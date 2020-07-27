@@ -184,4 +184,12 @@ public class TimeTools {
             return ZonedDateTime.of(LocalDateTime.parse(timeString), TimeTools.GMT);
         }
     }
+
+    public static Duration getFromIracingDuration(Object iRacingDuration) {
+        if (iRacingDuration == null) {
+            return Duration.ZERO;
+        }
+        // iRacing lap, repair and tow times are seconds as float
+        return Duration.ofNanos((long)((Double)iRacingDuration * 1000000000));
+    }
 }
