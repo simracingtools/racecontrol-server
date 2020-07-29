@@ -4,6 +4,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface RacecontrolDataService {
 
-	public String receiveClientData(@RequestBody String clientString);
+	String receiveClientData(@RequestBody String clientString);
 
 }

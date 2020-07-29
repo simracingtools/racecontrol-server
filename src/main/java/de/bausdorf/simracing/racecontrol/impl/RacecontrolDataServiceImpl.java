@@ -76,12 +76,12 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 	}
 
 	private ClientMessage validateClientMessage(Map<String, Object> clientMessage) {
-		String clientId = (String) clientMessage.get(MessageConstants.Message.CLIENT_ID);
+		Integer clientId = (Integer) clientMessage.get(MessageConstants.Message.CLIENT_ID);
 
 		String messageType = (String) clientMessage.get(Message.MESSAGE_TYPE);
 		String clientVersion = (String) clientMessage.get(MessageConstants.Message.VERSION);
 		String sessionId = (String) clientMessage.get(MessageConstants.Message.SESSION_ID);
-		String teamId = (String) clientMessage.get(MessageConstants.Message.TEAM_ID);
+		Integer teamId = (Integer) clientMessage.get(MessageConstants.Message.TEAM_ID);
 
 		if (messageType == null) {
 			throw new InvalidClientMessageException("No message type in message");

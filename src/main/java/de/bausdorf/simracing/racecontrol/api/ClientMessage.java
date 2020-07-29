@@ -1,7 +1,6 @@
 package de.bausdorf.simracing.racecontrol.api;
 
 import java.time.Duration;
-import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,8 +17,8 @@ public class ClientMessage {
 	private String version;
 	private long eventNo;
 	private String sessionId;
-	private String teamId;
-	private String driverId;
+	private Integer teamId;
+	private Integer driverId;
 	private long iRating;
 	private String driverName;
 	private String teamName;
