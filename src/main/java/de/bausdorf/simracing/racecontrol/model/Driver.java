@@ -67,6 +67,9 @@ public class Driver extends BaseEntity {
 	}
 
 	public Stint getLastStint() {
+		if(stints.isEmpty()) {
+			return null;
+		}
 		return stints.get(stints.size() - 1);
 	}
 

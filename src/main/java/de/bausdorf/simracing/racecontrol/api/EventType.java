@@ -26,19 +26,20 @@ public enum EventType {
 	DRIVER_CHANGE("DriverChange"),
 	ENTER_PITLANE("PitEnter"),
 	EXIT_PITLANE("PitExit"),
+	IN_PIT_STALL("InPitStall"),
 	APPROACHING_PITS("AproachingPits"),
 	OFF_TRACK("OffTrack"),
 	OFF_WORLD("OffWorld"),
 	ON_TRACK("OnTrack");
 
-	private final String eventType;
+	private final String eventString;
 
 	EventType(String trackLocation) {
-		this.eventType = trackLocation;
+		this.eventString = trackLocation;
 	}
 
-	public String getEventType() {
-		return this.eventType;
+	public String getEventString() {
+		return this.eventString;
 	}
 
 	public static EventType ofType(String type) {
@@ -47,6 +48,7 @@ public enum EventType {
 			case "PitEnter": return ENTER_PITLANE;
 			case "PitExit": return EXIT_PITLANE;
 			case "AproachingPits": return APPROACHING_PITS;
+			case "InPitStall": return IN_PIT_STALL;
 			case "OffTrack": return OFF_TRACK;
 			case "OffWorld": return OFF_WORLD;
 			case "OnTrack": return ON_TRACK;

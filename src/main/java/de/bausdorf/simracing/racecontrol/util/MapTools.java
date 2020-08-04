@@ -74,7 +74,7 @@ public class MapTools {
 		try {
 			return ((Long) data.get(key)).intValue();
 		} catch( Exception eLong ) {
-			log.info(EXCEPTION_LOG_PATTERN, key, eLong.getMessage(), data.get(key));
+			log.debug(EXCEPTION_LOG_PATTERN, key, eLong.getMessage(), data.get(key));
 			try {
 				return (Integer) data.get(key);
 			} catch( Exception e ) {

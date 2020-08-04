@@ -24,9 +24,12 @@ package de.bausdorf.simracing.racecontrol.api;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import de.bausdorf.simracing.racecontrol.api.MessageConstants.MessageType;
+
 public enum ClientMessageType {
-	PING(MessageConstants.MessageType.PING_NAME),
-	EVENT(MessageConstants.MessageType.EVENTDATA_NAME);
+	PING(MessageType.PING_NAME),
+	EVENT(MessageType.EVENTDATA_NAME),
+	SESSION(MessageType.SESSIONDATA_NAME);
 
 	private final String jsonKey;
 
@@ -44,8 +47,9 @@ public enum ClientMessageType {
 			throw new IllegalArgumentException("Invalid message type null");
 		}
 		switch(key) {
-			case MessageConstants.MessageType.EVENTDATA_NAME: return EVENT;
-			case MessageConstants.MessageType.PING_NAME: return PING;
+			case MessageType.EVENTDATA_NAME: return EVENT;
+			case MessageType.SESSIONDATA_NAME: return EVENT;
+			case MessageType.PING_NAME: return PING;
 			default:
 				throw new IllegalArgumentException("Invalid message type \"" + key + "\"");
 		}

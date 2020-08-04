@@ -22,14 +22,30 @@ package de.bausdorf.simracing.racecontrol;
  * #L%
  */
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import lombok.extern.slf4j.Slf4j;
+
 @SpringBootTest
+@Slf4j
 class RacecontrolServerApplicationTests {
 
 	@Test
 	void contextLoads() {
 	}
 
+	@Test
+	void testEncodings() {
+		String encoded = "J\u00f9lien Jean";
+		try {
+			String decoded = URLDecoder.decode(encoded, "UTF-8");
+			log.info("{} -> {}", encoded, decoded);
+		} catch (UnsupportedEncodingException e) {
+			log.error(e.getMessage(), e);
+		}
+	}
 }

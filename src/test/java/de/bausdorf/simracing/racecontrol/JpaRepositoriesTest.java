@@ -228,7 +228,6 @@ class JpaRepositoriesTest {
 				.sessionId(SESSION_ID)
 				.lastUpdate(Timestamp.valueOf(created))
 				.sessionDuration(Duration.ofHours(24))
-				.startTime(ZonedDateTime.now())
 				.trackName("NOS")
 				.build());
 

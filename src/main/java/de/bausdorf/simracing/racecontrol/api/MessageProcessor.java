@@ -22,7 +22,7 @@ package de.bausdorf.simracing.racecontrol.api;
  * #L%
  */
 
-public interface EventProcessor {
+public interface MessageProcessor {
 
-	void processEvent(ClientMessage message);
+	void processMessage(ClientMessage message);
 }

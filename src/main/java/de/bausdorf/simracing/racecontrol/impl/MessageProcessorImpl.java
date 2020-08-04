@@ -33,9 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.bausdorf.simracing.racecontrol.api.ClientData;
 import de.bausdorf.simracing.racecontrol.api.ClientMessage;
-import de.bausdorf.simracing.racecontrol.api.EventProcessor;
+import de.bausdorf.simracing.racecontrol.api.ClientMessageType;
+import de.bausdorf.simracing.racecontrol.api.EventMessage;
+import de.bausdorf.simracing.racecontrol.api.MessageProcessor;
 import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.api.SessionMessage;
 import de.bausdorf.simracing.racecontrol.model.Driver;
 import de.bausdorf.simracing.racecontrol.model.DriverChange;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
@@ -49,13 +53,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class EventProcessorImpl implements EventProcessor {
+public class MessageProcessorImpl implements MessageProcessor {
 
 	private final DriverRepository driverRepository;
 	private final DriverChangeRepository changeRepository;
 	private final SessionRepository sessionRepository;
 
-	public EventProcessorImpl(@Autowired DriverRepository driverRepository,
+	public MessageProcessorImpl(@Autowired DriverRepository driverRepository,
 			@Autowired DriverChangeRepository driverChangeRepository,
 			@Autowired SessionRepository sessionRepository) {
 		this.driverRepository = driverRepository;
@@ -64,26 +68,89 @@ public class EventProcessorImpl implements EventProcessor {
 	}
 
 	@Transactional
-	public void processEvent(ClientMessage message) {
+	public void processMessage(ClientMessage message) {
+		ClientData clientData = MessageFactory.validateAndConvert(message);
 		Optional<Session> session = sessionRepository.findBySessionId(message.getSessionId());
 		if(!session.isPresent()) {
-			sessionRepository.save(Session.builder()
-					.sessionId(message.getSessionId())
-					.lastUpdate(Timestamp.valueOf(LocalDateTime.now()))
-					.build());
+			createSession(message);
 		} else {
-			session.get().setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
+			updateSession(session.get(), message.getType() == ClientMessageType.SESSION ? (SessionMessage)clientData : null);
 		}
-		Optional<Driver> existingDriver = driverRepository.findBySessionIdAndIracingId(message.getSessionId(), message.getDriverId());
+		if(message.getType() == ClientMessageType.EVENT) {
+			processEventMessage(message.getSessionId(),
+					Long.parseLong(message.getDriverId()),
+					Long.parseLong(message.getTeamId()),
+					(EventMessage)clientData);
+		}
+	}
+
+	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime) {
+		Stint stint = driver.getLastStint();
+		if(stint == null) {
+			stint = Stint.builder()
+					.sessionId(driver.getSessionId())
+					.driver(driver)
+					.build();
+			driver.setStints(new ArrayList<>(Collections.singletonList(stint)));
+		}
+		switch(eventType) {
+			case ON_TRACK:
+				if(stint.getStartTime() == null) {
+					log.debug("{} stating stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
+					stint.setStartTime(sessionTime);
+				}
+				break;
+			case ENTER_PITLANE:
+				if(stint.getEndTime() == null && stint.getStartTime() != null) {
+					log.debug("{} ending stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
+					stint.setEndTime(sessionTime);
+				}
+				break;
+			case EXIT_PITLANE:
+				log.debug("{} stating stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
+				if(stint.getStartTime() == null) {
+					stint.setStartTime(sessionTime);
+				} else {
+					driver.getStints().add(Stint.builder()
+							.sessionId(driver.getSessionId())
+							.driver(driver)
+							.startTime(sessionTime)
+							.build());
+				}
+				break;
+			default:
+		}
+	}
+
+	public void createSession(ClientMessage message) {
+		sessionRepository.save(Session.builder()
+				.sessionDuration(Duration.ZERO)
+				.sessionId(message.getSessionId())
+				.lastUpdate(Timestamp.valueOf(LocalDateTime.now()))
+				.build());
+	}
+
+	public void updateSession(Session session, SessionMessage message) {
+		session.setLastUpdate(Timestamp.valueOf(LocalDateTime.now()));
+		if(message != null) {
+			session.setSessionDuration(message.getSessionDuration());
+			session.setTrackName(message.getTrackName());
+			session.setSessionType(message.getSessionType());
+		}
+	}
+
+	public void processEventMessage(String sessionId, long driverId, long teamId, EventMessage message) {
+		Optional<Driver> existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId);
 		if (!existingDriver.isPresent()) {
-			Driver driver = createNewDriver(message);
-			updateDriverStint(message.getSessionId(), driver, message.getEventType(), message.getSessionTime());
+			Driver driver = createNewDriver(sessionId, driverId, teamId, message);
+			updateDriverStint(driver, message.getEventType(), message.getSessionTime());
 			driverRepository.save(driver);
 		} else {
-			updateDriverStint(message.getSessionId(), existingDriver.get(), message.getEventType(), message.getSessionTime());
+			updateDriverStint(existingDriver.get(), message.getEventType(), message.getSessionTime());
+			driverRepository.save(existingDriver.get());
 			if(message.getEventType() == EventType.DRIVER_CHANGE) {
 				DriverChange change = DriverChange.builder()
-						.sessionId(message.getSessionId())
+						.sessionId(sessionId)
 						.changeFrom(existingDriver.get().getTeam().getCurrentDriver())
 						.changeTo(existingDriver.get())
 						.changeTime(message.getSessionTime())
@@ -95,52 +162,24 @@ public class EventProcessorImpl implements EventProcessor {
 		}
 	}
 
-	private void updateDriverStint(String sessionId, Driver driver, EventType eventType, Duration sessionTime) {
-		Stint stint = driver.getLastStint();
-		switch(eventType) {
-			case ON_TRACK:
-				if(stint.getStartTime() == null) {
-					log.debug("{} stating stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
-					stint.setStartTime(sessionTime);
-				}
-				break;
-			case ENTER_PITLANE:
-				if(stint.getEndTime() == null) {
-					log.debug("{} ending stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
-					stint.setEndTime(sessionTime);
-				}
-				break;
-			case EXIT_PITLANE:
-				log.debug("{} stating stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
-				if(stint.getStartTime() == null) {
-					stint.setStartTime(sessionTime);
-				} else {
-					driver.getStints().add(Stint.builder()
-							.sessionId(sessionId)
-							.startTime(sessionTime)
-							.build());
-				}
-				break;
-			default:
-		}
-
-	}
-
-	private Driver createNewDriver(ClientMessage message) {
+	private Driver createNewDriver(String sessionId, long driverId, long teamId, EventMessage message) {
 		Driver driver = Driver.builder()
-				.sessionId(message.getSessionId())
-				.driverId(message.getDriverId())
+				.sessionId(sessionId)
+				.driverId(driverId)
 				.name(message.getDriverName())
 				.iRating(message.getIRating())
-				.stints(new ArrayList<>(Collections.singletonList(Stint.builder().build())))
 				.build();
 		driver.setTeam(Team.builder()
-				.sessionId(message.getSessionId())
-				.teamId(message.getTeamId())
+				.sessionId(sessionId)
+				.teamId(teamId)
 				.name(message.getTeamName())
 				.carNo(message.getCarNo())
 				.currentDriver(driver)
 				.build());
+		driver.setStints(new ArrayList<>(Collections.singletonList(Stint.builder()
+				.driver(driver)
+				.sessionId(sessionId)
+				.build())));
 		return driver;
 	}
 }

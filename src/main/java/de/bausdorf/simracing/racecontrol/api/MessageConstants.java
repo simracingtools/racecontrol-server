@@ -29,22 +29,24 @@ public class MessageConstants {
 
 		public static final String PING_NAME = "ping";
 		public static final String EVENTDATA_NAME = "event";
+		public static final String SESSIONDATA_NAME = "session";
 
 		private MessageType() {}
 	}
 
 	public static class Message {
-		public static final String MESSAGE_TYPE = "MesssageType";
-		public static final String VERSION = "Version";
-		public static final String SESSION_ID = "SessionId";
-		public static final String TEAM_ID = "TeamID";
-		public static final String CLIENT_ID = "DriverId";
-		public static final String SESSION_TIME = "SessionTime";
+		public static final String MESSAGE_TYPE = "type";
+		public static final String VERSION = "version";
+		public static final String SESSION_ID = "sessionId";
+		public static final String TEAM_ID = "teamId";
+		public static final String CLIENT_ID = "clientId";
+		public static final String PAYLOAD = "payload";
 
 		private Message() {}
 	}
 
 	public static class EventData {
+		public static final String SESSION_TIME = "SessionTime";
 		public static final String TRACK_LOCATION = "trackLocation";
 		public static final String DRIVER_NAME = "CurrentDriver";
 		public static final String I_RATING = "IRating";
@@ -57,6 +59,13 @@ public class MessageConstants {
 		private EventData() {}
 	}
 
+	public static class SessionData {
+		public static final String TRACK_NAME = "TrackName";
+		public static final String SESSION_DURATION = "SessionDuration";
+		public static final String SESSION_TYPE = "SessionType";
+
+		private SessionData() {}
+	}
 	private MessageConstants() {
 		super();
 	}

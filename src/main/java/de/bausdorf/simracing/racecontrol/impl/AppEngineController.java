@@ -1,8 +1,8 @@
-package de.bausdorf.simracing.racecontrol.model;
+package de.bausdorf.simracing.racecontrol.impl;
 
 /*-
  * #%L
- * racecontrol-server
+ * tt-cloud-server
  * %%
  * Copyright (C) 2020 bausdorf engineering
  * %%
@@ -22,26 +22,30 @@ package de.bausdorf.simracing.racecontrol.model;
  * #L%
  */
 
-import java.time.Duration;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Converter(autoApply = true)
+@RestController
 @Slf4j
-public class DurationConverter implements AttributeConverter<Duration, String> {
+public class AppEngineController {
 
-	@Override
-	public String convertToDatabaseColumn(Duration attribute) {
-		log.debug("Convert {} to Long", attribute);
-		return attribute != null ? attribute.toString() : null;
+	@GetMapping("/_ah/stop")
+	public ResponseEntity<String> appEngineStopRequest() {
+		log.warn("AppEngine send stop request");
+		return new ResponseEntity<>("OK", HttpStatus.OK);
 	}
 
-	@Override
-	public Duration convertToEntityAttribute(String duration) {
-		log.debug("Convert {} to Duration", duration);
-		return duration != null ? Duration.parse(duration) : null;
+	@GetMapping("/_ah/start")
+	public ResponseEntity<String> appEngineStartRequest() {
+		return new ResponseEntity<>("OK", HttpStatus.OK);
+	}
+
+	@GetMapping("/_ah/health")
+	public ResponseEntity<String> healthCheck() {
+		return new ResponseEntity<>("Healthy", HttpStatus.OK);
 	}
 }
