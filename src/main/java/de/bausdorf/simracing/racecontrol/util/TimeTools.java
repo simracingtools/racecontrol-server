@@ -188,7 +188,19 @@ public class TimeTools {
         if (iRacingDuration == null) {
             return Duration.ZERO;
         }
+        double durationDouble = (Double)iRacingDuration;
+        if(durationDouble < 1.5) {
+            // duration delivered as fraction of 86400 (seconds of day)
+            durationDouble *= 86400;
+        }
         // iRacing lap, repair and tow times are seconds as float
-        return Duration.ofNanos((long)((Double)iRacingDuration * 1000000000));
+        return Duration.ofNanos((long)(durationDouble * 1000000000));
+    }
+
+    public static Duration getFromIracingSessionDuration(String sessionDurationWithSec) {
+        // 43200.0000 sec
+        String strippedPostfix = sessionDurationWithSec.replaceFirst(" sec", "");
+        double durationSeconds = Double.parseDouble(strippedPostfix);
+        return Duration.ofSeconds((long)durationSeconds);
     }
 }

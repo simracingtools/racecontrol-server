@@ -64,8 +64,9 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 		// Maybe Json is escaped - so remove escape characters
 		Map<String, Object> clientMessage = readClientMessage(clientString.replace("\\", ""));
 
+		ClientMessage msg;
 		try {
-			ClientMessage msg = this.validateClientMessage(clientMessage);
+			msg = this.validateClientMessage(clientMessage);
 			if (msg.getType() != ClientMessageType.PING) {
 				messageProcessor.processMessage(msg);
 			}
@@ -76,6 +77,9 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 		} catch (UnsupportedClientException e) {
 			log.warn(e.getMessage());
 			return "UNSUPPORTED_CLIENT";
+		} catch (Exception e) {
+			log.error(e.getMessage());
+			throw e;
 		}
 	}
 

@@ -35,10 +35,8 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 @Data
-@ToString
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Driver extends BaseEntity {
@@ -81,5 +79,11 @@ public class Driver extends BaseEntity {
 			}
 		}
 		return breakDurations;
+	}
+
+	@Override
+	public String toString() {
+		return "Driver(name=" + this.getName() + ", iRating=" + this.getIRating() + ", team=" + this.getTeam().getName() + ", stints="
+				+ this.getStints() + ")";
 	}
 }

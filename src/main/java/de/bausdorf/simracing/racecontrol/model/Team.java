@@ -34,10 +34,8 @@ import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 
 @Data
-@ToString
 @EqualsAndHashCode(callSuper = true)
 @Entity
 public class Team extends BaseEntity {
@@ -69,5 +67,11 @@ public class Team extends BaseEntity {
 		return drivers.stream()
 				.filter(s -> s.getIracingId() == driverId)
 				.collect(Collectors.toSet()).stream().findFirst().isPresent();
+	}
+
+	@Override
+	public String toString() {
+		return "Team(name=" + this.getName() + ", currentDriver=" + this.getCurrentDriver().getName() + ", carNo=" + this.getCarNo() + ", drivers="
+				+ this.getDrivers() + ")";
 	}
 }

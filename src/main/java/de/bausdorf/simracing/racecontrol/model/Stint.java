@@ -25,23 +25,21 @@ package de.bausdorf.simracing.racecontrol.model;
 import java.time.Duration;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@ToString
 @Entity
 public class Stint {
 	@Id
@@ -59,5 +57,10 @@ public class Stint {
 			return endTime.minus(startTime);
 		}
 		return Duration.ZERO;
+	}
+
+	public String toString() {
+		return "Stint(id=" + this.getId() + ", startTime=" + this.getStartTime() + ", endTime=" + this.getEndTime() + ", driver="
+				+ this.getDriver().getName() + ", sessionId=" + this.getSessionId() + ")";
 	}
 }

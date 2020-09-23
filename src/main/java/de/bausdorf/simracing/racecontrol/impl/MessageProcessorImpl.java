@@ -72,7 +72,11 @@ public class MessageProcessorImpl implements MessageProcessor {
 		ClientData clientData = MessageFactory.validateAndConvert(message);
 		Optional<Session> session = sessionRepository.findBySessionId(message.getSessionId());
 		if(!session.isPresent()) {
-			createSession(message);
+			switch(message.getType()) {
+				case EVENT: createSession(message); break;
+				case SESSION: createSession((SessionMessage)clientData, message.getSessionId()); break;
+				default: break;
+			}
 		} else {
 			updateSession(session.get(), message.getType() == ClientMessageType.SESSION ? (SessionMessage)clientData : null);
 		}
@@ -96,7 +100,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		switch(eventType) {
 			case ON_TRACK:
 				if(stint.getStartTime() == null) {
-					log.debug("{} stating stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
+					log.debug("{} starting stint at {}", driver.getName(), TimeTools.longDurationString(sessionTime));
 					stint.setStartTime(sessionTime);
 				}
 				break;
@@ -126,6 +130,16 @@ public class MessageProcessorImpl implements MessageProcessor {
 		sessionRepository.save(Session.builder()
 				.sessionDuration(Duration.ZERO)
 				.sessionId(message.getSessionId())
+				.lastUpdate(Timestamp.valueOf(LocalDateTime.now()))
+				.build());
+	}
+
+	public void createSession(SessionMessage message, String sessionId) {
+		sessionRepository.save(Session.builder()
+				.sessionDuration(message.getSessionDuration())
+				.trackName(message.getTrackName())
+				.sessionType(message.getSessionType())
+				.sessionId(sessionId)
 				.lastUpdate(Timestamp.valueOf(LocalDateTime.now()))
 				.build());
 	}

@@ -29,7 +29,7 @@ public class MessageConstants {
 
 		public static final String PING_NAME = "ping";
 		public static final String EVENTDATA_NAME = "event";
-		public static final String SESSIONDATA_NAME = "session";
+		public static final String SESSIONDATA_NAME = "sessionInfo";
 
 		private MessageType() {}
 	}

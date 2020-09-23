@@ -48,7 +48,7 @@ public enum ClientMessageType {
 		}
 		switch(key) {
 			case MessageType.EVENTDATA_NAME: return EVENT;
-			case MessageType.SESSIONDATA_NAME: return EVENT;
+			case MessageType.SESSIONDATA_NAME: return SESSION;
 			case MessageType.PING_NAME: return PING;
 			default:
 				throw new IllegalArgumentException("Invalid message type \"" + key + "\"");
