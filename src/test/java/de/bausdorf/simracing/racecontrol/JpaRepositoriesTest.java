@@ -85,8 +85,10 @@ class JpaRepositoriesTest {
 
 	@AfterEach
 	public void tearDown() {
-		changeRepository.deleteAll();
-		driverRepository.deleteAll();
+		changeRepository.findBySessionIdAndTeam(SESSION_ID, team).stream()
+				.forEach(s -> changeRepository.delete(s));
+
+		driverRepository.deleteById(4711);
 	}
 
 	@Test

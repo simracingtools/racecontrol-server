@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.model;
  * #L%
  */
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
@@ -29,4 +30,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface TeamRepository extends CrudRepository<Team, Integer> {
 
 	Optional<Team> findBySessionIdAndIracingId(String sessionId, long iRacingId);
+	List<Team> findBySessionIdOrderByNameAsc(String sessionId);
 }

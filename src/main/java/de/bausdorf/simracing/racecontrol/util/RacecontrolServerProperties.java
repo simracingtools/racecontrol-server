@@ -30,10 +30,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Configuration
-@ConfigurationProperties(prefix="teamtactics")
+@ConfigurationProperties(prefix="racecontrol")
 @NoArgsConstructor
 @Data
 public class RacecontrolServerProperties {
     private String version;
     private String serverBaseUrl;
+    private int maxDrivingTimeRequiresRestMinutes;
+    private int maxDrivingTimeMinutes;
+    private int minRestTimeMinutes;
+    private double fairShareFactor;
 }
