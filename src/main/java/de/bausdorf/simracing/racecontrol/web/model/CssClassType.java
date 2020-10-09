@@ -14,8 +14,12 @@ public enum CssClassType {
 	@Getter
 	String textClass;
 
-	private CssClassType(String backgroundClass, String textClass) {
+	CssClassType(String backgroundClass, String textClass) {
 		this.backgroundClass = backgroundClass;
 		this.textClass = textClass;
+	}
+
+	public String getClassString() {
+		return backgroundClass + " " + textClass;
 	}
 }

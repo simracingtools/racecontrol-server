@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>racecontrol</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+<!--    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">-->
+        <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
+            <thead>
+                <tr>
+                    <th>Team</th>
+                    <th>Car</th>
+                    <th>Driver</th>
+                    <th class="text-center">Stint 1</th>
+                    <th class="text-center">Stint 2</th>
+                    <th class="text-center">Stint 3</th>
+                    <th class="text-center">Stint 4</th>
+                    <th class="text-center">Stint 5</th>
+                    <th class="text-center">Stint 6</th>
+                    <th class="text-center">Stint 7</th>
+                    <th class="text-center">Stint 8</th>
+                    <th class="text-center">Stint 9</th>
+                    <th class="text-center">Stint 10</th>
+                    <th>Driving Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                <div th:each="teamData : ${sessionView.teams}">
+                    <tr th:id="${'team-' + teamData.getTeamId() + '-iRacingId'}">
+                        <td th:id="${'team-' + teamData.getTeamId() + '-name'}" th:text="${teamData.name.value}">FBP Racing Blue</td>
+                        <td th:id="${'team-' + teamData.getTeamId() + '-carNo'}" th:text="${teamData.carNo.value}">99</td>
+                        <td colspan="12"></td>
+                    </tr>
+                    <div th:each="driver : ${teamData.drivers}">
+                        <tr th:id="${'driver-' + driver.getIRacingId()}">
+                            <td th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
+                            <td></td>
+                            <td th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:text="${driver.name.value}">Robert Bausdorf</td>
+                            <div th:each="stint : ${driver.stints}">
+                                <td style="padding: 0;">
+                                    <table style="margin: 0;" class="table">
+                                        <tbody>
+                                        <tr>
+                                            <td style="border: 0;" th:class="${stint.startTime.displayType.getClassString()}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
+                                            <td style="border: 0;" th:class="${stint.stopTime.displayType.getClassString()}" th:text="${stint.stopTime.value}">1:03:23<br></td>
+                                            <td style="border: 0;" th:class="${stint.duration.displayType.getClassString()}" th:text="${stint.duration.value}">1:03:14<br></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </div>
+                            <td class="bg-success">2:09:22</td>
+                        </div>
+                    </div>
+                </div>
+            </tbody>
+        </table>
+<!--    </div>-->
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

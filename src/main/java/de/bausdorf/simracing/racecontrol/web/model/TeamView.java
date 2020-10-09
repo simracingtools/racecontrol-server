@@ -17,19 +17,24 @@ public class TeamView {
 	private TableCellView carNo;
 	private TableCellView avgTeamRating;
 	private List<DriverView> drivers;
+	private String teamId;
 
 	public static TeamView buildFromTeamList(Team team) {
 		return TeamView.builder()
 				.name(TableCellView.builder()
 						.value(team.getName())
+						.displayType(CssClassType.DEFAULT)
 						.build())
 				.carNo(TableCellView.builder()
 						.value(String.valueOf(team.getCarNo()))
+						.displayType(CssClassType.DEFAULT)
 						.build())
+				.teamId(String.valueOf(team.getTeamId()))
 				.drivers(team.getDrivers().stream()
 						.map(s -> DriverView.builder()
 									.name(TableCellView.builder()
 											.value(s.getName())
+											.displayType(CssClassType.DEFAULT)
 											.build())
 									.iRacingId(String.valueOf(s.getIracingId()))
 									.iRating(String.valueOf(s.getIRating()))
@@ -37,12 +42,15 @@ public class TeamView {
 											.map(k -> StintView.builder()
 														.startTime(TableCellView.builder()
 																.value(TimeTools.shortDurationString(k.getStartTime()))
+																.displayType(CssClassType.DEFAULT)
 																.build())
 														.stopTime(TableCellView.builder()
 																.value(TimeTools.shortDurationString(k.getEndTime()))
+																.displayType(CssClassType.DEFAULT)
 																.build())
 														.duration(TableCellView.builder()
 																.value(TimeTools.shortDurationString(k.getStintDuration()))
+																.displayType(CssClassType.DEFAULT)
 																.build())
 														.build()
 											)
