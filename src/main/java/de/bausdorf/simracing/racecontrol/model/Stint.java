@@ -31,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 
+import de.bausdorf.simracing.racecontrol.api.StintStateType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -51,6 +52,7 @@ public class Stint {
 	private Driver driver;
 	@Column(nullable = false)
 	private String sessionId;
+	private StintStateType state;
 
 	public Duration getStintDuration() {
 		if( startTime != null && endTime != null ) {
