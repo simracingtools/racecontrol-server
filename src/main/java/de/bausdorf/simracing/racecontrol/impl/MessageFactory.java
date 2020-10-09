@@ -63,6 +63,8 @@ public class MessageFactory {
 				.sessionDuration(TimeTools.getFromIracingSessionDuration(MapTools.stringFromMap(SessionData.SESSION_DURATION, data)))
 				.sessionType(MapTools.stringFromMap(SessionData.SESSION_TYPE, data))
 				.trackName(MapTools.stringFromMap(SessionData.TRACK_NAME, data))
+				.sessionState(MapTools.intFromMap(SessionData.SESSION_STATE, data))
+				.sessionTime(TimeTools.getFromIracingDuration(MapTools.doubleFromMap(SessionData.SESSION_TIME, data)))
 				.build();
 	}
 

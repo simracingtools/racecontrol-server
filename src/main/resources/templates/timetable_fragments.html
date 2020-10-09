@@ -1,0 +1,51 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+  <table>
+    <div th:fragment="teamLine(team)">
+      <tr>
+        <td th:text="${team}">FBP Racing Blue</td>
+        <td></td>
+        <td th:text="${team}">99</td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+<!--      <tr th:each="driver : ${team.drivers}" th:replace="~{timetable_fragments.html :: driverLine(driver=${driver})}"></tr>-->
+    </div>
+    <tr th:fragment="driverLine(driver)">
+      <td>111111</td>
+      <td></td>
+      <td>Robert Bausdorf</td>
+      <td>
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr>
+              <td class="text-dark">0:00:00<br></td>
+              <td>1:03:23<br></td>
+              <td class="bg-success">1:03:14<br></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+      <td>
+        <div class="table-responsive">
+          <table class="table">
+            <tbody>
+            <tr>
+              <td class="bg-success">1:04:11</td>
+              <td>2:09:33</td>
+              <td class="bg-success">1:05:11</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </td>
+      <td></td>
+      <td class="bg-success">2:09:22</td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -113,7 +113,7 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 			throw new InvalidClientMessageException("No message version");
 		}
 
-		if (clientId == null) {
+		if (clientId == null || "-1".equalsIgnoreCase(clientId) || "0".equalsIgnoreCase(teamId)) {
 			throw new InvalidClientMessageException("Message without client id");
 		}
 		if (sessionId == null) {

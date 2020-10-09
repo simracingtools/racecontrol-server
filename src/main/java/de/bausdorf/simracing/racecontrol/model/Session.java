@@ -22,13 +22,13 @@ package de.bausdorf.simracing.racecontrol.model;
  * #L%
  */
 
-import java.sql.Timestamp;
 import java.time.Duration;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import de.bausdorf.simracing.racecontrol.api.SessionStateType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,5 +46,6 @@ public class Session {
 	private Duration sessionDuration;
 	private String sessionType;
 	@Column(nullable = false)
-	private Timestamp lastUpdate;
+	private Duration lastUpdate;
+	private SessionStateType sessionState;
 }

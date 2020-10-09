@@ -103,6 +103,9 @@ public class TimeTools {
     }
 
     public static String shortDurationString(final Duration duration) {
+        if(duration == null) {
+            return "";
+        }
         String prefix = "";
         Duration d = duration;
         if (duration.isNegative()) {

@@ -63,6 +63,8 @@ public class MessageConstants {
 		public static final String TRACK_NAME = "TrackName";
 		public static final String SESSION_DURATION = "SessionDuration";
 		public static final String SESSION_TYPE = "SessionType";
+		public static final String SESSION_STATE = "SessionState";
+		public static final String SESSION_TIME = "SessionTime";
 
 		private SessionData() {}
 	}

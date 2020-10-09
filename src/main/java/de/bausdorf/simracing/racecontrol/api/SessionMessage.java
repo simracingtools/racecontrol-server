@@ -37,4 +37,6 @@ public class SessionMessage implements ClientData {
 	private String trackName;
 	private Duration sessionDuration;
 	private String sessionType;
+	private int sessionState;
+	private Duration sessionTime;
 }
