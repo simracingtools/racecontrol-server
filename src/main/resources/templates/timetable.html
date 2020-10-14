@@ -46,13 +46,15 @@
             <td>&nbsp;</td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
+            <td>&nbsp;</td>
         </tr>
         <tr>
             <td class="text-right">Track:</td>
             <td th:class="${sessionView.trackName.displayType.getClassString()}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
             <td th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
-            <td th:class="${sessionView.sessionType.displayType.getClassString()}" th:text="${sessionView.sessionType.value}">RACE</td>
-            <td th:class="${sessionView.sessionState.displayType.getClassString() + ' text-right'}" th:text="${sessionView.sessionState.value}">RACING</td>
+            <td th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
+            <td class="text-right">Session state:</td>
+            <td th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
         </tr>
         </tbody>
     </table>
