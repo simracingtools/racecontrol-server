@@ -28,5 +28,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface DriverChangeRepository extends CrudRepository<DriverChange, Integer> {
 
-	List<DriverChange> findBySessionIdAndTeam(String sessionId, Team team);
+	List<DriverChange> findBySessionIdAndTeamOrderByChangeTimeAsc(String sessionId, Team team);
+
 }

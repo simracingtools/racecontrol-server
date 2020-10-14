@@ -22,16 +22,21 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
+import java.time.Duration;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class StintView {
 
 	private TableCellView startTime;
 	private TableCellView stopTime;
 	private TableCellView duration;
+	private Duration trackTime;
 }

@@ -40,4 +40,5 @@ public class RacecontrolServerProperties {
     private int maxDrivingTimeMinutes;
     private int minRestTimeMinutes;
     private double fairShareFactor;
+    private int proAmDiscriminator;
 }

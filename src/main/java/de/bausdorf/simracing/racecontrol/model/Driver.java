@@ -22,7 +22,6 @@ package de.bausdorf.simracing.racecontrol.model;
  * #L%
  */
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +31,7 @@ import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import de.bausdorf.simracing.racecontrol.api.EventType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -46,6 +46,7 @@ public class Driver extends BaseEntity {
 	private Team team;
 	@OneToMany(mappedBy = "driver", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Stint> stints;
+	private EventType lastEventType;
 
 	public Driver() {
 		this.stints = new ArrayList<>();
@@ -69,16 +70,6 @@ public class Driver extends BaseEntity {
 			return null;
 		}
 		return stints.get(stints.size() - 1);
-	}
-
-	public List<Duration> getBreakDurations() {
-		List<Duration> breakDurations = new ArrayList<>();
-		if( stints.size() > 1) {
-			for(int i = 1; i < stints.size(); i++) {
-				breakDurations.add(stints.get(i).getStartTime().minus(stints.get(i-1).getEndTime()));
-			}
-		}
-		return breakDurations;
 	}
 
 	@Override

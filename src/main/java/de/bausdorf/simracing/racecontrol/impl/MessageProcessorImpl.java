@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,22 +58,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class MessageProcessorImpl implements MessageProcessor {
 
-	public static final String VALID_TRANSITION_FOR = "Valid transition for {}: {} -> {}";
+	public static final String VALID_TRANSITION_FOR = "Ignored transition for {}: {} -> {}";
 	public static final String INVALID_STATE_TRANSITION_FOR = "Invalid state transition for {}: {} -> {}";
 	private final DriverRepository driverRepository;
 	private final DriverChangeRepository changeRepository;
 	private final SessionRepository sessionRepository;
 	private final TeamRepository teamRepository;
+	private final SimpMessagingTemplate messagingTemplate;
 
 
 	public MessageProcessorImpl(@Autowired DriverRepository driverRepository,
 			@Autowired TeamRepository teamRepository,
 			@Autowired DriverChangeRepository driverChangeRepository,
-			@Autowired SessionRepository sessionRepository) {
+			@Autowired SessionRepository sessionRepository,
+			@Autowired SimpMessagingTemplate messagingTemplate) {
 		this.driverRepository = driverRepository;
 		this.changeRepository = driverChangeRepository;
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
+		this.messagingTemplate = messagingTemplate;
 	}
 
 	@Transactional
@@ -91,7 +95,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		session = sessionRepository.findBySessionId(message.getSessionId());
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
 				&& session.get().getSessionState().getTypeCode() < SessionStateType.CHECKERED.getTypeCode()) {
-			processEventMessage(message.getSessionId(),
+			processEventMessage(session.get(),
 					Long.parseLong(message.getDriverId()),
 					Long.parseLong(message.getTeamId()),
 					(EventMessage)clientData);
@@ -134,7 +138,6 @@ public class MessageProcessorImpl implements MessageProcessor {
 					log.info("{} ending stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
 				} else if(stint.getState() == StintStateType.UNDEFINED) {
 					log.debug(VALID_TRANSITION_FOR, driver.getName(), stint.getState(), eventType);
-					stint.setState(StintStateType.IN_PIT);
 				} else if(stint.getState() != StintStateType.IN_PIT){
 					log.warn(INVALID_STATE_TRANSITION_FOR, driver.getName(), stint.getState(), eventType);
 				}
@@ -181,28 +184,37 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
-	public void processEventMessage(String sessionId, long driverId, long teamId, EventMessage message) {
-		Optional<Driver> existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId);
-		if (!existingDriver.isPresent()) {
+	public void processEventMessage(Session session, long driverId, long teamId, EventMessage message) {
+		String sessionId = session.getSessionId();
+		Driver existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId).orElse(null);
+		if (existingDriver == null) {
 			 if(driverId < 1) {
 			 	log.warn("Invalid driver id {} for driver {}", driverId, message.getDriverName());
 			 }
-			Driver driver = createNewDriver(sessionId, driverId, teamId, message);
-			updateDriverStint(driver, message.getEventType(), message.getSessionTime());
-			driverRepository.save(driver);
+			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
+			if(session.getSessionState() == SessionStateType.RACING) {
+				updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+			}
 		} else {
-			updateDriverStint(existingDriver.get(), message.getEventType(), message.getSessionTime());
-			driverRepository.save(existingDriver.get());
-			if(message.getEventType() == EventType.DRIVER_CHANGE) {
+			if(session.getSessionState() == SessionStateType.RACING) {
+				updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+			}
+		}
+		existingDriver.setLastEventType(message.getEventType());
+		driverRepository.save(existingDriver);
+
+		if(message.getEventType() == EventType.DRIVER_CHANGE) {
+			if(existingDriver.getTeam().getCurrentDriverId() != existingDriver.getIracingId()) {
 				DriverChange change = DriverChange.builder()
 						.sessionId(sessionId)
-						.changeFrom(existingDriver.get().getTeam().getCurrentDriver())
-						.changeTo(existingDriver.get())
+						.changeFromId(existingDriver.getTeam().getCurrentDriverId())
+						.changeToId(existingDriver.getIracingId())
 						.changeTime(message.getSessionTime())
+						.team(existingDriver.getTeam())
 						.build();
-				log.info("Driver change for team {}; {}", existingDriver.get().getTeam().getName(), change);
+				log.info("Driver change for team {}; {}", existingDriver.getTeam().getName(), change);
 				changeRepository.save(change);
-				existingDriver.get().getTeam().setCurrentDriver(existingDriver.get());
+				existingDriver.getTeam().setCurrentDriverId(existingDriver.getDriverId());
 			}
 		}
 	}
@@ -214,13 +226,14 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.name(message.getDriverName())
 				.iRating(message.getIRating())
 				.build();
-		driver.setTeam(Team.builder()
+		Team team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId).orElse(Team.builder()
 				.sessionId(sessionId)
 				.teamId(teamId)
 				.name(message.getTeamName())
 				.carNo(message.getCarNo())
-				.currentDriver(driver)
+				.currentDriverId(driverId)
 				.build());
+		driver.setTeam(team);
 		driver.setStints(new ArrayList<>(Collections.singletonList(Stint.builder()
 				.driver(driver)
 				.sessionId(sessionId)
@@ -232,17 +245,21 @@ public class MessageProcessorImpl implements MessageProcessor {
 	private void processGreenFlag(Session session) {
 		List<Team> teams = teamRepository.findBySessionIdOrderByNameAsc(session.getSessionId());
 		for(Team team : teams) {
-			log.info("{} starting stint (green flag) at {}", team.getCurrentDriver().getName(),
+			Driver currentDriver = driverRepository.findBySessionIdAndIracingId(session.getSessionId(), team.getCurrentDriverId()).orElse(null);
+			if(currentDriver == null) {
+				continue;
+			}
+			log.info("{} starting stint (green flag) at {}", currentDriver.getName(),
 					TimeTools.longDurationString(session.getLastUpdate()));
-			Stint stint = team.getCurrentDriver().getLastStint();
+			Stint stint = currentDriver.getLastStint();
 			if(stint == null) {
 				stint = Stint.builder()
 						.sessionId(team.getSessionId())
-						.driver(team.getCurrentDriver())
+						.driver(currentDriver)
 						.state(StintStateType.RUNNING)
 						.startTime(session.getLastUpdate())
 						.build();
-				team.getCurrentDriver().setStints(new ArrayList<>(Collections.singletonList(stint)));
+				currentDriver.setStints(new ArrayList<>(Collections.singletonList(stint)));
 			} else {
 				stint.setStartTime(session.getLastUpdate());
 				stint.setState(StintStateType.RUNNING);
@@ -253,14 +270,22 @@ public class MessageProcessorImpl implements MessageProcessor {
 	private void processCheckeredFlag(Session session) {
 		List<Team> teams = teamRepository.findBySessionIdOrderByNameAsc(session.getSessionId());
 		for(Team team : teams) {
-			log.info("{} end stint (checkered flag) at {}", team.getCurrentDriver().getName(),
-					TimeTools.longDurationString(session.getLastUpdate()));
-			Stint stint = team.getCurrentDriver().getLastStint();
+			Driver currentDriver = driverRepository.findBySessionIdAndIracingId(session.getSessionId(), team.getCurrentDriverId()).orElse(null);
+			if(currentDriver == null) {
+				continue;
+			}
+			Stint stint = currentDriver.getLastStint();
 			if(stint == null) {
-				log.error("No last stint for {} at race end", team.getCurrentDriver());
+				log.error("No last stint for {} at race end", currentDriver);
 			} else {
-				stint.setEndTime(session.getLastUpdate());
-				stint.setState(StintStateType.IN_PIT);
+				if(stint.getEndTime() == null) {
+					log.info("{} end stint (checkered flag) at {}", currentDriver.getName(),
+							TimeTools.longDurationString(session.getLastUpdate()));
+					stint.setEndTime(session.getLastUpdate());
+					stint.setState(StintStateType.IN_PIT);
+				} else {
+					log.info("{} ended last stint at {}", currentDriver.getName(), TimeTools.longDurationString(stint.getEndTime()));
+				}
 			}
 		}
 	}

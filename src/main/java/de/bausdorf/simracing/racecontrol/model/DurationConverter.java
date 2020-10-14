@@ -31,17 +31,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Converter(autoApply = true)
 @Slf4j
-public class DurationConverter implements AttributeConverter<Duration, String> {
+public class DurationConverter implements AttributeConverter<Duration, Long> {
 
 	@Override
-	public String convertToDatabaseColumn(Duration attribute) {
+	public Long convertToDatabaseColumn(Duration attribute) {
 		log.debug("Convert {} to Long", attribute);
-		return attribute != null ? attribute.toString() : null;
+		return attribute != null ? attribute.toMillis() : null;
 	}
 
 	@Override
-	public Duration convertToEntityAttribute(String duration) {
+	public Duration convertToEntityAttribute(Long duration) {
 		log.debug("Convert {} to Duration", duration);
-		return duration != null ? Duration.parse(duration) : null;
+		return duration != null ? Duration.ofMillis(duration) : null;
 	}
 }

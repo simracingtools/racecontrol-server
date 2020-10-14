@@ -26,9 +26,12 @@ import lombok.Getter;
 
 public enum CssClassType {
 	DEFAULT("", ""),
-	SUCCESS("bg-success", "text-dark"),
-	WARNING("bg-warning", "text-dark"),
-	DANGER("bg-danger", "text-light");
+	TBL_SUCCESS("table-success", ""),
+	TBL_WARNING("table-warning", ""),
+	TBL_DANGER("table-danger", ""),
+	TBL_INFO("table-info", ""),
+	TBL_DARK("table-dark", ""),
+	TBL_PRIMARY("table-primary", "");
 
 	@Getter
 	String backgroundClass;

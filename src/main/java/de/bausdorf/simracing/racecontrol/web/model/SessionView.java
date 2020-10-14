@@ -36,6 +36,7 @@ public class SessionView {
 	private TableCellView trackName;
 	private TableCellView sessionDuration;
 	private TableCellView sessionType;
+	private TableCellView sessionState;
 	private List<TeamView> teams;
 	private int maxStintColumns;
 }

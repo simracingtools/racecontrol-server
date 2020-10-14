@@ -36,6 +36,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.bausdorf.simracing.racecontrol.api.SessionStateType;
+import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Team;
@@ -46,7 +48,6 @@ import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionView;
 import de.bausdorf.simracing.racecontrol.web.model.TableCellView;
-import de.bausdorf.simracing.racecontrol.web.model.TeamView;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -57,11 +58,15 @@ public class MainController {
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
+	final DriverChangeRepository changeRepository;
+	final ViewBuilder viewBuilder;
 
 	public MainController(@Autowired SessionRepository sessionRepository,
-		@Autowired TeamRepository teamRepository) {
+		@Autowired TeamRepository teamRepository, @Autowired DriverChangeRepository changeRepository, @Autowired ViewBuilder viewBuilder) {
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
+		this.changeRepository = changeRepository;
+		this.viewBuilder = viewBuilder;
 	}
 
 	@GetMapping({"/", "/index", "index.html"})
@@ -108,17 +113,41 @@ public class MainController {
 							.build())
 					.sessionType(TableCellView.builder()
 							.value(selectedSession.get().getSessionType())
-							.displayType(CssClassType.DANGER)
+							.displayType(selectedSession.get().getSessionType().equalsIgnoreCase("RACE")
+									? CssClassType.TBL_SUCCESS : CssClassType.TBL_WARNING)
+							.build())
+					.trackName(TableCellView.builder()
+							.value(selectedSession.get().getTrackName())
+							.displayType(CssClassType.DEFAULT)
+							.build())
+					.sessionState(TableCellView.builder()
+							.value(selectedSession.get().getSessionState().name())
+							.displayType(cssTypeForSessionState(selectedSession.get().getSessionState()))
 							.build())
 					.build();
 
 			sessionView.setTeams(teamsInSession.stream()
-					.map(s -> TeamView.buildFromTeamList(s))
+					.map(viewBuilder::buildFromTeam)
 					.collect(Collectors.toList()));
 
 			model.addAttribute("sessionView", sessionView);
 
 		}
 		return SESSION_VIEW;
+	}
+
+	private CssClassType cssTypeForSessionState(SessionStateType sessionState) {
+		if(sessionState == null) {
+			return CssClassType.DEFAULT;
+		}
+		switch(sessionState) {
+			case GRIDING: return CssClassType.TBL_PRIMARY;
+			case WARMUP:
+			case PARADE_LAPS: return CssClassType.TBL_INFO;
+			case RACING: return CssClassType.TBL_SUCCESS;
+			case CHECKERED:
+			case COOL_DOWN: return CssClassType.TBL_DARK;
+			default: return CssClassType.DEFAULT;
+		}
 	}
 }

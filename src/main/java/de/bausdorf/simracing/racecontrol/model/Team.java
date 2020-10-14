@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import lombok.Builder;
@@ -40,8 +39,7 @@ import lombok.EqualsAndHashCode;
 @Entity
 public class Team extends BaseEntity {
 	private String name;
-	@ManyToOne
-	private Driver currentDriver;
+	private long currentDriverId;
 	long carNo;
 	@OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
 	private List<Driver> drivers;
@@ -51,10 +49,10 @@ public class Team extends BaseEntity {
 	}
 
 	@Builder
-	public Team(String sessionId, long teamId, String name, Driver currentDriver, long carNo, List<Driver> drivers) {
+	public Team(String sessionId, long teamId, String name, long currentDriverId, long carNo, List<Driver> drivers) {
 		super(sessionId, teamId);
 		this.name = name;
-		this.currentDriver = currentDriver;
+		this.currentDriverId = currentDriverId;
 		this.carNo = carNo;
 		this.drivers = drivers;
 	}
@@ -71,7 +69,7 @@ public class Team extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "Team(name=" + this.getName() + ", currentDriver=" + this.getCurrentDriver().getName() + ", carNo=" + this.getCarNo() + ", drivers="
+		return "Team(name=" + this.getName() + ", currentDriverId=" + this.getCurrentDriverId() + ", carNo=" + this.getCarNo() + ", drivers="
 				+ this.getDrivers() + ")";
 	}
 }

@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.web;
 
 /*-
  * #%L
@@ -22,19 +22,27 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.util.List;
+import java.util.Optional;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-@Data
-@AllArgsConstructor
-@Builder
-public class TeamView {
-	private TableCellView name;
-	private TableCellView carNo;
-	private TableCellView avgTeamRating;
-	private List<DriverView> drivers;
-	private String teamId;
+import de.bausdorf.simracing.racecontrol.model.Team;
+import de.bausdorf.simracing.racecontrol.model.TeamRepository;
+
+@SpringBootTest
+class ViewBuilderTest {
+
+	@Autowired
+	ViewBuilder viewBuilder;
+
+	@Autowired
+	TeamRepository teamRepository;
+
+	@Test
+	public void testCuriousTeam() {
+		Optional<Team> team = teamRepository.findBySessionIdAndIracingId("roadamerica full@139239792#35010657#2",200098);
+		viewBuilder.buildFromTeam(team.get());
+	}
 }

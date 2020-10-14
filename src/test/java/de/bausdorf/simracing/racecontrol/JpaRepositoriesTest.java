@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol;
  */
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.InstanceOfAssertFactories.DURATION;
 
 import java.sql.Timestamp;
 import java.time.Duration;
@@ -41,6 +42,7 @@ import de.bausdorf.simracing.racecontrol.model.Driver;
 import de.bausdorf.simracing.racecontrol.model.DriverChange;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
 import de.bausdorf.simracing.racecontrol.model.DriverRepository;
+import de.bausdorf.simracing.racecontrol.model.IRacingPk;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Stint;
@@ -85,10 +87,10 @@ class JpaRepositoriesTest {
 
 	@AfterEach
 	public void tearDown() {
-		changeRepository.findBySessionIdAndTeam(SESSION_ID, team).stream()
+		changeRepository.findBySessionIdAndTeamOrderByChangeTimeAsc(SESSION_ID, team).stream()
 				.forEach(s -> changeRepository.delete(s));
 
-		driverRepository.deleteById(4711);
+		driverRepository.delete(driver);
 	}
 
 	@Test
@@ -109,14 +111,14 @@ class JpaRepositoriesTest {
 		Optional<Driver> driver1 = driverRepository.findBySessionIdAndIracingId(SESSION_ID, 4711);
 		assertThat(driver1).isPresent();
 
-		driver1.get().getTeam().setCurrentDriver(driver1.get());
+		driver1.get().getTeam().setCurrentDriverId(driver1.get().getIracingId());
 		driverRepository.save(driver1.get());
 
 		Team team1 = getTeam(8510);
 //		Team team1 = teamRepository.findBySessionIdAndIracingId(SESSION_ID, 8150).orElse(null);
 		assertThat(team1).isNotNull();
-		assertThat(team1.getCurrentDriver()).isNotNull();
-		assertThat(team1.getCurrentDriver().getDriverId()).isEqualTo(4711);
+		assertThat(team1.getCurrentDriverId()).isNotZero();
+		assertThat(team1.getCurrentDriverId()).isEqualTo(4711);
 
 	}
 
@@ -198,13 +200,13 @@ class JpaRepositoriesTest {
 		DriverChange change = DriverChange.builder()
 				.sessionId(SESSION_ID)
 				.team(team)
-				.changeFrom(driver)
-				.changeTo(driver2)
+				.changeFromId(driver.getIracingId())
+				.changeToId(driver2.getIracingId())
 				.changeTime(Duration.ofMinutes(55))
 				.build();
 		changeRepository.save(change);
 
-		List<DriverChange> changes = changeRepository.findBySessionIdAndTeam(SESSION_ID, team);
+		List<DriverChange> changes = changeRepository.findBySessionIdAndTeamOrderByChangeTimeAsc(SESSION_ID, team);
 		assertThat(changes).isNotEmpty();
 
 		Team team1 = getTeam(8150);
@@ -213,13 +215,13 @@ class JpaRepositoriesTest {
 		DriverChange change1 = DriverChange.builder()
 				.sessionId(SESSION_ID)
 				.team(team1)
-				.changeFrom(driver2)
-				.changeTo(driver)
+				.changeFromId(driver2.getIracingId())
+				.changeToId(driver.getIracingId())
 				.changeTime(Duration.ofMinutes(108))
 				.build();
 		changeRepository.save(change1);
 
-		List<DriverChange> changes1 = changeRepository.findBySessionIdAndTeam(SESSION_ID, team1);
+		List<DriverChange> changes1 = changeRepository.findBySessionIdAndTeamOrderByChangeTimeAsc(SESSION_ID, team1);
 		assertThat(changes1).hasSize(2);
 	}
 
@@ -228,7 +230,7 @@ class JpaRepositoriesTest {
 		LocalDateTime created = LocalDateTime.now();
 		sessionRepository.save(Session.builder()
 				.sessionId(SESSION_ID)
-				.lastUpdate(Timestamp.valueOf(created))
+				.lastUpdate(Duration.ZERO)
 				.sessionDuration(Duration.ofHours(24))
 				.trackName("NOS")
 				.build());
@@ -236,12 +238,12 @@ class JpaRepositoriesTest {
 		Session session = sessionRepository.findBySessionId(SESSION_ID).orElse(null);
 		assertThat(session).isNotNull();
 
-		session.setLastUpdate(Timestamp.valueOf(created.plusSeconds(1)));
+		session.setLastUpdate(Duration.ofSeconds(1));
 		sessionRepository.save(session);
 
 		Session session1 = sessionRepository.findBySessionId(SESSION_ID).orElse(null);
 		assertThat(session1).isNotNull();
-		assertThat(session1.getLastUpdate()).isAfter(Timestamp.valueOf(created));
+		assertThat(session1.getLastUpdate()).isPositive();
 
 		sessionRepository.delete(session1);
 

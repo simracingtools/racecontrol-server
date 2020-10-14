@@ -33,6 +33,29 @@
 </head>
 
 <body>
+    <table class="table">
+        <tbody>
+        <tr>
+            <td rowspan="2" style="width: 80px;"><img src="assets/img/be-logoV2.png" width="80" /></td>
+            <td style="width: 150Px;">
+                <h4>RaceControl</h4>
+            </td>
+            <td>
+                <h6>Driving times</h6>
+            </td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="text-right">Track:</td>
+            <td th:class="${sessionView.trackName.displayType.getClassString()}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
+            <td th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
+            <td th:class="${sessionView.sessionType.displayType.getClassString()}" th:text="${sessionView.sessionType.value}">RACE</td>
+            <td th:class="${sessionView.sessionState.displayType.getClassString() + ' text-right'}" th:text="${sessionView.sessionState.value}">RACING</td>
+        </tr>
+        </tbody>
+    </table>
 <!--    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">-->
         <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
             <thead>
@@ -40,6 +63,7 @@
                     <th>Team</th>
                     <th>Car</th>
                     <th>Driver</th>
+                    <th>Driving Time</th>
                     <th class="text-center">Stint 1</th>
                     <th class="text-center">Stint 2</th>
                     <th class="text-center">Stint 3</th>
@@ -50,35 +74,41 @@
                     <th class="text-center">Stint 8</th>
                     <th class="text-center">Stint 9</th>
                     <th class="text-center">Stint 10</th>
-                    <th>Driving Time</th>
+                    <th class="text-center">Stint 11</th>
+                    <th class="text-center">Stint 12</th>
+                    <th class="text-center">Stint 13</th>
+                    <th class="text-center">Stint 14</th>
+                    <th class="text-center">Stint 15</th>
+                    <th class="text-center">Stint 16</th>
                 </tr>
             </thead>
             <tbody>
                 <div th:each="teamData : ${sessionView.teams}">
                     <tr th:id="${'team-' + teamData.getTeamId() + '-iRacingId'}">
-                        <td th:id="${'team-' + teamData.getTeamId() + '-name'}" th:text="${teamData.name.value}">FBP Racing Blue</td>
+                        <td th:id="${'team-' + teamData.getTeamId() + '-name'}" th:text="${teamData.name.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}">FBP Racing Blue</td>
                         <td th:id="${'team-' + teamData.getTeamId() + '-carNo'}" th:text="${teamData.carNo.value}">99</td>
-                        <td colspan="12"></td>
+                        <td th:id="${'team-' + teamData.getTeamId() + '-carNo'}" th:text="${teamData.avgTeamRating.value}"></td>
+                        <td colspan="17"></td>
                     </tr>
                     <div th:each="driver : ${teamData.drivers}">
                         <tr th:id="${'driver-' + driver.getIRacingId()}">
-                            <td th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
+                            <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
                             <td></td>
-                            <td th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:text="${driver.name.value}">Robert Bausdorf</td>
+                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString()}" th:text="${driver.name.value}">Robert Bausdorf</td>
+                            <td style="padding: 6px" th:class="${driver.drivingTime.displayType.getClassString()}" th:text="${driver.drivingTime.value}">2:09:22</td>
                             <div th:each="stint : ${driver.stints}">
-                                <td style="padding: 0;">
-                                    <table style="margin: 0;" class="table">
+                                <td style="padding: 0 0 0 10px;">
+                                    <table style="margin-bottom: 0;" class="table">
                                         <tbody>
                                         <tr>
-                                            <td style="border: 0;" th:class="${stint.startTime.displayType.getClassString()}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
-                                            <td style="border: 0;" th:class="${stint.stopTime.displayType.getClassString()}" th:text="${stint.stopTime.value}">1:03:23<br></td>
-                                            <td style="border: 0;" th:class="${stint.duration.displayType.getClassString()}" th:text="${stint.duration.value}">1:03:14<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:class="${stint.startTime.displayType.getClassString()}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:class="${stint.stopTime.displayType.getClassString()}" th:text="${stint.stopTime.value}">1:03:23<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:class="${stint.duration.displayType.getClassString()}" th:text="${stint.duration.value}">1:03:14<br></td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </td>
                             </div>
-                            <td class="bg-success">2:09:22</td>
                         </div>
                     </div>
                 </div>

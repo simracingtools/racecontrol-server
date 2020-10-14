@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.model;
 
 import java.time.Duration;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.GeneratedValue;
@@ -46,11 +47,9 @@ public class DriverChange {
 	@Id
 	@GeneratedValue
 	long id;
-	@ManyToOne
-	private Driver changeFrom;
-	@ManyToOne
-	private Driver changeTo;
-	@ManyToOne
+	private long changeFromId;
+	private long changeToId;
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Team team;
 	private Duration changeTime;
 	@Column(nullable = false)
