@@ -89,7 +89,7 @@ public class MainController {
 	}
 
 	@PostMapping({"/session"})
-	public String session(SessionSelectView selectView, Model model) {
+	public String session(SessionSelectView selectView) {
 
 		try {
 			return "redirect:session?sessionId=" + URLEncoder.encode(selectView.getSelectedSessionId(), "UTF-8");
@@ -132,6 +132,8 @@ public class MainController {
 
 			model.addAttribute("sessionView", sessionView);
 
+		} else {
+			return "redirect:index";
 		}
 		return SESSION_VIEW;
 	}

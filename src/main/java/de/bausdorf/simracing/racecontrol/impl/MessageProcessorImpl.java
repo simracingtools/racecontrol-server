@@ -29,8 +29,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.stereotype.Component;
+import org.springframework.messaging.simp.annotation.SendToUser;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.bausdorf.simracing.racecontrol.api.ClientData;
@@ -52,9 +54,12 @@ import de.bausdorf.simracing.racecontrol.model.Stint;
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
+import de.bausdorf.simracing.racecontrol.web.ViewBuilder;
+import de.bausdorf.simracing.racecontrol.web.model.ClientAck;
+import de.bausdorf.simracing.racecontrol.web.model.ClientConnectMessage;
 import lombok.extern.slf4j.Slf4j;
 
-@Component
+@Controller
 @Slf4j
 public class MessageProcessorImpl implements MessageProcessor {
 
@@ -65,18 +70,20 @@ public class MessageProcessorImpl implements MessageProcessor {
 	private final SessionRepository sessionRepository;
 	private final TeamRepository teamRepository;
 	private final SimpMessagingTemplate messagingTemplate;
-
+	private final ViewBuilder viewBuilder;
 
 	public MessageProcessorImpl(@Autowired DriverRepository driverRepository,
 			@Autowired TeamRepository teamRepository,
 			@Autowired DriverChangeRepository driverChangeRepository,
 			@Autowired SessionRepository sessionRepository,
-			@Autowired SimpMessagingTemplate messagingTemplate) {
+			@Autowired SimpMessagingTemplate messagingTemplate,
+			@Autowired ViewBuilder viewBuilder) {
 		this.driverRepository = driverRepository;
 		this.changeRepository = driverChangeRepository;
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
 		this.messagingTemplate = messagingTemplate;
+		this.viewBuilder = viewBuilder;
 	}
 
 	@Transactional
@@ -100,6 +107,22 @@ public class MessageProcessorImpl implements MessageProcessor {
 					Long.parseLong(message.getTeamId()),
 					(EventMessage)clientData);
 		}
+	}
+
+	@MessageMapping("/timingclient")
+	@SendToUser("/timing/client-ack")
+	public ClientAck respondAck(ClientConnectMessage message) {
+		log.info(message.toString());
+		return new ClientAck(message.getSessionId());
+	}
+
+	private void sendPageReload(String sessionId, String message) {
+		messagingTemplate.convertAndSend("/timing/" + sessionId + "/reload", message);
+	}
+
+	private void sendDriverMessage(Driver driver) {
+		messagingTemplate.convertAndSend("/timing/" + driver.getSessionId() + "/driver",
+				viewBuilder.buildDriverView(driver));
 	}
 
 	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime) {
@@ -169,6 +192,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 
 	public void updateSession(Session session, SessionMessage message) {
 		if(message != null) {
+			boolean doReload = message.getSessionState() != session.getSessionState().getTypeCode();
 			session.setLastUpdate(message.getSessionTime());
 			session.setSessionDuration(message.getSessionDuration());
 			session.setTrackName(message.getTrackName());
@@ -181,6 +205,9 @@ public class MessageProcessorImpl implements MessageProcessor {
 			} else if(session.getSessionState() == SessionStateType.CHECKERED) {
 				processCheckeredFlag(session);
 			}
+			if(doReload) {
+				sendPageReload(session.getSessionId(), session.getSessionState().name());
+			}
 		}
 	}
 
@@ -192,30 +219,29 @@ public class MessageProcessorImpl implements MessageProcessor {
 			 	log.warn("Invalid driver id {} for driver {}", driverId, message.getDriverName());
 			 }
 			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
-			if(session.getSessionState() == SessionStateType.RACING) {
-				updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
-			}
-		} else {
-			if(session.getSessionState() == SessionStateType.RACING) {
-				updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
-			}
 		}
-		existingDriver.setLastEventType(message.getEventType());
+		if(session.getSessionState() == SessionStateType.RACING) {
+			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+		}
+		if(message.getEventType() != existingDriver.getLastEventType()) {
+			existingDriver.setLastEventType(message.getEventType());
+			sendDriverMessage(existingDriver);
+		}
 		driverRepository.save(existingDriver);
 
-		if(message.getEventType() == EventType.DRIVER_CHANGE) {
-			if(existingDriver.getTeam().getCurrentDriverId() != existingDriver.getIracingId()) {
-				DriverChange change = DriverChange.builder()
-						.sessionId(sessionId)
-						.changeFromId(existingDriver.getTeam().getCurrentDriverId())
-						.changeToId(existingDriver.getIracingId())
-						.changeTime(message.getSessionTime())
-						.team(existingDriver.getTeam())
-						.build();
-				log.info("Driver change for team {}; {}", existingDriver.getTeam().getName(), change);
-				changeRepository.save(change);
-				existingDriver.getTeam().setCurrentDriverId(existingDriver.getDriverId());
-			}
+		if(message.getEventType() == EventType.DRIVER_CHANGE
+				&& existingDriver.getTeam().getCurrentDriverId() != existingDriver.getIracingId()) {
+			DriverChange change = DriverChange.builder()
+					.sessionId(sessionId)
+					.changeFromId(existingDriver.getTeam().getCurrentDriverId())
+					.changeToId(existingDriver.getIracingId())
+					.changeTime(message.getSessionTime())
+					.team(existingDriver.getTeam())
+					.build();
+			log.info("Driver change for team {}; {}", existingDriver.getTeam().getName(), change);
+			changeRepository.save(change);
+			existingDriver.getTeam().setCurrentDriverId(existingDriver.getDriverId());
+			sendPageReload(existingDriver.getSessionId(), "Driver change " + existingDriver.getTeam().getName());
 		}
 	}
 
@@ -225,6 +251,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.driverId(driverId)
 				.name(message.getDriverName())
 				.iRating(message.getIRating())
+				.lastEventType(message.getEventType())
 				.build();
 		Team team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId).orElse(Team.builder()
 				.sessionId(sessionId)

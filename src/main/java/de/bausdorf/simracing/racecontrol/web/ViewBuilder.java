@@ -26,7 +26,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
-import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,12 +80,12 @@ public class ViewBuilder {
 				.build();
 
 		// Calculate fair share ruling
-		OptionalInt maxDrivingMillis = teamView.getDrivers().stream()
+		int maxDrivingMillis = teamView.getDrivers().stream()
 				.mapToInt(DriverView::getDrivingMillis)
-				.max();
+				.max().orElse(0);
 		for(DriverView driverView : teamView.getDrivers()) {
 			driverView.getDrivingTime().setDisplayType(
-					complianceCheck.isFairShareCompliant(maxDrivingMillis.getAsInt(), driverView.getDrivingMillis())
+					complianceCheck.isFairShareCompliant(maxDrivingMillis, driverView.getDrivingMillis())
 					? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER);
 		}
 
@@ -123,6 +122,7 @@ public class ViewBuilder {
 						.drivingMillis((int)trackTime.toMillis())
 						.build();
 	}
+
 	public List<StintView> buildStintViews(Driver driver) {
 		List<StintView> stintViews = new ArrayList<>();
 
@@ -228,6 +228,10 @@ public class ViewBuilder {
 				}
 				if(s.getEndTime() == null) {
 					log.debug("Unfinished stint for {}: {}", driver.getName(), s);
+					continue;
+				}
+				if(startTime == null || stopTime == null) {
+					log.debug("Null times in StintView: {}, {}", startTime, stopTime);
 					continue;
 				}
 				try {

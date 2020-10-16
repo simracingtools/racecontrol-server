@@ -53,12 +53,13 @@ public class Driver extends BaseEntity {
 	}
 
 	@Builder
-	public Driver(String sessionId, long driverId, String name, long iRating, Team team, List<Stint> stints) {
+	public Driver(String sessionId, long driverId, String name, long iRating, Team team, EventType lastEventType, List<Stint> stints) {
 		super(sessionId, driverId);
 		this.name = name;
 		this.iRating = iRating;
 		this.team = team;
 		this.stints = stints;
+		this.lastEventType = lastEventType;
 	}
 
 	public long getDriverId() {

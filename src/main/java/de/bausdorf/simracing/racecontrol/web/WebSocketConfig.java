@@ -34,15 +34,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableSimpleBroker("/live", "/plan");
+		config.enableSimpleBroker("/timing");
 		config.setApplicationDestinationPrefixes("/app");
 	}
 
 	@Override
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
-		registry.addEndpoint("/liveclient");
-		registry.addEndpoint("/liveclient").withSockJS();
-		registry.addEndpoint("/planclient");
-		registry.addEndpoint("/planclient").withSockJS();
+		registry.addEndpoint("/timingclient");
+		registry.addEndpoint("/timingclient").withSockJS();
 	}
 }

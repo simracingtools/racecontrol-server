@@ -35,6 +35,7 @@
 <body>
     <table class="table">
         <tbody>
+        <input id="sessionId" type="hidden" th:value="${sessionView.sessionId}"/>
         <tr>
             <td rowspan="2" style="width: 80px;"><img src="assets/img/be-logoV2.png" width="80" /></td>
             <td style="width: 150Px;">
@@ -50,11 +51,11 @@
         </tr>
         <tr>
             <td class="text-right">Track:</td>
-            <td th:class="${sessionView.trackName.displayType.getClassString()}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
-            <td th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
-            <td th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
+            <td id="trackName" th:class="${sessionView.trackName.displayType.getClassString()}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
+            <td id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
+            <td id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
             <td class="text-right">Session state:</td>
-            <td th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
+            <td id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
         </tr>
         </tbody>
     </table>
@@ -89,7 +90,7 @@
                     <tr th:id="${'team-' + teamData.getTeamId() + '-iRacingId'}">
                         <td th:id="${'team-' + teamData.getTeamId() + '-name'}" th:text="${teamData.name.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}">FBP Racing Blue</td>
                         <td th:id="${'team-' + teamData.getTeamId() + '-carNo'}" th:text="${teamData.carNo.value}">99</td>
-                        <td th:id="${'team-' + teamData.getTeamId() + '-carNo'}" th:text="${teamData.avgTeamRating.value}"></td>
+                        <td th:id="${'team-' + teamData.getTeamId() + '-teamRating'}" th:text="${teamData.avgTeamRating.value}"></td>
                         <td colspan="17"></td>
                     </tr>
                     <div th:each="driver : ${teamData.drivers}">
@@ -97,15 +98,15 @@
                             <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
                             <td></td>
                             <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString()}" th:text="${driver.name.value}">Robert Bausdorf</td>
-                            <td style="padding: 6px" th:class="${driver.drivingTime.displayType.getClassString()}" th:text="${driver.drivingTime.value}">2:09:22</td>
-                            <div th:each="stint : ${driver.stints}">
+                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString()}" th:text="${driver.drivingTime.value}">2:09:22</td>
+                            <div th:each="stint, stintStat : ${driver.stints}">
                                 <td style="padding: 0 0 0 10px;">
                                     <table style="margin-bottom: 0;" class="table">
                                         <tbody>
                                         <tr>
-                                            <td style="border: 0;  padding: 6px;" th:class="${stint.startTime.displayType.getClassString()}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
-                                            <td style="border: 0;  padding: 6px;" th:class="${stint.stopTime.displayType.getClassString()}" th:text="${stint.stopTime.value}">1:03:23<br></td>
-                                            <td style="border: 0;  padding: 6px;" th:class="${stint.duration.displayType.getClassString()}" th:text="${stint.duration.value}">1:03:14<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString()}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString()}" th:text="${stint.stopTime.value}">1:03:23<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString()}" th:text="${stint.duration.value}">1:03:14<br></td>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -119,6 +120,14 @@
 <!--    </div>-->
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="assets/js/timetable-client.js"></script>
+    <script>
+        window.onload = function afterPageReload() {
+            connect();
+        }
+    </script>
 </body>
 
 </html>
