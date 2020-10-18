@@ -225,5 +225,16 @@
     <developerConnection>scm:git:git@github.com:simracingtools/racecontrol-server.git</developerConnection>
     <tag>HEAD</tag>
   </scm>
-
+  <distributionManagement>
+    <repository>
+      <id>be-release</id>
+      <name>a0lbjvyg8fw10-artifactory-primary-0-releases</name>
+      <url>https://bausdorfengineering.jfrog.io/artifactory/racecontrol-server</url>
+    </repository>
+    <snapshotRepository>
+      <id>be-snapshots</id>
+      <name>a0lbjvyg8fw10-artifactory-primary-0-snapshots</name>
+      <url>https://bausdorfengineering.jfrog.io/artifactory/racecontrol-server</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>
