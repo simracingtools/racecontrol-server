@@ -39,11 +39,12 @@ jobs:
           git config user.email github-actions@github.com
           mkdir -p ~/.ssh
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-agent -a $SSH_AUTH_SOCK > /dev/null
+          ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
           ssh-add - <<< "${{ secrets.PRIVATE_SSH_KEY }}"
           mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION}-SNAPSHOT -Dtag=v${INPUT_RELEASE_VERSION}
         env:
           github_token: ${{ github.token }}
+          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       - name: Maven release perform
         run: mvn -B release:perform -Dmaven.test.skip=true
         env:
