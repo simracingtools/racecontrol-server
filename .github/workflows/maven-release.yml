@@ -9,10 +9,6 @@ on:
       next_dev_version:
         description: 'Next development version'
         required: true
-      scm_tag:
-        description: 'SCM tag for release'
-        required: false
-        default: 'v${INPUT_RELEASE_VERSION}'
 
 jobs:
   build:
@@ -45,7 +41,7 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           ssh-agent -a $SSH_AUTH_SOCK > /dev/null
           ssh-add - <<< "${{ secrets.PRIVATE_SSH_KEY }}"
-          mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION} -Dtag=${INPUT_SCM_TAG}
+          mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION}-SNAPSHOT -Dtag=v${INPUT_RELEASE_VERSION}
         env:
           github_token: ${{ github.token }}
       - name: Maven release perform
