@@ -3,15 +3,16 @@ name: Maven release
 on:
   workflow_dispatch:
     inputs:
-      release-version:
+      release_version:
         description: 'Version to release'
         required: true
-      next-dev-version:
+      next_dev_version:
         description: 'Next development version'
         required: true
-      scm-tag:
+      scm_tag:
         description: 'SCM tag for release'
-        required: true
+        required: false
+        default: 'v${INPUT_RELEASE_VERSION}'
 
 jobs:
   build:
@@ -36,7 +37,7 @@ jobs:
           server-username: DEPLOY_USERNAME
           server-password: DEPLOY_PASSWORD
       - name: Maven release prepare
-        run: mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE-VERSION} -DdevelopmentVersion=${INPUT_NEXT-DEV-VERSION} -Dtag=${INPUT_SCM-TAG}
+        run: mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION} -Dtag=${INPUT_SCM_TAG}
         env:
           github_token: ${{ github.token }}
       - name: Maven release perform
