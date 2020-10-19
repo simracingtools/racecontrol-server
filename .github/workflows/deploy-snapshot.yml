@@ -18,7 +18,7 @@ jobs:
           server-username: DEPLOY_USERNAME
           server-password: DEPLOY_PASSWORD
       - name: Build with Maven
-        run: mvn -B deploy -Dmaven.test.skip=true --file pom.xml
+        run: mvn -B deploy --file pom.xml
         env:
           DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
