@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.model;
 
 /*-
  * #%L
@@ -22,31 +22,36 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import lombok.Getter;
+import java.time.Duration;
 
-public enum CssClassType {
-	DEFAULT("", ""),
-	TBL_SUCCESS("table-success", ""),
-	TBL_WARNING("table-warning", ""),
-	TBL_DANGER("table-danger", ""),
-	TBL_INFO("table-info", ""),
-	TBL_DARK("table-dark", ""),
-	TBL_PRIMARY("table-primary", "");
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
-	@Getter
-	final
-	String backgroundClass;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-	@Getter
-	final
-	String textClass;
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+@IdClass(EventPk.class)
+public class Event {
+	@Id
+	String sessionId;
+	@Id
+	long eventNo;
 
-	CssClassType(String backgroundClass, String textClass) {
-		this.backgroundClass = backgroundClass;
-		this.textClass = textClass;
-	}
-
-	public String getClassString() {
-		return backgroundClass + " " + textClass;
-	}
+	private Duration sessionTime;
+	private String eventTime;
+	private String eventType;
+	private String teamName;
+	private long teamId;
+	private String driverName;
+	private long driverId;
+	private long carNo;
+	private long lap;
 }

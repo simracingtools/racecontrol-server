@@ -26,13 +26,33 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import lombok.extern.slf4j.Slf4j;
 
+@RunWith(SpringRunner.class)
 @SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
 @Slf4j
 class RacecontrolServerApplicationTests {
+	@Container
+	public static MariaDBContainer database = new MariaDBContainer();
+
+	@DynamicPropertySource
+	static void databaseProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", database::getJdbcUrl);
+		registry.add("spring.datasource.username", database::getUsername);
+		registry.add("spring.datasource.password", database::getPassword);
+	}
 
 	@Test
 	void contextLoads() {

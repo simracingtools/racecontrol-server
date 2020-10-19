@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.model;
 
 /*-
  * #%L
@@ -22,31 +22,14 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import lombok.Getter;
+import java.util.List;
+import java.util.Optional;
 
-public enum CssClassType {
-	DEFAULT("", ""),
-	TBL_SUCCESS("table-success", ""),
-	TBL_WARNING("table-warning", ""),
-	TBL_DANGER("table-danger", ""),
-	TBL_INFO("table-info", ""),
-	TBL_DARK("table-dark", ""),
-	TBL_PRIMARY("table-primary", "");
+import org.springframework.data.repository.CrudRepository;
 
-	@Getter
-	final
-	String backgroundClass;
+public interface EventRepository extends CrudRepository<Event, Integer> {
 
-	@Getter
-	final
-	String textClass;
-
-	CssClassType(String backgroundClass, String textClass) {
-		this.backgroundClass = backgroundClass;
-		this.textClass = textClass;
-	}
-
-	public String getClassString() {
-		return backgroundClass + " " + textClass;
-	}
+	Optional<Event> findBySessionIdAndEventNo(String sessionId, long eventNo);
+	List<Event> findBySessionIdAndTeamIdOrderBySessionTimeDesc(String sessionId, long teamId);
+	List<Event> findBySessionIdAndDriverIdOrderBySessionTimeDesc(String sessionId, long driverId);
 }
