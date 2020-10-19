@@ -27,12 +27,29 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.MariaDBContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 
 @SpringBootTest
+@Testcontainers
+@ActiveProfiles("test")
 class ViewBuilderTest {
+	@Container
+	public static MariaDBContainer database = new MariaDBContainer();
+
+	@DynamicPropertySource
+	static void databaseProperties(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", database::getJdbcUrl);
+		registry.add("spring.datasource.username", database::getUsername);
+		registry.add("spring.datasource.password", database::getPassword);
+	}
 
 	@Autowired
 	ViewBuilder viewBuilder;
@@ -43,6 +60,6 @@ class ViewBuilderTest {
 	@Test
 	public void testCuriousTeam() {
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId("roadamerica full@139239792#35010657#2",200098);
-		viewBuilder.buildFromTeam(team.get());
+		team.ifPresent(value -> viewBuilder.buildFromTeam(value));
 	}
 }
