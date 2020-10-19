@@ -53,10 +53,6 @@ jobs:
         run: |
           git config user.name ${GITHUB_ACTOR}
           git config user.email github-actions@github.com
-          git pull
-          mkdir -p ~/.ssh
-          ssh-keyscan github.com >> ~/.ssh/known_hosts
-          ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
           ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           mvn -B release:perform -Dmaven.test.skip=true
         env:
