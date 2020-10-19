@@ -38,15 +38,14 @@ jobs:
           git config user.name ${GITHUB_ACTOR}
           git config user.email github-actions@github.com
           mkdir -p ~/.ssh
-          echo "${SSH_PRIVATE_KEY}"
+          echo "${{ secrets.SSH_PRIVATE_KEY }}"
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
-          ssh-add - <<< "${SSH_PRIVATE_KEY}"
+          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
           mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION}-SNAPSHOT -Dtag=v${INPUT_RELEASE_VERSION}
         env:
           github_token: ${{ github.token }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-          SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_SSH_KEY }}
       - name: Maven release perform
         run: mvn -B release:perform -Dmaven.test.skip=true
         env:
