@@ -33,7 +33,7 @@ jobs:
           server-id: be-release
           server-username: DEPLOY_USERNAME
           server-password: DEPLOY_PASSWORD
-      - name: Maven release prepare
+      - name: Maven release prepare / perform
         run: |
           git config user.name ${GITHUB_ACTOR}
           git config user.email github-actions@github.com
@@ -42,23 +42,16 @@ jobs:
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
           ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-          mvn -B release:prepare -DreleaseVersion=${RELEASE_VERSION} -DdevelopmentVersion=${NEXT_DEV_VERSION} -Dtag=${SCM_TAG}
+          mvn -B release:prepare -Dmaven.test.skip=true -DreleaseVersion=${RELEASE_VERSION} -DdevelopmentVersion=${NEXT_DEV_VERSION} -Dtag=${SCM_TAG}
+          mvn -B release:perform -Dmaven.test.skip=true
         env:
           github_token: ${{ github.token }}
           SSH_AUTH_SOCK: /tmp/ssh_agent.sock
           RELEASE_VERSION: ${{ github.event.inputs.release-version }}
           NEXT_DEV_VERSION: ${{ format('{0}-SNAPSHOT', github.event.inputs.next-version) }}
           SCM_TAG: ${{ format('v{0}', github.event.inputs.release-version) }}
-      - name: Maven release perform
-        run: |
-          git config user.name ${GITHUB_ACTOR}
-          git config user.email github-actions@github.com
-          ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-          mvn -B release:perform -Dmaven.test.skip=true
-        env:
           DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
-          SSH_AUTH_SOCK: /tmp/ssh_agent.sock
       - uses: actions/checkout@v2
         with:
           ref: develop
