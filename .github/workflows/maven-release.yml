@@ -25,7 +25,7 @@ jobs:
         uses: devmasx/merge-branch@v1.3.0
         with:
           type: now
-          from_branch: develop
+          head_to_merge: develop
           target_branch: master
           github_token: ${{ github.token }}
       - name: Set up JDK 1.8
@@ -51,6 +51,6 @@ jobs:
         uses: devmasx/merge-branch@v1.3.0
         with:
           type: now
-          from_branch: master
+          head_to_merge: master
           target_branch: develop
           github_token: ${{ github.token }}
