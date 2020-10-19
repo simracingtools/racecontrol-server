@@ -37,7 +37,10 @@ jobs:
           server-username: DEPLOY_USERNAME
           server-password: DEPLOY_PASSWORD
       - name: Maven release prepare
-        run: mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION} -Dtag=${INPUT_SCM_TAG}
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com 
+          mvn -B release:prepare -DreleaseVersion=${INPUT_RELEASE_VERSION} -DdevelopmentVersion=${INPUT_NEXT_DEV_VERSION} -Dtag=${INPUT_SCM_TAG}
         env:
           github_token: ${{ github.token }}
       - name: Maven release perform
