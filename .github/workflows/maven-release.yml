@@ -38,6 +38,7 @@ jobs:
           git config user.name ${GITHUB_ACTOR}
           git config user.email github-actions@github.com
           mkdir -p ~/.ssh
+          echo "${SSH_PRIVATE_KEY}"
           ssh-keyscan github.com >> ~/.ssh/known_hosts
           ssh-agent -a ${SSH_AUTH_SOCK} > /dev/null
           ssh-add - <<< "${SSH_PRIVATE_KEY}"
