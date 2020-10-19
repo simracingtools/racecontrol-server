@@ -18,6 +18,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: master
       - name: Merge develop -> master
         uses: devmasx/merge-branch@v1.3.0
         with:
@@ -25,9 +28,6 @@ jobs:
           from_branch: develop
           target_branch: master
           github_token: ${{ github.token }}
-      - uses: actions/checkout@v2
-        with:
-          ref: master
       - name: Set up JDK 1.8
         uses: actions/setup-java@v1
         with:
@@ -44,6 +44,9 @@ jobs:
         env:
           DEPLOY_USERNAME: ${{ secrets.DEPLOY_USERNAME }}
           DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+      - uses: actions/checkout@v2
+        with:
+          ref: develop
       - name: Merge master -> develop
         uses: devmasx/merge-branch@v1.3.0
         with:
