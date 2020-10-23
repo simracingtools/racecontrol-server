@@ -22,32 +22,26 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import lombok.Getter;
+import java.util.List;
 
-public enum CssClassType {
-	DEFAULT("", ""),
-	TBL_SUCCESS("table-success", ""),
-	TBL_WARNING("table-warning", ""),
-	TBL_DANGER("table-danger", ""),
-	TBL_INFO("table-info", ""),
-	TBL_DARK("table-dark", ""),
-	TBL_SECONDARY("table-secondary", ""),
-	TBL_PRIMARY("table-primary", "");
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-	@Getter
-	final
-	String backgroundClass;
+@Data
+@AllArgsConstructor
+@Builder
+public class TeamDetailView {
+	private String teamId;
+	private TableCellView name;
+	private TableCellView carNo;
+	private TableCellView avgTeamRating;
+	private List<StintView> stints;
+	private List<EventView> events;
 
-	@Getter
-	final
-	String textClass;
-
-	CssClassType(String backgroundClass, String textClass) {
-		this.backgroundClass = backgroundClass;
-		this.textClass = textClass;
-	}
-
-	public String getClassString() {
-		return backgroundClass + " " + textClass;
+	public long getStintCount() {
+		return stints.stream()
+				.mapToInt(s -> s.getTrackTimes().size() + 1)
+				.sum();
 	}
 }

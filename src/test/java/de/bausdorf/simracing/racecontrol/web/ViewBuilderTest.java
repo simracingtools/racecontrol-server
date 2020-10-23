@@ -58,8 +58,10 @@ class ViewBuilderTest {
 	TeamRepository teamRepository;
 
 	@Test
-	public void testCuriousTeam() {
+	void testCuriousTeam() {
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId("roadamerica full@139239792#35010657#2",200098);
-		team.ifPresent(value -> viewBuilder.buildFromTeam(value));
+		if(team.isPresent()) {
+			viewBuilder.buildFromTeam(team.get());
+		}
 	}
 }

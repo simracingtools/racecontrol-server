@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class SessionView {
+
 	private String sessionId;
 	private TableCellView trackName;
 	private TableCellView sessionDuration;
@@ -39,4 +41,18 @@ public class SessionView {
 	private TableCellView sessionState;
 	private List<TeamView> teams;
 	private int maxStintColumns;
+
+	public List<Integer> getMaxDriverStints() {
+		int maxStints = 0;
+		for (TeamView team : teams) {
+			if (maxStints < team.getMaxDriverStints()) {
+				maxStints = team.getMaxDriverStints();
+			}
+		}
+		ArrayList<Integer> retVal = new ArrayList<>();
+		for (int i = 0; i < maxStints; i++) {
+			retVal.add(i + 1);
+		}
+		return retVal;
+	}
 }

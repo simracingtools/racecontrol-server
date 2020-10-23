@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web.model;
  */
 
 import java.time.Duration;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,4 +40,6 @@ public class StintView {
 	private TableCellView stopTime;
 	private TableCellView duration;
 	private Duration trackTime;
+	private Duration changeTime;
+	private List<TrackTimeView> trackTimes;
 }

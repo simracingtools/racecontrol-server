@@ -22,32 +22,19 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public enum CssClassType {
-	DEFAULT("", ""),
-	TBL_SUCCESS("table-success", ""),
-	TBL_WARNING("table-warning", ""),
-	TBL_DANGER("table-danger", ""),
-	TBL_INFO("table-info", ""),
-	TBL_DARK("table-dark", ""),
-	TBL_SECONDARY("table-secondary", ""),
-	TBL_PRIMARY("table-primary", "");
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class TrackTimeView {
 
-	@Getter
-	final
-	String backgroundClass;
-
-	@Getter
-	final
-	String textClass;
-
-	CssClassType(String backgroundClass, String textClass) {
-		this.backgroundClass = backgroundClass;
-		this.textClass = textClass;
-	}
-
-	public String getClassString() {
-		return backgroundClass + " " + textClass;
-	}
+	private TableCellView startTime;
+	private TableCellView stopTime;
+	private TableCellView duration;
+	private TableCellView driver;
 }

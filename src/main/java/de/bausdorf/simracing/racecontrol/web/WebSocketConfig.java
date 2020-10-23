@@ -35,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
 		config.enableSimpleBroker("/timing");
+		config.enableSimpleBroker("/rc");
 		config.setApplicationDestinationPrefixes("/app");
 	}
 
@@ -42,5 +43,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	public void registerStompEndpoints(StompEndpointRegistry registry) {
 		registry.addEndpoint("/timingclient");
 		registry.addEndpoint("/timingclient").withSockJS();
+		registry.addEndpoint("/rcclient");
 	}
 }

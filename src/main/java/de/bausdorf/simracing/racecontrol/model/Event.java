@@ -52,6 +52,6 @@ public class Event {
 	private long teamId;
 	private String driverName;
 	private long driverId;
-	private long carNo;
+	private String carNo;
 	private long lap;
 }

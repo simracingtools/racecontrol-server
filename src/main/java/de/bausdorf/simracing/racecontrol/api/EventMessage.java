@@ -39,7 +39,7 @@ public class EventMessage implements ClientData {
 	private String driverName;
 	private String teamName;
 	private EventType eventType;
-	private long carNo;
+	private String carNo;
 	private long lap;
 	private Duration sessionTime;
 }

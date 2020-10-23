@@ -154,6 +154,13 @@ public class MessageProcessorImpl implements MessageProcessor {
 		return new ClientAck(message.getSessionId());
 	}
 
+	@MessageMapping("/rcclient")
+	@SendToUser("/rc/client-ack")
+	public String respondRcAck(String message) {
+		log.info(message);
+		return "rc ack for user";
+	}
+
 	private void sendPageReload(String sessionId, String message) {
 		messagingTemplate.convertAndSend("/timing/" + sessionId + "/reload", message);
 	}

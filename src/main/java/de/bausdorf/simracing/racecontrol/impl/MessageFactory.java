@@ -47,7 +47,7 @@ public class MessageFactory {
 
 	private static ClientData fromEventMessage(Map<String, Object> data) {
 		return EventMessage.builder()
-				.carNo(MapTools.intFromMap(EventData.CAR_NUMBER, data))
+				.carNo(MapTools.stringFromMap(EventData.CAR_NUMBER, data))
 				.driverName(MapTools.stringFromMap(EventData.DRIVER_NAME, data))
 				.eventNo(MapTools.intFromMap(EventData.EVENT_NO, data))
 				.eventType(EventType.ofType(MapTools.stringFromMap(EventData.EVENT_TYPE, data)))
