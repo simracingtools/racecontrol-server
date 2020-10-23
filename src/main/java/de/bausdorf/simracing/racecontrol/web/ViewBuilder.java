@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
@@ -38,6 +39,8 @@ import de.bausdorf.simracing.racecontrol.api.StintStateType;
 import de.bausdorf.simracing.racecontrol.model.Driver;
 import de.bausdorf.simracing.racecontrol.model.DriverChange;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
+import de.bausdorf.simracing.racecontrol.model.Event;
+import de.bausdorf.simracing.racecontrol.model.EventRepository;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.util.RuleComplianceCheck;
@@ -45,10 +48,13 @@ import de.bausdorf.simracing.racecontrol.model.Stint;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.model.CssClassType;
 import de.bausdorf.simracing.racecontrol.web.model.DriverView;
+import de.bausdorf.simracing.racecontrol.web.model.EventView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionView;
 import de.bausdorf.simracing.racecontrol.web.model.StintView;
 import de.bausdorf.simracing.racecontrol.web.model.TableCellView;
+import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamView;
+import de.bausdorf.simracing.racecontrol.web.model.TrackTimeView;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -60,11 +66,14 @@ public class ViewBuilder {
 
 	private final RuleComplianceCheck complianceCheck;
 	private final DriverChangeRepository changeRepository;
+	private final EventRepository eventRepository;
 
 	public ViewBuilder(@Autowired RuleComplianceCheck complianceCheck,
-			@Autowired DriverChangeRepository driverChangeRepository) {
+			@Autowired DriverChangeRepository driverChangeRepository,
+			@Autowired EventRepository eventRepository) {
 		this.changeRepository = driverChangeRepository;
 		this.complianceCheck = complianceCheck;
+		this.eventRepository = eventRepository;
 	}
 
 	public SessionView buildSessionView(Session selectedSession, @Nullable List<Team> teamsInSession) {
@@ -134,6 +143,60 @@ public class ViewBuilder {
 		return teamView;
 	}
 
+	public TeamDetailView buildFromTeamView(TeamView teamView, String sessionId) {
+		TeamDetailView detailView = TeamDetailView.builder()
+				.avgTeamRating(teamView.getAvgTeamRating())
+				.carNo(teamView.getCarNo())
+				.teamId(teamView.getTeamId())
+				.name(teamView.getName())
+				.build();
+
+		List<StintView> changes = new ArrayList<>();
+		for(DriverView driver : teamView.getDrivers()) {
+			changes.addAll(driver.getStints());
+		}
+		detailView.setStints(changes.stream()
+				.sorted(Comparator.comparing(StintView::getChangeTime))
+				.collect(Collectors.toList()));
+		detailView.setEvents(buildFromEventList(eventRepository
+				.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, Long.parseLong(teamView.getTeamId()))));
+		return detailView;
+	}
+
+	public List<EventView> buildFromEventList(List<Event> events) {
+		return events.stream()
+				.map(s -> EventView.builder()
+						.driverId(s.getDriverId())
+						.teamId(s.getTeamId())
+						.sessionTime(s.getSessionTime())
+						.carNo(TableCellView.builder()
+								.value(s.getCarNo())
+								.displayType(CssClassType.DEFAULT)
+								.build())
+						.driverName(TableCellView.builder()
+								.value(s.getDriverName())
+								.displayType(CssClassType.DEFAULT)
+								.build())
+						.eventTime(TableCellView.builder()
+								.value(s.getEventTime())
+								.displayType(CssClassType.TBL_SECONDARY)
+								.build())
+						.eventType(TableCellView.builder()
+								.value(s.getEventType())
+								.displayType(cssTypeForEventType(EventType.valueOf(s.getEventType())))
+								.build())
+						.teamName(TableCellView.builder()
+								.value(s.getTeamName())
+								.displayType(CssClassType.DEFAULT)
+								.build())
+						.lap(TableCellView.builder()
+								.value(String.valueOf(s.getLap()))
+								.displayType(CssClassType.DEFAULT)
+								.build())
+						.build())
+				.collect(Collectors.toList());
+	}
+
 	public DriverView buildDriverView(Driver driver) {
 		List<StintView> stintViews = buildStintViews(driver);
 		Duration trackTime = Duration.ZERO;
@@ -170,13 +233,15 @@ public class ViewBuilder {
 			if(currentStintView == null) {
 				if(change.getChangeToId() != driver.getIracingId()) {
 					// first stint
-					currentStintView = new StintViewData(Duration.ZERO, change.getChangeTime(), Duration.ZERO, true, false);
+					currentStintView = new StintViewData(Duration.ZERO, change.getChangeTime(), Duration.ZERO,
+							true, false, new ArrayList<>());
 					currentStintView.calculateTrackTime(driver);
 					stintViews.add(buildStintView(currentStintView));
 					lastStintView = currentStintView;
 					currentStintView = null;
 				} else {
-					currentStintView = new StintViewData(change.getChangeTime(), Duration.ZERO, Duration.ZERO, true, false);
+					currentStintView = new StintViewData(change.getChangeTime(), Duration.ZERO, Duration.ZERO,
+							true, false, 	new ArrayList<>());
 				}
 			} else {
 				if(change.getChangeFromId() == driver.getIracingId()) {
@@ -218,7 +283,9 @@ public class ViewBuilder {
 						.value(TimeTools.shortDurationString(data.getTrackTime()))
 						.displayType(complianceCheck.isStintDurationCompliant(data.getTrackTime()) ? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER)
 						.build())
+				.changeTime(data.getStopTime())
 				.trackTime(data.getTrackTime())
+				.trackTimes(data.getTrackTimeViews())
 				.build();
 	}
 
@@ -247,6 +314,7 @@ public class ViewBuilder {
 		private Duration trackTime;
 		private boolean startTimeCompliant;
 		private boolean unfinished;
+		private List<TrackTimeView> trackTimeViews;
 
 		public void calculateTrackTime(Driver driver) {
 			List<Stint> stintsBetween = new ArrayList<>();
@@ -280,7 +348,27 @@ public class ViewBuilder {
 				log.info("No stints for {} ({}) between {} and {}", driver.getName(), driver.getIracingId(), startTime, stopTime);
 				unfinished = true;
 			} else {
-				stintsBetween.forEach(s -> addTrackTime(s.getStintDuration()));
+				stintsBetween.forEach(s -> {
+					addTrackTime(s.getStintDuration());
+					trackTimeViews.add(TrackTimeView.builder()
+							.startTime(TableCellView.builder()
+									.value(TimeTools.shortDurationString(s.getStartTime()))
+									.displayType(CssClassType.DEFAULT)
+									.build())
+							.stopTime(TableCellView.builder()
+									.value(TimeTools.shortDurationString(s.getEndTime()))
+									.displayType(CssClassType.DEFAULT)
+									.build())
+							.duration(TableCellView.builder()
+									.value(TimeTools.shortDurationString(s.getStintDuration()))
+									.displayType(CssClassType.DEFAULT)
+									.build())
+							.driver(TableCellView.builder()
+									.value(driver.getName())
+									.displayType(CssClassType.DEFAULT)
+									.build())
+							.build());
+				});
 			}
 		}
 
@@ -301,6 +389,24 @@ public class ViewBuilder {
 			case CHECKERED:
 			case COOL_DOWN: return CssClassType.TBL_DARK;
 			default: return CssClassType.DEFAULT;
+		}
+	}
+
+	private CssClassType cssTypeForEventType(EventType eventType) {
+		if(eventType == null) {
+			return CssClassType.DEFAULT;
+		}
+		switch(eventType) {
+			case DRIVER_CHANGE: return CssClassType.TBL_DARK;
+			case ENTER_PITLANE:
+			case EXIT_PITLANE: return CssClassType.TBL_PRIMARY;
+			case IN_PIT_STALL: return CssClassType.TBL_INFO;
+			case APPROACHING_PITS:
+			case OFF_TRACK: return CssClassType.TBL_WARNING;
+			case OFF_WORLD: return CssClassType.TBL_DANGER;
+			case ON_TRACK: return CssClassType.TBL_SUCCESS;
+			default: return CssClassType.DEFAULT;
+
 		}
 	}
 }

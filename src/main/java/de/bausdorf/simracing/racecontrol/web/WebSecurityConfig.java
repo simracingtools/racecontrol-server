@@ -67,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public void configure(WebSecurity web) {
 		web.ignoring().antMatchers("/_ah/**",
 				"/rcclient/**", "/timingclient/**", "/app/**", "/timing/**", "/rc/**",
-				"/session/**", "/assets/**", "/webjars/**");
+				"/", "/index", "/session/**", "/team**", "/assets/**", "/webjars/**");
 //		web.ignoring().antMatchers("/**");
 	}
 
@@ -76,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests()
 				.antMatchers("!/_ah",
 						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
-						"!/session/**", "!/assets/**", "!/webjars/**")
+						"!/", "!/index", "!/session/**", "!/team/**", "!/assets/**", "!/webjars/**")
 //				.antMatchers("!/**")
 					.permitAll()
 					.anyRequest().authenticated()

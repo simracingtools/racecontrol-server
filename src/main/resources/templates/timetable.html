@@ -47,14 +47,18 @@
                 <h4>RaceControl</h4>
             </td>
             <td>
-                <a th:if="${viewMode.equalsIgnoreCase('team')}" href="">
+                <a th:if="${viewMode.equalsIgnoreCase('team')}" th:href="@{/session(sessionId=${sessionView.sessionId})}">
                     <h6>Driving times</h6>
                 </a>
                 <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
             </td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
-            <td>&nbsp;</td>
+            <td>
+                <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"></h5>
+            </td>
+            <td class="text-right">Avg. iRating:</td>
+            <td>
+                <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.avgTeamRating.value}" th:class="${selectedTeam.avgTeamRating.displayType.getClassString()}"></span>
+            </td>
             <td>&nbsp;</td>
         </tr>
         <tr>
@@ -76,30 +80,17 @@
                     <th>Car</th>
                     <th>Driver</th>
                     <th>Driving Time</th>
-                    <th class="text-center">Stint 1</th>
-                    <th class="text-center">Stint 2</th>
-                    <th class="text-center">Stint 3</th>
-                    <th class="text-center">Stint 4</th>
-                    <th class="text-center">Stint 5</th>
-                    <th class="text-center">Stint 6</th>
-                    <th class="text-center">Stint 7</th>
-                    <th class="text-center">Stint 8</th>
-                    <th class="text-center">Stint 9</th>
-                    <th class="text-center">Stint 10</th>
-                    <th class="text-center">Stint 11</th>
-                    <th class="text-center">Stint 12</th>
-                    <th class="text-center">Stint 13</th>
-                    <th class="text-center">Stint 14</th>
-                    <th class="text-center">Stint 15</th>
-                    <th class="text-center">Stint 16</th>
+                    <th class="text-center" th:each="stintNum : ${sessionView.getMaxDriverStints()}" th:text="${'Stint ' + stintNum}">Stint 1</th>
                 </tr>
             </thead>
             <tbody>
                 <div th:each="teamData : ${sessionView.teams}">
-                    <tr th:id="${'team-' + teamData.getTeamId() + '-iRacingId'}">
-                        <td th:id="${'team-' + teamData.getTeamId() + '-name'}" th:text="${teamData.name.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}">FBP Racing Blue</td>
-                        <td th:id="${'team-' + teamData.getTeamId() + '-carNo'}" th:text="${teamData.carNo.value}">99</td>
-                        <td th:id="${'team-' + teamData.getTeamId() + '-teamRating'}" th:text="${teamData.avgTeamRating.value}"></td>
+                    <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
+                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}">
+                            <a th:href="@{/team(teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}">FBP Racing Blue</a>
+                        </td>
+                        <td th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}">99</td>
+                        <td th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}"></td>
                         <td colspan="17"></td>
                     </tr>
                     <div th:each="driver : ${teamData.drivers}">
@@ -107,15 +98,15 @@
                             <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
                             <td></td>
                             <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString()}" th:text="${driver.name.value}">Robert Bausdorf</td>
-                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString()}" th:text="${driver.drivingTime.value}">2:09:22</td>
+                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
                             <div th:each="stint, stintStat : ${driver.stints}">
                                 <td style="padding: 0 0 0 10px;">
                                     <table style="margin-bottom: 0;" class="table">
                                         <tbody>
                                         <tr>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString()}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString()}" th:text="${stint.stopTime.value}">1:03:23<br></td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString()}" th:text="${stint.duration.value}">1:03:14<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}">1:03:23<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
                                         </tr>
                                         </tbody>
                                     </table>

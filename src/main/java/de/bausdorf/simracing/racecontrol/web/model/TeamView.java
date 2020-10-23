@@ -37,4 +37,14 @@ public class TeamView {
 	private TableCellView avgTeamRating;
 	private List<DriverView> drivers;
 	private String teamId;
+
+	public int getMaxDriverStints() {
+		int maxStints = 0;
+		for(DriverView driver : drivers) {
+			if(maxStints < driver.getStints().size()) {
+				maxStints = driver.getStints().size();
+			}
+		}
+		return maxStints;
+	}
 }

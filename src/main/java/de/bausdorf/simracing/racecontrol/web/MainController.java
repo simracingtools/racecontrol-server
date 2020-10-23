@@ -32,7 +32,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -43,6 +42,7 @@ import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
+import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -109,14 +109,16 @@ public class MainController {
 		return SESSION_VIEW;
 	}
 
-	@GetMapping("/team/{teamId}")
-	public String team(@RequestParam String sessionId, @PathVariable long teamId, Model model) {
+	@GetMapping("/team")
+	public String team(@RequestParam long teamId, @RequestParam String sessionId, Model model) {
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId);
 		if(selectedSession.isPresent() && team.isPresent()) {
-			model.addAttribute("viewMode", "teams");
+			TeamDetailView teamView = viewBuilder.buildFromTeamView(
+					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId());
+			model.addAttribute("viewMode", "team");
 			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), null));
-			model.addAttribute("selectedTeam", viewBuilder.buildFromTeam(team.get()));
+			model.addAttribute("selectedTeam", teamView);
 		} else {
 			try {
 				return "redirect:session?sessionId=" + URLEncoder.encode(sessionId, "UTF-8");
