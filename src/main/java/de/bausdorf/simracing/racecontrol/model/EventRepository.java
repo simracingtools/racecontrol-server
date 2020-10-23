@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.model;
  * #L%
  */
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ import org.springframework.data.repository.CrudRepository;
 public interface EventRepository extends CrudRepository<Event, Integer> {
 
 	Optional<Event> findBySessionIdAndEventNo(String sessionId, long eventNo);
+	Optional<Event> findBySessionIdAndSessionTimeAndDriverIdAndEventType(
+			String sessionId, Duration sessionTime, long driverId, String eventType);
 	List<Event> findBySessionIdAndTeamIdOrderBySessionTimeDesc(String sessionId, long teamId);
 	List<Event> findBySessionIdAndDriverIdOrderBySessionTimeDesc(String sessionId, long driverId);
 }

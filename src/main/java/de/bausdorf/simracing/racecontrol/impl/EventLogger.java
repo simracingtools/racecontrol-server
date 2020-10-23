@@ -44,7 +44,11 @@ public class EventLogger {
 	}
 
 	public boolean log(EventMessage eventMessage, Driver driver) {
-		Optional<Event> existingEvent = eventRepository.findBySessionIdAndEventNo(driver.getSessionId(), eventMessage.getEventNo());
+		Optional<Event> existingEvent = eventRepository.findBySessionIdAndSessionTimeAndDriverIdAndEventType(
+						driver.getSessionId(),
+						eventMessage.getSessionTime(),
+						driver.getDriverId(),
+						eventMessage.getEventType().name());
 		if(existingEvent.isPresent()) {
 			log.warn("Event {} for session {} already exisits", driver.getSessionId(), eventMessage.getEventNo());
 			return false;

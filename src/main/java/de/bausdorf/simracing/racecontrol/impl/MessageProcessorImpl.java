@@ -99,8 +99,13 @@ public class MessageProcessorImpl implements MessageProcessor {
 				case SESSION: createSession((SessionMessage)clientData, message.getSessionId()); break;
 				default: break;
 			}
-		} else {
-			updateSession(session.get(), message.getType() == ClientMessageType.SESSION ? (SessionMessage)clientData : null);
+		} else if(message.getType() == ClientMessageType.SESSION) {
+			if(!updateSession(session.get(), (SessionMessage)clientData)) {
+				log.warn("Session update for state {} for {} already exists",
+						SessionStateType.ofTypeCode(((SessionMessage)clientData).getSessionState()),
+						session.get().getSessionId());
+				return;
+			}
 		}
 		session = sessionRepository.findBySessionId(message.getSessionId());
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
@@ -121,7 +126,9 @@ public class MessageProcessorImpl implements MessageProcessor {
 			}
 			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
 		}
-		eventLogger.log(message, existingDriver);
+		if(!eventLogger.log(message, existingDriver)) {
+			return;
+		}
 		if(session.getSessionState() == SessionStateType.RACING) {
 			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
 		}
@@ -235,14 +242,15 @@ public class MessageProcessorImpl implements MessageProcessor {
 		log.debug("created session {}", sessionId);
 	}
 
-	public void updateSession(Session session, SessionMessage message) {
-		if(message != null) {
+	public boolean updateSession(Session session, SessionMessage message) {
+		SessionStateType messageType = SessionStateType.ofTypeCode(message.getSessionState());
+		if(session.getSessionState().getTypeCode() < messageType.getTypeCode()) {
 			boolean doReload = message.getSessionState() != session.getSessionState().getTypeCode();
 			session.setLastUpdate(message.getSessionTime());
 			session.setSessionDuration(message.getSessionDuration());
 			session.setTrackName(message.getTrackName());
 			session.setSessionType(message.getSessionType());
-			session.setSessionState(SessionStateType.ofTypeCode(message.getSessionState()));
+			session.setSessionState(messageType);
 			sessionRepository.save(session);
 
 			if(session.getSessionState() == SessionStateType.RACING) {
@@ -253,6 +261,9 @@ public class MessageProcessorImpl implements MessageProcessor {
 			if(doReload) {
 				sendPageReload(session.getSessionId(), session.getSessionState().name());
 			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
