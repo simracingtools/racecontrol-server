@@ -27,27 +27,22 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import de.bausdorf.simracing.racecontrol.api.SessionStateType;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
-import de.bausdorf.simracing.racecontrol.util.TimeTools;
-import de.bausdorf.simracing.racecontrol.web.model.CssClassType;
 import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
-import de.bausdorf.simracing.racecontrol.web.model.SessionView;
-import de.bausdorf.simracing.racecontrol.web.model.TableCellView;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -55,6 +50,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MainController {
 	public static final String INDEX_VIEW = "index";
 	public static final String SESSION_VIEW = "timetable";
+	public static final String TEAM_VIEW = "teamtable";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
@@ -105,51 +101,29 @@ public class MainController {
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		if(selectedSession.isPresent()) {
-			SessionView sessionView = SessionView.builder()
-					.sessionId(selectedSession.get().getSessionId())
-					.sessionDuration(TableCellView.builder()
-							.value(TimeTools.shortDurationString(selectedSession.get().getSessionDuration()))
-							.displayType(CssClassType.DEFAULT)
-							.build())
-					.sessionType(TableCellView.builder()
-							.value(selectedSession.get().getSessionType())
-							.displayType(selectedSession.get().getSessionType().equalsIgnoreCase("RACE")
-									? CssClassType.TBL_SUCCESS : CssClassType.TBL_WARNING)
-							.build())
-					.trackName(TableCellView.builder()
-							.value(selectedSession.get().getTrackName())
-							.displayType(CssClassType.DEFAULT)
-							.build())
-					.sessionState(TableCellView.builder()
-							.value(selectedSession.get().getSessionState().name())
-							.displayType(cssTypeForSessionState(selectedSession.get().getSessionState()))
-							.build())
-					.build();
-
-			sessionView.setTeams(teamsInSession.stream()
-					.map(viewBuilder::buildFromTeam)
-					.collect(Collectors.toList()));
-
-			model.addAttribute("sessionView", sessionView);
-
+			model.addAttribute("viewMode", "times");
+			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
 		} else {
 			return "redirect:index";
 		}
 		return SESSION_VIEW;
 	}
 
-	private CssClassType cssTypeForSessionState(SessionStateType sessionState) {
-		if(sessionState == null) {
-			return CssClassType.DEFAULT;
+	@GetMapping("/team/{teamId}")
+	public String team(@RequestParam String sessionId, @PathVariable long teamId, Model model) {
+		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
+		Optional<Team> team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId);
+		if(selectedSession.isPresent() && team.isPresent()) {
+			model.addAttribute("viewMode", "teams");
+			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), null));
+			model.addAttribute("selectedTeam", viewBuilder.buildFromTeam(team.get()));
+		} else {
+			try {
+				return "redirect:session?sessionId=" + URLEncoder.encode(sessionId, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				log.error(e.getMessage(), e);
+			}
 		}
-		switch(sessionState) {
-			case GRIDING: return CssClassType.TBL_PRIMARY;
-			case WARMUP:
-			case PARADE_LAPS: return CssClassType.TBL_INFO;
-			case RACING: return CssClassType.TBL_SUCCESS;
-			case CHECKERED:
-			case COOL_DOWN: return CssClassType.TBL_DARK;
-			default: return CssClassType.DEFAULT;
-		}
+		return TEAM_VIEW;
 	}
 }

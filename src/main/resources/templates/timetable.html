@@ -33,6 +33,7 @@
 </head>
 
 <body>
+<div th:fragment="header">
     <table class="table">
         <tbody>
         <input id="sessionId" type="hidden" th:value="${sessionView.sessionId}"/>
@@ -46,7 +47,10 @@
                 <h4>RaceControl</h4>
             </td>
             <td>
-                <h6>Driving times</h6>
+                <a th:if="${viewMode.equalsIgnoreCase('team')}" href="">
+                    <h6>Driving times</h6>
+                </a>
+                <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
             </td>
             <td>&nbsp;</td>
             <td>&nbsp;</td>
@@ -63,6 +67,7 @@
         </tr>
         </tbody>
     </table>
+</div>
 <!--    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">-->
         <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
             <thead>

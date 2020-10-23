@@ -29,19 +29,23 @@ import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.api.SessionStateType;
 import de.bausdorf.simracing.racecontrol.api.StintStateType;
 import de.bausdorf.simracing.racecontrol.model.Driver;
 import de.bausdorf.simracing.racecontrol.model.DriverChange;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
+import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.util.RuleComplianceCheck;
 import de.bausdorf.simracing.racecontrol.model.Stint;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.model.CssClassType;
 import de.bausdorf.simracing.racecontrol.web.model.DriverView;
+import de.bausdorf.simracing.racecontrol.web.model.SessionView;
 import de.bausdorf.simracing.racecontrol.web.model.StintView;
 import de.bausdorf.simracing.racecontrol.web.model.TableCellView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamView;
@@ -61,6 +65,35 @@ public class ViewBuilder {
 			@Autowired DriverChangeRepository driverChangeRepository) {
 		this.changeRepository = driverChangeRepository;
 		this.complianceCheck = complianceCheck;
+	}
+
+	public SessionView buildSessionView(Session selectedSession, @Nullable List<Team> teamsInSession) {
+		SessionView sessionView = SessionView.builder()
+				.sessionId(selectedSession.getSessionId())
+				.sessionDuration(TableCellView.builder()
+						.value(TimeTools.shortDurationString(selectedSession.getSessionDuration()))
+						.displayType(CssClassType.DEFAULT)
+						.build())
+				.sessionType(TableCellView.builder()
+						.value(selectedSession.getSessionType())
+						.displayType(selectedSession.getSessionType().equalsIgnoreCase("RACE")
+								? CssClassType.TBL_SUCCESS : CssClassType.TBL_WARNING)
+						.build())
+				.trackName(TableCellView.builder()
+						.value(selectedSession.getTrackName())
+						.displayType(CssClassType.DEFAULT)
+						.build())
+				.sessionState(TableCellView.builder()
+						.value(selectedSession.getSessionState().name())
+						.displayType(cssTypeForSessionState(selectedSession.getSessionState()))
+						.build())
+				.build();
+		if(teamsInSession != null) {
+			sessionView.setTeams(teamsInSession.stream()
+					.map(this::buildFromTeam)
+					.collect(Collectors.toList()));
+		}
+		return sessionView;
 	}
 
 	public TeamView buildFromTeam(Team team) {
@@ -253,6 +286,21 @@ public class ViewBuilder {
 
 		public void addTrackTime(Duration timeSlice) {
 			trackTime = trackTime.plus(timeSlice);
+		}
+	}
+
+	private CssClassType cssTypeForSessionState(SessionStateType sessionState) {
+		if(sessionState == null) {
+			return CssClassType.DEFAULT;
+		}
+		switch(sessionState) {
+			case GRIDING: return CssClassType.TBL_PRIMARY;
+			case WARMUP:
+			case PARADE_LAPS: return CssClassType.TBL_INFO;
+			case RACING: return CssClassType.TBL_SUCCESS;
+			case CHECKERED:
+			case COOL_DOWN: return CssClassType.TBL_DARK;
+			default: return CssClassType.DEFAULT;
 		}
 	}
 }
