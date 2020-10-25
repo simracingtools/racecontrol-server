@@ -40,5 +40,6 @@ public class ClientMessage {
 	private String sessionId;
 	private String teamId;
 	private String driverId;
+	private int lap;
 	private Map<String, Object> payload;
 }

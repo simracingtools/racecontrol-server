@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.bausdorf.simracing.racecontrol.api.ClientMessage;
 import de.bausdorf.simracing.racecontrol.api.ClientMessageType;
+import de.bausdorf.simracing.racecontrol.api.MessageConstants.MessageType;
 import de.bausdorf.simracing.racecontrol.api.MessageProcessor;
 import de.bausdorf.simracing.racecontrol.api.InvalidClientMessageException;
 import de.bausdorf.simracing.racecontrol.api.MessageConstants.Message;
@@ -106,17 +107,20 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 		String sessionId = (String) clientMessage.get(Message.SESSION_ID);
 		String teamId = (String) clientMessage.get(Message.TEAM_ID);
 
-		if (messageType == null) {
+		if(messageType == null) {
 			throw new InvalidClientMessageException("No message type in message");
 		}
-		if (clientVersion == null || clientVersion.isEmpty()) {
+		if(clientVersion == null || clientVersion.isEmpty()) {
 			throw new InvalidClientMessageException("No message version");
 		}
-
-		if (clientId == null || "-1".equalsIgnoreCase(clientId) || "0".equalsIgnoreCase(teamId)) {
+		if(clientId == null) {
 			throw new InvalidClientMessageException("Message without client id");
 		}
-		if (sessionId == null) {
+		if(MessageType.EVENTDATA_NAME.equalsIgnoreCase(messageType)
+				&& ("-1".equalsIgnoreCase(clientId) || "0".equalsIgnoreCase(teamId))) {
+			throw new InvalidClientMessageException("Event message with invalid client or team id");
+		}
+		if(sessionId == null) {
 			throw new InvalidClientMessageException("Message without session id");
 		}
 
@@ -127,6 +131,7 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 					.sessionId(sessionId)
 					.teamId(teamId)
 					.driverId(clientId)
+					.lap(MapTools.intFromMap(Message.SESSION_LAP, clientMessage))
 					.type(ClientMessageType.fromJsonKey(MapTools.stringFromMap(Message.MESSAGE_TYPE, clientMessage)))
 					.payload((Map<String, Object>) clientMessage.get(Message.PAYLOAD))
 					.build();

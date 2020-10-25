@@ -48,4 +48,5 @@ public class Session {
 	@Column(nullable = false)
 	private Duration lastUpdate;
 	private SessionStateType sessionState;
+	private int sessionLaps;
 }

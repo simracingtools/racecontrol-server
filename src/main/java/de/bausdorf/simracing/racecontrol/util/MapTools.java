@@ -155,4 +155,8 @@ public class MapTools {
 		}
 		return new HashMap<>();
 	}
+
+	public static String hexStringFromLong(String key, Map<String, Object> data) {
+		return Integer.toHexString(intFromMap(key, data));
+	}
 }

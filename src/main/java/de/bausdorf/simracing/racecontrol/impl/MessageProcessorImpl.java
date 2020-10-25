@@ -100,12 +100,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				default: break;
 			}
 		} else if(message.getType() == ClientMessageType.SESSION) {
-			if(!updateSession(session.get(), (SessionMessage)clientData)) {
-				log.warn("Session update for state {} for {} already exists",
-						SessionStateType.ofTypeCode(((SessionMessage)clientData).getSessionState()),
-						session.get().getSessionId());
-				return;
-			}
+			processSessionMessage(session.get(), message.getLap(), (SessionMessage)clientData);
 		}
 		session = sessionRepository.findBySessionId(message.getSessionId());
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
@@ -117,26 +112,32 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
+	private void processSessionMessage(Session session, int lap, SessionMessage clientData) {
+		if(!updateSession(session, clientData)) {
+			log.warn("Session update for state {} for {} already exists",
+					SessionStateType.ofTypeCode(clientData.getSessionState()),
+					session.getSessionId());
+			return;
+		}
+		if(session.getSessionLaps() < lap) {
+			session.setSessionLaps(lap);
+			sessionRepository.save(session);
+		}
+	}
+
 	public void processEventMessage(Session session, long driverId, long teamId, EventMessage message) {
 		String sessionId = session.getSessionId();
 		Driver existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId).orElse(null);
 		if (existingDriver == null) {
-			if(driverId < 1) {
+			if (driverId < 1) {
 				log.warn("Invalid driver id {} for driver {}", driverId, message.getDriverName());
 			}
 			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
 		}
-		if(!eventLogger.log(message, existingDriver)) {
+		if (!eventLogger.log(message, existingDriver)) {
 			return;
 		}
-		if(session.getSessionState() == SessionStateType.RACING) {
-			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
-		}
-		if(message.getEventType() != existingDriver.getLastEventType()) {
-			existingDriver.setLastEventType(message.getEventType());
-			sendDriverMessage(existingDriver);
-		}
-		driverRepository.save(existingDriver);
+		updateDriver(session, existingDriver, message);
 
 		if(message.getEventType() == EventType.DRIVER_CHANGE
 				&& existingDriver.getTeam().getCurrentDriverId() != existingDriver.getIracingId()) {
@@ -274,12 +275,17 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.name(message.getDriverName())
 				.iRating(message.getIRating())
 				.lastEventType(message.getEventType())
+				.lastLapPosition(message.getLapPct())
 				.build();
 		Team team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId).orElse(Team.builder()
 				.sessionId(sessionId)
 				.teamId(teamId)
 				.name(message.getTeamName())
 				.carNo(message.getCarNo())
+				.carName(message.getCarName())
+				.carClass(message.getCarClass())
+				.carClassId(message.getCarClassId())
+				.carClassColor(message.getCarClassColor())
 				.currentDriverId(driverId)
 				.build());
 		driver.setTeam(team);
@@ -337,5 +343,19 @@ public class MessageProcessorImpl implements MessageProcessor {
 				}
 			}
 		}
+	}
+
+	private void updateDriver(Session session, Driver existingDriver, EventMessage message) {
+		if (session.getSessionState() == SessionStateType.RACING) {
+			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+		}
+		if (message.getEventType() != existingDriver.getLastEventType()) {
+			existingDriver.setLastEventType(message.getEventType());
+			sendDriverMessage(existingDriver);
+		}
+		if (message.getLapPct() != existingDriver.getLastLapPosition()) {
+			existingDriver.setLastLapPosition(message.getLapPct());
+		}
+		driverRepository.save(existingDriver);
 	}
 }
