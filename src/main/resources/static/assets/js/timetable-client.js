@@ -53,6 +53,10 @@ function sendConnectAck() {
   stompClient.send("/app/timingclient", {}, JSON.stringify({'sessionId': $("#sessionId").val(), 'text': 'Hello'}));
 }
 
+function sendRcTimestamp(millis, driverId) {
+  stompClient.send("/app/rctimestamp", {}, JSON.stringify({'messageType': 'replayTime', 'timestamp': millis, 'driverId': driverId}));
+}
+
 function reloadPage() {
   window.location.reload();
 }

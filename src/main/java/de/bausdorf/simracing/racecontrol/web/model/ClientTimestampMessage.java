@@ -22,29 +22,22 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TeamDetailView {
-	private long teamId;
-	private TableCellView name;
-	private TableCellView carNo;
-	private String carName;
-	private String carClass;
-	private String carClassColor;
-	private TableCellView avgTeamRating;
-	private List<StintView> stints;
-	private List<EventView> events;
+@ToString
+public class ClientTimestampMessage {
+	private long timestamp;
+	private long driverId;
 
-	public long getStintCount() {
-		return stints.stream()
-				.mapToInt(s -> s.getTrackTimes().size() + 1)
-				.sum();
+	public String toJson() {
+		return "{'timestamp': " + timestamp + ", 'driverId:' " + driverId + "}";
 	}
 }

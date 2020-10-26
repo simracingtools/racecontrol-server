@@ -34,9 +34,12 @@ import lombok.Data;
 public class TeamView {
 	private TableCellView name;
 	private TableCellView carNo;
+	private String carName;
+	private String carClass;
+	private String carClassColor;
 	private TableCellView avgTeamRating;
 	private List<DriverView> drivers;
-	private String teamId;
+	private long teamId;
 
 	public int getMaxDriverStints() {
 		int maxStints = 0;

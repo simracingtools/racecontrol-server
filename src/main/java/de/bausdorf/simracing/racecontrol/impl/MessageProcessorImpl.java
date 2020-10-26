@@ -162,11 +162,18 @@ public class MessageProcessorImpl implements MessageProcessor {
 		return new ClientAck(message.getSessionId());
 	}
 
+	@MessageMapping("/rctimestamp")
+	@SendToUser("/timingclient/client-ack")
+	public ClientAck respondTimestampMessage(String message) {
+		messagingTemplate.convertAndSend("/rc/229120/replayposition", message);
+		return new ClientAck("timestamp received");
+	}
+
 	@MessageMapping("/rcclient")
 	@SendToUser("/rc/client-ack")
 	public String respondRcAck(String message) {
 		log.info(message);
-		return "rc ack for user";
+		return "{\"messageType\":\"ack\", \"clientId\": \"" + message + "\"}";
 	}
 
 	private void sendPageReload(String sessionId, String message) {
