@@ -23,10 +23,10 @@ package de.bausdorf.simracing.racecontrol.web.model;
  */
 
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
-import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import de.bausdorf.simracing.racecontrol.web.security.SubscriptionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +49,7 @@ public class UserProfileView {
 	private SubscriptionType subscriptionType;
 	private String subscriptionExpiration;
 	private String timezone;
+	private String created;
 	private Boolean enabled;
 	private Boolean locked;
 	private Boolean expired;
@@ -70,28 +71,17 @@ public class UserProfileView {
 		this.username = user.getUsername();
 		this.timezone = user.getTimezone() != null ? TimeTools.toShortZoneId(user.getTimezone()) : "";
 		this.subscriptionType = user.getSubscriptionType();
+		this.created = user.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")); //2020-10-28T20:02
 //		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
 //				? user.getLastSubscription().plus(this.subscriptionType.getDuration()).toLocalDate().toString()
 //				: "Not relevant";
 	}
 
-	public RcUser getUser(RcUser merge) {
-		return RcUser.builder()
-				.name(name != null ? name : merge.getName())
-				.oauthId(id != null ? id : merge.getOauthId())
-				.email(email != null ? email : merge.getEmail())
-				.imageUrl(imageUrl != null ? imageUrl : merge.getImageUrl())
-				.clientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken())
-				.enabled(enabled != null ? enabled : merge.isEnabled())
-				.locked(locked != null ? locked : merge.isLocked())
-				.expired(expired != null ? expired : merge.isExpired())
-				.iRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId())
-				.userType(userType != null ? RcUserType.ofText(userType) : merge.getUserType())
-				.timezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone())
-				.created(merge.getCreated())
-				.lastAccess(merge.getLastAccess())
-				.lastSubscription(merge.getLastSubscription())
-				.subscriptionType(merge.getSubscriptionType())
-				.build();
+	public RcUser apply(RcUser merge) {
+		merge.setName(name != null ? name : merge.getName());
+		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
+		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
+		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
+		return merge;
 	}
 }

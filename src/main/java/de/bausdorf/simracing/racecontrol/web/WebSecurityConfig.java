@@ -103,11 +103,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 //						new CustomAuthorizationRequestResolver(
 //								registrationRepository))
 				.and()
+				.defaultSuccessUrl("/index.html")
 				.userInfoEndpoint()
 					.userAuthoritiesMapper(this.userAuthoritiesMapper())
-					.oidcUserService(userService)
+						.oidcUserService(userService)
+					.and()
 				.and()
-			.and()
+					.logout()
+						.logoutSuccessUrl("/")
+				.and()
 			.exceptionHandling().accessDeniedHandler(this);
 
 

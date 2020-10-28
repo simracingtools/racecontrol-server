@@ -39,14 +39,18 @@
     <div>
         <div class="container">
             <div class="row" style="background: linear-gradient(rgb(247,178,227) 7%, rgb(8,118,248) 100%);" th:fragment="header">
-                <div class="col-2 col-sm-2 col-md-2 col-lg-1" style="padding: 0;height: 75px;"><a class="btn btn-primary text-center" role="button" style="background: url('assets/img/be-logoV2.png') no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0;border-style: none;" th:href="@{/index(userId=${user.id})}"></a></div>
+                <div class="col-2 col-sm-2 col-md-2 col-lg-1" style="padding: 0;height: 75px;">
+                    <a class="btn btn-primary text-center" role="button" style="background: url('assets/img/be-logoV2.png') no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0;border-style: none;" th:href="@{/index(userId=${user.id})}"></a>
+                </div>
                 <div
                     class="col-8 col-sm-8 col-md-8 col-lg-10 text-nowrap align-self-center">
                     <header>
-                        <h1 style="font-family: Notable, sans-serif;text-shadow: 2px 2px 9px rgb(255,255,255);color: rgba(4,2,10,0.57);font-size: 29px;">Race Control</h1>
+                        <h1 style="font-family: Notable, sans-serif;text-shadow: 2px 2px 9px rgb(255,255,255);color: rgba(4,2,10,0.57);font-size: 29px;">iRacing Race Control</h1>
                     </header>
                 </div>
-                <div class="col-2 col-sm-2 col-md-2 col-lg-1 text-right" style="padding: 0;height: 75px;"><a class="btn btn-primary text-center" role="button" th:style="'background: url(' + ${user.imageUrl != null ? user.imageUrl : 'assets/img/be-logoV2.png'} + '); no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0px;border-style: none;'" href="/"></a></div>
+                <div class="col-2 col-sm-2 col-md-2 col-lg-1 text-right" style="padding: 0;height: 75px;">
+                    <a class="btn btn-primary text-center" role="button" th:style="'background: url(' + ${user.imageUrl != null ? user.imageUrl : 'assets/img/be-logoV2.png'} + '); no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0px;border-style: none;'" href="/profile"></a>
+                </div>
             </div>
             <div class="row" th:fragment="messages">
                 <div class="col">
@@ -55,6 +59,12 @@
                             <span aria-hidden="true">×</span>
                         </button>
                         <span th:each="err : ${messages.infos()}" th:text="${err.text}"><strong>Alert</strong> text.</span>
+                    </div>
+                    <div th:if="${!messages.warnings().isEmpty()}" class="alert alert-warning" role="alert" style="width: 100%;">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                        <span th:each="err : ${messages.warnings()}" th:text="${err.text}"><strong>Alert</strong> text.</span>
                     </div>
                     <div th:if="${!messages.errors().isEmpty()}" class="alert alert-danger" role="alert" style="width: 100%;">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -92,6 +102,7 @@
                                 <span class="navbar-text actions">
 <!--                                    <a class="login" href="#">Log In</a>-->
                                     <a th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/logout">Logout</a>
+                                    <a th:if="${user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/index.html">Login</a>
                                 </span>
                             </div>
                         </div>

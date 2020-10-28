@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,7 @@ public class ControllerBase {
 				: RcUser.builder()
 						.name("Unknown")
 						.userType(RcUserType.NEW)
+						.created(ZonedDateTime.now())
 						.build();
 	}
 

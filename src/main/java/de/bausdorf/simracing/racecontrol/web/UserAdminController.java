@@ -35,6 +35,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
 import de.bausdorf.simracing.racecontrol.web.model.UserSearchView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
@@ -44,16 +45,13 @@ public class UserAdminController extends ControllerBase {
 
 	public static final String USER_LIST = "userList";
 	public static final String SEARCH_VIEW = "searchView";
+	public static final String PROFILE_VIEW = "profile";
 	public static final String ADMIN_VIEW = "useradmin";
-
-	public UserAdminController() {
-		this.activeNav = "userAdmin";
-	}
 
 	@GetMapping("/useradmin")
 	@Secured("ROLE_SYSADMIN")
 	public String adminView(Model model) {
-
+		this.activeNav = "userAdmin";
 		model.addAttribute(SEARCH_VIEW, new UserSearchView());
 		model.addAttribute(USER_LIST, new ArrayList<>());
 
@@ -63,6 +61,7 @@ public class UserAdminController extends ControllerBase {
 	@PostMapping("/usersearch")
 	@Secured("ROLE_SYSADMIN")
 	public String searchUsers(@ModelAttribute UserSearchView searchView, Model model) {
+		this.activeNav = "userAdmin";
 		if (searchView != null) {
 			List<RcUser> userList = findBySearchView(searchView);
 			model.addAttribute(SEARCH_VIEW, searchView);
@@ -86,6 +85,27 @@ public class UserAdminController extends ControllerBase {
 			searchView.setUserName(existingUser != null ? existingUser.getName() : "");
 		}
 		return searchUsers(searchView, model);
+	}
+
+	@GetMapping("/profile")
+	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER", "ROLE_NEW"})
+	public String getUserProfile(@RequestParam Optional<String> userId, Model model) {
+		this.activeNav = "userProfile";
+		RcUser user = currentUser();
+		if(user.getIRacingId() == 0) {
+			addWarning("Please provide your iRacing Id !", model);
+		}
+		model.addAttribute("profileView", new UserProfileView(user));
+		return PROFILE_VIEW;
+	}
+
+	@PostMapping("/profile")
+	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER", "ROLE_NEW"})
+	@Transactional
+	public String saveUserProfile(@ModelAttribute UserProfileView profileView, Model model) {
+		RcUser userToSave = profileView.apply(currentUser());
+		userRepository.save(userToSave);
+		return "redirect:/profile";
 	}
 
 	@GetMapping("/deletesiteuser")
