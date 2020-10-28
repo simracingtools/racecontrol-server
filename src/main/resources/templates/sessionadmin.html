@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>racecontrol</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Notable">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik+Mono+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Timmana">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu"></div>
+
+        <div class="row">
+            <div class="col-md-4 col-lg-1"></div>
+            <div class="col-md-4 col-lg-10">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Last Update</th>
+                                <th>Track</th>
+                                <th>Duration</th>
+                                <th>Type</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="sessionView, sessionStat : ${sessions}">
+                                <td th:text="${sessionView.created}">12.04.2020</td>
+                                <td th:text="${sessionView.trackName}">Le Mans</td>
+                                <td th:text="${sessionView.duration}">06:00</td>
+                                <td th:text="${sessionView.type}">Race</td>
+                                <td class="text-center" style="padding: 4px;">
+                                    <button class="btn btn-danger" type="button" th:onclick="'confirmSessionRemove(' + ${sessionStat.index} + ')'">
+                                        <i class="fas fa-trash" style="height: 20px;width: 20px;font-size: 20px;"></i>
+                                    </button>
+                                </td>
+                                <div th:id="'session-remove-confirm-' + ${sessionStat.index}" class="modal fade" role="dialog" tabindex="-1">
+                                    <div class="modal-dialog modal-dialog-centered" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title">Confirm remove</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">×</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p th:text="'Do you really want to delete ' + ${sessionView.type} + ' session from ' + ${sessionView.created} + ' ?'">Do you really want to remove site user ?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a th:href="@{/deletesession(sessionId=${sessionView.sessionId})}">
+                                                    <button class="btn btn-primary" type="button">Remove</button>
+                                                </a>
+                                                <button class="btn btn-light" type="button" data-dismiss="modal">Cancel</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-1"></div>
+        </div>
+        <div th:insert="index :: footer"></div>
+    </div>
+    <!-- End: 2 Rows 1+3 Columns -->
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

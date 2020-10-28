@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.model;
  */
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,6 +43,8 @@ import lombok.NoArgsConstructor;
 public class Session {
 	@Id
 	private String sessionId;
+	@Column(nullable = false)
+	private ZonedDateTime created;
 	private String trackName;
 	private Duration sessionDuration;
 	private String sessionType;

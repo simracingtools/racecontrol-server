@@ -21,15 +21,17 @@
  */
 
 function saveUser(index) {
-  var url = '/savesiteuser?userId=' + $("#userId-" + index).val()
+  window.location = '/savesiteuser?userId=' + $("#userId-" + index).val()
       + '&role=' + $("#role-" + index).val()
       + '&enabled=' + $("#enabled-" + index).prop('checked')
       + '&locked=' + $("#locked-" + index).prop('checked')
       + '&expired=' + $("#expired-" + index).prop('checked');
-
-  window.location = url;
 }
 
 function confirmUserRemove(index) {
   $("#user-remove-confirm-" + index).modal('show');
+}
+
+function confirmSessionRemove(index) {
+  $("#session-remove-confirm-" + index).modal('show');
 }

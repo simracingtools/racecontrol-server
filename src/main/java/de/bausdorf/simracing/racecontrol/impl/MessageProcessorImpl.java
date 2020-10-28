@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.impl;
  */
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -235,6 +236,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.sessionDuration(Duration.ZERO)
 				.sessionId(message.getSessionId())
 				.lastUpdate(Duration.ZERO)
+				.created(ZonedDateTime.now())
 				.build());
 		log.debug("created session {}", message.getSessionId());
 	}
@@ -247,6 +249,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.sessionId(sessionId)
 				.sessionState(SessionStateType.ofTypeCode(message.getSessionState()))
 				.lastUpdate(message.getSessionTime())
+				.created(ZonedDateTime.now())
 				.build());
 		log.debug("created session {}", sessionId);
 	}

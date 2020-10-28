@@ -21,7 +21,7 @@
   #L%
   -->
 
-<html xmlns:th="http://www.thymeleaf.org" >
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head th:fragment="head">
     <meta charset="utf-8">
@@ -39,11 +39,11 @@
     <div>
         <div class="container">
             <div class="row" style="background: linear-gradient(rgb(247,178,227) 7%, rgb(8,118,248) 100%);" th:fragment="header">
-                <div class="col-2 col-sm-2 col-md-2 col-lg-1" style="padding: 0;height: 75px;"><a class="btn btn-primary text-center" role="button" style="background: url(&quot;assets/img/be-logoV2.png&quot;) no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0px;border-style: none;" th:href="@{/index(userId=${user.id})}"></a></div>
+                <div class="col-2 col-sm-2 col-md-2 col-lg-1" style="padding: 0;height: 75px;"><a class="btn btn-primary text-center" role="button" style="background: url('assets/img/be-logoV2.png') no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0;border-style: none;" th:href="@{/index(userId=${user.id})}"></a></div>
                 <div
                     class="col-8 col-sm-8 col-md-8 col-lg-10 text-nowrap align-self-center">
                     <header>
-                        <h1 style="font-family: Notable, sans-serif;text-shadow: 2px 2px 9px rgb(255,255,255);color: rgb(6,2,18);font-size: 29px;">Race Control Center</h1>
+                        <h1 style="font-family: Notable, sans-serif;text-shadow: 2px 2px 9px rgb(255,255,255);color: rgba(4,2,10,0.57);font-size: 29px;">Race Control</h1>
                     </header>
                 </div>
                 <div class="col-2 col-sm-2 col-md-2 col-lg-1 text-right" style="padding: 0;height: 75px;"><a class="btn btn-primary text-center" role="button" th:style="'background: url(' + ${user.imageUrl != null ? user.imageUrl : 'assets/img/be-logoV2.png'} + '); no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0px;border-style: none;'" href="/"></a></div>
@@ -78,8 +78,12 @@
                                         <a th:if="${!navigation.equalsIgnoreCase('sessionSelect')}" class="nav-link" th:href="@{/index(userId=${user.id})}">Select Sessions</a>
                                     </li>
                                     <li class="nav-item">
-                                        <a th:if="${navigation.equalsIgnoreCase('userAdmin')}" class="nav-link active" th:href="@{/useradmin}">Manage Users</a>
-                                        <a th:if="${!navigation.equalsIgnoreCase('userAdmin')}" class="nav-link" th:href="@{/useradmin}">Manage Users</a>
+                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('userAdmin')}" class="nav-link active" th:href="@{/useradmin}">Manage Users</a>
+                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('userAdmin')}" class="nav-link" th:href="@{/useradmin}">Manage Users</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link active" th:href="@{/sessionadmin}">Manage Sessions</a>
+                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link" th:href="@{/sessionadmin}">Manage Sessions</a>
                                     </li>
 <!--                                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Dropdown </a>-->
 <!--                                        <div class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>-->
@@ -102,7 +106,7 @@
                     <form th:action="@{/session}" method="post" th:object="${selectView}">
                         <input type="hidden" th:field="*{userId}">
                         <div class="form-group">
-                            <label class="d-inline float-left">Select session</label>
+                            <label class="d-inline float-left" th:for="*{selectedSessionId}">Select session</label>
                             <select class="form-control" th:field="*{selectedSessionId}">
                                 <option th:each="singleSession : *{sessions}" th:value="${singleSession.sessionId}" th:text="${singleSession.displayName}"></option>
                             </select>

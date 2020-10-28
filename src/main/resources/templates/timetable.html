@@ -21,7 +21,7 @@
   #L%
   -->
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -90,13 +90,13 @@
             <tbody>
                 <div th:each="teamData : ${sessionView.teams}">
                     <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
-                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor}" class="text-nowrap">
-                            <a th:href="@{/team((userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fcf8e3; padding: 2px; font-weight: bold">FBP Racing Blue</a>
+                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
+                            <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                         </td>
-                        <td th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
-                        <td th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
-                        <td th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
-                        <td th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
 <!--                        <td colspan="16"></td>-->
                     </tr>
                     <div th:each="driver : ${teamData.drivers}">
@@ -118,7 +118,7 @@
                                     </table>
                                 </td>
                             </div>
-                        </div>
+                        </tr>
                     </div>
                 </div>
             </tbody>
