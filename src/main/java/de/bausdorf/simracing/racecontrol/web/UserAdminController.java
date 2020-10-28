@@ -112,7 +112,7 @@ public class UserAdminController extends ControllerBase {
 		if(searchView.getUserRole().equalsIgnoreCase("*")) {
 			return userRepository.findByNameContainingAndEmailContaining(searchView.getUserName(), searchView.getEmail());
 		} else {
-			return userRepository.findByNameContainingAndEmailContainingAndUserTypeContaining(
+			return userRepository.findByNameContainingAndEmailContainingAndUserType(
 					searchView.getUserName(), searchView.getEmail(), RcUserType.valueOf(searchView.getUserRole()));
 		}
 	}

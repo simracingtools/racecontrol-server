@@ -31,6 +31,6 @@ public interface RcUserRepository extends CrudRepository<RcUser, String> {
 
 	Optional<RcUser> findByEmail(String email);
 
-	List<RcUser> findByNameContainingAndEmailContainingAndUserTypeContaining(String name, String email, RcUserType userType);
+	List<RcUser> findByNameContainingAndEmailContainingAndUserType(String name, String email, RcUserType userType);
 	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
 }
