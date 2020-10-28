@@ -1,8 +1,8 @@
-package de.bausdorf.simracing.racecontrol.web.security;
+package de.bausdorf.simracing.racecontrol.web;
 
 /*-
  * #%L
- * racecontrol-server
+ * tt-cloud-server
  * %%
  * Copyright (C) 2020 bausdorf engineering
  * %%
@@ -22,15 +22,20 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
-import java.util.List;
-import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
-import org.springframework.data.repository.CrudRepository;
+@Data
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode
+public class Message {
+    public static final String ERROR="error";
+    public static final String WARN="warning";
+    public static final String INFO="info";
 
-public interface RcUserRepository extends CrudRepository<RcUser, String> {
-
-	Optional<RcUser> findByEmail(String email);
-
-	List<RcUser> findByNameContainingAndEmailContainingAndUserTypeContaining(String name, String email, RcUserType userType);
-	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
+    String type;
+    String text;
 }

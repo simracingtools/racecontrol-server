@@ -41,4 +41,6 @@ public class RacecontrolServerProperties {
     private int minRestTimeMinutes;
     private double fairShareFactor;
     private int proAmDiscriminator;
+    private String iRacingUsername;
+    private String iRacingPassword;
 }

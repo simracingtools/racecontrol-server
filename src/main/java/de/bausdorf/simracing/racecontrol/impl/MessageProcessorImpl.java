@@ -41,6 +41,7 @@ import de.bausdorf.simracing.racecontrol.api.ClientMessageType;
 import de.bausdorf.simracing.racecontrol.api.EventMessage;
 import de.bausdorf.simracing.racecontrol.api.MessageProcessor;
 import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.api.ReplayPositionClientMessage;
 import de.bausdorf.simracing.racecontrol.api.SessionMessage;
 import de.bausdorf.simracing.racecontrol.api.SessionStateType;
 import de.bausdorf.simracing.racecontrol.api.StintStateType;
@@ -164,8 +165,8 @@ public class MessageProcessorImpl implements MessageProcessor {
 
 	@MessageMapping("/rctimestamp")
 	@SendToUser("/timingclient/client-ack")
-	public ClientAck respondTimestampMessage(String message) {
-		messagingTemplate.convertAndSend("/rc/229120/replayposition", message);
+	public ClientAck respondTimestampMessage(ReplayPositionClientMessage message) {
+		messagingTemplate.convertAndSend("/rc/" + message.getUserId() + "/replayposition", message);
 		return new ClientAck("timestamp received");
 	}
 

@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.security;
+package de.bausdorf.simracing.racecontrol.web.model;
 
 /*-
  * #%L
@@ -22,15 +22,27 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
-import java.util.List;
-import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-import org.springframework.data.repository.CrudRepository;
+@Data
+@AllArgsConstructor
+@Builder
+public class UserSearchView {
+	private String userName;
+	private String email;
+	private String userRole;
+	private boolean enabled;
+	private boolean locked;
+	private boolean expired;
 
-public interface RcUserRepository extends CrudRepository<RcUser, String> {
-
-	Optional<RcUser> findByEmail(String email);
-
-	List<RcUser> findByNameContainingAndEmailContainingAndUserTypeContaining(String name, String email, RcUserType userType);
-	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
+	public UserSearchView() {
+		userName="";
+		email = "";
+		userRole = "any";
+		enabled = false;
+		locked = false;
+		expired = false;
+	}
 }

@@ -65,7 +65,7 @@
                                 </thead>
                                 <tbody>
                                 <tr th:each="event, eventStats : ${selectedTeam.events}">
-                                    <td style="padding: 6px;" th:id="${'event-time-' + eventStats.index}" th:text="${event.eventTime.value}" th:class="${event.eventTime.displayType.getClassString()}" th:onclick="'sendRcTimestamp(' + ${event.sessionTime.toMillis()} + ', ' + ${event.teamId} + ');'">1:04:11</td>
+                                    <td style="padding: 6px;" th:id="${'event-time-' + eventStats.index}" th:text="${event.eventTime.value}" th:class="${event.eventTime.displayType.getClassString()}" th:onclick="'sendRcTimestamp(' + ${event.sessionTime.toMillis()} + ', ' + ${event.teamId} + ', ' + ${user.iRacingId} + ');'">1:04:11</td>
                                     <td style="padding: 6px;" th:id="${'event-type-' + eventStats.index}" th:text="${event.eventType.value}" th:class="${event.eventType.displayType.getClassString()}">OFFTRACK</td>
                                     <td style="padding: 6px;" th:id="${'event-lap-' + eventStats.index}" th:text="${event.lap.value}" th:class="${event.lap.displayType.getClassString()}"></td>
                                     <td style="padding: 6px;" th:id="${'event-drivername-' + eventStats.index}" th:text="${event.driverName.value}" th:class="${event.driverName.displayType.getClassString()}">Robert Bausdorf</td>

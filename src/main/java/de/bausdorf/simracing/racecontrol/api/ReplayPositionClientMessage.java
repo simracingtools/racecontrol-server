@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.security;
+package de.bausdorf.simracing.racecontrol.api;
 
 /*-
  * #%L
@@ -22,15 +22,18 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
-import java.util.List;
-import java.util.Optional;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import org.springframework.data.repository.CrudRepository;
-
-public interface RcUserRepository extends CrudRepository<RcUser, String> {
-
-	Optional<RcUser> findByEmail(String email);
-
-	List<RcUser> findByNameContainingAndEmailContainingAndUserTypeContaining(String name, String email, RcUserType userType);
-	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Data
+public class ReplayPositionClientMessage {
+	private String messageType;
+	private long timestamp;
+	private long driverId;
+	private long userId;
 }

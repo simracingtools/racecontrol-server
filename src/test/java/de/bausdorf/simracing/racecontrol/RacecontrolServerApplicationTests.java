@@ -38,21 +38,21 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import lombok.extern.slf4j.Slf4j;
 
-@RunWith(SpringRunner.class)
+//@RunWith(SpringRunner.class)
 @SpringBootTest
-@Testcontainers
-@ActiveProfiles("test")
+//@Testcontainers
+//@ActiveProfiles("test")
 @Slf4j
 class RacecontrolServerApplicationTests {
-	@Container
-	public static MariaDBContainer database = new MariaDBContainer();
-
-	@DynamicPropertySource
-	static void databaseProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", database::getJdbcUrl);
-		registry.add("spring.datasource.username", database::getUsername);
-		registry.add("spring.datasource.password", database::getPassword);
-	}
+//	@Container
+//	public static MariaDBContainer database = new MariaDBContainer();
+//
+//	@DynamicPropertySource
+//	static void databaseProperties(DynamicPropertyRegistry registry) {
+//		registry.add("spring.datasource.url", database::getJdbcUrl);
+//		registry.add("spring.datasource.username", database::getUsername);
+//		registry.add("spring.datasource.password", database::getPassword);
+//	}
 
 	@Test
 	void contextLoads() {

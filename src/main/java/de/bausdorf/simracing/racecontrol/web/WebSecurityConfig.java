@@ -22,38 +22,48 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
 @EnableOAuth2Client
 @EnableGlobalMethodSecurity(securedEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@Slf4j
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements AccessDeniedHandler {
 
 	public static final String ROLE_PREFIX = "ROLE_";
 
@@ -95,19 +105,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 				.userInfoEndpoint()
 					.userAuthoritiesMapper(this.userAuthoritiesMapper())
-					.oidcUserService(userService);
-//				.and()
-//			.and()
-//			.exceptionHandling().accessDeniedHandler(accessDeniedHandler());
+					.oidcUserService(userService)
+				.and()
+			.and()
+			.exceptionHandling().accessDeniedHandler(this);
 
 
 	}
 
-//	@Bean
-//	public AccessDeniedHandler accessDeniedHandler() {
-//		return new TtAccessDeniedHandler();
-//	}
-//
 	private GrantedAuthoritiesMapper userAuthoritiesMapper() {
 		return authorities -> {
 			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
@@ -139,21 +144,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			if (!rcUser.isEnabled()) {
 				authorities.clear();
 				authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + RcUserType.NEW.name()));
-				rcUser.setUserType(Collections.singletonList(RcUserType.NEW));
+				rcUser.setUserType(RcUserType.NEW);
 			}
-			rcUser.getUserType().forEach(
-					s -> authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + s.name()))
-			);
+			authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + rcUser.getUserType().name()));
 		}
 		return authorities;
 	}
 
-//	public static void updateCurrentUserRole(TtUserType newRole) {
-//		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//
-//		List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
-//		updatedAuthorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + newRole.name()));
-//		Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
-//		SecurityContextHolder.getContext().setAuthentication(newAuth);
-//	}
+	@Override
+	public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e)
+			throws IOException {
+
+		Authentication auth
+				= SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			log.warn("User: {}({}) attempted to access the protected URL: {}",
+					auth.getName(), auth.getAuthorities(), request.getRequestURI());
+		}
+
+		response.sendRedirect(request.getContextPath() + "/index?error=Access%20denied%20to%20" + request.getRequestURI());
+	}
+
+	public static void updateCurrentUserRole(RcUserType newRole) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		List<GrantedAuthority> updatedAuthorities = new ArrayList<>(auth.getAuthorities());
+		updatedAuthorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + newRole.name()));
+		Authentication newAuth = new UsernamePasswordAuthenticationToken(auth.getPrincipal(), auth.getCredentials(), updatedAuthorities);
+		SecurityContextHolder.getContext().setAuthentication(newAuth);
+	}
 }

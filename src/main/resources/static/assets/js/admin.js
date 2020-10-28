@@ -1,5 +1,3 @@
-package de.bausdorf.simracing.racecontrol.web.security;
-
 /*-
  * #%L
  * racecontrol-server
@@ -22,15 +20,16 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
-import java.util.List;
-import java.util.Optional;
+function saveUser(index) {
+  var url = '/savesiteuser?userId=' + $("#userId-" + index).val()
+      + '&role=' + $("#role-" + index).val()
+      + '&enabled=' + $("#enabled-" + index).prop('checked')
+      + '&locked=' + $("#locked-" + index).prop('checked')
+      + '&expired=' + $("#expired-" + index).prop('checked');
 
-import org.springframework.data.repository.CrudRepository;
+  window.location = url;
+}
 
-public interface RcUserRepository extends CrudRepository<RcUser, String> {
-
-	Optional<RcUser> findByEmail(String email);
-
-	List<RcUser> findByNameContainingAndEmailContainingAndUserTypeContaining(String name, String email, RcUserType userType);
-	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
+function confirmUserRemove(index) {
+  $("#user-remove-confirm-" + index).modal('show');
 }

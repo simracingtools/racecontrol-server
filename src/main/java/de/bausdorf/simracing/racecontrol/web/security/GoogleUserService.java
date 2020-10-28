@@ -23,10 +23,8 @@ package de.bausdorf.simracing.racecontrol.web.security;
  */
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +39,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class GoogleUserService extends OidcUserService implements UserDetailsService {
 
     private final RcUserRepository userRepository;
-    private static final Set<RcUserType> NEW_USER_ROLE = new HashSet<>();
 
     public GoogleUserService(@Autowired RcUserRepository userRepository) {
         this.userRepository = userRepository;
@@ -50,9 +47,6 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
     @Override
     @Transactional
     public OidcUser loadUser(OidcUserRequest userRequest) {
-        if(NEW_USER_ROLE.isEmpty()) {
-            NEW_USER_ROLE.add(RcUserType.NEW);
-        }
         OidcUser oidcUser = super.loadUser(userRequest);
         Map<String, Object> attributes = oidcUser.getAttributes();
         String userId = (String) attributes.get("sub");
@@ -63,14 +57,14 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
                     .oauthId(userId)
                     .imageUrl((String) attributes.get("picture"))
                     .name((String) attributes.get("name"))
-                    .userType(NEW_USER_ROLE)
+                    .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : RcUserType.NEW)
                     .created(ZonedDateTime.now())
                     .subscriptionType(SubscriptionType.NONE)
                     .lastSubscription(ZonedDateTime.now())
                     .lastAccess(ZonedDateTime.now())
                     .locked(false)
                     .expired(false)
-                    .enabled(false)
+                    .enabled(true)
                     .build()
             );
         }

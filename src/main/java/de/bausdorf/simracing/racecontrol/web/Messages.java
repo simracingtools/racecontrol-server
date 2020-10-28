@@ -1,8 +1,8 @@
-package de.bausdorf.simracing.racecontrol.web.security;
+package de.bausdorf.simracing.racecontrol.web;
 
 /*-
  * #%L
- * racecontrol-server
+ * tt-cloud-server
  * %%
  * Copyright (C) 2020 bausdorf engineering
  * %%
@@ -22,15 +22,27 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
-import org.springframework.data.repository.CrudRepository;
+public class Messages extends ArrayList<Message> {
 
-public interface RcUserRepository extends CrudRepository<RcUser, String> {
+    public List<Message> errors() {
+        return this.stream()
+                .filter(s -> s.getType().equalsIgnoreCase(Message.ERROR))
+                .collect(Collectors.toList());
+    }
 
-	Optional<RcUser> findByEmail(String email);
+    public List<Message> warnings() {
+        return this.stream()
+                .filter(s -> s.getType().equalsIgnoreCase(Message.WARN))
+                .collect(Collectors.toList());
+    }
 
-	List<RcUser> findByNameContainingAndEmailContainingAndUserTypeContaining(String name, String email, RcUserType userType);
-	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
+    public List<Message> infos() {
+        return this.stream()
+                .filter(s -> s.getType().equalsIgnoreCase(Message.INFO))
+                .collect(Collectors.toList());
+    }
 }
