@@ -50,7 +50,7 @@ public class EventLogger {
 						driver.getDriverId(),
 						eventMessage.getEventType().name());
 		if(existingEvent.isPresent()) {
-			log.warn("Event {} for session {} already exisits", driver.getSessionId(), eventMessage.getEventNo());
+			log.warn("Event {} for session {} already exisits", eventMessage.getEventNo(), driver.getSessionId());
 			return false;
 		}
 		eventRepository.save(Event.builder()
