@@ -179,6 +179,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	private void sendPageReload(String sessionId, String message) {
+		log.debug("send {} to {}", message, "/timing/" + sessionId + "/reload");
 		messagingTemplate.convertAndSend("/timing/" + sessionId + "/reload", message);
 	}
 

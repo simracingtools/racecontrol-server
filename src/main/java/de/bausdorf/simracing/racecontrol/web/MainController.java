@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -151,6 +152,7 @@ public class MainController extends ControllerBase {
 			Optional<RcUser> currentUser = userRepository.findById(userId.get());
 			model.addAttribute("user", new UserProfileView(currentUser.orElse(RcUser.builder()
 					.name("Unknown")
+					.created(ZonedDateTime.now())
 					.userType(RcUserType.NEW)
 					.build())));
 		}
