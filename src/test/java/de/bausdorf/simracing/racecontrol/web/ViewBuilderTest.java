@@ -39,7 +39,7 @@ import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 
 @SpringBootTest
 //@Testcontainers
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 class ViewBuilderTest {
 //	@Container
 //	public static MariaDBContainer database = new MariaDBContainer();

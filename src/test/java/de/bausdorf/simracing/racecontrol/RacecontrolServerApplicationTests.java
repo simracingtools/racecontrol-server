@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 //@RunWith(SpringRunner.class)
 @SpringBootTest
 //@Testcontainers
-//@ActiveProfiles("test")
+@ActiveProfiles("test")
 @Slf4j
 class RacecontrolServerApplicationTests {
 //	@Container
