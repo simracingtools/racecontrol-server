@@ -53,7 +53,7 @@
                     <td style="padding: 6px;" th:text="${tracktime.stopTime.value}" th:class="${tracktime.stopTime.displayType.getClassString()}">00:23:21</td>
                     <td style="padding: 6px;" th:text="${tracktime.duration.value}" th:class="${tracktime.duration.displayType.getClassString()}">00:23:21</td>
                     <td th:if="${stintStats.index == 0 && ttStats.index == 0}" th:rowspan="${selectedTeam.getStintCount()}" style="padding-top: 0;padding-right: 6px;padding-bottom: 0;padding-left: 6px;">
-                        <div class="table-responsive" th:style="${'width: 100%; ovewrflow-y: auto; height: ' + (selectedTeam.getStintCount() * 34) + 'px;'}">
+                        <div th:fragment="eventTable" class="table-responsive" th:style="${'width: 100%; ovewrflow-y: auto; height: ' + (selectedTeam.getStintCount() * 34) + 'px;'}">
                             <table class="table">
                                 <thead>
                                 <tr>
@@ -64,11 +64,12 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:each="event : ${selectedTeam.events}">
-                                    <td style="padding: 6px;" th:text="${event.eventTime.value}" th:class="${event.eventTime.displayType.getClassString()}">1:04:11</td>
-                                    <td style="padding: 6px;"  th:text="${event.eventType.value}" th:class="${event.eventType.displayType.getClassString()}">OFFTRACK</td>
-                                    <td style="padding: 6px;" th:text="${event.lap.value}" th:class="${event.lap.displayType.getClassString()}"></td>
-                                    <td style="padding: 6px;"  th:text="${event.driverName.value}" th:class="${event.driverName.displayType.getClassString()}">Robert Bausdorf</td>
+                                <tr th:each="event, eventStats : ${selectedTeam.events}">
+                                    <td style="padding: 6px;" th:id="${'event-time-' + eventStats.index}" th:text="${event.eventTime.value}" th:class="${event.eventTime.displayType.getClassString()}" th:onclick="'sendRcTimestamp(' + ${event.sessionTime.toMillis()} + ', ' + ${event.teamId} + ', ' + ${user.iRacingId} + ');'">1:04:11</td>
+                                    <td style="padding: 6px;" th:id="${'event-type-' + eventStats.index}" th:text="${event.eventType.value}" th:class="${event.eventType.displayType.getClassString()}">OFFTRACK</td>
+                                    <td style="padding: 6px;" th:id="${'event-lap-' + eventStats.index}" th:text="${event.lap.value}" th:class="${event.lap.displayType.getClassString()}"></td>
+                                    <td style="padding: 6px;" th:id="${'event-drivername-' + eventStats.index}" th:text="${event.driverName.value}" th:class="${event.driverName.displayType.getClassString()}">Robert Bausdorf</td>
+                                    <td style="padding: 6px;" th:id="${'event-driverid-' + eventStats.index}" th:text="${event.driverId}">123456</td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -80,6 +81,9 @@
                     <td style="padding: 6px;" th:text="${stint.startTime.value}" th:class="${stint.startTime.displayType.getClassString()}">00:00:00</td>
                     <td style="padding: 6px;" th:text="${stint.stopTime.value}" th:class="${stint.stopTime.displayType.getClassString()}">&nbsp</td>
                     <td style="padding: 6px;" th:text="${stint.duration.value}" th:class="${stint.duration.displayType.getClassString()}">00:23:21</td>
+                    <td th:if="${stint.getTrackTimes().isEmpty() && stintStats.index == 0}" th:rowspan="${selectedTeam.getStintCount()}" style="padding-top: 0;padding-right: 6px;padding-bottom: 0;padding-left: 6px;">
+                        <div th:insert="teamtable.html :: eventTable"></div>
+                    </td>
                 </tr>
             </div>
             </tbody>
@@ -87,6 +91,14 @@
     </div>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="assets/js/timetable-client.js"></script>
+    <script>
+        window.onload = function afterPageReload() {
+            connect();
+        }
+    </script>
 </body>
 
 </html>

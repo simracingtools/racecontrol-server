@@ -38,18 +38,18 @@ import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 
 @SpringBootTest
-@Testcontainers
+//@Testcontainers
 @ActiveProfiles("test")
 class ViewBuilderTest {
-	@Container
-	public static MariaDBContainer database = new MariaDBContainer();
-
-	@DynamicPropertySource
-	static void databaseProperties(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", database::getJdbcUrl);
-		registry.add("spring.datasource.username", database::getUsername);
-		registry.add("spring.datasource.password", database::getPassword);
-	}
+//	@Container
+//	public static MariaDBContainer database = new MariaDBContainer();
+//
+//	@DynamicPropertySource
+//	static void databaseProperties(DynamicPropertyRegistry registry) {
+//		registry.add("spring.datasource.url", database::getJdbcUrl);
+//		registry.add("spring.datasource.username", database::getUsername);
+//		registry.add("spring.datasource.password", database::getPassword);
+//	}
 
 	@Autowired
 	ViewBuilder viewBuilder;

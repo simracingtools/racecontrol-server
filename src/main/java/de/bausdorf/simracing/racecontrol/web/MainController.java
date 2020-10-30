@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,11 +44,14 @@ import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
+import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @Slf4j
-public class MainController {
+public class MainController extends ControllerBase {
 	public static final String INDEX_VIEW = "index";
 	public static final String SESSION_VIEW = "timetable";
 	public static final String TEAM_VIEW = "teamtable";
@@ -63,12 +67,18 @@ public class MainController {
 		this.teamRepository = teamRepository;
 		this.changeRepository = changeRepository;
 		this.viewBuilder = viewBuilder;
+		this.activeNav = "sessionSelect";
 	}
 
 	@GetMapping({"/", "/index", "index.html"})
-	public String index(Model model) {
+	public String index(@RequestParam Optional<String> error, @RequestParam Optional<String> userId, Model model) {
+		if(error.isPresent()) {
+			addError(error.get(), model);
+		}
+		currentUserProfile(userId, model);
 		List<SessionOptionView> sessionOptions = new ArrayList<>();
 		SessionSelectView selectView = SessionSelectView.builder()
+				.userId(userId.orElse(""))
 				.selectedSessionId("")
 				.sessions(sessionOptions)
 				.build();
@@ -86,9 +96,12 @@ public class MainController {
 
 	@PostMapping({"/session"})
 	public String session(SessionSelectView selectView) {
-
 		try {
-			return "redirect:session?sessionId=" + URLEncoder.encode(selectView.getSelectedSessionId(), "UTF-8");
+			String redirectUri = "redirect:session?";
+			if(!selectView.getUserId().isEmpty()) {
+				redirectUri += "userId=" + selectView.getUserId() + "&";
+			}
+			return redirectUri + "sessionId=" + URLEncoder.encode(selectView.getSelectedSessionId(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -96,21 +109,22 @@ public class MainController {
 	}
 
 	@GetMapping({"/session"})
-	public String session(@RequestParam String sessionId, Model model) {
-
+	public String session(@RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
+		currentUserProfile(userId, model);
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		if(selectedSession.isPresent()) {
 			model.addAttribute("viewMode", "times");
 			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
 		} else {
-			return "redirect:index";
+			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
 		}
 		return SESSION_VIEW;
 	}
 
 	@GetMapping("/team")
-	public String team(@RequestParam long teamId, @RequestParam String sessionId, Model model) {
+	public String team(@RequestParam long teamId, @RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
+		currentUserProfile(userId, model);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId);
 		if(selectedSession.isPresent() && team.isPresent()) {
@@ -121,11 +135,26 @@ public class MainController {
 			model.addAttribute("selectedTeam", teamView);
 		} else {
 			try {
-				return "redirect:session?sessionId=" + URLEncoder.encode(sessionId, "UTF-8");
+				String redirectUri = "redirect:session?";
+				if(userId.isPresent()) {
+					redirectUri += "userId=" + userId.get() + "&";
+				}
+				return redirectUri + "sessionId=" + URLEncoder.encode(sessionId, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				log.error(e.getMessage(), e);
 			}
 		}
 		return TEAM_VIEW;
+	}
+
+	private void currentUserProfile(Optional<String> userId, Model model) {
+		if(userId.isPresent()) {
+			Optional<RcUser> currentUser = userRepository.findById(userId.get());
+			model.addAttribute("user", new UserProfileView(currentUser.orElse(RcUser.builder()
+					.name("Unknown")
+					.created(ZonedDateTime.now())
+					.userType(RcUserType.NEW)
+					.build())));
+		}
 	}
 }

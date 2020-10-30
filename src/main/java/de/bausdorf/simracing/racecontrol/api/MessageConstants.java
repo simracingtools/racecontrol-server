@@ -41,6 +41,7 @@ public class MessageConstants {
 		public static final String TEAM_ID = "teamId";
 		public static final String CLIENT_ID = "clientId";
 		public static final String PAYLOAD = "payload";
+		public static final String SESSION_LAP = "lap";
 
 		private Message() {}
 	}
@@ -52,9 +53,14 @@ public class MessageConstants {
 		public static final String I_RATING = "IRating";
 		public static final String TEAM_NAME = "TeamName";
 		public static final String CAR_NUMBER = "CarNumber";
-		public static final String LAP = "Lap";
+		public static final String LAP = "CarLap";
 		public static final String EVENT_TYPE = "Type";
 		public static final String EVENT_NO = "IncNo";
+		public static final String CAR_NAME = "CarName";
+		public static final String CAR_CLASS = "CarClass";
+		public static final String CAR_CLASS_ID = "CarClassId";
+		public static final String CAR_CLASS_COLOR = "CarClassColor";
+		public static final String LAP_PCT = "LapPct";
 
 		private EventData() {}
 	}

@@ -21,7 +21,7 @@
   #L%
   -->
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -33,45 +33,49 @@
 </head>
 
 <body>
-<div th:fragment="header">
-    <table class="table">
-        <tbody>
-        <input id="sessionId" type="hidden" th:value="${sessionView.sessionId}"/>
-        <tr>
-            <td rowspan="2" style="width: 80px;">
-                <a href="/">
-                    <img src="assets/img/be-logoV2.png" width="80" />
-                </a>
-            </td>
-            <td style="width: 150Px;">
-                <h4>RaceControl</h4>
-            </td>
-            <td>
-                <a th:if="${viewMode.equalsIgnoreCase('team')}" th:href="@{/session(sessionId=${sessionView.sessionId})}">
-                    <h6>Driving times</h6>
-                </a>
-                <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
-            </td>
-            <td>
-                <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"></h5>
-            </td>
-            <td class="text-right">Avg. iRating:</td>
-            <td>
-                <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.avgTeamRating.value}" th:class="${selectedTeam.avgTeamRating.displayType.getClassString()}"></span>
-            </td>
-            <td>&nbsp;</td>
-        </tr>
-        <tr>
-            <td class="text-right">Track:</td>
-            <td id="trackName" th:class="${sessionView.trackName.displayType.getClassString()}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
-            <td id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
-            <td id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
-            <td class="text-right">Session state:</td>
-            <td id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
-        </tr>
-        </tbody>
-    </table>
-</div>
+    <div th:fragment="header">
+        <table class="table">
+            <tbody>
+            <input id="sessionId" type="hidden" th:value="${sessionView.sessionId}"/>
+            <tr>
+                <td rowspan="2" style="width: 80px;">
+                    <a th:href="@{/index(userId=${user.id})}">
+                        <img src="assets/img/be-logoV2.png" width="80" />
+                    </a>
+                </td>
+                <td style="width: 150Px;">
+                    <h4>RaceControl</h4>
+                </td>
+                <td>
+                    <a th:if="${viewMode.equalsIgnoreCase('team')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
+                        <h6>Driving times</h6>
+                    </a>
+                    <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
+                </td>
+                <td>
+                    <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor}"></h5>
+                </td>
+                <td>
+                    <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.carName}"></span>
+                </td>
+                <td class="text-right">
+                    <span th:if="${viewMode.equalsIgnoreCase('team')}">Avg. iRating:</span>
+                </td>
+                <td>
+                    <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.avgTeamRating.value}"></span>
+                </td>
+            </tr>
+            <tr>
+                <td class="text-right">Track:</td>
+                <td id="trackName" th:class="${sessionView.trackName.displayType.getClassString() + ' text-nowrap'}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
+                <td id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
+                <td id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
+                <td class="text-right">Session state:</td>
+                <td id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 <!--    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">-->
         <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
             <thead>
@@ -86,33 +90,35 @@
             <tbody>
                 <div th:each="teamData : ${sessionView.teams}">
                     <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
-                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}">
-                            <a th:href="@{/team(teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}">FBP Racing Blue</a>
+                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
+                            <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                         </td>
-                        <td th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}">99</td>
-                        <td th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}"></td>
-                        <td colspan="17"></td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
+                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
+<!--                        <td colspan="16"></td>-->
                     </tr>
                     <div th:each="driver : ${teamData.drivers}">
                         <tr th:id="${'driver-' + driver.getIRacingId()}">
                             <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
                             <td></td>
-                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString()}" th:text="${driver.name.value}">Robert Bausdorf</td>
+                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString() + ' text-nowrap'}" th:text="${driver.name.value}">Robert Bausdorf</td>
                             <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
                             <div th:each="stint, stintStat : ${driver.stints}">
                                 <td style="padding: 0 0 0 10px;">
                                     <table style="margin-bottom: 0;" class="table">
                                         <tbody>
                                         <tr>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}">0:00:00<br></td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}">1:03:23<br></td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
+                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
                                             <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
                                         </tr>
                                         </tbody>
                                     </table>
                                 </td>
                             </div>
-                        </div>
+                        </tr>
                     </div>
                 </div>
             </tbody>

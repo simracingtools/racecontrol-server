@@ -34,8 +34,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		config.enableSimpleBroker("/timing");
-		config.enableSimpleBroker("/rc");
+		config.enableSimpleBroker("/timing", "/rc");
 		config.setApplicationDestinationPrefixes("/app");
 	}
 

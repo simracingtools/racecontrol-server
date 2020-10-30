@@ -47,19 +47,21 @@ public class Driver extends BaseEntity {
 	@OneToMany(mappedBy = "driver", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<Stint> stints;
 	private EventType lastEventType;
+	private double lastLapPosition;
 
 	public Driver() {
 		this.stints = new ArrayList<>();
 	}
 
 	@Builder
-	public Driver(String sessionId, long driverId, String name, long iRating, Team team, EventType lastEventType, List<Stint> stints) {
+	public Driver(String sessionId, long driverId, String name, long iRating, Team team, EventType lastEventType, double lastLapPosition, List<Stint> stints) {
 		super(sessionId, driverId);
 		this.name = name;
 		this.iRating = iRating;
 		this.team = team;
 		this.stints = stints;
 		this.lastEventType = lastEventType;
+		this.lastLapPosition = lastLapPosition;
 	}
 
 	public long getDriverId() {

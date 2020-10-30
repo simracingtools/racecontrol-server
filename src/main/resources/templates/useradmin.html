@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<!--
+  #%L
+  tt-cloud-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head">></head>
+<body>
+<!-- Start: Team content -->
+  <div class="container" style="width: 80%;background-color: rgb(255,255,255);">
+    <header th:replace="index :: header"></header>
+    <div th:replace="index :: messages"></div>
+    <div th:replace="index :: menu"></div>
+
+    <form method="post" th:object="${searchView}" th:action="@{/usersearch}">
+      <div class="form-row">
+        <div class="col">
+          <form>
+            <div class="form-group"><label>Name contains</label><input th:field="*{userName}" class="form-control" type="text"></div>
+          </form>
+        </div>
+        <div class="col">
+          <div class="form-group"><label>Email contains</label><input th:field="*{email}" class="form-control" type="text"></div>
+        </div>
+        <div class="col"><label>Role</label>
+          <select th:field="*{userRole}" class="form-control">
+            <option value="*" selected="">any</option>
+            <option th:each="userType : ${userTypes}" th:text="${userType.toText()}" th:value="${userType.name()}"></option>
+          </select>
+        </div>
+        <div
+            class="col">
+          <div class="form-group" style="margin-bottom: 0;margin-top: 5px;">
+            <div class="form-check text-left"><input th:field="*{enabled}" class="form-check-input" type="checkbox" id="formCheck-2"><label class="form-check-label" for="formCheck-2">Disabled</label></div>
+          </div>
+          <div class="clearfix"></div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <div class="form-check text-left"><input th:field="*{locked}" class="form-check-input" type="checkbox" id="formCheck-1"><label class="form-check-label" for="formCheck-1">Locked</label></div>
+          </div>
+          <div class="clearfix"></div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <div class="form-check text-left"><input th:field="*{expired}" class="form-check-input" type="checkbox" id="formCheck-3"><label class="form-check-label" for="formCheck-3">Expired</label></div>
+          </div>
+        </div>
+        <div class="col align-self-center"><button class="btn btn-primary btn-block" type="submit">Search</button></div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+            <tr>
+              <th>iRacing Id</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>States</th>
+              <th></th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody th:if="${!userList.isEmpty()}" >
+            <tr th:each="u, userStat : ${userList}">
+              <input type="hidden" th:id="${'userId-' + userStat.index}" th:value="${u.oauthId}"/>
+              <td th:text="${u.iRacingId}">9812640572138965</td>
+              <td th:text="${u.name}">Robert Bausdorf</td>
+              <td th:text="${u.email}">luke@skywalker.com</td>
+              <td>
+                <select th:id="${'role-' + userStat.index}" th:value="${u.userType}" class="custom-select">
+                  <option th:each="userType : ${userTypes}" th:value="${userType}" th:text="${userType.toText()}" th:selected="${userType == u.userType}"></option>
+                </select>
+              </td>
+              <td class="text-left">
+                <div class="form-check"><input th:id="${'enabled-' + userStat.index}" th:checked="${u.enabled}" class="form-check-input" type="checkbox"><label class="form-check-label">Enabled</label></div>
+                <div class="form-check"><input th:id="${'locked-' + userStat.index}" th:checked="${u.locked}" class="form-check-input" type="checkbox"><label class="form-check-label">Locked</label></div>
+                <div class="form-check"><input th:id="${'expired-' + userStat.index}" th:checked="${u.expired}" class="form-check-input" type="checkbox"><label class="form-check-label">Expired</label></div>
+              </td>
+              <td>
+                <button class="btn btn-primary" type="button" th:onclick="'saveUser(' + ${userStat.index} + ')'">
+                  <i class="far fa-save" style="font-size: 20px;"></i>
+                </button>
+              </td>
+              <td>
+                <button class="btn btn-primary" type="button" th:onclick="'confirmUserRemove(' + ${userStat.index} + ')'">
+                  <i class="far fa-trash-alt" style="font-size: 20px;"></i>
+                </button>
+                <div th:id="'user-remove-confirm-' + ${userStat.index}" class="modal fade" role="dialog" tabindex="-1">
+                  <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h4 class="modal-title">Confirm remove</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">×</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        <p th:text="'Do you really want to delete user ' + ${u.name} + ' ?'">Do you really want to remove site user ?</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a th:href="@{/deletesiteuser(userId=${u.oauthId})}">
+                          <button class="btn btn-primary" type="button">Remove</button>
+                        </a>
+                        <button class="btn btn-light" type="button" data-dismiss="modal">Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div th:insert="index :: footer"></div>
+  </div>
+<!-- End: Team content -->
+
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+
+</body>
+</html>

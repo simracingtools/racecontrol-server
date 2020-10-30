@@ -32,9 +32,12 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class TeamDetailView {
-	private String teamId;
+	private long teamId;
 	private TableCellView name;
 	private TableCellView carNo;
+	private String carName;
+	private String carClass;
+	private String carClassColor;
 	private TableCellView avgTeamRating;
 	private List<StintView> stints;
 	private List<EventView> events;

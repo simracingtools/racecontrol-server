@@ -44,16 +44,24 @@ public class EventLogger {
 	}
 
 	public boolean log(EventMessage eventMessage, Driver driver) {
-		Optional<Event> existingEvent = eventRepository.findBySessionIdAndEventNo(driver.getSessionId(), eventMessage.getEventNo());
+		Optional<Event> existingEvent = eventRepository.findBySessionIdAndSessionTimeAndDriverIdAndEventType(
+						driver.getSessionId(),
+						eventMessage.getSessionTime(),
+						driver.getDriverId(),
+						eventMessage.getEventType().name());
 		if(existingEvent.isPresent()) {
-			log.warn("Event {} for session {} already exisits", driver.getSessionId(), eventMessage.getEventNo());
+			log.warn("Event {} for session {} already exisits", eventMessage.getEventNo(), driver.getSessionId());
 			return false;
 		}
 		eventRepository.save(Event.builder()
 				.sessionId(driver.getSessionId())
 				.eventNo(eventMessage.getEventNo())
 				.carNo(eventMessage.getCarNo())
+				.carName(eventMessage.getCarName())
+				.carClass(eventMessage.getCarClass())
+				.carClassColor(eventMessage.getCarClassColor())
 				.lap(eventMessage.getLap())
+				.lapPct(eventMessage.getLapPct())
 				.driverName(eventMessage.getDriverName())
 				.teamName(eventMessage.getTeamName())
 				.sessionTime(eventMessage.getSessionTime())

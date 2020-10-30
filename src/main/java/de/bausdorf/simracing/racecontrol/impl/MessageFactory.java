@@ -55,6 +55,11 @@ public class MessageFactory {
 				.lap(MapTools.intFromMap(EventData.LAP, data))
 				.sessionTime(TimeTools.getFromIracingDuration(MapTools.doubleFromMap(EventData.SESSION_TIME, data)))
 				.teamName(MapTools.stringFromMap(EventData.TEAM_NAME, data))
+				.carName(MapTools.stringFromMap(EventData.CAR_NAME, data))
+				.carClass(MapTools.stringFromMap(EventData.CAR_CLASS, data))
+				.carClassId(MapTools.intFromMap(EventData.CAR_CLASS_ID, data))
+				.carClassColor(MapTools.hexStringFromLong(EventData.CAR_CLASS_COLOR, data))
+				.lapPct(MapTools.doubleFromMap(EventData.LAP_PCT, data))
 				.build();
 	}
 

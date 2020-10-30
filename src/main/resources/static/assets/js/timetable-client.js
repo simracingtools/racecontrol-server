@@ -53,18 +53,13 @@ function sendConnectAck() {
   stompClient.send("/app/timingclient", {}, JSON.stringify({'sessionId': $("#sessionId").val(), 'text': 'Hello'}));
 }
 
+function sendRcTimestamp(millis, driverId, userId) {
+  stompClient.send("/app/rctimestamp", {}, JSON.stringify({'messageType': 'replayTime', 'timestamp': millis, 'driverId': driverId, 'userId': userId}));
+}
+
 function reloadPage() {
+  console.log("reload page")
   window.location.reload();
-}
-
-function sendDriverChange(driverSelect) {
-  var message = JSON.stringify({'planId': $("#selectedPlanId").val(), 'selectId': driverSelect.id, 'driverName': driverSelect.value});
-  stompClient.send("/app/driverplanchange", {}, message);
-}
-
-function sendServiceChange(serviceCheck) {
-  var message = JSON.stringify({'planId': $("#selectedPlanId").val(), 'checkId': serviceCheck.id, 'checked': serviceCheck.checked});
-  stompClient.send("/app/serviceplanchange", {}, message);
 }
 
 function showDriverData(message) {
@@ -75,44 +70,7 @@ function showDriverData(message) {
       .attr("class", message.drivingTime.cssClassString)
       .text(message.drivingTime.value);
 }
-
-function showPitData(message) {
-  var rowsLeft = 50;
-  for (var i in message) {
-    $("#stintRow-" + i).removeClass("hidden");
-    // $("#pitStint-" + i).text(message[i].stintNo);
-    $("#stintDriverSelect-" + i).empty();
-    for (var k in message[i].availableDrivers) {
-      $("<option/>").val(message[i].availableDrivers[k].driverName)
-      .text(message[i].availableDrivers[k].driverName)
-      .addClass(message[i].availableDrivers[k].availableStyle)
-      .appendTo("#stintDriverSelect-" + i);
-    }
-    $("#stintDriverSelect-" + i).val(message[i].selectedDriver.driverName)
-    .prop('style', message[i].selectedDriver.colorStyle);
-    $("#stintStartTime-" + i).text(localTime(message[i].startLocal));
-    $("#stintStartToD-" + i).text(localTime(message[i].startToD));
-    $("#stintLaps-" + i).text(message[i].laps);
-    $("#stintDuration-" + i).text(message[i].duration);
-    $("#pitServiceTyres-" + i).prop('checked', message[i].changeTyres);
-    $("#pitServiceFuel-" + i).prop('checked', message[i].refuel);
-    $("#pitServiceWs-" + i).prop('checked', message[i].clearWindshield);
-    if (message[i].lastStint) {
-      $("#pitServiceTyres-" + i).prop('disabled', 'disabled');
-      $("#pitServiceFuel-" + i).prop('disabled', 'disabled');
-      $("#pitServiceWs-" + i).prop('disabled', 'disabled');
-    } else {
-      $("#pitServiceTyres-" + i).removeAttr('disabled');
-      $("#pitServiceFuel-" + i).removeAttr('disabled');
-      $("#pitServiceWs-" + i).removeAttr('disabled');
-    }
-    rowsLeft -= 1;
-  }
-  for (i = 50 - rowsLeft; i < 50; i++) {
-    $("#stintRow-" + i).addClass("hidden");
-  }
-
   // function localTime(zonedTime) {
   //   return moment(zonedTime, 'HH:mm:ssZZ').local().format('HH:mm:ss')
   // }
-}
+

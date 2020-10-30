@@ -115,7 +115,10 @@ public class ViewBuilder {
 						.value(String.valueOf(team.getCarNo()))
 						.displayType(CssClassType.DEFAULT)
 						.build())
-				.teamId(String.valueOf(team.getTeamId()))
+				.carName(team.getCarName())
+				.carClass(team.getCarClass())
+				.carClassColor(team.getCarClassColor())
+				.teamId(team.getTeamId())
 				.drivers(team.getDrivers().stream()
 						.map(this::buildDriverView)
 						.collect(Collectors.toList()))
@@ -147,6 +150,9 @@ public class ViewBuilder {
 		TeamDetailView detailView = TeamDetailView.builder()
 				.avgTeamRating(teamView.getAvgTeamRating())
 				.carNo(teamView.getCarNo())
+				.carName(teamView.getCarName())
+				.carClass(teamView.getCarClass())
+				.carClassColor(teamView.getCarClassColor())
 				.teamId(teamView.getTeamId())
 				.name(teamView.getName())
 				.build();
@@ -159,7 +165,7 @@ public class ViewBuilder {
 				.sorted(Comparator.comparing(StintView::getChangeTime))
 				.collect(Collectors.toList()));
 		detailView.setEvents(buildFromEventList(eventRepository
-				.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, Long.parseLong(teamView.getTeamId()))));
+				.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, teamView.getTeamId())));
 		return detailView;
 	}
 
@@ -229,6 +235,11 @@ public class ViewBuilder {
 
 		StintViewData currentStintView = null;
 		StintViewData lastStintView = null;
+		if(changes.isEmpty()) {
+			// No driver change yet or single driver
+			currentStintView = new StintViewData(Duration.ZERO, Duration.ofHours(25), Duration.ZERO,
+					true, false, new ArrayList<>());
+		}
 		for(DriverChange change : changes) {
 			if(currentStintView == null) {
 				if(change.getChangeToId() != driver.getIracingId()) {
@@ -319,19 +330,7 @@ public class ViewBuilder {
 		public void calculateTrackTime(Driver driver) {
 			List<Stint> stintsBetween = new ArrayList<>();
 			for(Stint s : driver.getStints()) {
-				if(s.getState() == StintStateType.UNDEFINED) {
-					log.warn("Undefined stint state for {}: {}", driver.getName(), s);
-					continue;
-				}
-				if(s.getStartTime() == null) {
-					log.warn("Null start time in stint for {}: {}", driver.getName(), s);
-					continue;
-				}
-				if(s.getEndTime() == null) {
-					log.debug("Unfinished stint for {}: {}", driver.getName(), s);
-					continue;
-				}
-				if(startTime == null || stopTime == null) {
+				if(startTime == null || stopTime == null || !validateStint(s, driver)) {
 					log.debug("Null times in StintView: {}, {}", startTime, stopTime);
 					continue;
 				}
@@ -374,6 +373,23 @@ public class ViewBuilder {
 
 		public void addTrackTime(Duration timeSlice) {
 			trackTime = trackTime.plus(timeSlice);
+		}
+
+		private boolean validateStint(Stint s, Driver driver) {
+			if(s.getState() == StintStateType.UNDEFINED) {
+				log.warn("Undefined stint state for {}: {}", driver.getName(), s);
+				return false;
+			}
+			if(s.getStartTime() == null) {
+				log.warn("Null start time in stint for {}: {}", driver.getName(), s);
+				return false;
+			}
+			if(s.getEndTime() == null) {
+				log.debug("Unfinished stint for {}: {}", driver.getName(), s);
+				return false;
+			}
+
+			return true;
 		}
 	}
 

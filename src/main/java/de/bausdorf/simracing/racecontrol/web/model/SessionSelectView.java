@@ -34,6 +34,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class SessionSelectView {
+	private String userId;
 	private String selectedSessionId;
 	List<SessionOptionView> sessions;
 }

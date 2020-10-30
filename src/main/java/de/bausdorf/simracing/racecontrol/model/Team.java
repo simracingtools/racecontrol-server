@@ -41,6 +41,10 @@ public class Team extends BaseEntity {
 	private String name;
 	private long currentDriverId;
 	String carNo;
+	String carName;
+	String carClass;
+	long carClassId;
+	String carClassColor;
 	@OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
 	private List<Driver> drivers;
 
@@ -49,12 +53,17 @@ public class Team extends BaseEntity {
 	}
 
 	@Builder
-	public Team(String sessionId, long teamId, String name, long currentDriverId, String carNo, List<Driver> drivers) {
+	public Team(String sessionId, long teamId, String name, long currentDriverId, String carNo,
+			String carName, String carClass, long carClassId, String carClassColor, List<Driver> drivers) {
 		super(sessionId, teamId);
 		this.name = name;
 		this.currentDriverId = currentDriverId;
 		this.carNo = carNo;
+		this.carName = carName;
+		this.carClass = carClass;
+		this.carClassId = carClassId;
 		this.drivers = drivers;
+		this.carClassColor = carClassColor;
 	}
 
 	public long getTeamId() {

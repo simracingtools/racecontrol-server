@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.impl;
  */
 
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,7 @@ import de.bausdorf.simracing.racecontrol.api.ClientMessageType;
 import de.bausdorf.simracing.racecontrol.api.EventMessage;
 import de.bausdorf.simracing.racecontrol.api.MessageProcessor;
 import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.api.ReplayPositionClientMessage;
 import de.bausdorf.simracing.racecontrol.api.SessionMessage;
 import de.bausdorf.simracing.racecontrol.api.SessionStateType;
 import de.bausdorf.simracing.racecontrol.api.StintStateType;
@@ -99,8 +101,8 @@ public class MessageProcessorImpl implements MessageProcessor {
 				case SESSION: createSession((SessionMessage)clientData, message.getSessionId()); break;
 				default: break;
 			}
-		} else {
-			updateSession(session.get(), message.getType() == ClientMessageType.SESSION ? (SessionMessage)clientData : null);
+		} else if(message.getType() == ClientMessageType.SESSION) {
+			processSessionMessage(session.get(), message.getLap(), (SessionMessage)clientData);
 		}
 		session = sessionRepository.findBySessionId(message.getSessionId());
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
@@ -112,24 +114,32 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
+	private void processSessionMessage(Session session, int lap, SessionMessage clientData) {
+		if(!updateSession(session, clientData)) {
+			log.warn("Session update for state {} for {} already exists",
+					SessionStateType.ofTypeCode(clientData.getSessionState()),
+					session.getSessionId());
+			return;
+		}
+		if(session.getSessionLaps() < lap) {
+			session.setSessionLaps(lap);
+			sessionRepository.save(session);
+		}
+	}
+
 	public void processEventMessage(Session session, long driverId, long teamId, EventMessage message) {
 		String sessionId = session.getSessionId();
 		Driver existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId).orElse(null);
 		if (existingDriver == null) {
-			if(driverId < 1) {
+			if (driverId < 1) {
 				log.warn("Invalid driver id {} for driver {}", driverId, message.getDriverName());
 			}
 			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
 		}
-		eventLogger.log(message, existingDriver);
-		if(session.getSessionState() == SessionStateType.RACING) {
-			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+		if (!eventLogger.log(message, existingDriver)) {
+			return;
 		}
-		if(message.getEventType() != existingDriver.getLastEventType()) {
-			existingDriver.setLastEventType(message.getEventType());
-			sendDriverMessage(existingDriver);
-		}
-		driverRepository.save(existingDriver);
+		updateDriver(session, existingDriver, message);
 
 		if(message.getEventType() == EventType.DRIVER_CHANGE
 				&& existingDriver.getTeam().getCurrentDriverId() != existingDriver.getIracingId()) {
@@ -154,14 +164,22 @@ public class MessageProcessorImpl implements MessageProcessor {
 		return new ClientAck(message.getSessionId());
 	}
 
+	@MessageMapping("/rctimestamp")
+	@SendToUser("/timingclient/client-ack")
+	public ClientAck respondTimestampMessage(ReplayPositionClientMessage message) {
+		messagingTemplate.convertAndSend("/rc/" + message.getUserId() + "/replayposition", message);
+		return new ClientAck("timestamp received");
+	}
+
 	@MessageMapping("/rcclient")
 	@SendToUser("/rc/client-ack")
 	public String respondRcAck(String message) {
 		log.info(message);
-		return "rc ack for user";
+		return "{\"messageType\":\"ack\", \"clientId\": \"" + message + "\"}";
 	}
 
 	private void sendPageReload(String sessionId, String message) {
+		log.debug("send {} to {}", message, "/timing/" + sessionId + "/reload");
 		messagingTemplate.convertAndSend("/timing/" + sessionId + "/reload", message);
 	}
 
@@ -219,6 +237,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.sessionDuration(Duration.ZERO)
 				.sessionId(message.getSessionId())
 				.lastUpdate(Duration.ZERO)
+				.created(ZonedDateTime.now())
 				.build());
 		log.debug("created session {}", message.getSessionId());
 	}
@@ -231,18 +250,20 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.sessionId(sessionId)
 				.sessionState(SessionStateType.ofTypeCode(message.getSessionState()))
 				.lastUpdate(message.getSessionTime())
+				.created(ZonedDateTime.now())
 				.build());
 		log.debug("created session {}", sessionId);
 	}
 
-	public void updateSession(Session session, SessionMessage message) {
-		if(message != null) {
+	public boolean updateSession(Session session, SessionMessage message) {
+		SessionStateType messageType = SessionStateType.ofTypeCode(message.getSessionState());
+		if(session.getSessionState().getTypeCode() < messageType.getTypeCode()) {
 			boolean doReload = message.getSessionState() != session.getSessionState().getTypeCode();
 			session.setLastUpdate(message.getSessionTime());
 			session.setSessionDuration(message.getSessionDuration());
 			session.setTrackName(message.getTrackName());
 			session.setSessionType(message.getSessionType());
-			session.setSessionState(SessionStateType.ofTypeCode(message.getSessionState()));
+			session.setSessionState(messageType);
 			sessionRepository.save(session);
 
 			if(session.getSessionState() == SessionStateType.RACING) {
@@ -253,6 +274,9 @@ public class MessageProcessorImpl implements MessageProcessor {
 			if(doReload) {
 				sendPageReload(session.getSessionId(), session.getSessionState().name());
 			}
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -263,12 +287,17 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.name(message.getDriverName())
 				.iRating(message.getIRating())
 				.lastEventType(message.getEventType())
+				.lastLapPosition(message.getLapPct())
 				.build();
 		Team team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId).orElse(Team.builder()
 				.sessionId(sessionId)
 				.teamId(teamId)
 				.name(message.getTeamName())
 				.carNo(message.getCarNo())
+				.carName(message.getCarName())
+				.carClass(message.getCarClass())
+				.carClassId(message.getCarClassId())
+				.carClassColor(message.getCarClassColor())
 				.currentDriverId(driverId)
 				.build());
 		driver.setTeam(team);
@@ -326,5 +355,19 @@ public class MessageProcessorImpl implements MessageProcessor {
 				}
 			}
 		}
+	}
+
+	private void updateDriver(Session session, Driver existingDriver, EventMessage message) {
+		if (session.getSessionState() == SessionStateType.RACING) {
+			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+		}
+		if (message.getEventType() != existingDriver.getLastEventType()) {
+			existingDriver.setLastEventType(message.getEventType());
+			sendDriverMessage(existingDriver);
+		}
+		if (message.getLapPct() != existingDriver.getLastLapPosition()) {
+			existingDriver.setLastLapPosition(message.getLapPct());
+		}
+		driverRepository.save(existingDriver);
 	}
 }

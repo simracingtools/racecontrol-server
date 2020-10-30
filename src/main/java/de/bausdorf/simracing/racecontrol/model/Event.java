@@ -53,5 +53,9 @@ public class Event {
 	private String driverName;
 	private long driverId;
 	private String carNo;
+	private String carName;
+	private String carClass;
+	private String carClassColor;
 	private long lap;
+	private double lapPct;
 }
