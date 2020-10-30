@@ -1,0 +1,13 @@
+After=syslog.target
+
+[Service]
+User=racecontrol
+WorkingDirectory=/opt/race-control
+EnvironmentFile=/opt/race-control/env
+StandardOutput=append:/var/log/racecontrol.log
+StandardError=append:/var/log/racecontrol.log
+ExecStart=/opt/race-control/racecontrol-server.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
