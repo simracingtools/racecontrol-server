@@ -343,7 +343,7 @@ public class ViewBuilder {
 					continue;
 				}
 				try {
-					if (s.getStartTime().compareTo(startTime) > 0 && s.getEndTime().compareTo(stopTime) < 0) {
+					if (s.getStartTime().compareTo(startTime) >= 0 && s.getEndTime().compareTo(stopTime) <= 0) {
 						stintsBetween.add(s);
 					}
 				} catch(Exception e) {
