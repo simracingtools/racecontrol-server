@@ -22,11 +22,14 @@ package de.bausdorf.simracing.racecontrol.model;
  * #L%
  */
 
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.repository.CrudRepository;
 
 public interface SessionRepository extends CrudRepository<Session, String> {
 
+	List<Session> findAllByCreatedBeforeOrderByCreatedDesc(ZonedDateTime allBefore);
 	Optional<Session> findBySessionId(String sessionId);
 }

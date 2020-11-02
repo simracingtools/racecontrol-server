@@ -47,10 +47,14 @@
                     <h4>RaceControl</h4>
                 </td>
                 <td>
-                    <a th:if="${viewMode.equalsIgnoreCase('team')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
                         <h6>Driving times</h6>
                     </a>
                     <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
+                        <h6>Track Events</h6>
+                    </a>
+                    <h6 th:if="${viewMode.equalsIgnoreCase('events')}">Track Events</h6>
                 </td>
                 <td>
                     <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor}"></h5>

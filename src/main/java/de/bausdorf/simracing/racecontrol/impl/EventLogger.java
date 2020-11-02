@@ -43,7 +43,7 @@ public class EventLogger {
 		this.eventRepository = eventRepository;
 	}
 
-	public boolean log(EventMessage eventMessage, Driver driver) {
+	public Event log(EventMessage eventMessage, Driver driver, int sessionLap) {
 		Optional<Event> existingEvent = eventRepository.findBySessionIdAndSessionTimeAndDriverIdAndEventType(
 						driver.getSessionId(),
 						eventMessage.getSessionTime(),
@@ -51,16 +51,16 @@ public class EventLogger {
 						eventMessage.getEventType().name());
 		if(existingEvent.isPresent()) {
 			log.warn("Event {} for session {} already exisits", eventMessage.getEventNo(), driver.getSessionId());
-			return false;
+			return null;
 		}
-		eventRepository.save(Event.builder()
+		Event event = Event.builder()
 				.sessionId(driver.getSessionId())
 				.eventNo(eventMessage.getEventNo())
 				.carNo(eventMessage.getCarNo())
 				.carName(eventMessage.getCarName())
 				.carClass(eventMessage.getCarClass())
 				.carClassColor(eventMessage.getCarClassColor())
-				.lap(eventMessage.getLap())
+				.lap(sessionLap)
 				.lapPct(eventMessage.getLapPct())
 				.driverName(eventMessage.getDriverName())
 				.teamName(eventMessage.getTeamName())
@@ -69,8 +69,9 @@ public class EventLogger {
 				.eventType(eventMessage.getEventType().name())
 				.driverId(driver.getDriverId())
 				.teamId(driver.getTeam().getTeamId())
-				.build()
-		);
-		return true;
+				.build();
+
+		eventRepository.save(event);
+		return event;
 	}
 }

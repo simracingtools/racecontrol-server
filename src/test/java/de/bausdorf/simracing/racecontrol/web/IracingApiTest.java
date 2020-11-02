@@ -37,9 +37,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySupplier;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestExecution;
@@ -47,12 +50,16 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @Slf4j
 public class IracingApiTest {
 
@@ -70,21 +77,31 @@ public class IracingApiTest {
 	@Autowired
 	RacecontrolServerProperties props;
 
-//	@Test
+	//@Test
 	void testIracingLogin() {
 		try {
-			String encodedUsername = URLEncoder.encode(props.getIRacingUsername(), "UTF-8");
-			String encodedPW = URLEncoder.encode(props.getIRacingPassword(), "UTF-8");
+			String urltext = URL_MEMBERS_HOMEPAGE_BASE_SECURE + URI_ABSOLUTE_PATH_LOGIN_TARGET;
 
-			String urltext = URL_MEMBERS_HOMEPAGE_BASE_SECURE + URI_ABSOLUTE_PATH_LOGIN + "?username=" + encodedUsername +
-					"&password=" + encodedPW; // + "&utcoffset=-60&todaysdate=";
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+			map.add("username", props.getIRacingUsername());
+			map.add("password", props.getIRacingPassword());
+			map.add("utcoffset", "-60");
+			map.add("todaysdate", "");
+
+			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+
+			ResponseEntity<String> response = restTemplate.postForEntity(urltext, request, String.class);
+			if(response.getStatusCode() == HttpStatus.FOUND) {
+				ResponseEntity<String> memberPage = restTemplate.getForEntity(response.getHeaders().get("Location").get(0).replaceFirst("http", "https"), String.class);
+				log.info(memberPage.toString());
+			}
 
 			String searchUrl = "https://members.iracing.com/membersite/member/GetDriverStatus?searchTerms=Robert Bausdorf";
 
-			ResponseEntity<String> response = restTemplate.getForEntity(urltext, String.class);
-			log.info(response.toString());
 
-			ResponseEntity<String> memberData = restTemplate.getForEntity(urltext, String.class);
+			ResponseEntity<String> memberData = restTemplate.getForEntity(searchUrl, String.class);
 
 			log.info(memberData.toString());
 

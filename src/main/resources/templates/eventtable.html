@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>racecontrol</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div th:replace="timetable.html :: header"></div>
+    <input id="selectedTeamId" type="hidden" th:value="${selectedTeamId}">
+    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 10px;">
+        <table class="table">
+            <thead>
+                <tr class="text-center">
+                    <th class="text-center">Teams</th>
+                    <th class="text-center">Events</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                <tr>
+                    <td style="padding: 0 6px; width: 300px;">
+                        <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
+                            <table class="table">
+                                <thead>
+                                    <tr class="text-center">
+                                        <td colspan="2" style="padding: 6px;">
+                                            <a th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">All</a>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="teamData : ${sessionView.teams}">
+                                        <td class="text-right" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px;'}" th:text="${teamData.carNo.value}"></td>
+                                        <td class="text-left" style="padding: 6px;">
+                                            <a th:href="@{/events(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">All</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                    <td style="padding: 0 6px;">
+                        <div class="table-responsive" th:style="'width: 100%;height: ' + ${(sessionView.teams.size() + 1) * 28} + 'px;overflow-y: scroll;font-family: \'Roboto Mono\', monospace;font-size: 12px;'">
+                            <input id="eventTableSize" type="hidden" th:value="${selectedEvents.size()}">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="padding: 6px;">Time</th>
+                                        <th style="padding: 6px;">Type</th>
+                                        <th style="padding: 6px;">Lap</th>
+                                        <th style="padding: 6px;">Driver</th>
+                                        <th style="padding: 6px;">Team</th>
+                                        <th style="padding: 6px;">Car</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="eventTable">
+                                    <tr th:each="event, eventStats : ${selectedEvents}">
+                                        <td style="padding: 6px;" th:id="${'event-time-' + eventStats.index}" th:text="${event.eventTime.value}" th:class="${event.eventTime.displayType.getClassString()}" th:onclick="'sendRcTimestamp(' + ${event.sessionTime.toMillis()} + ', ' + ${event.teamId} + ', ' + ${user.iRacingId} + ');'">1:04:11</td>
+                                        <td style="padding: 6px;" th:id="${'event-type-' + eventStats.index}" th:text="${event.eventType.value}" th:class="${event.eventType.displayType.getClassString()}">OFFTRACK</td>
+                                        <td style="padding: 6px;" th:id="${'event-lap-' + eventStats.index}" th:text="${event.lap.value}" th:class="${event.lap.displayType.getClassString()}"></td>
+                                        <td style="padding: 6px;" th:id="${'event-drivername-' + eventStats.index}" th:text="${event.driverName.value}" th:class="${event.driverName.displayType.getClassString()}">Robert Bausdorf</td>
+                                        <td style="padding: 6px;" th:id="${'event-teamname-' + eventStats.index}" th:text="${event.teamName.value}" th:class="${event.teamName.displayType.getClassString()}">123456</td>
+                                        <td style="padding: 6px;" th:id="${'event-carname-' + eventStats.index}" th:text="${event.carName.value}" th:class="${event.carName.displayType.getClassString()}">123456</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="assets/js/timetable-client.js"></script>
+    <script>
+        window.onload = function afterPageReload() {
+            connect();
+        }
+    </script>
+</body>
+
+</html>
