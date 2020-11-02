@@ -9,7 +9,7 @@
   </parent>
   <groupId>de.bausdorf.simracing</groupId>
   <artifactId>racecontrol-server</artifactId>
-  <version>0.9.1-SNAPSHOT</version>
+  <version>0.9.1</version>
   <name>racecontrol-server</name>
   <organization>
     <name>bausdorf engineering</name>
@@ -267,7 +267,7 @@
     <connection>scm:git:git@github.com:simracingtools/racecontrol-server.git</connection>
     <url>scm:git:git@github.com:simracingtools/racecontrol-server.git</url>
     <developerConnection>scm:git:git@github.com:simracingtools/racecontrol-server.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v0.9.1</tag>
   </scm>
   <distributionManagement>
     <repository>
