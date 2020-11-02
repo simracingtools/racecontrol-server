@@ -50,6 +50,7 @@ import de.bausdorf.simracing.racecontrol.model.Driver;
 import de.bausdorf.simracing.racecontrol.model.DriverChange;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
 import de.bausdorf.simracing.racecontrol.model.DriverRepository;
+import de.bausdorf.simracing.racecontrol.model.Event;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Stint;
@@ -108,6 +109,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
 				&& session.get().getSessionState().getTypeCode() < SessionStateType.COOL_DOWN.getTypeCode()) {
 			processEventMessage(session.get(),
+					message.getLap(),
 					Long.parseLong(message.getDriverId()),
 					Long.parseLong(message.getTeamId()),
 					(EventMessage)clientData);
@@ -127,7 +129,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
-	public void processEventMessage(Session session, long driverId, long teamId, EventMessage message) {
+	public void processEventMessage(Session session, int sessionLap, long driverId, long teamId, EventMessage message) {
 		String sessionId = session.getSessionId();
 		Driver existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId).orElse(null);
 		if (existingDriver == null) {
@@ -136,9 +138,11 @@ public class MessageProcessorImpl implements MessageProcessor {
 			}
 			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
 		}
-		if (!eventLogger.log(message, existingDriver)) {
+		Event event = eventLogger.log(message, existingDriver, sessionLap);
+		if (event == null) {
 			return;
 		}
+		sendEventMessage(event);
 		updateDriver(session, existingDriver, message);
 
 		if(message.getEventType() == EventType.DRIVER_CHANGE
@@ -165,7 +169,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	@MessageMapping("/rctimestamp")
-	@SendToUser("/timingclient/client-ack")
+	@SendToUser("/timing/client-ack")
 	public ClientAck respondTimestampMessage(ReplayPositionClientMessage message) {
 		messagingTemplate.convertAndSend("/rc/" + message.getUserId() + "/replayposition", message);
 		return new ClientAck("timestamp received");
@@ -186,6 +190,11 @@ public class MessageProcessorImpl implements MessageProcessor {
 	private void sendDriverMessage(Driver driver) {
 		messagingTemplate.convertAndSend("/timing/" + driver.getSessionId() + "/driver",
 				viewBuilder.buildDriverView(driver));
+	}
+
+	private void sendEventMessage(Event event) {
+		messagingTemplate.convertAndSend("/timing/" + event.getSessionId() + "/event",
+				viewBuilder.buildEventView(event));
 	}
 
 	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime) {

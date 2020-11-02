@@ -69,6 +69,7 @@ public class ControllerBase {
 		return details.isPresent() ? details.get()
 				: RcUser.builder()
 						.name("Unknown")
+						.oauthId("")
 						.userType(RcUserType.NEW)
 						.created(ZonedDateTime.now())
 						.build();

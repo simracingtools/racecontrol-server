@@ -40,5 +40,6 @@ public class EventView {
 	private TableCellView teamName;
 	private TableCellView driverName;
 	private TableCellView carNo;
+	private TableCellView carName;
 	private TableCellView lap;
 }

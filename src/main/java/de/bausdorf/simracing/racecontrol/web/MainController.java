@@ -25,6 +25,7 @@ package de.bausdorf.simracing.racecontrol.web;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +38,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
+import de.bausdorf.simracing.racecontrol.model.EventRepository;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Team;
@@ -55,17 +57,25 @@ public class MainController extends ControllerBase {
 	public static final String INDEX_VIEW = "index";
 	public static final String SESSION_VIEW = "timetable";
 	public static final String TEAM_VIEW = "teamtable";
+	public static final String EVENT_VIEW = "eventtable";
+	public static final String SELECTED_EVENTS = "selectedEvents";
+	public static final String VIEW_MODE = "viewMode";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
 	final DriverChangeRepository changeRepository;
+	final EventRepository eventRepository;
 	final ViewBuilder viewBuilder;
 
 	public MainController(@Autowired SessionRepository sessionRepository,
-		@Autowired TeamRepository teamRepository, @Autowired DriverChangeRepository changeRepository, @Autowired ViewBuilder viewBuilder) {
+			@Autowired TeamRepository teamRepository,
+			@Autowired DriverChangeRepository changeRepository,
+			@Autowired EventRepository eventRepository,
+			@Autowired ViewBuilder viewBuilder) {
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
 		this.changeRepository = changeRepository;
+		this.eventRepository = eventRepository;
 		this.viewBuilder = viewBuilder;
 		this.activeNav = "sessionSelect";
 	}
@@ -78,14 +88,15 @@ public class MainController extends ControllerBase {
 		currentUserProfile(userId, model);
 		List<SessionOptionView> sessionOptions = new ArrayList<>();
 		SessionSelectView selectView = SessionSelectView.builder()
-				.userId(userId.orElse(""))
+				.userId(userId.orElse(currentUser().getOauthId()))
 				.selectedSessionId("")
 				.sessions(sessionOptions)
 				.build();
-		for(Session session :  sessionRepository.findAll()) {
+		for(Session session :  sessionRepository.findAllByCreatedBeforeOrderByCreatedDesc(ZonedDateTime.now())) {
 			sessionOptions.add(SessionOptionView.builder()
 					.sessionId(session.getSessionId())
-					.displayName(session.getTrackName() + " "
+					.displayName(session.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm "))
+							+ session.getTrackName() + " "
 							+ session.getSessionDuration().toHours() + "h "
 							+ session.getSessionType())
 					.build());
@@ -114,7 +125,7 @@ public class MainController extends ControllerBase {
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		if(selectedSession.isPresent()) {
-			model.addAttribute("viewMode", "times");
+			model.addAttribute(VIEW_MODE, "times");
 			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
 		} else {
 			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
@@ -130,7 +141,7 @@ public class MainController extends ControllerBase {
 		if(selectedSession.isPresent() && team.isPresent()) {
 			TeamDetailView teamView = viewBuilder.buildFromTeamView(
 					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId());
-			model.addAttribute("viewMode", "team");
+			model.addAttribute(VIEW_MODE, "team");
 			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), null));
 			model.addAttribute("selectedTeam", teamView);
 		} else {
@@ -145,6 +156,28 @@ public class MainController extends ControllerBase {
 			}
 		}
 		return TEAM_VIEW;
+	}
+
+	@GetMapping("/events")
+	public String getEvents(@RequestParam String teamId, @RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
+		currentUserProfile(userId, model);
+		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
+		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
+		if(selectedSession.isPresent()) {
+			model.addAttribute(VIEW_MODE, "events");
+			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
+			model.addAttribute("selectedTeamId", teamId);
+			if("All".equalsIgnoreCase(teamId)) {
+				model.addAttribute(SELECTED_EVENTS, viewBuilder.buildFromEventList(eventRepository
+						.findTop100BySessionIdOrderBySessionTimeDesc(sessionId)));
+			} else {
+				model.addAttribute(SELECTED_EVENTS, viewBuilder.buildFromEventList(eventRepository
+						.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, Long.parseLong(teamId))));
+			}
+		} else {
+			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
+		}
+		return EVENT_VIEW;
 	}
 
 	private void currentUserProfile(Optional<String> userId, Model model) {

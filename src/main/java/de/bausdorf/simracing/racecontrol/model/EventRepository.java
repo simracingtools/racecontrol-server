@@ -33,6 +33,7 @@ public interface EventRepository extends CrudRepository<Event, Integer> {
 	Optional<Event> findBySessionIdAndEventNo(String sessionId, long eventNo);
 	Optional<Event> findBySessionIdAndSessionTimeAndDriverIdAndEventType(
 			String sessionId, Duration sessionTime, long driverId, String eventType);
+	List<Event> findTop100BySessionIdOrderBySessionTimeDesc(String sessionId);
 	List<Event> findBySessionIdAndTeamIdOrderBySessionTimeDesc(String sessionId, long teamId);
 	List<Event> findBySessionIdAndDriverIdOrderBySessionTimeDesc(String sessionId, long driverId);
 	void deleteAllBySessionId(String sessionId);
