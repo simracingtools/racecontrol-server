@@ -358,7 +358,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 					log.info("{} end stint (checkered flag) at {}", currentDriver.getName(),
 							TimeTools.longDurationString(session.getLastUpdate()));
 					stint.setEndTime(session.getLastUpdate());
-					stint.setState(StintStateType.IN_PIT);
+					//stint.setState(StintStateType.IN_PIT);
 				} else {
 					log.info("{} ended last stint at {}", currentDriver.getName(), TimeTools.longDurationString(stint.getEndTime()));
 				}
