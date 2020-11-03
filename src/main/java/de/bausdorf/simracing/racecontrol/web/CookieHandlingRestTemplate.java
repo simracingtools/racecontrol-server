@@ -36,11 +36,12 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class CookieHandlingRestTemplate extends RestTemplate{
+
+	public static final String COOKIE = "Cookie";
 	private final List<HttpCookie> cookies = new ArrayList<>();
 
 	public CookieHandlingRestTemplate() {
@@ -62,15 +63,15 @@ public class CookieHandlingRestTemplate extends RestTemplate{
 	private void processHeaders(HttpHeaders headers) {
 		final List<String> cooks = headers.get("Set-Cookie");
 		if (cooks != null && !cooks.isEmpty()) {
-			cooks.stream().map(c -> HttpCookie.parse(c)).forEachOrdered(cook -> {
+			cooks.stream().map(HttpCookie::parse).forEachOrdered(cook ->
 				cook.forEach(a -> {
 					HttpCookie cookieExists = cookies.stream().filter(x -> a.getName().equals(x.getName())).findAny().orElse(null);
 					if (cookieExists != null) {
 						cookies.remove(cookieExists);
 					}
 					cookies.add(a);
-				});
-			});
+				})
+			);
 		}
 	}
 
@@ -78,14 +79,23 @@ public class CookieHandlingRestTemplate extends RestTemplate{
 	protected <T extends Object> T doExecute(URI url, HttpMethod method, final RequestCallback requestCallback,
 			final ResponseExtractor<T> responseExtractor) {
 
+
 		return super.doExecute(url, method, new RequestCallback() {
 			@Override
 			public void doWithRequest(ClientHttpRequest chr) throws IOException {
-				StringBuilder sb = new StringBuilder();
+
 				for (HttpCookie cookie : cookies) {
-					sb.append(cookie.getName()).append(cookie.getValue()).append(";");
+					StringBuilder sb = new StringBuilder()
+							.append(cookie.getName())
+							.append("=")
+							.append(cookie.getValue());
+
+					if(chr.getHeaders().get(COOKIE) == null) {
+						chr.getHeaders().set(COOKIE, sb.toString());
+					} else {
+						chr.getHeaders().get(COOKIE).add(sb.toString());
+					}
 				}
-				chr.getHeaders().add("Cookie", sb.toString());
 				requestCallback.doWithRequest(chr);
 			}
 

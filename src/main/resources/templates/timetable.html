@@ -34,48 +34,48 @@
 
 <body>
     <div th:fragment="header">
-        <table class="table">
+        <table class="table" style="margin-bottom: 5px;">
             <tbody>
             <input id="sessionId" type="hidden" th:value="${sessionView.sessionId}"/>
-            <tr>
-                <td rowspan="2" style="width: 80px;">
+            <tr style="line-height: 1.1">
+                <td rowspan="2" style="width: 80px; padding: 0;">
                     <a th:href="@{/index(userId=${user.id})}">
                         <img src="assets/img/be-logoV2.png" width="80" />
                     </a>
                 </td>
-                <td style="width: 150Px;">
-                    <h4>RaceControl</h4>
+                <td style="width: 150Px; padding: 0 6px;vertical-align: middle;">
+                    <h4 style="margin: 0">RaceControl</h4>
                 </td>
-                <td>
+                <td style="padding: 0 6px; vertical-align: middle;">
                     <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
-                        <h6>Driving times</h6>
+                        <h6 style="margin: 0;" class="d-inline">Driving times</h6>
                     </a>
-                    <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>&nbsp;&nbsp;
                     <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
-                        <h6>Track Events</h6>
+                        <h6 style="margin: 0" class="d-inline">Track Events</h6>
                     </a>
-                    <h6 th:if="${viewMode.equalsIgnoreCase('events')}">Track Events</h6>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('events')}">&nbsp;&nbsp;Track Events</h6>
                 </td>
-                <td>
-                    <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor}"></h5>
+                <td style="padding: 0 6px; vertical-align: middle;">
+                    <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor + '; margin: 0;'}"></h5>
                 </td>
-                <td>
+                <td style="padding: 0 6px; vertical-align: middle;">
                     <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.carName}"></span>
                 </td>
-                <td class="text-right">
+                <td style="padding: 0 6px; vertical-align: middle;" class="text-right">
                     <span th:if="${viewMode.equalsIgnoreCase('team')}">Avg. iRating:</span>
                 </td>
-                <td>
+                <td style="padding: 0 6px; vertical-align: middle;">
                     <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.avgTeamRating.value}"></span>
                 </td>
             </tr>
-            <tr>
-                <td class="text-right">Track:</td>
-                <td id="trackName" th:class="${sessionView.trackName.displayType.getClassString() + ' text-nowrap'}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
-                <td id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
-                <td id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
-                <td class="text-right">Session state:</td>
-                <td id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
+            <tr style="line-height: 1.1">
+                <td style="padding: 0 6px; vertical-align: middle;" class="text-right">Track:</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="trackName" th:class="${sessionView.trackName.displayType.getClassString() + ' text-nowrap'}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
+                <td style="padding: 0 6px; vertical-align: middle;" class="text-right">Session state:</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
             </tr>
             </tbody>
         </table>
@@ -98,7 +98,7 @@
                             <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                         </td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
+                        <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" data-toggle="tooltip" th:attr="title=${teamData.proTeam ? 'PRO' : 'AM'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
 <!--                        <td colspan="16"></td>-->
@@ -114,8 +114,8 @@
                                     <table style="margin-bottom: 0;" class="table">
                                         <tbody>
                                         <tr>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
+                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
+                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
                                             <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
                                         </tr>
                                         </tbody>
