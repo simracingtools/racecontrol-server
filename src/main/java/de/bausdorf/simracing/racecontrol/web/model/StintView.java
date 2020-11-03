@@ -41,5 +41,6 @@ public class StintView {
 	private TableCellView duration;
 	private Duration trackTime;
 	private Duration changeTime;
+	private String changeTimeStr;
 	private List<TrackTimeView> trackTimes;
 }

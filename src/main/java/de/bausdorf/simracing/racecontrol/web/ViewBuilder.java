@@ -139,9 +139,10 @@ public class ViewBuilder {
 		if(avgTeamRating.isPresent()) {
 			teamView.setAvgTeamRating(TableCellView.builder()
 					.displayType(
-							complianceCheck.isProTeam(avgTeamRating.getAsDouble()) ? CssClassType.TBL_PRIMARY : CssClassType.TBL_WARNING)
+							complianceCheck.isProTeam(avgTeamRating.getAsDouble()) ? CssClassType.TBL_DARK : CssClassType.TBL_SECONDARY)
 					.value(String.format("%.2f", avgTeamRating.getAsDouble()))
 					.build());
+			teamView.setProTeam(complianceCheck.isProTeam(avgTeamRating.getAsDouble()));
 		}
 		return teamView;
 	}
@@ -303,6 +304,7 @@ public class ViewBuilder {
 						.displayType(complianceCheck.isStintDurationCompliant(data.getTrackTime()) ? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER)
 						.build())
 				.changeTime(data.isUnfinished() ? data.getStartTime() : data.getStopTime())
+				.changeTimeStr(data.isUnfinished() ? TimeTools.shortDurationString(data.getStartTime()) : TimeTools.shortDurationString(data.getStopTime()))
 				.trackTime(data.getTrackTime())
 				.trackTimes(data.getTrackTimeViews())
 				.build();

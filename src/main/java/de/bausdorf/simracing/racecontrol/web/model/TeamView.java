@@ -39,6 +39,7 @@ public class TeamView {
 	private String carClassColor;
 	private TableCellView avgTeamRating;
 	private List<DriverView> drivers;
+	private boolean proTeam;
 	private long teamId;
 
 	public int getMaxDriverStints() {

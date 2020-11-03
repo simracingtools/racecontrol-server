@@ -98,7 +98,7 @@
                             <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                         </td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
+                        <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" data-toggle="tooltip" th:attr="title=${teamData.proTeam ? 'PRO' : 'AM'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
 <!--                        <td colspan="16"></td>-->
@@ -114,8 +114,8 @@
                                     <table style="margin-bottom: 0;" class="table">
                                         <tbody>
                                         <tr>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
+                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
+                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
                                             <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
                                         </tr>
                                         </tbody>
