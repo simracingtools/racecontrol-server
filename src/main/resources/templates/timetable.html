@@ -34,48 +34,48 @@
 
 <body>
     <div th:fragment="header">
-        <table class="table">
+        <table class="table" style="margin-bottom: 5px;">
             <tbody>
             <input id="sessionId" type="hidden" th:value="${sessionView.sessionId}"/>
-            <tr>
-                <td rowspan="2" style="width: 80px;">
+            <tr style="line-height: 1.1">
+                <td rowspan="2" style="width: 80px; padding: 0;">
                     <a th:href="@{/index(userId=${user.id})}">
                         <img src="assets/img/be-logoV2.png" width="80" />
                     </a>
                 </td>
-                <td style="width: 150Px;">
-                    <h4>RaceControl</h4>
+                <td style="width: 150Px; padding: 0 6px;vertical-align: middle;">
+                    <h4 style="margin: 0">RaceControl</h4>
                 </td>
-                <td>
+                <td style="padding: 0 6px; vertical-align: middle;">
                     <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
-                        <h6>Driving times</h6>
+                        <h6 style="margin: 0;" class="d-inline">Driving times</h6>
                     </a>
-                    <h6 th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>&nbsp;&nbsp;
                     <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
-                        <h6>Track Events</h6>
+                        <h6 style="margin: 0" class="d-inline">Track Events</h6>
                     </a>
-                    <h6 th:if="${viewMode.equalsIgnoreCase('events')}">Track Events</h6>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('events')}">&nbsp;&nbsp;Track Events</h6>
                 </td>
-                <td>
-                    <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor}"></h5>
+                <td style="padding: 0 6px; vertical-align: middle;">
+                    <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor + '; margin: 0;'}"></h5>
                 </td>
-                <td>
+                <td style="padding: 0 6px; vertical-align: middle;">
                     <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.carName}"></span>
                 </td>
-                <td class="text-right">
+                <td style="padding: 0 6px; vertical-align: middle;" class="text-right">
                     <span th:if="${viewMode.equalsIgnoreCase('team')}">Avg. iRating:</span>
                 </td>
-                <td>
+                <td style="padding: 0 6px; vertical-align: middle;">
                     <span th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${selectedTeam.avgTeamRating.value}"></span>
                 </td>
             </tr>
-            <tr>
-                <td class="text-right">Track:</td>
-                <td id="trackName" th:class="${sessionView.trackName.displayType.getClassString() + ' text-nowrap'}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
-                <td id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
-                <td id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
-                <td class="text-right">Session state:</td>
-                <td id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
+            <tr style="line-height: 1.1">
+                <td style="padding: 0 6px; vertical-align: middle;" class="text-right">Track:</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="trackName" th:class="${sessionView.trackName.displayType.getClassString() + ' text-nowrap'}" th:text="${sessionView.trackName.value}">Road America Full Course</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="sessionDuration" th:class="${sessionView.sessionDuration.displayType.getClassString()}" th:text="${sessionView.sessionDuration.value}">6h</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="sessionType" th:class="${sessionView.sessionType.displayType.getClassString() + 'text-center'}" th:text="${sessionView.sessionType.value}">RACE</td>
+                <td style="padding: 0 6px; vertical-align: middle;" class="text-right">Session state:</td>
+                <td style="padding: 0 6px; vertical-align: middle;" id="sessionState" th:class="${sessionView.sessionState.displayType.getClassString() + ' text-center'}" th:text="${sessionView.sessionState.value}">RACING</td>
             </tr>
             </tbody>
         </table>

@@ -35,17 +35,17 @@
 <body>
     <div th:replace="timetable.html :: header"></div>
     <input id="selectedTeamId" type="hidden" th:value="${selectedTeamId}">
-    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 10px;">
+    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 14px;">
         <table class="table">
             <thead>
                 <tr class="text-center">
-                    <th class="text-center">Teams</th>
+                    <th class="text-center" style="border-right: 1px solid #dee2e6;">Teams</th>
                     <th class="text-center">Events</th>
                 </tr>
             </thead>
             <tbody class="text-center">
                 <tr>
-                    <td style="padding: 0 6px; width: 300px;">
+                    <td style="padding: 0 6px; width: 300px; border-right: 1px solid #dee2e6;">
                         <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
                             <table class="table">
                                 <thead>
@@ -67,7 +67,7 @@
                         </div>
                     </td>
                     <td style="padding: 0 6px;">
-                        <div class="table-responsive" th:style="'width: 100%;height: ' + ${(sessionView.teams.size() + 1) * 28} + 'px;overflow-y: scroll;font-family: \'Roboto Mono\', monospace;font-size: 12px;'">
+                        <div class="table-responsive" th:style="'width: 100%;height: ' + ${(sessionView.teams.size() + 1) * 31} + 'px;overflow-y: scroll;font-family: \'Roboto Mono\', monospace;font-size: 12px;'">
                             <input id="eventTableSize" type="hidden" th:value="${selectedEvents.size()}">
                             <table class="table">
                                 <thead>
