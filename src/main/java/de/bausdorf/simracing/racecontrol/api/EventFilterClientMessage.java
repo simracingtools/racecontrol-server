@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.api;
 
 /*-
  * #%L
@@ -22,26 +22,19 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.time.Duration;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
-@Data
+@NoArgsConstructor
 @Builder
-public class EventView {
-	private long teamId;
-	private long driverId;
-	private long sessionMillis;
+@Data
+public class EventFilterClientMessage {
+	private String messageType;
+	private String sessionId;
 	private long userId;
-	private Duration sessionTime;
-	private TableCellView eventTime;
-	private TableCellView eventType;
-	private TableCellView teamName;
-	private TableCellView driverName;
-	private TableCellView carNo;
-	private TableCellView carName;
-	private TableCellView lap;
+	private String eventType;
+	private boolean checked;
 }

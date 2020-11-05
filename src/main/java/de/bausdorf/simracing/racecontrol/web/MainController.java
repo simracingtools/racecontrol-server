@@ -47,6 +47,7 @@ import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
+import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,7 @@ public class MainController extends ControllerBase {
 	public static final String EVENT_VIEW = "eventtable";
 	public static final String SELECTED_EVENTS = "selectedEvents";
 	public static final String VIEW_MODE = "viewMode";
+	public static final String SESSION_VIEW_ATTRIBUTE = "sessionView";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
@@ -82,9 +84,7 @@ public class MainController extends ControllerBase {
 
 	@GetMapping({"/", "/index", "index.html"})
 	public String index(@RequestParam Optional<String> error, @RequestParam Optional<String> userId, Model model) {
-		if(error.isPresent()) {
-			addError(error.get(), model);
-		}
+		error.ifPresent(s -> addError(s, model));
 		currentUserProfile(userId, model);
 		List<SessionOptionView> sessionOptions = new ArrayList<>();
 		SessionSelectView selectView = SessionSelectView.builder()
@@ -126,7 +126,7 @@ public class MainController extends ControllerBase {
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		if(selectedSession.isPresent()) {
 			model.addAttribute(VIEW_MODE, "times");
-			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
+			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
 		} else {
 			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
 		}
@@ -135,14 +135,14 @@ public class MainController extends ControllerBase {
 
 	@GetMapping("/team")
 	public String team(@RequestParam long teamId, @RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
-		currentUserProfile(userId, model);
+		RcUser user = currentUserProfile(userId, model);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId);
 		if(selectedSession.isPresent() && team.isPresent()) {
 			TeamDetailView teamView = viewBuilder.buildFromTeamView(
-					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId());
+					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId(), user);
 			model.addAttribute(VIEW_MODE, "team");
-			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), null));
+			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), null));
 			model.addAttribute("selectedTeam", teamView);
 		} else {
 			try {
@@ -160,19 +160,19 @@ public class MainController extends ControllerBase {
 
 	@GetMapping("/events")
 	public String getEvents(@RequestParam String teamId, @RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
-		currentUserProfile(userId, model);
+		RcUser user = currentUserProfile(userId, model);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		if(selectedSession.isPresent()) {
 			model.addAttribute(VIEW_MODE, "events");
-			model.addAttribute("sessionView", viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
+			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
 			model.addAttribute("selectedTeamId", teamId);
 			if("All".equalsIgnoreCase(teamId)) {
 				model.addAttribute(SELECTED_EVENTS, viewBuilder.buildFromEventList(eventRepository
-						.findTop100BySessionIdOrderBySessionTimeDesc(sessionId)));
+						.findTop100BySessionIdOrderBySessionTimeDesc(sessionId), user));
 			} else {
 				model.addAttribute(SELECTED_EVENTS, viewBuilder.buildFromEventList(eventRepository
-						.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, Long.parseLong(teamId))));
+						.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, Long.parseLong(teamId)), user));
 			}
 		} else {
 			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
@@ -180,14 +180,23 @@ public class MainController extends ControllerBase {
 		return EVENT_VIEW;
 	}
 
-	private void currentUserProfile(Optional<String> userId, Model model) {
+	private RcUser currentUserProfile(Optional<String> userId, Model model) {
 		if(userId.isPresent()) {
 			Optional<RcUser> currentUser = userRepository.findById(userId.get());
-			model.addAttribute("user", new UserProfileView(currentUser.orElse(RcUser.builder()
+			RcUser user = currentUser.orElse(RcUser.builder()
 					.name("Unknown")
 					.created(ZonedDateTime.now())
+					.eventFilter(GoogleUserService.defaultEventFilter())
 					.userType(RcUserType.NEW)
-					.build())));
+					.build());
+			model.addAttribute("user", new UserProfileView(user));
+			return user;
 		}
+		return RcUser.builder()
+				.name("Unknown")
+				.eventFilter(GoogleUserService.defaultEventFilter())
+				.created(ZonedDateTime.now())
+				.userType(RcUserType.NEW)
+				.build();
 	}
 }

@@ -62,6 +62,10 @@ function sendRcTimestamp(millis, driverId, userId) {
   stompClient.send("/app/rctimestamp", {}, JSON.stringify({'messageType': 'replayTime', 'timestamp': millis, 'driverId': driverId, 'userId': userId}));
 }
 
+function sendEventFilterChange(userId, event, checked) {
+  stompClient.send("/app/eventfilter", {}, JSON.stringify({'messageType': 'eventFilter', 'sessionId': $("#sessionId").val(), 'userId': userId, 'eventType': event, 'checked': checked}));
+}
+
 function reloadPage() {
   console.log("reload page")
   window.location.reload();
@@ -82,19 +86,29 @@ function showEventData(message) {
     return;
   }
 
+  var showEvent = $('#' + message.eventType.value).prop('checked')
+  if(!showEvent) {
+    console.log("Discard event type " + message.eventType.value);
+    return;
+  }
+
   var tableSize = $('#eventTableSize').val()
   for(var i = tableSize - 1; i >= 0; i--) {
     if(i > 0) {
-      $('#event-time-' + i).text($('#event-time-' + (i - 1)).text());
+      $('#event-time-' + i).text($('#event-time-' + (i - 1)).text())
+          .attr('onclick', $('#event-time-' + (i - 1)).attr('onclick'));
       $('#event-type-' + i).text($('#event-type-' + (i - 1)).text())
-          .attr("class", $('#event-type-' + (i - 1)).attr('class'));
+          .attr("class", $('#event-type-' + (i - 1)).attr('class'))
+          .attr('onclick', $('#event-type-' + (i - 1)).attr('onclick'));
       $('#event-lap-' + i).text($('#event-lap-' + (i - 1)).text());
       $('#event-drivername-' + i).text($('#event-drivername-' + (i - 1)).text());
       $('#event-teamname-' + i).text($('#event-teamname-' + (i - 1)).text());
       $('#event-carname-' + i).text($('#event-carname-' + (i - 1)).text());
     } else {
-      $('#event-time-0').text(message.eventTime.value);
+      $('#event-time-0').text(message.eventTime.value)
+          .attr("onclick", 'sendRcTimestamp(' + message.sessionMillis + ', ' + message.teamId + ', ' + $('#userId').val() + ');');
       $('#event-type-0').text(message.eventType.value)
+          .attr("onclick", 'sendRcTimestamp(' + message.sessionMillis + ', ' + message.teamId + ', ' + $('#userId').val() + ');')
           .attr("class", message.eventType.cssClassString);
       $('#event-lap-0').text(message.lap.value);
       $('#event-drivername-0').text(message.driverName.value);

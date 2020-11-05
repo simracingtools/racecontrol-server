@@ -23,8 +23,10 @@ package de.bausdorf.simracing.racecontrol.web.security;
  */
 
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +36,8 @@ import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import de.bausdorf.simracing.racecontrol.api.EventType;
 
 @Service
 public class GoogleUserService extends OidcUserService implements UserDetailsService {
@@ -60,6 +64,7 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
                     .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : RcUserType.NEW)
                     .created(ZonedDateTime.now())
                     .subscriptionType(SubscriptionType.NONE)
+                    .eventFilter(defaultEventFilter())
                     .lastSubscription(ZonedDateTime.now())
                     .lastAccess(ZonedDateTime.now())
                     .locked(false)
@@ -67,6 +72,11 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
                     .enabled(true)
                     .build()
             );
+        } else {
+            if(user.get().getEventFilter().isEmpty()) {
+                user.get().setEventFilter(defaultEventFilter());
+                userRepository.save(user.get());
+            }
         }
         return oidcUser;
     }
@@ -77,4 +87,15 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
         return user.orElse(null);
     }
 
+    public static Set<EventType> defaultEventFilter() {
+        Set<EventType> defaultSet = new HashSet<>();
+        defaultSet.add(EventType.ON_TRACK);
+        defaultSet.add(EventType.OFF_TRACK);
+        defaultSet.add(EventType.APPROACHING_PITS);
+        defaultSet.add(EventType.ENTER_PITLANE);
+        defaultSet.add(EventType.EXIT_PITLANE);
+        defaultSet.add(EventType.IN_PIT_STALL);
+        defaultSet.add(EventType.DRIVER_CHANGE);
+        return defaultSet;
+    }
 }

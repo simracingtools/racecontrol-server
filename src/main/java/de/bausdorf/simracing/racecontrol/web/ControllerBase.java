@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
+import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
@@ -66,13 +67,13 @@ public class ControllerBase {
 	protected RcUser currentUser() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		Optional<RcUser> details = auth != null ? userRepository.findById(auth.getName()) : Optional.empty();
-		return details.isPresent() ? details.get()
-				: RcUser.builder()
-						.name("Unknown")
-						.oauthId("")
-						.userType(RcUserType.NEW)
-						.created(ZonedDateTime.now())
-						.build();
+		return details.orElseGet(() -> RcUser.builder()
+				.name("Unknown")
+				.oauthId("")
+				.eventFilter(GoogleUserService.defaultEventFilter())
+				.userType(RcUserType.NEW)
+				.created(ZonedDateTime.now())
+				.build());
 	}
 
 	@ModelAttribute(MESSAGES)

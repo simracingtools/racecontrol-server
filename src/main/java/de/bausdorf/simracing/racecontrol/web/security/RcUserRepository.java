@@ -30,7 +30,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface RcUserRepository extends CrudRepository<RcUser, String> {
 
 	Optional<RcUser> findByEmail(String email);
-
+	Optional<RcUser> findByiRacingId(long iRacingId);
 	List<RcUser> findByNameContainingAndEmailContainingAndUserType(String name, String email, RcUserType userType);
 	List<RcUser> findByNameContainingAndEmailContaining(String name, String email);
 }

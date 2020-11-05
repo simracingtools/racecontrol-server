@@ -26,13 +26,16 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import de.bausdorf.simracing.racecontrol.api.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -58,6 +61,8 @@ public class RcUser implements UserDetails {
 	private ZonedDateTime lastAccess;
 	private ZonedDateTime lastSubscription;
 	private SubscriptionType subscriptionType;
+	@ElementCollection(targetClass=EventType.class)
+	private Set<EventType> eventFilter;
 	private boolean enabled;
 	private boolean locked;
 	private boolean expired;

@@ -24,8 +24,12 @@ package de.bausdorf.simracing.racecontrol.web.model;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import de.bausdorf.simracing.racecontrol.api.EventType;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
+import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.SubscriptionType;
 import lombok.AllArgsConstructor;
@@ -50,6 +54,7 @@ public class UserProfileView {
 	private String subscriptionExpiration;
 	private String timezone;
 	private String created;
+	private List<String> eventFilter;
 	private Boolean enabled;
 	private Boolean locked;
 	private Boolean expired;
@@ -72,6 +77,12 @@ public class UserProfileView {
 		this.timezone = user.getTimezone() != null ? TimeTools.toShortZoneId(user.getTimezone()) : "";
 		this.subscriptionType = user.getSubscriptionType();
 		this.created = user.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")); //2020-10-28T20:02
+		this.eventFilter = user.getEventFilter() != null ? user.getEventFilter().stream()
+						.map(EventType::name)
+						.collect(Collectors.toList())
+				: GoogleUserService.defaultEventFilter().stream()
+						.map(EventType::name)
+						.collect(Collectors.toList());
 //		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
 //				? user.getLastSubscription().plus(this.subscriptionType.getDuration()).toLocalDate().toString()
 //				: "Not relevant";
