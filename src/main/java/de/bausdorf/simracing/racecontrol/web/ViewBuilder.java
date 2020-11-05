@@ -55,6 +55,7 @@ import de.bausdorf.simracing.racecontrol.web.model.TableCellView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamView;
 import de.bausdorf.simracing.racecontrol.web.model.TrackTimeView;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
@@ -147,7 +148,7 @@ public class ViewBuilder {
 		return teamView;
 	}
 
-	public TeamDetailView buildFromTeamView(TeamView teamView, String sessionId) {
+	public TeamDetailView buildFromTeamView(TeamView teamView, String sessionId, RcUser user) {
 		TeamDetailView detailView = TeamDetailView.builder()
 				.avgTeamRating(teamView.getAvgTeamRating())
 				.carNo(teamView.getCarNo())
@@ -166,12 +167,13 @@ public class ViewBuilder {
 				.sorted(Comparator.comparing(StintView::getChangeTime))
 				.collect(Collectors.toList()));
 		detailView.setEvents(buildFromEventList(eventRepository
-				.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, teamView.getTeamId())));
+				.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, teamView.getTeamId()), user));
 		return detailView;
 	}
 
-	public List<EventView> buildFromEventList(List<Event> events) {
+	public List<EventView> buildFromEventList(List<Event> events, RcUser user) {
 		return events.stream()
+				.filter(s -> user.getEventFilter().contains(EventType.valueOf(s.getEventType())))
 				.map(this::buildEventView)
 				.collect(Collectors.toList());
 	}
@@ -181,6 +183,7 @@ public class ViewBuilder {
 				.driverId(event.getDriverId())
 				.teamId(event.getTeamId())
 				.sessionTime(event.getSessionTime())
+				.sessionMillis(event.getSessionTime().toMillis())
 				.carNo(TableCellView.builder()
 						.value(event.getCarNo())
 						.displayType(CssClassType.DEFAULT)

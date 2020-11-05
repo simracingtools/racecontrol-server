@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 import de.bausdorf.simracing.racecontrol.api.ClientData;
 import de.bausdorf.simracing.racecontrol.api.ClientMessage;
 import de.bausdorf.simracing.racecontrol.api.ClientMessageType;
+import de.bausdorf.simracing.racecontrol.api.EventFilterClientMessage;
 import de.bausdorf.simracing.racecontrol.api.EventMessage;
 import de.bausdorf.simracing.racecontrol.api.MessageProcessor;
 import de.bausdorf.simracing.racecontrol.api.EventType;
@@ -60,6 +61,8 @@ import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.ViewBuilder;
 import de.bausdorf.simracing.racecontrol.web.model.ClientAck;
 import de.bausdorf.simracing.racecontrol.web.model.ClientConnectMessage;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -68,10 +71,12 @@ public class MessageProcessorImpl implements MessageProcessor {
 
 	public static final String VALID_TRANSITION_FOR = "Ignored transition for {}: {} -> {}";
 	public static final String INVALID_STATE_TRANSITION_FOR = "Invalid state transition for {}: {} -> {}";
+	public static final String TIMING = "/timing/";
 	private final DriverRepository driverRepository;
 	private final DriverChangeRepository changeRepository;
 	private final SessionRepository sessionRepository;
 	private final TeamRepository teamRepository;
+	private final RcUserRepository userRepository;
 	private final SimpMessagingTemplate messagingTemplate;
 	private final ViewBuilder viewBuilder;
 	private final EventLogger eventLogger;
@@ -80,6 +85,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 			@Autowired TeamRepository teamRepository,
 			@Autowired DriverChangeRepository driverChangeRepository,
 			@Autowired SessionRepository sessionRepository,
+			@Autowired RcUserRepository userRepository,
 			@Autowired SimpMessagingTemplate messagingTemplate,
 			@Autowired ViewBuilder viewBuilder,
 			@Autowired EventLogger eventLogger) {
@@ -87,6 +93,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		this.changeRepository = driverChangeRepository;
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
+		this.userRepository = userRepository;
 		this.messagingTemplate = messagingTemplate;
 		this.viewBuilder = viewBuilder;
 		this.eventLogger = eventLogger;
@@ -175,6 +182,18 @@ public class MessageProcessorImpl implements MessageProcessor {
 		return new ClientAck("timestamp received");
 	}
 
+	@MessageMapping("/eventfilter")
+	@SendToUser("/timing/client-ack")
+	@Transactional
+	public ClientAck changeEventFilter(EventFilterClientMessage message) {
+		Optional<RcUser> user = userRepository.findByiRacingId(message.getUserId());
+		if(user.isPresent()) {
+			updateEventFilter(user.get(), message.getEventType(), message.isChecked());
+			sendPageReload(message.getSessionId(), "EventFilter change");
+		}
+		return new ClientAck("eventfilter change for " + message.getUserId());
+	}
+
 	@MessageMapping("/rcclient")
 	@SendToUser("/rc/client-ack")
 	public String respondRcAck(String message) {
@@ -183,17 +202,17 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	private void sendPageReload(String sessionId, String message) {
-		log.debug("send {} to {}", message, "/timing/" + sessionId + "/reload");
-		messagingTemplate.convertAndSend("/timing/" + sessionId + "/reload", message);
+		log.debug("send {} to {}", message, TIMING + sessionId + "/reload");
+		messagingTemplate.convertAndSend(TIMING + sessionId + "/reload", message);
 	}
 
 	private void sendDriverMessage(Driver driver) {
-		messagingTemplate.convertAndSend("/timing/" + driver.getSessionId() + "/driver",
+		messagingTemplate.convertAndSend(TIMING + driver.getSessionId() + "/driver",
 				viewBuilder.buildDriverView(driver));
 	}
 
 	private void sendEventMessage(Event event) {
-		messagingTemplate.convertAndSend("/timing/" + event.getSessionId() + "/event",
+		messagingTemplate.convertAndSend(TIMING + event.getSessionId() + "/event",
 				viewBuilder.buildEventView(event));
 	}
 
@@ -358,7 +377,6 @@ public class MessageProcessorImpl implements MessageProcessor {
 					log.info("{} end stint (checkered flag) at {}", currentDriver.getName(),
 							TimeTools.longDurationString(session.getLastUpdate()));
 					stint.setEndTime(session.getLastUpdate());
-					//stint.setState(StintStateType.IN_PIT);
 				} else {
 					log.info("{} ended last stint at {}", currentDriver.getName(), TimeTools.longDurationString(stint.getEndTime()));
 				}
@@ -378,5 +396,14 @@ public class MessageProcessorImpl implements MessageProcessor {
 			existingDriver.setLastLapPosition(message.getLapPct());
 		}
 		driverRepository.save(existingDriver);
+	}
+
+	private void updateEventFilter(RcUser user, String event, boolean checked) {
+		if(checked) {
+			user.getEventFilter().remove(EventType.valueOf(event));
+		} else {
+			user.getEventFilter().add(EventType.valueOf(event));
+		}
+		userRepository.save(user);
 	}
 }
