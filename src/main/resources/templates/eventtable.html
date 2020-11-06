@@ -109,6 +109,14 @@
                                         <td style="padding: 6px;" th:id="${'event-teamname-' + eventStats.index}" th:text="${event.teamName.value}" th:class="${event.teamName.displayType.getClassString()}">123456</td>
                                         <td style="padding: 6px;" th:id="${'event-carname-' + eventStats.index}" th:text="${event.carName.value}" th:class="${event.carName.displayType.getClassString()}">123456</td>
                                     </tr>
+                                    <tr id="event-row-prototype" style="display: none;">
+                                        <td id="event-time-" style="padding: 6px; cursor: pointer;" data-toggle="tooltip" ></td>
+                                        <td id="event-type-" style="padding: 6px; cursor: pointer;" data-toggle="tooltip" ></td>
+                                        <td id="event-lap-" style="padding: 6px;"></td>
+                                        <td id="event-drivername-" style="padding: 6px;"></td>
+                                        <td id="event-teamname-" style="padding: 6px;"></td>
+                                        <td id="event-carname-" style="padding: 6px;"></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
