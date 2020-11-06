@@ -28,14 +28,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
-import de.bausdorf.simracing.racecontrol.model.Team;
-import de.bausdorf.simracing.racecontrol.model.TeamRepository;
+import de.bausdorf.simracing.racecontrol.live.model.Team;
+import de.bausdorf.simracing.racecontrol.live.model.TeamRepository;
 
 @SpringBootTest
 //@Testcontainers

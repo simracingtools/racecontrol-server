@@ -34,11 +34,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
-import de.bausdorf.simracing.racecontrol.model.DriverRepository;
-import de.bausdorf.simracing.racecontrol.model.EventRepository;
-import de.bausdorf.simracing.racecontrol.model.Session;
-import de.bausdorf.simracing.racecontrol.model.SessionRepository;
+import de.bausdorf.simracing.racecontrol.live.model.DriverChangeRepository;
+import de.bausdorf.simracing.racecontrol.live.model.DriverRepository;
+import de.bausdorf.simracing.racecontrol.live.model.EventRepository;
+import de.bausdorf.simracing.racecontrol.live.model.Session;
+import de.bausdorf.simracing.racecontrol.live.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.model.SessionAdminView;
 import lombok.extern.slf4j.Slf4j;

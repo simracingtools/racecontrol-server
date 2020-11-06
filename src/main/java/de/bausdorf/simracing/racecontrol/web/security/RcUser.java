@@ -35,7 +35,7 @@ import javax.persistence.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.live.api.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

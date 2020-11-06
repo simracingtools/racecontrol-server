@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.live.api.EventType;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;

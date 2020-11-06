@@ -37,7 +37,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.live.api.EventType;
 
 @Service
 public class GoogleUserService extends OidcUserService implements UserDetailsService {
