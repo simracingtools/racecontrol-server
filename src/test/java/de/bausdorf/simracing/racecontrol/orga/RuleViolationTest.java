@@ -106,8 +106,8 @@ class RuleViolationTest {
 		RuleViolationCategory cat1 = categoryRepository.findById("CAT1").orElse(null);
 		RuleViolation ruleViolation = RuleViolation.builder()
 				.category(cat1)
-				.identifier("A")
-				.violationReason("Avoidable contact")
+				.identifier("B")
+				.violationReason("Causing a collision")
 				.possiblePenaltyCodes(new HashSet<>(Arrays.asList("P01", "P04", "P05")))
 				.build();
 		violationRepository.save(ruleViolation);
