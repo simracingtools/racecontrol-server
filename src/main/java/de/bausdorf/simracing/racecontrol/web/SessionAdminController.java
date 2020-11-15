@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -65,6 +66,7 @@ public class SessionAdminController extends ControllerBase {
 	}
 
 	@GetMapping("/sessionadmin")
+	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
 	public String getSessionAdministration(@RequestParam Optional<String> error, Model model) {
 		this.activeNav = "sessionAdmin";
 		error.ifPresent(s -> addError(s, model));
@@ -84,6 +86,7 @@ public class SessionAdminController extends ControllerBase {
 	}
 
 	@GetMapping("/deletesession")
+	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
 	@Transactional
 	public String deleteSession(@RequestParam String sessionId) {
 

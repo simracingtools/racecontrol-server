@@ -87,20 +87,32 @@
                                         <a th:if="${navigation.equalsIgnoreCase('sessionSelect')}" class="nav-link active" th:href="@{/index(userId=${user.id})}">Select Sessions</a>
                                         <a th:if="${!navigation.equalsIgnoreCase('sessionSelect')}" class="nav-link" th:href="@{/index(userId=${user.id})}">Select Sessions</a>
                                     </li>
-                                    <li class="nav-item">
-                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('userAdmin')}" class="nav-link active" th:href="@{/useradmin}">Manage Users</a>
-                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('userAdmin')}" class="nav-link" th:href="@{/useradmin}">Manage Users</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link active" th:href="@{/sessionadmin}">Manage Sessions</a>
-                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link" th:href="@{/sessionadmin}">Manage Sessions</a>
-                                    </li>
-<!--                                    <li class="nav-item dropdown"><a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Dropdown </a>-->
-<!--                                        <div class="dropdown-menu"><a class="dropdown-item" href="#">First Item</a><a class="dropdown-item" href="#">Second Item</a><a class="dropdown-item" href="#">Third Item</a></div>-->
+<!--                                    <li class="nav-item">-->
+<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('userAdmin')}" class="nav-link active" th:href="@{/useradmin}">Manage Users</a>-->
+<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('userAdmin')}" class="nav-link" th:href="@{/useradmin}">Manage Users</a>-->
+<!--                                    </li>-->
+<!--                                    <li class="nav-item">-->
+<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link active" th:href="@{/sessionadmin}">Manage Sessions</a>-->
+<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link" th:href="@{/sessionadmin}">Manage Sessions</a>-->
+<!--                                    </li>-->
+<!--                                    <li th:if="${user.userType.equalsIgnoreCase('SYSADMIN')}" class="nav-item dropdown">-->
+<!--                                        <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>-->
+<!--                                        <div class="dropdown-menu">-->
+<!--                                            <a class="dropdown-item" th:href="@{/useradmin}">Users</a>-->
+<!--                                            <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>-->
+<!--                                            <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>-->
+<!--                                        </div>-->
 <!--                                    </li>-->
                                 </ul>
+                                <div class="dropdown">
+                                    <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" th:href="@{/useradmin}">Users</a>
+                                        <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>
+                                        <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>
+                                    </div>
+                                </div>
                                 <span class="navbar-text actions">
-<!--                                    <a class="login" href="#">Log In</a>-->
                                     <a th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/logout">Logout</a>
                                     <a th:if="${user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/index.html">Login</a>
                                 </span>

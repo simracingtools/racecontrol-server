@@ -8,6 +8,6 @@ import org.springframework.data.repository.CrudRepository;
 public interface RuleViolationRepository extends CrudRepository<RuleViolation, Long> {
 
 	List<RuleViolation> findAllByCategory(RuleViolationCategory category);
-
 	Optional<RuleViolation> findRuleViolationByCategoryAndIdentifier(RuleViolationCategory category, String identifier);
+	Optional<RuleViolation> findById(long id);
 }
