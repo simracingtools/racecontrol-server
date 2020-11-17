@@ -29,20 +29,32 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
 import de.bausdorf.simracing.racecontrol.model.EventRepository;
+import de.bausdorf.simracing.racecontrol.model.RcBulletin;
+import de.bausdorf.simracing.racecontrol.model.RcBulletinRepository;
 import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.PenaltyRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.RuleViolation;
+import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationRepository;
+import de.bausdorf.simracing.racecontrol.web.model.PenaltySelectView;
+import de.bausdorf.simracing.racecontrol.web.model.RcBulletinView;
+import de.bausdorf.simracing.racecontrol.web.model.RuleViolationCategorySelectView;
+import de.bausdorf.simracing.racecontrol.web.model.RuleViolationView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
@@ -62,22 +74,33 @@ public class MainController extends ControllerBase {
 	public static final String SELECTED_EVENTS = "selectedEvents";
 	public static final String VIEW_MODE = "viewMode";
 	public static final String SESSION_VIEW_ATTRIBUTE = "sessionView";
+	public static final String SELECTED_TEAM_ID = "selectedTeamId";
+	public static final String NEXT_BULLETIN_VIEW = "nextBulletinView";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
 	final DriverChangeRepository changeRepository;
 	final EventRepository eventRepository;
+	final RcBulletinRepository bulletinRepository;
+	final RuleViolationRepository violationRepository;
+	final PenaltyRepository penaltyRepository;
 	final ViewBuilder viewBuilder;
 
 	public MainController(@Autowired SessionRepository sessionRepository,
 			@Autowired TeamRepository teamRepository,
 			@Autowired DriverChangeRepository changeRepository,
 			@Autowired EventRepository eventRepository,
+			@Autowired RcBulletinRepository bulletinRepository,
+			@Autowired RuleViolationRepository violationRepository,
+			@Autowired PenaltyRepository penaltyRepository,
 			@Autowired ViewBuilder viewBuilder) {
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
 		this.changeRepository = changeRepository;
 		this.eventRepository = eventRepository;
+		this.bulletinRepository = bulletinRepository;
+		this.violationRepository = violationRepository;
+		this.penaltyRepository = penaltyRepository;
 		this.viewBuilder = viewBuilder;
 		this.activeNav = "sessionSelect";
 	}
@@ -127,6 +150,7 @@ public class MainController extends ControllerBase {
 		if(selectedSession.isPresent()) {
 			model.addAttribute(VIEW_MODE, "times");
 			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
+			model.addAttribute(NEXT_BULLETIN_VIEW, prepareNextBulletin(sessionId));
 		} else {
 			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
 		}
@@ -143,6 +167,7 @@ public class MainController extends ControllerBase {
 					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId(), user);
 			model.addAttribute(VIEW_MODE, "team");
 			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), null));
+			model.addAttribute(NEXT_BULLETIN_VIEW, prepareNextBulletin(sessionId));
 			model.addAttribute("selectedTeam", teamView);
 		} else {
 			try {
@@ -166,7 +191,8 @@ public class MainController extends ControllerBase {
 		if(selectedSession.isPresent()) {
 			model.addAttribute(VIEW_MODE, "events");
 			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
-			model.addAttribute("selectedTeamId", teamId);
+			model.addAttribute(NEXT_BULLETIN_VIEW, prepareNextBulletin(sessionId));
+			model.addAttribute(SELECTED_TEAM_ID, teamId);
 			if("All".equalsIgnoreCase(teamId)) {
 				model.addAttribute(SELECTED_EVENTS, viewBuilder.buildFromEventList(eventRepository
 						.findTop100BySessionIdOrderBySessionTimeDesc(sessionId), user));
@@ -178,6 +204,31 @@ public class MainController extends ControllerBase {
 			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
 		}
 		return EVENT_VIEW;
+	}
+
+	@PostMapping("/issueBulletin")
+	@Transactional
+	public String issueBulletin(@ModelAttribute RcBulletinView nextBulletinView, @RequestParam String redirectTo, Model model) {
+		Optional<RcBulletin> bulletin = bulletinRepository.findBySessionIdAndBulletinNo(
+				nextBulletinView.getSessionId(), nextBulletinView.getBulletinNo());
+		if(bulletin.isPresent()) {
+			return "redirect:index.html?error=" + "Bulletin " + bulletin.get().getBulletinNo() + " exists in this session";
+		} else {
+			RuleViolation violation = violationRepository.findById(nextBulletinView.getViolationId()).orElse(null);
+			if(violation != null) {
+				RcBulletin newBulletin = RcBulletin.builder()
+						.bulletinNo(nextBulletinView.getBulletinNo())
+						.sessionId(nextBulletinView.getSessionId())
+						.carNo(nextBulletinView.getCarNo())
+						.penaltyIdentifier(violation.getIdentifier())
+						.penaltyCategory(violation.getCategory().getCategoryCode())
+						.message(nextBulletinView.getMessage())
+						.build();
+				bulletinRepository.save(newBulletin);
+			}
+		}
+
+		return "redirect:" + redirectTo + "?teamId=All&sessionId=" + nextBulletinView.getSessionId();
 	}
 
 	private RcUser currentUserProfile(Optional<String> userId, Model model) {
@@ -198,5 +249,43 @@ public class MainController extends ControllerBase {
 				.created(ZonedDateTime.now())
 				.userType(RcUserType.NEW)
 				.build();
+	}
+
+	@ModelAttribute("ruleViolations")
+	public List<RuleViolationCategorySelectView> getRuleViolations() {
+		List<RuleViolationCategorySelectView> views = new ArrayList<>();
+		RuleViolation lastViolation = null;
+		RuleViolationCategorySelectView lastCategory = null;
+		for(RuleViolation violation : violationRepository.findAll()) {
+			if(lastViolation == null ||
+					!lastViolation.getCategory().getCategoryCode().equals(violation.getCategory().getCategoryCode())) {
+				List<RuleViolationView> violationSelectViews = new ArrayList<>();
+				violationSelectViews.add(RuleViolationView.buildFromEntity(violation));
+
+				lastCategory = RuleViolationCategorySelectView.builder()
+						.code(violation.getCategory().getCategoryCode())
+						.description(violation.getCategoryDescription())
+						.violations(violationSelectViews)
+						.build();
+				views.add(lastCategory);
+			} else {
+				lastCategory.getViolations().add(RuleViolationView.buildFromEntity(violation));
+			}
+			lastViolation = violation;
+		}
+		return views;
+	}
+
+	@ModelAttribute("penaltyViews")
+	@Transactional
+	public List<PenaltySelectView> getPenalties() {
+		return penaltyRepository.findAllByCodeContainingOrderByCodeAsc("")
+				.map(PenaltySelectView::buildFromEntity)
+				.collect(Collectors.toList());
+	}
+
+	private RcBulletinView prepareNextBulletin(String sessionId) {
+		long nextBulletinNo = bulletinRepository.countAllBySessionId(sessionId) + 1;
+		return RcBulletinView.buildNew(sessionId, nextBulletinNo);
 	}
 }

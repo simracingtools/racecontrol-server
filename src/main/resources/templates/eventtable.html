@@ -77,7 +77,7 @@
                                 </thead>
                                 <tbody>
                                     <tr th:each="teamData : ${sessionView.teams}">
-                                        <td class="text-right" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px;'}" th:text="${teamData.carNo.value}"></td>
+                                        <td class="text-right" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px; cursor: pointer;'}" th:text="${teamData.carNo.value}" onclick="showRcBulletinDialog(this.innerText)"></td>
                                         <td class="text-left" style="padding: 6px;">
                                             <a th:href="@{/events(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">All</a>
                                         </td>
@@ -125,6 +125,8 @@
             </tbody>
         </table>
     </div>
+    <div th:replace="timetable.html :: rc-model (redirectTarget='events')"></div>
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>

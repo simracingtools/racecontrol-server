@@ -35,4 +35,16 @@ public class RuleViolation {
 	private String violationReason;
 	@ElementCollection(fetch = FetchType.EAGER)
 	private Set<String> possiblePenaltyCodes;
+
+	public String getCategoryDescription() {
+		return category.getCategoryCode()
+				+ " - "
+				+ category.getCategoryName();
+	}
+
+	public String getDescription() {
+		return identifier
+				+ ") "
+				+ violationReason;
+	}
 }

@@ -97,7 +97,7 @@
                         <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
                             <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                         </td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
+                        <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText)">99</td>
                         <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" data-toggle="tooltip" th:attr="title=${teamData.proTeam ? 'PRO' : 'AM'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
@@ -128,6 +128,56 @@
             </tbody>
         </table>
 <!--    </div>-->
+    <div th:fragment="rc-model" th:with="redirectTarget=${redirectTarget} ? 'session'">
+        <div th:if="${user.userType.equalsIgnoreCase('SYSADMIN') || user.userType.equalsIgnoreCase('RACE_DIRECTOR') || user.userType.equalsIgnoreCase('STEWARD')}" id="rc-bulletin-model" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/issueBulletin(redirectTo=${redirectTarget})}" th:object="${nextBulletinView}">
+                        <div class="modal-header">
+                            <input type="hidden" th:field="*{sessionId}">
+                            <input type="hidden" th:field="*{bulletinNo}">
+                            <h4 class="modal-title" th:text="${'Race control bulletin #' + nextBulletinView.bulletinNo}">Race control bulletin #---</h4>
+                            <input type="time" th:field="*{sessionTime}" style="margin-left: 81px;">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>car #</label>
+                                <input type="text" th:field="*{carNo}" style="width: 35px;" value="999">
+                                <label style="margin-left: 5px;">Violation</label>
+                                <select th:field="*{violationId}" style="margin-left: 3px;width: 300px;" onchange="violationSelect()">
+                                    <option id="violation-0" value="0" selected="">None</option>
+                                    <optgroup th:each="cat : ${ruleViolations}" th:label="${cat.description}" th:data="${cat.code}">
+                                        <option th:each="violationView : ${cat.violations}" th:id="${'violation-' + violationView.id}" th:value="${violationView.id}" th:text="${violationView.getDescription()}" th:data="${violationView.getPenaltyCodesAsString()}">CAT1 A) Causing a collision</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div id="penalty-params" class="form-group" style="display: none;">
+                                <label>Penalty</label>
+                                <select th:field="*{selectedPenaltyCode}" style="margin-left: 3px;" onclick="penaltySelect()">
+                                    <option th:each="pen : ${penaltyViews}" th:value="${pen.code}" th:text="${pen.description}" th:data="${pen.needsTimeParam}">This is item 1</option>
+                                </select>
+                                <label id="penaltySecondsLabel" style="margin-left: 4px;">Sec</label>
+                                <input th:field="*{penaltySeconds}" type="number" style="margin-left: 5px; width: 60px" onchange="penaltySecondsChange()">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Message</label>
+                                <input th:field="*{message}" class="d-block" type="text" style="width: 465px;" oninput="messageChange()">
+                            </div>
+                            <p id="bulletin-preview">#R2-01 car #999&nbsp;</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="Submit">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>

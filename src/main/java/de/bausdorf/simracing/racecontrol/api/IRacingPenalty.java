@@ -1,16 +1,22 @@
 package de.bausdorf.simracing.racecontrol.api;
 
 public enum IRacingPenalty {
-	MESSAGE("/all <driver> <message>"),
-	DRIVE_THROUGH("!black <driver> D"),
-	STOP_AND_HOLD("!black <driver> <sec>"),
-	DISQUALIFICATION("!dq <driver> <message>"),
-	EXCLUSION("!remove <driver> <message>");
+	MESSAGE("/all <driver> <message>", false),
+	DRIVE_THROUGH("!black <driver> D", false),
+	STOP_AND_HOLD("!black <driver> <sec>", true),
+	DISQUALIFICATION("!dq <driver> <message>", false),
+	EXCLUSION("!remove <driver> <message>", false);
 
 	private final String command;
+	private final boolean timeParamNeeded;
 
-	private IRacingPenalty(String command) {
+	private IRacingPenalty(String command, boolean timeParam) {
+		this.timeParamNeeded = timeParam;
 		this.command = command;
+	}
+
+	public boolean isTimeParamNeeded() {
+		return timeParamNeeded;
 	}
 
 	public String issue(int carNo) {

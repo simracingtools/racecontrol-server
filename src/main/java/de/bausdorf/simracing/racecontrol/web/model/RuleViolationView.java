@@ -23,6 +23,12 @@ public class RuleViolationView {
 	private String violationReason;
 	private Set<String> possiblePenaltyCodes;
 
+	public String getDescription() {
+		return identifier
+				+ ") "
+				+ violationReason;
+	}
+
 	public String getPenaltyCodesAsString() {
 		StringBuilder penaltyCodes = new StringBuilder();
 		possiblePenaltyCodes.stream().forEach(s -> {
