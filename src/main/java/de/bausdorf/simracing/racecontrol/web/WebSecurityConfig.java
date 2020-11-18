@@ -46,7 +46,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -60,7 +59,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
-@EnableOAuth2Client
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements AccessDeniedHandler {
@@ -81,7 +79,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	public void configure(WebSecurity web) {
 		web.ignoring().antMatchers("/_ah/**", "/clientmessage",
 				"/rcclient/**", "/timingclient/**", "/app/**", "/timing/**", "/rc/**",
-				"/", "/index", "/session/**", "/team**", "/events/**", "/assets/**", "/webjars/**");
+				"/", "/index", "/session/**", "/team**", "/events/**", "/issueBulletin", "/assets/**", "/webjars/**");
 	}
 
 	@Override
@@ -89,7 +87,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 		http.authorizeRequests()
 				.antMatchers("!/_ah", "!/clientmessage",
 						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
-						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/assets/**", "!/webjars/**")
+						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/issueBulletin", "!/assets/**", "!/webjars/**")
 					.permitAll()
 					.anyRequest().authenticated()
 				.and()
@@ -126,12 +124,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 					OidcUserAuthority oidcUserAuthority = (OidcUserAuthority)authority;
 
 					determineUserRoles(oidcUserAuthority.getIdToken().getSubject())
-							.forEach(s -> mappedAuthorities.add(s));
+							.forEach(mappedAuthorities::add);
 				} else if (authority instanceof OAuth2UserAuthority) {
 					OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority)authority;
 
 					determineUserRoles(oauth2UserAuthority.getAttributes().get("sub").toString())
-							.forEach(s -> mappedAuthorities.add(s));
+							.forEach(mappedAuthorities::add);
 				}
 			});
 

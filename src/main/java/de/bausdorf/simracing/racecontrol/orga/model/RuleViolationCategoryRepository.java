@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
@@ -22,25 +22,11 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.time.Duration;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import java.util.stream.Stream;
 
-@AllArgsConstructor
-@Data
-@Builder
-public class EventView {
-	private long teamId;
-	private long driverId;
-	private long sessionMillis;
-	private long userId;
-	private Duration sessionTime;
-	private TableCellView eventTime;
-	private TableCellView eventType;
-	private TableCellView teamName;
-	private TableCellView driverName;
-	private TableCellView carNo;
-	private TableCellView carName;
-	private TableCellView lap;
+import org.springframework.data.repository.CrudRepository;
+
+public interface RuleViolationCategoryRepository extends CrudRepository<RuleViolationCategory, String> {
+
+	Stream<RuleViolationCategory> findAllByCategoryCodeContainingOrderByCategoryCodeAsc(String code);
 }

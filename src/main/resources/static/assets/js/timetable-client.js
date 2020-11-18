@@ -21,6 +21,98 @@
  */
 var stompClient = null;
 
+function showRcBulletinDialog(carNumber, eventIndex) {
+  $("#carNo").val(carNumber);
+  if(eventIndex > -1) {
+    var eventTime = $("#event-time-" + eventIndex).text();
+    var dotIndex = eventTime.indexOf('.');
+    if(dotIndex > 0) {
+      eventTime = eventTime.substr(0, dotIndex);
+    }
+    $("#sessionTime").val(eventTime);
+  }
+  updateRcBulletinPreview(false);
+  $("#rc-bulletin-model").modal('show');
+}
+
+function violationSelect() {
+  var violationId = $("#violationId").val();
+  if( violationId === "0") {
+    $("#penalty-params").attr("style", "display: none;");
+    updateRcBulletinPreview(false);
+  } else {
+    $("#penalty-params").attr("style", "");
+    var codes = $("#violation-" + violationId).attr("data");
+    var firstVisibleSelected = false;
+    $("#selectedPenaltyCode option").each(function (i) {
+      if(codes.indexOf($(this).val()) >= 0) {
+        $(this).show();
+        if(!firstVisibleSelected) {
+          $(this).attr('selected',true);
+          firstVisibleSelected = true;
+          if($(this).attr("data") === "true") {
+            $("#penaltySecondsLabel").show();
+            $("#penaltySeconds").show();
+          } else {
+            $("#penaltySecondsLabel").hide();
+            $("#penaltySeconds").hide();
+          }
+        }
+      } else {
+        $(this).hide();
+      }
+    })
+    updateRcBulletinPreview(true);
+  }
+}
+
+function penaltySelect() {
+  if($("#selectedPenaltyCode option:selected").attr("data") === "true") {
+    $("#penaltySecondsLabel").show();
+    $("#penaltySeconds").show();
+  } else {
+    $("#penaltySecondsLabel").hide();
+    $("#penaltySeconds").hide();
+  }
+
+  updateRcBulletinPreview(true);
+}
+
+function messageChange() {
+  if($("#violationId").val() === "0") {
+    updateRcBulletinPreview(false);
+  } else {
+    updateRcBulletinPreview(true);
+  }
+}
+
+function penaltySecondsChange() {
+  updateRcBulletinPreview(true);
+}
+
+function sessionTimeChange() {
+  updateRcBulletinPreview($("#selectedPenaltyCode").is(":visible"));
+}
+
+function updateRcBulletinPreview(checkViolation) {
+  var preview = $("#sessionType").text().substr(0, 1);
+  preview += $("#bulletinNo").val() + " ";
+  preview += $("#sessionTime").val();
+  preview += " - car #" + $("#carNo").val();
+  if(checkViolation) {
+    preview += " - " + $("#violationId option:selected").closest("optgroup").attr("data");
+    preview += " " + $("#violationId option:selected").text();
+    preview += " " + $("#selectedPenaltyCode option:selected").text();
+    if($("#selectedPenaltyCode option:selected").attr("data") === "true") {
+      preview += " " + $("#penaltySeconds").val() + " sec";
+    }
+  }
+  if($("message").val() !== "") {
+    preview += " - " + $("#message").val();
+  }
+  $("#bulletin-preview").text(preview);
+}
+
 function connect() {
   var socket = new SockJS('/timingclient');
   stompClient = Stomp.over(socket);

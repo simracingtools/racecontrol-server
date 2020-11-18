@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.model;
 
 /*-
  * #%L
@@ -22,25 +22,36 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.time.Duration;
+import java.time.ZonedDateTime;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class EventView {
-	private long teamId;
-	private long driverId;
-	private long sessionMillis;
-	private long userId;
-	private Duration sessionTime;
-	private TableCellView eventTime;
-	private TableCellView eventType;
-	private TableCellView teamName;
-	private TableCellView driverName;
-	private TableCellView carNo;
-	private TableCellView carName;
-	private TableCellView lap;
+@Entity
+@IdClass(BulletinPk.class)
+public class RcBulletin {
+	@Id
+	String sessionId;
+	@Id
+	private long bulletinNo;
+
+	private ZonedDateTime created;
+	private ZonedDateTime sent;
+	private String sessionTime;
+	private String carNo;
+	private String message;
+	private String violationCategory;
+	private String violationIdentifier;
+	private String selectedPenaltyCode;
+	private Long penaltySeconds;
 }

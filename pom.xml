@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.1.RELEASE</version>
+    <version>2.4.0</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>de.bausdorf.simracing</groupId>
@@ -20,19 +20,19 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <spring-cloud.version>Hoxton.SR4</spring-cloud.version>
-    <gcloud-project-id>iracing-team-tactics</gcloud-project-id>
-    <maven.test.skip>false</maven.test.skip>
+    <oauth.autoconfigure.version>2.3.4.RELEASE</oauth.autoconfigure.version>
+    <testcontainers.version>1.14.3</testcontainers.version>
+    <socksjs-client.version>1.1.2</socksjs-client.version>
+    <stomp-websocket.version>2.3.3-1</stomp-websocket.version>
+    <momentjs.version>2.24.0</momentjs.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-dependencies</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
+        <groupId>org.springframework.security.oauth.boot</groupId>
+        <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+        <version>${oauth.autoconfigure.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -46,30 +46,16 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-oauth2-client</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>net.minidev</groupId>
-          <artifactId>json-smart</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.nimbusds</groupId>
-          <artifactId>nimbus-jose-jwt</artifactId>
-        </exclusion>
-      </exclusions>
+        <exclusions>
+          <exclusion>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security.oauth.boot</groupId>
       <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-oauth2-jose</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- Spring web -->
@@ -132,17 +118,17 @@
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>sockjs-client</artifactId>
-      <version>1.1.2</version>
+      <version>${socksjs-client.version}</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>stomp-websocket</artifactId>
-      <version>2.3.3-1</version>
+      <version>${stomp-websocket.version}</version>
     </dependency>
     <dependency>
       <groupId>org.webjars</groupId>
       <artifactId>momentjs</artifactId>
-      <version>2.24.0</version>
+      <version>${momentjs.version}</version>
     </dependency>
 
     <!-- Spring test -->
@@ -150,16 +136,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.junit.vintage</groupId>
-          <artifactId>junit-vintage-engine</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -169,19 +145,19 @@
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>mariadb</artifactId>
-      <version>1.14.3</version>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
-      <version>1.14.3</version>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>1.14.3</version>
+      <version>${testcontainers.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -281,4 +257,25 @@
       <url>https://bausdorfengineering.jfrog.io/artifactory/racecontrol-server</url>
     </snapshotRepository>
   </distributionManagement>
+
+  <repositories>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>libs-release</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>libs-release</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>

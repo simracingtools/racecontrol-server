@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
@@ -22,25 +22,26 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.time.Duration;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@AllArgsConstructor
 @Data
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class EventView {
-	private long teamId;
-	private long driverId;
-	private long sessionMillis;
-	private long userId;
-	private Duration sessionTime;
-	private TableCellView eventTime;
-	private TableCellView eventType;
-	private TableCellView teamName;
-	private TableCellView driverName;
-	private TableCellView carNo;
-	private TableCellView carName;
-	private TableCellView lap;
+@EqualsAndHashCode
+@ToString
+public class RuleViolationCategory {
+	@Id
+	private String categoryCode;
+
+	private String categoryName;
 }

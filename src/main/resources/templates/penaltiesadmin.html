@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu"></div>
+
+        <div class="row">
+            <div class="col">
+                <div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <a th:class="${'nav-link ' + (activeTab.equalsIgnoreCase('penalty') ? 'active' : '')}" th:href="@{/penalties(activeTab='penalty')}" role="tab">Penalties</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a th:class="${'nav-link ' + (activeTab.equalsIgnoreCase('category') ? 'active' : '')}" th:href="@{/penalties(activeTab='category')}" role="tab">Rule violation categories</a>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <a th:class="${'nav-link ' + (activeTab.equalsIgnoreCase('violation') ? 'active' : '')}" th:href="@{/penalties(activeTab='violation')}" role="tab">Rule violations</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div th:class="${'tab-pane ' + (activeTab.equalsIgnoreCase('penalty') ? 'active' : '')}" role="tabpanel" id="tab-penalty">
+                            <div class="row">
+                                <div class="col-md-5 col-lg-6">
+                                    <div class="table-responsive" style="font-size: 12px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Name</th>
+                                                    <th>iRacing penalty</th>
+                                                    <th></th>
+                                                    <th>
+    <!--                                                    <button class="btn btn-primary" type="button"><i class="fas fa-plus-square"></i></button>-->
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="penalty : ${penaltyViews}">
+                                                    <td th:text="${penalty.code}">P01</td>
+                                                    <td th:text="${penalty.name}">Warning</td>
+                                                    <td th:text="${penalty.IRacingPenalty}">MESSAGE</td>
+                                                    <td>
+                                                        <button class="btn btn-danger" type="button">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </button>
+                                                    </td>
+                                                    <td>
+                                                        <a th:href="@{/penalties(selectedPenaltyCode=${penalty.code}, activeTab=${activeTab})}">
+                                                            <button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-lg-6">
+                                    <form method="post" th:action="@{/savepenalty}" th:object="${selectedPenalty}">
+                                        <div class="form-group">
+                                            <label class="d-block">Code</label>
+                                            <input type="text" th:field="*{code}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="d-block">Name</label>
+                                            <input type="text" th:field="*{name}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="d-block">iRacing Penalty</label>
+                                            <select style="height: 30px;" th:field="*{IRacingPenalty}">
+                                                <option th:each="p : ${iRacingPenalties}" th:value="${p}" th:text="${p}">Penalty name</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group text-right">
+                                            <button class="btn btn-primary text-right" type="submit">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:class="${'tab-pane ' + (activeTab.equalsIgnoreCase('category') ? 'active' : '')}" role="tabpanel" id="tab-category">
+                            <div class="row">
+                                <div class="col">
+                                    <div class="table-responsive" style="font-size: 12px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Code</th>
+                                                    <th>Description</th>
+                                                    <th></th>
+                                                    <th>
+    <!--                                                    <button class="btn btn-primary" type="button"><i class="fas fa-plus-square"></i></button>-->
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="cat : ${categoryViews}">
+                                                    <td th:text="${cat.code}">CAT1</td>
+                                                    <td th:text="${cat.description}">Forcing contact / causing a collision</td>
+                                                    <td><button class="btn btn-danger" type="button"><i class="fas fa-trash-alt"></i></button></td>
+                                                    <td>
+                                                        <a th:href="@{/penalties(selectedCategoryCode=${cat.code}, activeTab=${activeTab})}">
+                                                            <button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-lg-6">
+                                    <form method="post" th:action="@{/savecategory}" th:object="${selectedCategory}">
+                                        <div class="form-group">
+                                            <label class="d-block">Code</label>
+                                            <input type="text" th:field="*{code}">
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="d-block">Description</label>
+                                            <input type="text" th:field="*{description}">
+                                        </div>
+                                        <div class="form-group text-right">
+                                            <button class="btn btn-primary text-right" type="submit">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div th:class="${'tab-pane ' + (activeTab.equalsIgnoreCase('violation') ? 'active' : '')}" role="tabpanel" id="tab-violations">
+                            <div class="row">
+                                <div class="col-md-5 col-lg-6">
+                                    <div class="table-responsive" style="font-size: 12px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Category</th>
+                                                    <th>Code</th>
+                                                    <th>Description</th>
+                                                    <th>Possible Penalties</th>
+                                                    <th></th>
+                                                    <th>
+                                                        <a th:href="@{/penalties(activeTab=${activeTab})}">
+                                                            <button class="btn btn-primary" type="button"><i class="fas fa-plus-square"></i></button>
+                                                        </a>
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="violation : ${violationViews}">
+                                                    <td th:text="${violation.categoryCode}">CAT1</td>
+                                                    <td th:text="${violation.identifier}">A</td>
+                                                    <td th:text="${violation.violationReason}">Avoidable Contact</td>
+                                                    <td th:text="${violation.getPenaltyCodesAsString()}">P01, P02, P03, P04, P05</td>
+                                                    <td>
+                                                        <button class="btn btn-danger" type="button"><i class="fas fa-trash-alt"></i></button>
+                                                    </td>
+                                                    <td>
+                                                        <a th:href="@{/penalties(activeTab=${activeTab}, selectedViolationId=${violation.getId()})}">
+                                                            <button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-5 col-lg-6">
+                                    <form method="post" th:action="@{/saveviolation}" th:object="${selectedViolation}">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group"><label class="d-block">Category</label>
+                                                    <select th:field="*{categoryCode}" style="height: 30px;">
+                                                        <option th:each="cat : ${categoryViews}" th:value="${cat.code}" th:text="${cat.code}">CAT1</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group"><label class="d-block">Code</label>
+                                                    <input th:field="*{identifier}" type="text">
+                                                </div>
+                                                <div class="form-group"><label class="d-block">Description</label>
+                                                    <input th:field="*{violationReason}" type="text">
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group"><label class="d-block">iRacing Penalties</label>
+                                                    <select th:field="*{possiblePenaltyCodes}" style="height: 186px;width: 80px;" multiple="">
+                                                        <option th:each="p : ${penaltyViews}" th:value="${p.code}" th:text="${p.code}">P01</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-group text-right">
+                                            <input type="hidden" th:field="*{id}">
+                                            <button class="btn btn-primary text-right" type="submit">Save</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:insert="index :: footer"></div>
+    </div>
+    <!-- End: 2 Rows 1+3 Columns -->
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

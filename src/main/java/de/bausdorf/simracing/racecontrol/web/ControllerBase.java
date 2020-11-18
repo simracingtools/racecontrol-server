@@ -81,6 +81,12 @@ public class ControllerBase {
 		return new Messages();
 	}
 
+	protected void prepareMessageModel(Optional<String> error, Optional<String> warn, Optional<String> info, Model model) {
+		error.ifPresent(s -> addError(s, model));
+		warn.ifPresent(s -> addWarning(s, model));
+		info.ifPresent(s -> addWarning(s, model));
+	}
+
 	protected void addMessage(Message msg, Model model) {
 		Messages messages = ((Messages)model.getAttribute(MESSAGES));
 		if( messages == null ) {

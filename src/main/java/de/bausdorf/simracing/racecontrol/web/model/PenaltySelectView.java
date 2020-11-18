@@ -22,25 +22,26 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import java.time.Duration;
+import de.bausdorf.simracing.racecontrol.orga.model.Penalty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class EventView {
-	private long teamId;
-	private long driverId;
-	private long sessionMillis;
-	private long userId;
-	private Duration sessionTime;
-	private TableCellView eventTime;
-	private TableCellView eventType;
-	private TableCellView teamName;
-	private TableCellView driverName;
-	private TableCellView carNo;
-	private TableCellView carName;
-	private TableCellView lap;
+public class PenaltySelectView {
+	private String code;
+	private String description;
+	private boolean needsTimeParam;
+
+	public static PenaltySelectView buildFromEntity(Penalty penalty) {
+		return PenaltySelectView.builder()
+				.code(penalty.getCode())
+				.description(penalty.getCode() + " - " + penalty.getName())
+				.needsTimeParam(penalty.getIRacingPenalty().isTimeParamNeeded())
+				.build();
+	}
 }

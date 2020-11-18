@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>racecontrol</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div th:replace="timetable.html :: header"></div>
+    <input id="selectedTeamId" type="hidden" th:value="${selectedTeamId}">
+    <input id="userId" type="hidden" th:value="${user.getIRacingId()}">
+    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 14px;">
+        <table class="table">
+            <thead>
+                <tr class="text-center">
+                    <th class="text-center">#</th>
+                    <th class="text-center">Session time</th>
+                    <th class="text-center">Violation</th>
+                    <th class="text-center">Penalty</th>
+                    <th class="text-center">Discord</th>
+                    <th class="text-center">Simulation</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                <tr th:each="bulletin : ${issuedBulletins}">
+                    <td class="text-center" th:text="${bulletin.bulletinNo}"></td>
+                    <td class="text-center" th:text="${bulletin.sessionTime}"></td>
+                    <td class="text-left" th:text="${bulletin.violationDescription}"></td>
+                    <td class="text-center" th:text="${bulletin.penaltyDescription}"></td>
+                    <td class="text-left" th:text="${bulletin.getDiscordText()}"></td>
+                    <td class="text-left" th:text="${bulletin.getSimulationChatText()}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="assets/js/timetable-client.js"></script>
+    <script>
+        window.onload = function afterPageReload() {
+            connect();
+        }
+    </script>
+</body>
+
+</html>
