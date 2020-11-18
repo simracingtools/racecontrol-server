@@ -47,14 +47,18 @@
                     <h4 style="margin: 0">RaceControl</h4>
                 </td>
                 <td style="padding: 0 6px; vertical-align: middle;">
-                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events') || viewMode.equalsIgnoreCase('bulletins')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
                         <h6 style="margin: 0;" class="d-inline">Driving times</h6>
                     </a>
                     <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>&nbsp;&nbsp;
-                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times') || viewMode.equalsIgnoreCase('bulletins')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
                         <h6 style="margin: 0" class="d-inline">Track Events</h6>
                     </a>
-                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('events')}">&nbsp;&nbsp;Track Events</h6>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('events')}">&nbsp;Track Events</h6>
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times') || viewMode.equalsIgnoreCase('events')}" th:href="@{/bulletins(userId=${user.id}, sessionId=${sessionView.sessionId})}">
+                        <h6 style="margin: 0" class="d-inline">&nbsp;Bulletins</h6>
+                    </a>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('bulletins')}">&nbsp;&nbsp;Bulletins</h6>
                 </td>
                 <td style="padding: 0 6px; vertical-align: middle;">
                     <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor + '; margin: 0;'}"></h5>

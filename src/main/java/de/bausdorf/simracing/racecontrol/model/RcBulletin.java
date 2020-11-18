@@ -6,7 +6,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 
-import de.bausdorf.simracing.racecontrol.api.IRacingPenalty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,6 +30,6 @@ public class RcBulletin {
 	private String message;
 	private String violationCategory;
 	private String violationIdentifier;
-	private IRacingPenalty penalty;
+	private String selectedPenaltyCode;
 	private Long penaltySeconds;
 }

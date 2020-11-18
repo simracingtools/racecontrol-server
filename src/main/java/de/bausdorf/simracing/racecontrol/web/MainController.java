@@ -51,9 +51,12 @@ import de.bausdorf.simracing.racecontrol.model.TeamRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.Penalty;
 import de.bausdorf.simracing.racecontrol.orga.model.PenaltyRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.RuleViolation;
+import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationCategory;
+import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationCategoryRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationRepository;
 import de.bausdorf.simracing.racecontrol.web.model.PenaltySelectView;
 import de.bausdorf.simracing.racecontrol.web.model.RcBulletinView;
+import de.bausdorf.simracing.racecontrol.web.model.RcIssuedBulletinView;
 import de.bausdorf.simracing.racecontrol.web.model.RuleViolationCategorySelectView;
 import de.bausdorf.simracing.racecontrol.web.model.RuleViolationView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
@@ -77,6 +80,8 @@ public class MainController extends ControllerBase {
 	public static final String SESSION_VIEW_ATTRIBUTE = "sessionView";
 	public static final String SELECTED_TEAM_ID = "selectedTeamId";
 	public static final String NEXT_BULLETIN_VIEW = "nextBulletinView";
+	public static final String REDIRECT_INDEX = "redirect:index";
+	public static final String PARAM_USER_ID = "?userId=";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
@@ -84,6 +89,7 @@ public class MainController extends ControllerBase {
 	final EventRepository eventRepository;
 	final RcBulletinRepository bulletinRepository;
 	final RuleViolationRepository violationRepository;
+	final RuleViolationCategoryRepository categoryRepository;
 	final PenaltyRepository penaltyRepository;
 	final ViewBuilder viewBuilder;
 
@@ -93,6 +99,7 @@ public class MainController extends ControllerBase {
 			@Autowired EventRepository eventRepository,
 			@Autowired RcBulletinRepository bulletinRepository,
 			@Autowired RuleViolationRepository violationRepository,
+			@Autowired RuleViolationCategoryRepository categoryRepository,
 			@Autowired PenaltyRepository penaltyRepository,
 			@Autowired ViewBuilder viewBuilder) {
 		this.sessionRepository = sessionRepository;
@@ -101,6 +108,7 @@ public class MainController extends ControllerBase {
 		this.eventRepository = eventRepository;
 		this.bulletinRepository = bulletinRepository;
 		this.violationRepository = violationRepository;
+		this.categoryRepository = categoryRepository;
 		this.penaltyRepository = penaltyRepository;
 		this.viewBuilder = viewBuilder;
 		this.activeNav = "sessionSelect";
@@ -153,7 +161,7 @@ public class MainController extends ControllerBase {
 			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
 			model.addAttribute(NEXT_BULLETIN_VIEW, prepareNextBulletin(sessionId));
 		} else {
-			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
+			return REDIRECT_INDEX + userId.map(s -> PARAM_USER_ID + s).orElse("");
 		}
 		return SESSION_VIEW;
 	}
@@ -202,9 +210,26 @@ public class MainController extends ControllerBase {
 						.findBySessionIdAndTeamIdOrderBySessionTimeDesc(sessionId, Long.parseLong(teamId)), user));
 			}
 		} else {
-			return "redirect:index" + userId.map(s -> "?userId=" + s).orElse("");
+			return REDIRECT_INDEX + userId.map(s -> PARAM_USER_ID + s).orElse("");
 		}
 		return EVENT_VIEW;
+	}
+
+	@GetMapping("/bulletins")
+	@Transactional
+	public String getBulletins(@RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
+		currentUserProfile(userId, model);
+		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
+		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
+		if(selectedSession.isPresent()) {
+			model.addAttribute(VIEW_MODE, "bulletins");
+			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), teamsInSession));
+			model.addAttribute("issuedBulletins", getIssuedBulletinViews(sessionId));
+		} else {
+			return REDIRECT_INDEX + userId.map(s -> PARAM_USER_ID + s).orElse("");
+		}
+
+		return "bulletintable";
 	}
 
 	@PostMapping("/issueBulletin")
@@ -227,7 +252,7 @@ public class MainController extends ControllerBase {
 					.carNo(nextBulletinView.getCarNo())
 					.violationIdentifier(violation != null ? violation.getIdentifier() : null)
 					.violationCategory(violation != null ? violation.getCategory().getCategoryCode() : null)
-					.penalty(penalty != null ? penalty.getIRacingPenalty() : null)
+					.selectedPenaltyCode((violation != null && penalty != null) ? penalty.getCode() : null)
 					.penaltySeconds((long) nextBulletinView.getPenaltySeconds())
 					.message(nextBulletinView.getMessage())
 					.sessionTime(nextBulletinView.getSessionTime())
@@ -302,5 +327,26 @@ public class MainController extends ControllerBase {
 	private RcBulletinView prepareNextBulletin(String sessionId) {
 		long nextBulletinNo = bulletinRepository.countAllBySessionId(sessionId) + 1;
 		return RcBulletinView.buildNew(sessionId, nextBulletinNo);
+	}
+
+	private List<RcIssuedBulletinView> getIssuedBulletinViews(String sessionId) {
+		List<RcIssuedBulletinView> bulletinViews = new ArrayList<>();
+		for( RcBulletin bulletin : bulletinRepository.findAllBySessionIdOrderByBulletinNoDesc(sessionId)) {
+			RuleViolation violation = null;
+			Penalty penalty = null;
+			if(bulletin.getViolationCategory() != null) {
+				RuleViolationCategory category = categoryRepository.findById(bulletin.getViolationCategory()).orElse(null);
+				if (category != null) {
+					violation = violationRepository.findRuleViolationByCategoryAndIdentifier(category,
+							bulletin.getViolationIdentifier()).orElse(null);
+				}
+			}
+			if(bulletin.getSelectedPenaltyCode() != null) {
+				penalty = penaltyRepository.findById(bulletin.getSelectedPenaltyCode()).orElse(null);
+			}
+			bulletinViews.add(RcIssuedBulletinView.fromEntity(bulletin, violation, penalty));
+		}
+
+		return bulletinViews;
 	}
 }
