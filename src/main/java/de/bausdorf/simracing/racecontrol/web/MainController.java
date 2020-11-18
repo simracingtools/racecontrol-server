@@ -48,6 +48,7 @@ import de.bausdorf.simracing.racecontrol.model.Session;
 import de.bausdorf.simracing.racecontrol.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.model.Team;
 import de.bausdorf.simracing.racecontrol.model.TeamRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.Penalty;
 import de.bausdorf.simracing.racecontrol.orga.model.PenaltyRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.RuleViolation;
 import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationRepository;
@@ -208,27 +209,41 @@ public class MainController extends ControllerBase {
 
 	@PostMapping("/issueBulletin")
 	@Transactional
-	public String issueBulletin(@ModelAttribute RcBulletinView nextBulletinView, @RequestParam String redirectTo, Model model) {
+	public String issueBulletin(@ModelAttribute RcBulletinView nextBulletinView,
+			@RequestParam String redirectTo,
+			@RequestParam Optional<String> userId, Model model) {
+		currentUserProfile(userId, model);
 		Optional<RcBulletin> bulletin = bulletinRepository.findBySessionIdAndBulletinNo(
 				nextBulletinView.getSessionId(), nextBulletinView.getBulletinNo());
 		if(bulletin.isPresent()) {
 			return "redirect:index.html?error=" + "Bulletin " + bulletin.get().getBulletinNo() + " exists in this session";
 		} else {
 			RuleViolation violation = violationRepository.findById(nextBulletinView.getViolationId()).orElse(null);
-			if(violation != null) {
-				RcBulletin newBulletin = RcBulletin.builder()
-						.bulletinNo(nextBulletinView.getBulletinNo())
-						.sessionId(nextBulletinView.getSessionId())
-						.carNo(nextBulletinView.getCarNo())
-						.penaltyIdentifier(violation.getIdentifier())
-						.penaltyCategory(violation.getCategory().getCategoryCode())
-						.message(nextBulletinView.getMessage())
-						.build();
-				bulletinRepository.save(newBulletin);
-			}
+			Penalty penalty = penaltyRepository.findById(nextBulletinView.getSelectedPenaltyCode()).orElse(null);
+			RcBulletin newBulletin = RcBulletin.builder()
+					.created(ZonedDateTime.now())
+					.bulletinNo(nextBulletinView.getBulletinNo())
+					.sessionId(nextBulletinView.getSessionId())
+					.carNo(nextBulletinView.getCarNo())
+					.violationIdentifier(violation != null ? violation.getIdentifier() : null)
+					.violationCategory(violation != null ? violation.getCategory().getCategoryCode() : null)
+					.penalty(penalty != null ? penalty.getIRacingPenalty() : null)
+					.penaltySeconds((long) nextBulletinView.getPenaltySeconds())
+					.message(nextBulletinView.getMessage())
+					.sessionTime(nextBulletinView.getSessionTime())
+					.build();
+			bulletinRepository.save(newBulletin);
 		}
-
-		return "redirect:" + redirectTo + "?teamId=All&sessionId=" + nextBulletinView.getSessionId();
+		if(redirectTo.isEmpty()) {
+			redirectTo = "session";
+		}
+		String paramString = "?teamId=All" + userId.map(s -> "&userId=" + s).orElse("");
+		try {
+			paramString += "&sessionId=" + URLEncoder.encode(nextBulletinView.getSessionId(), "utf-8");
+		} catch(UnsupportedEncodingException e) {
+			log.warn(e.getMessage(), e);
+		}
+		return "redirect:" + redirectTo + paramString;
 	}
 
 	private RcUser currentUserProfile(Optional<String> userId, Model model) {

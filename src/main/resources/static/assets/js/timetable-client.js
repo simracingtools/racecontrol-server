@@ -21,8 +21,16 @@
  */
 var stompClient = null;
 
-function showRcBulletinDialog(carNumber) {
+function showRcBulletinDialog(carNumber, eventIndex) {
   $("#carNo").val(carNumber);
+  if(eventIndex > -1) {
+    var eventTime = $("#event-time-" + eventIndex).text();
+    var dotIndex = eventTime.indexOf('.');
+    if(dotIndex > 0) {
+      eventTime = eventTime.substr(0, dotIndex);
+    }
+    $("#sessionTime").val(eventTime);
+  }
   updateRcBulletinPreview(false);
   $("#rc-bulletin-model").modal('show');
 }
@@ -82,10 +90,15 @@ function penaltySecondsChange() {
   updateRcBulletinPreview(true);
 }
 
+function sessionTimeChange() {
+  updateRcBulletinPreview($("#selectedPenaltyCode").is(":visible"));
+}
+
 function updateRcBulletinPreview(checkViolation) {
   var preview = $("#sessionType").text().substr(0, 1);
   preview += $("#bulletinNo").val() + " ";
-  preview += "car #" + $("#carNo").val();
+  preview += $("#sessionTime").val();
+  preview += " - car #" + $("#carNo").val();
   if(checkViolation) {
     preview += " - " + $("#violationId option:selected").closest("optgroup").attr("data");
     preview += " " + $("#violationId option:selected").text();

@@ -1,7 +1,5 @@
 package de.bausdorf.simracing.racecontrol.web.model;
 
-import java.time.Duration;
-
 import org.springframework.lang.Nullable;
 
 import de.bausdorf.simracing.racecontrol.model.RcBulletin;
@@ -18,8 +16,7 @@ import lombok.NoArgsConstructor;
 public class RcBulletinView {
 	private String sessionId;
 	private long bulletinNo;
-
-	private Duration sessionTime;
+	private String sessionTime;
 	private String carNo;
 	private String message;
 	private long violationId;
@@ -55,7 +52,7 @@ public class RcBulletinView {
 				.message("")
 				.selectedPenaltyCode("")
 				.penaltySeconds(0)
-				.sessionTime(Duration.ZERO)
+				.sessionTime("00:00:00")
 				.build();
 	}
 }

@@ -97,7 +97,7 @@
                         <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
                             <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                         </td>
-                        <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText)">99</td>
+                        <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
                         <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" data-toggle="tooltip" th:attr="title=${teamData.proTeam ? 'PRO' : 'AM'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
                         <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
@@ -128,16 +128,17 @@
             </tbody>
         </table>
 <!--    </div>-->
-    <div th:fragment="rc-model" th:with="redirectTarget=${redirectTarget} ? 'session'">
+<!--    <div th:fragment="rc-model(redirectTarget)" th:with="redirectTarget=${redirectTarget} ? 'session'">-->
+        <div th:fragment="rc-model(redirectTarget)">
         <div th:if="${user.userType.equalsIgnoreCase('SYSADMIN') || user.userType.equalsIgnoreCase('RACE_DIRECTOR') || user.userType.equalsIgnoreCase('STEWARD')}" id="rc-bulletin-model" class="modal fade" role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form method="post" th:action="@{/issueBulletin(redirectTo=${redirectTarget})}" th:object="${nextBulletinView}">
+                    <form method="post" th:action="@{/issueBulletin(redirectTo=${redirectTarget}, userId=${user.id})}" th:object="${nextBulletinView}">
                         <div class="modal-header">
                             <input type="hidden" th:field="*{sessionId}">
                             <input type="hidden" th:field="*{bulletinNo}">
                             <h4 class="modal-title" th:text="${'Race control bulletin #' + nextBulletinView.bulletinNo}">Race control bulletin #---</h4>
-                            <input type="time" th:field="*{sessionTime}" style="margin-left: 81px;">
+                            <input type="text" th:field="*{sessionTime}" style="margin-left: 81px; width: 70px;" oninput="sessionTimeChange()">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                             </button>
