@@ -1,0 +1,20 @@
+<!-- Use debug=true here if you want to see output from the appender itself -->
+<configuration>
+  <!-- Use shutdownHook so that we can close gracefully and finish the log drain -->
+  <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+  <appender name="LogzioLogbackAppender" class="io.logz.logback.LogzioLogbackAppender">
+    <token>[YOUR_TOKEN]</token>
+    <logzioUrl>https://listener-eu.logz.io:8071</logzioUrl>
+    <logzioType>java</logzioType>
+    <addHostname>true</addHostname>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>INFO</level>
+    </filter>
+    <additionalFields>application=race-control</additionalFields>
+  </appender>
+
+  <root level="debug">
+    <!-- IMPORTANT: make sure to include this line, otherwise the appender won't be used -->
+    <appender-ref ref="LogzioLogbackAppender"/>
+  </root>
+</configuration>
