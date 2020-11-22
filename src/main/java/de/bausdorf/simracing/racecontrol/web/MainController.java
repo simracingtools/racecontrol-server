@@ -252,22 +252,8 @@ public class MainController extends ControllerBase {
 		} else {
 			RuleViolation violation = violationRepository.findById(nextBulletinView.getViolationId()).orElse(null);
 			Penalty penalty = penaltyRepository.findById(nextBulletinView.getSelectedPenaltyCode()).orElse(null);
-			RcBulletin newBulletin = RcBulletin.builder()
-					.created(ZonedDateTime.now())
-					.bulletinNo(nextBulletinView.getBulletinNo())
-					.sessionId(nextBulletinView.getSessionId())
-					.carNo(nextBulletinView.getCarNo())
-					.violationIdentifier(violation != null ? violation.getIdentifier() : null)
-					.violationCategory(violation != null ? violation.getCategory().getCategoryCode() : null)
-					.violationDescription(violation != null ? violation.getDescription() : null)
-					.selectedPenaltyCode((violation != null && penalty != null) ? penalty.getCode() : null)
-					.penaltyDescription((violation != null && penalty != null) ? penalty.getName() : null)
-					.penaltySeconds((violation != null && penalty != null && penalty.getIRacingPenalty().isTimeParamNeeded())
-							? (long) nextBulletinView.getPenaltySeconds() : null)
-					.message(nextBulletinView.getMessage())
-					.sessionTime(nextBulletinView.getSessionTime())
-					.build();
-			bulletinRepository.save(newBulletin);
+
+			bulletinRepository.save(buildFromView(nextBulletinView, violation, penalty));
 		}
 		if(redirectTo.isEmpty()) {
 			redirectTo = "session";
@@ -389,4 +375,23 @@ public class MainController extends ControllerBase {
 				|| user.getUserType() == RcUserType.STEWARD;
 
 	}
+
+	private RcBulletin buildFromView(RcBulletinView bulletinView, RuleViolation violation, Penalty penalty) {
+		return RcBulletin.builder()
+				.created(ZonedDateTime.now())
+				.bulletinNo(bulletinView.getBulletinNo())
+				.sessionId(bulletinView.getSessionId())
+				.carNo(bulletinView.getCarNo())
+				.violationIdentifier(violation != null ? violation.getIdentifier() : null)
+				.violationCategory(violation != null ? violation.getCategory().getCategoryCode() : null)
+				.violationDescription(violation != null ? violation.getDescription() : null)
+				.selectedPenaltyCode((violation != null && penalty != null) ? penalty.getCode() : null)
+				.penaltyDescription((violation != null && penalty != null) ? penalty.getName() : null)
+				.penaltySeconds((violation != null && penalty != null && penalty.getIRacingPenalty().isTimeParamNeeded())
+						? (long) bulletinView.getPenaltySeconds() : null)
+				.message(bulletinView.getMessage())
+				.sessionTime(bulletinView.getSessionTime())
+				.build();
+	}
+
 }
