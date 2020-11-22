@@ -52,6 +52,23 @@ public class RcBulletin {
 	private String message;
 	private String violationCategory;
 	private String violationIdentifier;
+	private String violationDescription;
 	private String selectedPenaltyCode;
+	private String penaltyDescription;
 	private Long penaltySeconds;
+
+	public String getDiscordTitle() {
+		return "R" + bulletinNo + " " + sessionTime;
+	}
+
+	public String getViolationText() {
+		return (violationCategory != null ? violationCategory + " ": "")
+				+ (violationDescription != null ? violationDescription : "");
+	}
+
+	public String getPenaltyText() {
+		return (selectedPenaltyCode != null ? selectedPenaltyCode + " " : "")
+				+ (penaltyDescription != null ? penaltyDescription + " " : "")
+				+ (penaltySeconds != null ? penaltySeconds + " sec" : "");
+	}
 }

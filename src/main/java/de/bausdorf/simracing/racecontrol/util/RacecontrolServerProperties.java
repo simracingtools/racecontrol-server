@@ -43,4 +43,5 @@ public class RacecontrolServerProperties {
     private int proAmDiscriminator;
     private String iRacingUsername;
     private String iRacingPassword;
+    private String discordBulletinUrl;
 }

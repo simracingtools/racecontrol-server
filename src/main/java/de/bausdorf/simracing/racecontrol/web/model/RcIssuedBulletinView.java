@@ -102,7 +102,7 @@ public class RcIssuedBulletinView {
 				.sessionTime(bulletin.getSessionTime())
 				.selectedPenalty(penalty != null ? penalty.getIRacingPenalty() : null)
 				.penaltyDescription(penalty != null ? penalty.getCode() + " " + penalty.getName() : null)
-				.penaltySeconds(bulletin.getPenaltySeconds().intValue())
+				.penaltySeconds(bulletin.getPenaltySeconds() != null ? bulletin.getPenaltySeconds().intValue() : 0)
 				.message(bulletin.getMessage())
 				.sent(bulletin.getSent() != null)
 				.build();

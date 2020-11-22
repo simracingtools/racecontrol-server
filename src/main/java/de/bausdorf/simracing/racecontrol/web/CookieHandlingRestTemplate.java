@@ -38,7 +38,7 @@ import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
-@Component
+//@Component
 public class CookieHandlingRestTemplate extends RestTemplate{
 
 	public static final String COOKIE = "Cookie";
