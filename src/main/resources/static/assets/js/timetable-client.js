@@ -98,7 +98,7 @@ function updateRcBulletinPreview(checkViolation) {
   var preview = $("#sessionType").text().substr(0, 1);
   preview += $("#bulletinNo").val() + " ";
   preview += $("#sessionTime").val();
-  preview += " - car #" + $("#carNo").val();
+  preview += " #" + $("#carNo").val();
   if(checkViolation) {
     preview += " - " + $("#violationId option:selected").closest("optgroup").attr("data");
     preview += " " + $("#violationId option:selected").text();
@@ -159,8 +159,11 @@ function sendEventFilterChange(userId, event, checked) {
 }
 
 function reloadPage() {
-  console.log("reload page")
-  window.location.reload();
+  if($("#rc-bulletin-model").is(":visible")) {
+    console.log("bulletin modal visible, suppress page reload")
+  } else {
+    window.location.reload();
+  }
 }
 
 function showDriverData(message) {
@@ -193,6 +196,7 @@ function showEventData(message) {
           .attr("class", $('#event-type-' + (i - 1)).attr('class'))
           .attr('onclick', $('#event-type-' + (i - 1)).attr('onclick'));
       $('#event-lap-' + i).text($('#event-lap-' + (i - 1)).text());
+      $('#event-carno-' + i).text($('#event-carno-' + (i - 1)).text());
       $('#event-drivername-' + i).text($('#event-drivername-' + (i - 1)).text());
       $('#event-teamname-' + i).text($('#event-teamname-' + (i - 1)).text());
       $('#event-carname-' + i).text($('#event-carname-' + (i - 1)).text());
@@ -203,6 +207,7 @@ function showEventData(message) {
           .attr("onclick", 'sendRcTimestamp(' + message.sessionMillis + ', ' + message.teamId + ', ' + $('#userId').val() + ');')
           .attr("class", message.eventType.cssClassString);
       $('#event-lap-0').text(message.lap.value);
+      $('#event-carno-0').text(message.carNo.value);
       $('#event-drivername-0').text(message.driverName.value);
       $('#event-teamname-0').text(message.teamName.value);
       $('#event-carname-0').text(message.carName.value);

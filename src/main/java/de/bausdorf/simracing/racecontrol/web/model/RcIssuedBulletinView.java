@@ -49,10 +49,10 @@ public class RcIssuedBulletinView {
 	private int penaltySeconds;
 
 	public String getDiscordText() {
-		String discordText =  "R" + bulletinNo + " " + sessionTime + " - car #" + carNo + " - ";
+		String discordText =  "R" + bulletinNo + " " + sessionTime + " #" + carNo + " - ";
 		discordText += getBulletinIssue();
 		if(!message.isEmpty()) {
-			discordText += " - " + message;
+			discordText += (!discordText.endsWith(" - ") ? " - " : "") + message;
 		}
 		return discordText;
 	}
@@ -69,7 +69,7 @@ public class RcIssuedBulletinView {
 				chatText = selectedPenalty.issue(Integer.parseInt(carNo), message);
 			}
 		} else {
-			chatText += "car #" + carNo + ": " + message;
+			chatText += "#" + carNo + " - " + message;
 		}
 		return chatText;
 	}
@@ -87,19 +87,20 @@ public class RcIssuedBulletinView {
 		}
 		return issueText;
 	}
+
 	public static RcIssuedBulletinView fromEntity(RcBulletin bulletin, @Nullable RuleViolation violation, @Nullable Penalty penalty) {
-		String penaltyDescription = "";
+		String violationDescription = "";
 		if(violation != null) {
-			penaltyDescription = violation.getCategory().getCategoryCode() + " " + violation.getDescription();
+			violationDescription = violation.getCategory().getCategoryCode() + " " + violation.getDescription();
 		}
 		return RcIssuedBulletinView.builder()
 				.sessionId(bulletin.getSessionId())
 				.bulletinNo(bulletin.getBulletinNo())
 				.carNo(bulletin.getCarNo())
-				.violationDescription(penaltyDescription)
+				.violationDescription(violationDescription)
 				.sessionTime(bulletin.getSessionTime())
 				.selectedPenalty(penalty != null ? penalty.getIRacingPenalty() : null)
-				.penaltyDescription(penalty != null ? penalty.getName() : null)
+				.penaltyDescription(penalty != null ? penalty.getCode() + " " + penalty.getName() : null)
 				.penaltySeconds(bulletin.getPenaltySeconds().intValue())
 				.message(bulletin.getMessage())
 				.build();
