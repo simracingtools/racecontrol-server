@@ -47,6 +47,7 @@ public class RcIssuedBulletinView {
 	private IRacingPenalty selectedPenalty;
 	private String penaltyDescription;
 	private int penaltySeconds;
+	private boolean sent;
 
 	public String getDiscordText() {
 		String discordText =  "R" + bulletinNo + " " + sessionTime + " #" + carNo + " - ";
@@ -103,6 +104,7 @@ public class RcIssuedBulletinView {
 				.penaltyDescription(penalty != null ? penalty.getCode() + " " + penalty.getName() : null)
 				.penaltySeconds(bulletin.getPenaltySeconds().intValue())
 				.message(bulletin.getMessage())
+				.sent(bulletin.getSent() != null)
 				.build();
 	}
 }

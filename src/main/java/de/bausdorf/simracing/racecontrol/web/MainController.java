@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -271,6 +272,27 @@ public class MainController extends ControllerBase {
 		return "redirect:" + redirectTo + paramString;
 	}
 
+	@GetMapping("/sendBulletin")
+	@Transactional
+	public String sendBulletin(@RequestParam String sessionId, @RequestParam long bulletinNo, @RequestParam Optional<String> userId, Model model) {
+		RcUser user = currentUserProfile(userId, model);
+		RcBulletin bulletin = bulletinRepository.findBySessionIdAndBulletinNo(sessionId, bulletinNo).orElse(null);
+		if(bulletin != null) {
+			if(isUserRaceControl(user)) {
+				bulletin.setSent(ZonedDateTime.now());
+			} else {
+				log.warn("User " + user.getName() + " is not allowed to send RC bulletin");
+			}
+		}
+		String paramString = userId.map(s -> "userId=" + s + "&").orElse("");
+		try {
+			paramString += "sessionId=" + URLEncoder.encode(sessionId, "utf-8");
+		} catch(UnsupportedEncodingException e) {
+			log.warn(e.getMessage(), e);
+		}
+		return "redirect:bulletins?" + paramString;
+	}
+
 	private RcUser currentUserProfile(Optional<String> userId, Model model) {
 		if(userId.isPresent()) {
 			Optional<RcUser> currentUser = userRepository.findById(userId.get());
@@ -348,5 +370,12 @@ public class MainController extends ControllerBase {
 		}
 
 		return bulletinViews;
+	}
+
+	private boolean isUserRaceControl(@NonNull RcUser user) {
+		return user.getUserType() == RcUserType.SYSADMIN
+				|| user.getUserType() == RcUserType.RACE_DIRECTOR
+				|| user.getUserType() == RcUserType.STEWARD;
+
 	}
 }
