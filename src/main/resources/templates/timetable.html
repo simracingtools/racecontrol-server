@@ -85,55 +85,55 @@
         </table>
     </div>
 <!--    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">-->
-        <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
-            <thead>
-                <tr>
-                    <th>Team</th>
-                    <th>Car</th>
-                    <th>Driver</th>
-                    <th>Driving Time</th>
-                    <th class="text-center" th:each="stintNum : ${sessionView.getMaxDriverStints()}" th:text="${'Stint ' + stintNum}">Stint 1</th>
-                </tr>
-            </thead>
-            <tbody>
-                <div th:each="teamData : ${sessionView.teams}">
-                    <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
-                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
-                            <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
-                        </td>
-                        <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
-                        <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.proTeam ? 'PRO' : 'AM'}" data-toggle="tooltip" th:attr="title=${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
+    <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Car</th>
+                <th>Driver</th>
+                <th>Driving Time</th>
+                <th class="text-center" th:each="stintNum : ${sessionView.getMaxDriverStints()}" th:text="${'Stint ' + stintNum}">Stint 1</th>
+            </tr>
+        </thead>
+        <tbody>
+            <div th:each="teamData : ${sessionView.teams}">
+                <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
+                    <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
+                        <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
+                    </td>
+                    <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
+                    <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.proTeam ? 'PRO' : 'AM'}" data-toggle="tooltip" th:attr="title=${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
+                    <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
+                    <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
 <!--                        <td colspan="16"></td>-->
+                </tr>
+                <div th:each="driver : ${teamData.drivers}">
+                    <tr th:id="${'driver-' + driver.getIRacingId()}">
+                        <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
+                        <td></td>
+                        <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString() + ' text-nowrap'}" th:text="${driver.name.value}">Robert Bausdorf</td>
+                        <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
+                        <div th:each="stint, stintStat : ${driver.stints}">
+                            <td style="padding: 0 0 0 10px;">
+                                <table style="margin-bottom: 0;" class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
+                                        <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
+                                        <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </div>
                     </tr>
-                    <div th:each="driver : ${teamData.drivers}">
-                        <tr th:id="${'driver-' + driver.getIRacingId()}">
-                            <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
-                            <td></td>
-                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString() + ' text-nowrap'}" th:text="${driver.name.value}">Robert Bausdorf</td>
-                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
-                            <div th:each="stint, stintStat : ${driver.stints}">
-                                <td style="padding: 0 0 0 10px;">
-                                    <table style="margin-bottom: 0;" class="table">
-                                        <tbody>
-                                        <tr>
-                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
-                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </div>
-                        </tr>
-                    </div>
                 </div>
-            </tbody>
-        </table>
+            </div>
+        </tbody>
+    </table>
 <!--    </div>-->
 <!--    <div th:fragment="rc-model(redirectTarget)" th:with="redirectTarget=${redirectTarget} ? 'session'">-->
-        <div th:fragment="rc-model(redirectTarget)">
+    <div th:fragment="rc-model(redirectTarget)">
         <div th:if="${user.userType.equalsIgnoreCase('SYSADMIN') || user.userType.equalsIgnoreCase('RACE_DIRECTOR') || user.userType.equalsIgnoreCase('STEWARD')}" id="rc-bulletin-model" class="modal fade" role="dialog" tabindex="-1">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
