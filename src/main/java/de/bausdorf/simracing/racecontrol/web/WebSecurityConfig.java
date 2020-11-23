@@ -77,7 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 
 	@Override
 	public void configure(WebSecurity web) {
-		web.ignoring().antMatchers("/_ah/**", "/clientmessage",
+		web.ignoring().antMatchers("/_ah/**", "/actuator/**", "/clientmessage",
 				"/rcclient/**", "/timingclient/**", "/app/**", "/timing/**", "/rc/**",
 				"/", "/index", "/session/**", "/team**", "/events/**", "/issueBulletin", "/bulletins",
 				"/assets/**", "/webjars/**");
@@ -86,7 +86,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("!/_ah", "!/clientmessage",
+				.antMatchers("!/_ah", "!/actuator/**", "!/clientmessage",
 						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
 						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/issueBulletin", "!/bulletins/**",
 						"!/assets/**", "!/webjars/**")

@@ -31,6 +31,7 @@ import de.bausdorf.simracing.racecontrol.api.EventType;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import de.bausdorf.simracing.racecontrol.web.security.SubscriptionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +59,7 @@ public class UserProfileView {
 	private Boolean enabled;
 	private Boolean locked;
 	private Boolean expired;
+	private Boolean racecontrol;
 
 	// Read-only
 	private String username;
@@ -86,6 +88,9 @@ public class UserProfileView {
 //		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
 //				? user.getLastSubscription().plus(this.subscriptionType.getDuration()).toLocalDate().toString()
 //				: "Not relevant";
+		this.racecontrol = user.getUserType() == RcUserType.SYSADMIN
+				|| user.getUserType() == RcUserType.RACE_DIRECTOR
+				|| user.getUserType() == RcUserType.STEWARD;
 	}
 
 	public RcUser apply(RcUser merge) {

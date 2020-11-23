@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.bausdorf.simracing.racecontrol.discord.DiscordNotifier;
 import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
 import de.bausdorf.simracing.racecontrol.model.EventRepository;
 import de.bausdorf.simracing.racecontrol.model.RcBulletin;
@@ -82,6 +84,8 @@ public class MainController extends ControllerBase {
 	public static final String NEXT_BULLETIN_VIEW = "nextBulletinView";
 	public static final String REDIRECT_INDEX = "redirect:index";
 	public static final String PARAM_USER_ID = "?userId=";
+	public static final String USER_ID_PARAM = "userId=";
+	public static final String SESSION_ID_PARAM = "sessionId=";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
@@ -92,6 +96,7 @@ public class MainController extends ControllerBase {
 	final RuleViolationCategoryRepository categoryRepository;
 	final PenaltyRepository penaltyRepository;
 	final ViewBuilder viewBuilder;
+	final DiscordNotifier discordNotifier;
 
 	public MainController(@Autowired SessionRepository sessionRepository,
 			@Autowired TeamRepository teamRepository,
@@ -101,7 +106,8 @@ public class MainController extends ControllerBase {
 			@Autowired RuleViolationRepository violationRepository,
 			@Autowired RuleViolationCategoryRepository categoryRepository,
 			@Autowired PenaltyRepository penaltyRepository,
-			@Autowired ViewBuilder viewBuilder) {
+			@Autowired ViewBuilder viewBuilder,
+			@Autowired DiscordNotifier discordNotifier) {
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
 		this.changeRepository = changeRepository;
@@ -111,6 +117,7 @@ public class MainController extends ControllerBase {
 		this.categoryRepository = categoryRepository;
 		this.penaltyRepository = penaltyRepository;
 		this.viewBuilder = viewBuilder;
+		this.discordNotifier = discordNotifier;
 		this.activeNav = "sessionSelect";
 	}
 
@@ -142,9 +149,9 @@ public class MainController extends ControllerBase {
 		try {
 			String redirectUri = "redirect:session?";
 			if(!selectView.getUserId().isEmpty()) {
-				redirectUri += "userId=" + selectView.getUserId() + "&";
+				redirectUri += USER_ID_PARAM + selectView.getUserId() + "&";
 			}
-			return redirectUri + "sessionId=" + URLEncoder.encode(selectView.getSelectedSessionId(), "UTF-8");
+			return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(selectView.getSelectedSessionId(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -182,9 +189,9 @@ public class MainController extends ControllerBase {
 			try {
 				String redirectUri = "redirect:session?";
 				if(userId.isPresent()) {
-					redirectUri += "userId=" + userId.get() + "&";
+					redirectUri += USER_ID_PARAM + userId.get() + "&";
 				}
-				return redirectUri + "sessionId=" + URLEncoder.encode(sessionId, "UTF-8");
+				return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(sessionId, "UTF-8");
 			} catch (UnsupportedEncodingException e) {
 				log.error(e.getMessage(), e);
 			}
@@ -245,19 +252,8 @@ public class MainController extends ControllerBase {
 		} else {
 			RuleViolation violation = violationRepository.findById(nextBulletinView.getViolationId()).orElse(null);
 			Penalty penalty = penaltyRepository.findById(nextBulletinView.getSelectedPenaltyCode()).orElse(null);
-			RcBulletin newBulletin = RcBulletin.builder()
-					.created(ZonedDateTime.now())
-					.bulletinNo(nextBulletinView.getBulletinNo())
-					.sessionId(nextBulletinView.getSessionId())
-					.carNo(nextBulletinView.getCarNo())
-					.violationIdentifier(violation != null ? violation.getIdentifier() : null)
-					.violationCategory(violation != null ? violation.getCategory().getCategoryCode() : null)
-					.selectedPenaltyCode((violation != null && penalty != null) ? penalty.getCode() : null)
-					.penaltySeconds((long) nextBulletinView.getPenaltySeconds())
-					.message(nextBulletinView.getMessage())
-					.sessionTime(nextBulletinView.getSessionTime())
-					.build();
-			bulletinRepository.save(newBulletin);
+
+			bulletinRepository.save(buildFromView(nextBulletinView, violation, penalty));
 		}
 		if(redirectTo.isEmpty()) {
 			redirectTo = "session";
@@ -269,6 +265,29 @@ public class MainController extends ControllerBase {
 			log.warn(e.getMessage(), e);
 		}
 		return "redirect:" + redirectTo + paramString;
+	}
+
+	@GetMapping("/sendBulletin")
+	@Transactional
+	public String sendBulletin(@RequestParam String sessionId, @RequestParam long bulletinNo, @RequestParam Optional<String> userId, Model model) {
+		RcUser user = currentUserProfile(userId, model);
+		RcBulletin bulletin = bulletinRepository.findBySessionIdAndBulletinNo(sessionId, bulletinNo).orElse(null);
+		if(bulletin != null) {
+			if(isUserRaceControl(user)) {
+				String discordResponse = discordNotifier.sendRcBulletin(bulletin);
+				bulletin.setSent(ZonedDateTime.now());
+				log.info("Discord response: " + discordResponse);
+			} else {
+				log.warn("User " + user.getName() + " is not allowed to send RC bulletin");
+			}
+		}
+		String paramString = userId.map(s -> USER_ID_PARAM + s + "&").orElse("");
+		try {
+			paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, "utf-8");
+		} catch(UnsupportedEncodingException e) {
+			log.warn(e.getMessage(), e);
+		}
+		return "redirect:bulletins?" + paramString;
 	}
 
 	private RcUser currentUserProfile(Optional<String> userId, Model model) {
@@ -349,4 +368,30 @@ public class MainController extends ControllerBase {
 
 		return bulletinViews;
 	}
+
+	private boolean isUserRaceControl(@NonNull RcUser user) {
+		return user.getUserType() == RcUserType.SYSADMIN
+				|| user.getUserType() == RcUserType.RACE_DIRECTOR
+				|| user.getUserType() == RcUserType.STEWARD;
+
+	}
+
+	private RcBulletin buildFromView(RcBulletinView bulletinView, RuleViolation violation, Penalty penalty) {
+		return RcBulletin.builder()
+				.created(ZonedDateTime.now())
+				.bulletinNo(bulletinView.getBulletinNo())
+				.sessionId(bulletinView.getSessionId())
+				.carNo(bulletinView.getCarNo())
+				.violationIdentifier(violation != null ? violation.getIdentifier() : null)
+				.violationCategory(violation != null ? violation.getCategory().getCategoryCode() : null)
+				.violationDescription(violation != null ? violation.getDescription() : null)
+				.selectedPenaltyCode((violation != null && penalty != null) ? penalty.getCode() : null)
+				.penaltyDescription((violation != null && penalty != null) ? penalty.getName() : null)
+				.penaltySeconds((violation != null && penalty != null && penalty.getIRacingPenalty().isTimeParamNeeded())
+						? (long) bulletinView.getPenaltySeconds() : null)
+				.message(bulletinView.getMessage())
+				.sessionTime(bulletinView.getSessionTime())
+				.build();
+	}
+
 }
