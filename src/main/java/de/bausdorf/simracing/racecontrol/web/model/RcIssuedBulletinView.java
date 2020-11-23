@@ -49,6 +49,10 @@ public class RcIssuedBulletinView {
 	private int penaltySeconds;
 	private boolean sent;
 
+	public int getCarNoAsInt() {
+		return Integer.parseInt(carNo);
+	}
+
 	public String getDiscordText() {
 		String discordText =  "R" + bulletinNo + " " + sessionTime + " #" + carNo + " - ";
 		discordText += getBulletinIssue();
