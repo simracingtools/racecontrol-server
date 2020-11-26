@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 public class RuleComplianceCheck {
 
 	private final Duration maxStintDuration;
+	private final Duration formationLapDuration;
 	private final Duration maxTimeRequiresRest;
 	private final Duration minRestDuration;
 	private final double fairShareFactor;
@@ -43,10 +44,13 @@ public class RuleComplianceCheck {
 		this.minRestDuration = Duration.ofMinutes(props.getMinRestTimeMinutes());
 		this.fairShareFactor = props.getFairShareFactor();
 		this.proAmDiscriminator = props.getProAmDiscriminator();
+		this.formationLapDuration = Duration.ofMinutes(props.getFormationLapMinutes());
 	}
 
-	public boolean isStintDurationCompliant(Duration trackTime) {
-		return maxStintDuration.compareTo(trackTime) > 0;
+	public boolean isStintDurationCompliant(Duration trackTime, boolean includeFormationLap) {
+		return includeFormationLap
+				? maxStintDuration.plus(formationLapDuration).compareTo(trackTime) > 0
+				: maxStintDuration.compareTo(trackTime) > 0;
 	}
 
 	public boolean isRestTimeCompliant(Duration lastDrivingTime, Duration lastStintEnd, Duration nextStintStart) {
