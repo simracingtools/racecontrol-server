@@ -46,10 +46,12 @@ public class DiscordNotifier {
 
 		DiscordWebhook webhook = new DiscordWebhook(serverProperties.getDiscordBulletinUrl());
 		DiscordWebhook.EmbedObject embed = new DiscordWebhook.EmbedObject()
-				.setTitle(bulletin.getDiscordTitle())
-				.addField("car", "#" + bulletin.getCarNo(), true);
+				.setTitle(bulletin.getDiscordTitle());
 
 		boolean messageInline = true;
+		if(!bulletin.getCarNo().isEmpty()) {
+			embed.addField("car", "#" + bulletin.getCarNo(), true);
+		}
 		if(bulletin.getViolationDescription() != null) {
 			embed.addField("rule violation", bulletin.getViolationText(), true);
 			messageInline = false;
