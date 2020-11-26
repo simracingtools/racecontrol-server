@@ -86,6 +86,7 @@ public class MainController extends ControllerBase {
 	public static final String PARAM_USER_ID = "?userId=";
 	public static final String USER_ID_PARAM = "userId=";
 	public static final String SESSION_ID_PARAM = "sessionId=";
+	public static final String UTF_8 = "utf-8";
 
 	final SessionRepository sessionRepository;
 	final TeamRepository teamRepository;
@@ -260,7 +261,7 @@ public class MainController extends ControllerBase {
 		}
 		String paramString = "?teamId=All" + userId.map(s -> "&userId=" + s).orElse("");
 		try {
-			paramString += "&sessionId=" + URLEncoder.encode(nextBulletinView.getSessionId(), "utf-8");
+			paramString += "&sessionId=" + URLEncoder.encode(nextBulletinView.getSessionId(), UTF_8);
 		} catch(UnsupportedEncodingException e) {
 			log.warn(e.getMessage(), e);
 		}
@@ -274,16 +275,38 @@ public class MainController extends ControllerBase {
 		RcBulletin bulletin = bulletinRepository.findBySessionIdAndBulletinNo(sessionId, bulletinNo).orElse(null);
 		if(bulletin != null) {
 			if(isUserRaceControl(user)) {
-				String discordResponse = discordNotifier.sendRcBulletin(bulletin);
+				discordNotifier.sendRcBulletin(bulletin);
 				bulletin.setSent(ZonedDateTime.now());
-				log.info("Discord response: " + discordResponse);
+				log.info("Bulletin no {} sent to Discord.", bulletinNo);
 			} else {
 				log.warn("User " + user.getName() + " is not allowed to send RC bulletin");
 			}
 		}
 		String paramString = userId.map(s -> USER_ID_PARAM + s + "&").orElse("");
 		try {
-			paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, "utf-8");
+			paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, UTF_8);
+		} catch(UnsupportedEncodingException e) {
+			log.warn(e.getMessage(), e);
+		}
+		return "redirect:bulletins?" + paramString;
+	}
+
+	@GetMapping("/voidBulletin")
+	@Transactional
+	public String voidBulletin(@RequestParam String sessionId, @RequestParam long bulletinNo, @RequestParam Optional<String> userId, Model model) {
+		RcUser user = currentUserProfile(userId, model);
+		RcBulletin bulletin = bulletinRepository.findBySessionIdAndBulletinNo(sessionId, bulletinNo).orElse(null);
+		if(bulletin != null) {
+			if(isUserRaceControl(user)) {
+				bulletin.setValid(false);
+				log.info("Bulletin {} voided", bulletinNo);
+			} else {
+				log.warn("User " + user.getName() + " is not allowed to send RC bulletin");
+			}
+		}
+		String paramString = userId.map(s -> USER_ID_PARAM + s + "&").orElse("");
+		try {
+			paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, UTF_8);
 		} catch(UnsupportedEncodingException e) {
 			log.warn(e.getMessage(), e);
 		}
@@ -391,6 +414,7 @@ public class MainController extends ControllerBase {
 						? (long) bulletinView.getPenaltySeconds() : null)
 				.message(bulletinView.getMessage())
 				.sessionTime(bulletinView.getSessionTime())
+				.valid(true)
 				.build();
 	}
 

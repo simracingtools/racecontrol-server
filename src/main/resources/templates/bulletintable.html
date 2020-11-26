@@ -51,19 +51,26 @@
                 </tr>
             </thead>
             <tbody class="text-center">
-                <tr th:each="bulletin : ${issuedBulletins}" th:class="${bulletin.sent ? 'table-secondary' : ''}">
+                <tr th:each="bulletin : ${issuedBulletins}" th:class="${bulletin.sent ? 'table-secondary' : (!bulletin.valid ? '' : 'table-warning')}">
                     <td class="text-center" th:text="${bulletin.bulletinNo}"></td>
                     <td class="text-center" th:text="${bulletin.sessionTime}"></td>
                     <td class="text-left" th:text="${bulletin.violationDescription}"></td>
                     <td class="text-center" th:text="${bulletin.penaltyDescription}"></td>
                     <td class="text-left" th:text="${bulletin.getDiscordText()}"></td>
                     <td class="text-left" th:text="${bulletin.getSimulationChatText()}"></td>
-                    <td th:if="${!bulletin.sent && user.racecontrol}">
+                    <td th:if="${!bulletin.sent && bulletin.valid && user.racecontrol}">
                         <a th:href="@{/sendBulletin(userId=${user.id}, sessionId=${sessionView.sessionId}, bulletinNo=${bulletin.bulletinNo})}">
                             <button class="btn btn-primary" type="button"><i class="fas fa-sign-out-alt" style="height: 18px;width: 18px; font-size: 18px;"></i></button>
                         </a>
                     </td>
-                    <td th:if="${bulletin.sent || !user.racecontrol}">
+                    <td th:if="${!bulletin.sent && bulletin.valid && user.racecontrol}">
+                        <a th:href="@{/voidBulletin(userId=${user.id}, sessionId=${sessionView.sessionId}, bulletinNo=${bulletin.bulletinNo})}">
+                            <button class="btn btn-danger" type="button"><i class="fas fa-trash-alt" style="height: 18px;width: 18px; font-size: 18px;"></i></button>
+                        </a>
+                    </td>
+                    <td th:if="${bulletin.sent || !bulletin.valid || !user.racecontrol}">
+                    </td>
+                    <td th:if="${bulletin.sent || !bulletin.valid || !user.racecontrol}">
                     </td>
                 </tr>
             </tbody>

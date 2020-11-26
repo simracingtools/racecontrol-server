@@ -48,13 +48,15 @@ public class RcIssuedBulletinView {
 	private String penaltyDescription;
 	private int penaltySeconds;
 	private boolean sent;
+	private boolean valid;
 
 	public int getCarNoAsInt() {
 		return Integer.parseInt(carNo);
 	}
 
 	public String getDiscordText() {
-		String discordText =  "R" + bulletinNo + " " + sessionTime + " #" + carNo + " - ";
+		String discordText =  "R" + bulletinNo + " " + sessionTime;
+		discordText += carNo.isEmpty() ? " - " : " #" + carNo + " - ";
 		discordText += getBulletinIssue();
 		if(!message.isEmpty()) {
 			discordText += (!discordText.endsWith(" - ") ? " - " : "") + message;
@@ -109,6 +111,7 @@ public class RcIssuedBulletinView {
 				.penaltySeconds(bulletin.getPenaltySeconds() != null ? bulletin.getPenaltySeconds().intValue() : 0)
 				.message(bulletin.getMessage())
 				.sent(bulletin.getSent() != null)
+				.valid(bulletin.isValid())
 				.build();
 	}
 }
