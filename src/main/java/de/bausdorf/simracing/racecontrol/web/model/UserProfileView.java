@@ -70,6 +70,7 @@ public class UserProfileView {
 		this.email = user.getEmail();
 		this.imageUrl = user.getImageUrl();
 		this.iRacingId = user.getIRacingId();
+		this.iRacingName = user.getIRacingName();
 		this.userType = user.getUserType().name();
 		this.clientMessageAccessToken = user.getClientMessageAccessToken();
 		this.enabled = user.isEnabled();
@@ -94,9 +95,10 @@ public class UserProfileView {
 	}
 
 	public RcUser apply(RcUser merge) {
-		merge.setName(name != null ? name : merge.getName());
+		merge.setName(name != null ? name : merge.getIRacingName());
 		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
 		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
+		merge.setIRacingName(iRacingId != 0 ? iRacingName : merge.getIRacingName());
 		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
 		return merge;
 	}

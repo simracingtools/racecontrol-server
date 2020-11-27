@@ -304,7 +304,7 @@ public class ViewBuilder {
 						.build())
 				.duration(TableCellView.builder()
 						.value(TimeTools.shortDurationString(data.getTrackTime()))
-						.displayType(complianceCheck.isStintDurationCompliant(data.getTrackTime()) ? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER)
+						.displayType(complianceCheck.isStintDurationCompliant(data.getTrackTime(), data.startTime.equals(Duration.ZERO)) ? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER)
 						.build())
 				.changeTime(data.isUnfinished() ? data.getStartTime() : data.getStopTime())
 				.changeTimeStr(data.isUnfinished() ? TimeTools.shortDurationString(data.getStartTime()) : TimeTools.shortDurationString(data.getStopTime()))

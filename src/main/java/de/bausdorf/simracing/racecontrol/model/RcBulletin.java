@@ -56,6 +56,7 @@ public class RcBulletin {
 	private String selectedPenaltyCode;
 	private String penaltyDescription;
 	private Long penaltySeconds;
+	private boolean valid;
 
 	public String getDiscordTitle() {
 		return "R" + bulletinNo + " " + sessionTime;

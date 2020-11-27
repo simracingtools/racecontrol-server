@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,18 +36,28 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
 import de.bausdorf.simracing.racecontrol.web.model.UserSearchView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
+import lombok.extern.slf4j.Slf4j;
 
 @Controller
+@Slf4j
 public class UserAdminController extends ControllerBase {
 
 	public static final String USER_LIST = "userList";
 	public static final String SEARCH_VIEW = "searchView";
 	public static final String PROFILE_VIEW = "profile";
 	public static final String ADMIN_VIEW = "useradmin";
+
+	private final IRacingClient iRacingClient;
+
+	public UserAdminController(@Autowired IRacingClient iRacingClient) {
+		this.iRacingClient = iRacingClient;
+	}
 
 	@GetMapping("/useradmin")
 	@Secured("ROLE_SYSADMIN")
@@ -103,7 +114,18 @@ public class UserAdminController extends ControllerBase {
 	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER", "ROLE_NEW"})
 	@Transactional
 	public String saveUserProfile(@ModelAttribute UserProfileView profileView, Model model) {
-		RcUser userToSave = profileView.apply(currentUser());
+		RcUser currentUser = currentUser();
+		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()) {
+			List<MemberInfo> idSearch = iRacingClient.searchMembers(Long.toString(profileView.getIRacingId()));
+			if(idSearch.isEmpty()) {
+				log.warn("No iRacing user with id {} found", profileView.getIRacingId());
+			} else {
+				MemberInfo identifiedMember = idSearch.stream()
+						.filter(s -> s.getCustid() == profileView.getIRacingId()).findFirst().orElse(null);
+				profileView.setIRacingName(identifiedMember != null ? identifiedMember.getName() : profileView.getIRacingName());
+			}
+		}
+		RcUser userToSave = profileView.apply(currentUser);
 		userRepository.save(userToSave);
 		return "redirect:/profile";
 	}
