@@ -23,16 +23,20 @@ public class IRacingClient {
 
 	public IRacingClient(@Autowired RacecontrolServerProperties serverProperties) {
 		this.serverProperties = serverProperties;
-		System.getProperties().put("python.home", serverProperties.getJythonHome());
-		pyInterp = new PythonInterpreter();
-		log.info("Initialize jython ...");
-		pyInterp.exec("from ir_webstats.client import iRWebStats");
-		pyInterp.exec("irw = iRWebStats(False)");
-		log.info("... done.");
+		if(!serverProperties.getJythonHome().isEmpty()) {
+			System.getProperties().put("python.home", serverProperties.getJythonHome());
+			pyInterp = new PythonInterpreter();
+			log.info("Initialize jython ...");
+			pyInterp.exec("from ir_webstats.client import iRWebStats");
+			pyInterp.exec("irw = iRWebStats(False)");
+			log.info("... done.");
+		} else {
+			pyInterp = null;
+		}
 	}
 
 	public List<MemberInfo> searchMembers(String search) {
-		if(serverProperties.getJythonHome().isEmpty()) {
+		if(pyInterp == null) {
 			return Collections.emptyList();
 		}
 
