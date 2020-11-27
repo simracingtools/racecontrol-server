@@ -19,10 +19,16 @@ import lombok.extern.slf4j.Slf4j;
 public class IRacingClient {
 
 	private final RacecontrolServerProperties serverProperties;
+	private final PythonInterpreter pyInterp;
 
 	public IRacingClient(@Autowired RacecontrolServerProperties serverProperties) {
 		this.serverProperties = serverProperties;
 		System.getProperties().put("python.home", serverProperties.getJythonHome());
+		pyInterp = new PythonInterpreter();
+		log.info("Initialize jython ...");
+		pyInterp.exec("from ir_webstats.client import iRWebStats");
+		pyInterp.exec("irw = iRWebStats(False)");
+		log.info("... done.");
 	}
 
 	public List<MemberInfo> searchMembers(String search) {
@@ -30,9 +36,7 @@ public class IRacingClient {
 			return Collections.emptyList();
 		}
 
-		try(PythonInterpreter pyInterp = new PythonInterpreter()) {
-			pyInterp.exec("from ir_webstats.client import iRWebStats");
-			pyInterp.exec("irw = iRWebStats(False)");
+		try{
 			pyInterp.exec("irw.login('"
 					+ serverProperties.getIRacingUsername() + "', '"
 					+ serverProperties.getIRacingPassword() + "')");
@@ -42,7 +46,7 @@ public class IRacingClient {
 			return (List<MemberInfo>) searchResults.stream()
 					.map(s -> MemberInfo.builder()
 							.custid(((PyDictionary)s).get(new PyString("custid")).asInt())
-							.name(((PyDictionary)s).get(new PyString("name")).asString())
+							.name(((PyDictionary)s).get(new PyString("name")).asString().replace("+", " "))
 							.lastLogin(((PyDictionary)s).get(new PyString("lastLogin")).asLong())
 							.lastSeen(((PyDictionary)s).get(new PyString("lastSeen")).asLong())
 					.build())
