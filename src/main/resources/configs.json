@@ -1,0 +1,4914 @@
+[
+    {
+        "name": "Atlanta Motor Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 53,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=53",
+        "sku": 10039,
+        "price": 14.95,
+        "pkgID": 36,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Atlanta Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 51,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=51",
+        "sku": 10039,
+        "price": 14.95,
+        "pkgID": 36,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Atlanta Motor Speedway",
+        "category": "Oval",
+        "configname": "Legends Oval",
+        "trackID": 52,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=52",
+        "sku": 10039,
+        "price": 14.95,
+        "pkgID": 36,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Atlanta Motor Speedway",
+        "category": "Dirt Road",
+        "configname": "Rallycross Short",
+        "trackID": 322,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=322",
+        "sku": 10039,
+        "price": 14.95,
+        "pkgID": 36,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Atlanta Motor Speedway",
+        "category": "Dirt Road",
+        "configname": "Rallycross Long",
+        "trackID": 323,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=323",
+        "sku": 10039,
+        "price": 14.95,
+        "pkgID": 36,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Auto Club Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 225,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=225",
+        "sku": 10359,
+        "price": 14.95,
+        "pkgID": 151,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Auto Club Speedway",
+        "category": "Road",
+        "configname": "Competition",
+        "trackID": 226,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=226",
+        "sku": 10359,
+        "price": 14.95,
+        "pkgID": 151,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Auto Club Speedway",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 227,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=227",
+        "sku": 10359,
+        "price": 14.95,
+        "pkgID": 151,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Auto Club Speedway",
+        "category": "Road",
+        "configname": "Interior",
+        "trackID": 228,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=228",
+        "sku": 10359,
+        "price": 14.95,
+        "pkgID": 151,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 266,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=266",
+        "sku": 10403,
+        "price": 14.95,
+        "pkgID": 197,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 267,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=267",
+        "sku": 10403,
+        "price": 14.95,
+        "pkgID": 197,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 239,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=239",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "GP without first chicane",
+        "trackID": 244,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=244",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "GP without chicanes",
+        "trackID": 242,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=242",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "Combined",
+        "trackID": 247,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=247",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "Combined without first chicane",
+        "trackID": 246,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=246",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "Combined without chicanes",
+        "trackID": 240,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=240",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Road",
+        "configname": "Junior",
+        "trackID": 241,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=241",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Oval",
+        "configname": "Oval - Right turning",
+        "trackID": 243,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=243",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "category": "Oval",
+        "configname": "Oval - Left turning",
+        "trackID": 245,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=245",
+        "sku": 10383,
+        "price": 14.95,
+        "pkgID": 172,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autódromo José Carlos Pace",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 212,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=212",
+        "sku": 10340,
+        "price": 14.95,
+        "pkgID": 134,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Autódromo José Carlos Pace",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 213,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=213",
+        "sku": 10340,
+        "price": 14.95,
+        "pkgID": 134,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Barber Motorsports Park",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 46,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=46",
+        "sku": 10012,
+        "price": 11.95,
+        "pkgID": 33,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Barber Motorsports Park",
+        "category": "Road",
+        "configname": "Short A",
+        "trackID": 99,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=99",
+        "sku": 10012,
+        "price": 11.95,
+        "pkgID": 33,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Barber Motorsports Park",
+        "category": "Road",
+        "configname": "Short B",
+        "trackID": 100,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=100",
+        "sku": 10012,
+        "price": 11.95,
+        "pkgID": 33,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Bark River International Raceway",
+        "category": "Dirt Road",
+        "configname": "",
+        "trackID": 396,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=396",
+        "sku": 10499,
+        "price": 14.95,
+        "pkgID": 351,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Brands Hatch Circuit",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 290,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=290",
+        "sku": 10192,
+        "price": 14.95,
+        "pkgID": 91,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Brands Hatch Circuit",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 145,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=145",
+        "sku": 10192,
+        "price": 14.95,
+        "pkgID": 91,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Brands Hatch Circuit",
+        "category": "Road",
+        "configname": "Indy",
+        "trackID": 146,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=146",
+        "sku": 10192,
+        "price": 14.95,
+        "pkgID": 91,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Bristol Motor Speedway",
+        "category": "Dirt Oval",
+        "configname": "Dirt",
+        "trackID": 287,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=287",
+        "sku": 10055,
+        "price": 14.95,
+        "pkgID": 43,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Bristol Motor Speedway",
+        "category": "Oval",
+        "configname": "Dual Pit Roads",
+        "trackID": 101,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=101",
+        "sku": 10055,
+        "price": 14.95,
+        "pkgID": 43,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Bristol Motor Speedway",
+        "category": "Oval",
+        "configname": "Single Pit Roads",
+        "trackID": 365,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=365",
+        "sku": 10055,
+        "price": 14.95,
+        "pkgID": 43,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Canadian Tire Motorsports Park",
+        "category": "Road",
+        "configname": "",
+        "trackID": 144,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=144",
+        "sku": 10132,
+        "price": 14.95,
+        "pkgID": 90,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Cedar Lake Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 387,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=387",
+        "sku": 10496,
+        "price": 11.95,
+        "pkgID": 346,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Centripetal Circuit",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 143,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=143",
+        "sku": 10112,
+        "price": 0,
+        "pkgID": 79,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Road",
+        "configname": "Roval",
+        "trackID": 350,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=350",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 385,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=385",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Oval",
+        "configname": "Oval - 2018",
+        "trackID": 339,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=339",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Road",
+        "configname": "Roval - 2018",
+        "trackID": 330,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=330",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Road",
+        "configname": "Roval Long - 2018",
+        "trackID": 340,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=340",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Oval",
+        "configname": "Legends Oval - 2018",
+        "trackID": 335,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=335",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Road",
+        "configname": "Legends RC Short - 2018",
+        "trackID": 338,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=338",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Road",
+        "configname": "Legends RC Medium - 2018",
+        "trackID": 337,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=337",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "category": "Road",
+        "configname": "Legends RC Long - 2018",
+        "trackID": 336,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=336",
+        "sku": 10449,
+        "price": 0,
+        "pkgID": 268,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Chicago Street Circuit",
+        "category": "Road",
+        "configname": "",
+        "trackID": 405,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=405",
+        "sku": 10508,
+        "price": 14.95,
+        "pkgID": 365,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Chicagoland Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 123,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=123",
+        "sku": 10074,
+        "price": 14.95,
+        "pkgID": 65,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Chili Bowl",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 331,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=331",
+        "sku": 10453,
+        "price": 14.95,
+        "pkgID": 275,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Circuit de Barcelona Catalunya",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 345,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=345",
+        "sku": 10462,
+        "price": 14.95,
+        "pkgID": 292,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit de Barcelona Catalunya",
+        "category": "Road",
+        "configname": "National",
+        "trackID": 346,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=346",
+        "sku": 10462,
+        "price": 14.95,
+        "pkgID": 292,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit de Barcelona Catalunya",
+        "category": "Road",
+        "configname": "Club",
+        "trackID": 347,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=347",
+        "sku": 10462,
+        "price": 14.95,
+        "pkgID": 292,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit de Barcelona Catalunya",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 348,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=348",
+        "sku": 10462,
+        "price": 14.95,
+        "pkgID": 292,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit de Barcelona Catalunya",
+        "category": "Road",
+        "configname": "Historic",
+        "trackID": 349,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=349",
+        "sku": 10462,
+        "price": 14.95,
+        "pkgID": 292,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit de Barcelona-Catalunya",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 386,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=386",
+        "sku": 10462,
+        "price": 14.95,
+        "pkgID": 292,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Circuit de Spa-Francorchamps",
+        "category": "Road",
+        "configname": "Endurance",
+        "trackID": 165,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=165",
+        "sku": 10228,
+        "price": 14.95,
+        "pkgID": 103,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Circuit de Spa-Francorchamps",
+        "category": "Road",
+        "configname": "Classic Pits",
+        "trackID": 164,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=164",
+        "sku": 10228,
+        "price": 14.95,
+        "pkgID": 103,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Circuit de Spa-Francorchamps",
+        "category": "Road",
+        "configname": "Grand Prix Pits",
+        "trackID": 163,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=163",
+        "sku": 10228,
+        "price": 14.95,
+        "pkgID": 103,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Circuit des 24 Heures du Mans",
+        "category": "Road",
+        "configname": "24 Heures du Mans",
+        "trackID": 268,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=268",
+        "sku": 10407,
+        "price": 14.95,
+        "pkgID": 204,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 2
+    },
+    {
+        "name": "Circuit des 24 Heures du Mans",
+        "category": "Road",
+        "configname": "Historic",
+        "trackID": 269,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=269",
+        "sku": 10407,
+        "price": 14.95,
+        "pkgID": 204,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 2
+    },
+    {
+        "name": "Circuit Gilles Villeneuve",
+        "category": "Road",
+        "configname": "",
+        "trackID": 218,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=218",
+        "sku": 10352,
+        "price": 14.95,
+        "pkgID": 145,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit of the Americas",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 229,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=229",
+        "sku": 10361,
+        "price": 14.95,
+        "pkgID": 154,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit of the Americas",
+        "category": "Road",
+        "configname": "East",
+        "trackID": 230,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=230",
+        "sku": 10361,
+        "price": 14.95,
+        "pkgID": 154,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit of the Americas",
+        "category": "Road",
+        "configname": "West",
+        "trackID": 231,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=231",
+        "sku": 10361,
+        "price": 14.95,
+        "pkgID": 154,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit Park Zandvoort",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 149,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=149",
+        "sku": 10198,
+        "price": 14.95,
+        "pkgID": 92,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit Park Zandvoort",
+        "category": "Road",
+        "configname": "National",
+        "trackID": 150,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=150",
+        "sku": 10198,
+        "price": 14.95,
+        "pkgID": 92,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Circuit Park Zandvoort",
+        "category": "Road",
+        "configname": "Chicane",
+        "trackID": 147,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=147",
+        "sku": 10198,
+        "price": 14.95,
+        "pkgID": 92,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit Park Zandvoort",
+        "category": "Road",
+        "configname": "Club",
+        "trackID": 148,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=148",
+        "sku": 10198,
+        "price": 14.95,
+        "pkgID": 92,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Circuit Park Zandvoort",
+        "category": "Road",
+        "configname": "Oostelijk",
+        "trackID": 151,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=151",
+        "sku": 10198,
+        "price": 14.95,
+        "pkgID": 92,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Circuit Zolder",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 199,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=199",
+        "sku": 10317,
+        "price": 14.95,
+        "pkgID": 124,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Circuit Zolder",
+        "category": "Road",
+        "configname": "Alternate",
+        "trackID": 200,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=200",
+        "sku": 10317,
+        "price": 14.95,
+        "pkgID": 124,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Concord Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 15,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=15",
+        "sku": 10014,
+        "price": 0,
+        "pkgID": 3,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Crandon International Raceway",
+        "category": "Dirt Road",
+        "configname": "Full",
+        "trackID": 382,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=382",
+        "sku": 10491,
+        "price": 14.95,
+        "pkgID": 338,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Crandon International Raceway",
+        "category": "Dirt Road",
+        "configname": "Short",
+        "trackID": 383,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=383",
+        "sku": 10491,
+        "price": 14.95,
+        "pkgID": 338,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Darlington Raceway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 115,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=115",
+        "sku": 10065,
+        "price": 14.95,
+        "pkgID": 59,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Daytona International Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 191,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=191",
+        "sku": 10299,
+        "price": 14.95,
+        "pkgID": 120,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Daytona International Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 192,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=192",
+        "sku": 10299,
+        "price": 14.95,
+        "pkgID": 120,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Daytona International Speedway",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 193,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=193",
+        "sku": 10299,
+        "price": 14.95,
+        "pkgID": 120,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Daytona International Speedway",
+        "category": "Road",
+        "configname": "Short",
+        "trackID": 194,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=194",
+        "sku": 10299,
+        "price": 14.95,
+        "pkgID": 120,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Daytona International Speedway",
+        "category": "Road",
+        "configname": "NASCAR Road",
+        "trackID": 381,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=381",
+        "sku": 10299,
+        "price": 14.95,
+        "pkgID": 120,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Detroit Grand Prix at Belle Isle",
+        "category": "Road",
+        "configname": "Belle Isle",
+        "trackID": 319,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=319",
+        "sku": 10443,
+        "price": 14.95,
+        "pkgID": 259,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Donington Park Racing Circuit",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 233,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=233",
+        "sku": 10371,
+        "price": 14.95,
+        "pkgID": 162,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Donington Park Racing Circuit",
+        "category": "Road",
+        "configname": "National",
+        "trackID": 234,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=234",
+        "sku": 10371,
+        "price": 14.95,
+        "pkgID": 162,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Dover International Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 162,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=162",
+        "sku": 10223,
+        "price": 14.95,
+        "pkgID": 100,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 4,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Eldora Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 273,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=273",
+        "sku": 10415,
+        "price": 11.95,
+        "pkgID": 213,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Fairbury Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 344,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=344",
+        "sku": 10460,
+        "price": 11.95,
+        "pkgID": 289,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Five Flags Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 248,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=248",
+        "sku": 10390,
+        "price": 11.95,
+        "pkgID": 180,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 390,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=390",
+        "sku": 10498,
+        "price": 14.95,
+        "pkgID": 350,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "category": "Road",
+        "configname": "National A",
+        "trackID": 391,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=391",
+        "sku": 10498,
+        "price": 14.95,
+        "pkgID": 350,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "category": "Road",
+        "configname": "National B",
+        "trackID": 392,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=392",
+        "sku": 10498,
+        "price": 14.95,
+        "pkgID": 350,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "category": "Road",
+        "configname": "Short A",
+        "trackID": 393,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=393",
+        "sku": 10498,
+        "price": 14.95,
+        "pkgID": 350,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "category": "Road",
+        "configname": "Short B",
+        "trackID": 394,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=394",
+        "sku": 10498,
+        "price": 14.95,
+        "pkgID": 350,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "category": "Road",
+        "configname": "Outer",
+        "trackID": 395,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=395",
+        "sku": 10498,
+        "price": 14.95,
+        "pkgID": 350,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Homestead Miami Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 20,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=20",
+        "sku": 10016,
+        "price": 14.95,
+        "pkgID": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Homestead Miami Speedway",
+        "category": "Road",
+        "configname": "Road Course A",
+        "trackID": 21,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=21",
+        "sku": 10016,
+        "price": 14.95,
+        "pkgID": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Homestead Miami Speedway",
+        "category": "Road",
+        "configname": "Road Course B",
+        "trackID": 22,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=22",
+        "sku": 10016,
+        "price": 14.95,
+        "pkgID": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Homestead Miami Speedway",
+        "category": "Oval",
+        "configname": "IndyCar Oval",
+        "trackID": 362,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=362",
+        "sku": 10016,
+        "price": 14.95,
+        "pkgID": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Indianapolis Motor Speedway",
+        "category": "Oval",
+        "configname": "IndyCar Oval",
+        "trackID": 178,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=178",
+        "sku": 10107,
+        "price": 14.95,
+        "pkgID": 73,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Indianapolis Motor Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 133,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=133",
+        "sku": 10107,
+        "price": 14.95,
+        "pkgID": 73,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Indianapolis Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 134,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=134",
+        "sku": 10107,
+        "price": 14.95,
+        "pkgID": 73,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Indianapolis Motor Speedway",
+        "category": "Road",
+        "configname": "Bike",
+        "trackID": 135,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=135",
+        "sku": 10107,
+        "price": 14.95,
+        "pkgID": 73,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Iowa Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 169,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=169",
+        "sku": 10283,
+        "price": 14.95,
+        "pkgID": 115,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Iowa Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 170,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=170",
+        "sku": 10283,
+        "price": 14.95,
+        "pkgID": 115,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Iowa Speedway",
+        "category": "Oval",
+        "configname": "Legends",
+        "trackID": 171,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=171",
+        "sku": 10283,
+        "price": 14.95,
+        "pkgID": 115,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Iowa Speedway",
+        "category": "Oval",
+        "configname": "Infield Legends",
+        "trackID": 172,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=172",
+        "sku": 10283,
+        "price": 14.95,
+        "pkgID": 115,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Iowa Speedway",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 295,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=295",
+        "sku": 10283,
+        "price": 14.95,
+        "pkgID": 115,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "IRacing Superspeedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 384,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=384",
+        "sku": 10493,
+        "price": 14.95,
+        "pkgID": 341,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Irwindale Speedway",
+        "category": "Road",
+        "configname": "Figure Eight Jump",
+        "trackID": 388,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=388",
+        "sku": 10017,
+        "price": 11.95,
+        "pkgID": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Irwindale Speedway",
+        "category": "Oval",
+        "configname": "Outer",
+        "trackID": 23,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=23",
+        "sku": 10017,
+        "price": 11.95,
+        "pkgID": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Irwindale Speedway",
+        "category": "Oval",
+        "configname": "Inner",
+        "trackID": 19,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=19",
+        "sku": 10017,
+        "price": 11.95,
+        "pkgID": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Irwindale Speedway",
+        "category": "Oval",
+        "configname": "Outer - Inner",
+        "trackID": 30,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=30",
+        "sku": 10017,
+        "price": 11.95,
+        "pkgID": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Irwindale Speedway",
+        "category": "Road",
+        "configname": "Figure Eight",
+        "trackID": 217,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=217",
+        "sku": 10017,
+        "price": 11.95,
+        "pkgID": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Kansas Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 214,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=214",
+        "sku": 10350,
+        "price": 14.95,
+        "pkgID": 142,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Kansas Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 215,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=215",
+        "sku": 10350,
+        "price": 14.95,
+        "pkgID": 142,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Kansas Speedway",
+        "category": "Road",
+        "configname": "Infield Road Course",
+        "trackID": 216,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=216",
+        "sku": 10350,
+        "price": 14.95,
+        "pkgID": 142,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Kentucky Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 371,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=371",
+        "sku": 10480,
+        "price": 14.95,
+        "pkgID": 319,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Knoxville Raceway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 305,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=305",
+        "sku": 10437,
+        "price": 11.95,
+        "pkgID": 251,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Kokomo Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 320,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=320",
+        "sku": 10446,
+        "price": 11.95,
+        "pkgID": 264,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Langley Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 201,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=201",
+        "sku": 10318,
+        "price": 0,
+        "pkgID": 125,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lanier National Speedway",
+        "category": "Oval",
+        "configname": "Asphalt",
+        "trackID": 17,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=17",
+        "sku": 10020,
+        "price": 0,
+        "pkgID": 8,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lanier National Speedway",
+        "category": "Dirt Oval",
+        "configname": "Dirt",
+        "trackID": 288,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=288",
+        "sku": 10020,
+        "price": 0,
+        "pkgID": 8,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 103,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=103",
+        "sku": 10058,
+        "price": 14.95,
+        "pkgID": 54,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "category": "Oval",
+        "configname": "Legends Oval",
+        "trackID": 110,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=110",
+        "sku": 10058,
+        "price": 14.95,
+        "pkgID": 54,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course Combined",
+        "trackID": 114,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=114",
+        "sku": 10058,
+        "price": 14.95,
+        "pkgID": 54,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course Long",
+        "trackID": 111,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=111",
+        "sku": 10058,
+        "price": 14.95,
+        "pkgID": 54,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course Short",
+        "trackID": 112,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=112",
+        "sku": 10058,
+        "price": 14.95,
+        "pkgID": 54,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "category": "Oval",
+        "configname": "Infield Legends Oval",
+        "trackID": 113,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=113",
+        "sku": 10058,
+        "price": 14.95,
+        "pkgID": 54,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lernerville Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 351,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=351",
+        "sku": 10468,
+        "price": 11.95,
+        "pkgID": 303,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Limaland Motorsports Park",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 303,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=303",
+        "sku": 10435,
+        "price": 0,
+        "pkgID": 248,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lime Rock Park",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 353,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=353",
+        "sku": 10469,
+        "price": 0,
+        "pkgID": 304,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Lime Rock Park",
+        "category": "Road",
+        "configname": "Classic",
+        "trackID": 352,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=352",
+        "sku": 10469,
+        "price": 0,
+        "pkgID": 304,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Lime Rock Park",
+        "category": "Road",
+        "configname": "Chicanes",
+        "trackID": 354,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=354",
+        "sku": 10469,
+        "price": 0,
+        "pkgID": 304,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Lime Rock Park",
+        "category": "Road",
+        "configname": "West Bend Chicane",
+        "trackID": 355,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=355",
+        "sku": 10469,
+        "price": 0,
+        "pkgID": 304,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Long Beach Street Circuit",
+        "category": "Road",
+        "configname": "",
+        "trackID": 179,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=179",
+        "sku": 10349,
+        "price": 14.95,
+        "pkgID": 116,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lucas Oil Raceway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 232,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=232",
+        "sku": 10365,
+        "price": 11.95,
+        "pkgID": 159,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lucas Oil Raceway",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 304,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=304",
+        "sku": 10365,
+        "price": 11.95,
+        "pkgID": 159,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lånkebanen (Hell RX)",
+        "category": "Dirt Road",
+        "configname": "Hell Rallycross",
+        "trackID": 358,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=358",
+        "sku": 10475,
+        "price": 11.95,
+        "pkgID": 311,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lånkebanen (Hell RX)",
+        "category": "Dirt Road",
+        "configname": "Club",
+        "trackID": 359,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=359",
+        "sku": 10475,
+        "price": 11.95,
+        "pkgID": 311,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lånkebanen (Hell RX)",
+        "category": "Dirt Road",
+        "configname": "Rallycross Short",
+        "trackID": 360,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=360",
+        "sku": 10475,
+        "price": 11.95,
+        "pkgID": 311,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lånkebanen (Hell RX)",
+        "category": "Road",
+        "configname": "Road Short",
+        "trackID": 361,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=361",
+        "sku": 10475,
+        "price": 11.95,
+        "pkgID": 311,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Lånkebanen (Hell RX)",
+        "category": "Road",
+        "configname": "Road Long",
+        "trackID": 363,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=363",
+        "sku": 10475,
+        "price": 11.95,
+        "pkgID": 311,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Martinsville Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 33,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=33",
+        "sku": 10022,
+        "price": 14.95,
+        "pkgID": 26,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Michigan International Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 276,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=276",
+        "sku": 10422,
+        "price": 14.95,
+        "pkgID": 224,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Mid-Ohio Sports Car Course",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 153,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=153",
+        "sku": 10212,
+        "price": 14.95,
+        "pkgID": 96,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Mid-Ohio Sports Car Course",
+        "category": "Road",
+        "configname": "Chicane",
+        "trackID": 154,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=154",
+        "sku": 10212,
+        "price": 14.95,
+        "pkgID": 96,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Mid-Ohio Sports Car Course",
+        "category": "Road",
+        "configname": "Short",
+        "trackID": 155,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=155",
+        "sku": 10212,
+        "price": 14.95,
+        "pkgID": 96,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Mid-Ohio Sports Car Course",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 156,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=156",
+        "sku": 10212,
+        "price": 14.95,
+        "pkgID": 96,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Mid-Ohio Sports Car Course",
+        "category": "Oval",
+        "configname": "Alt Oval",
+        "trackID": 157,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=157",
+        "sku": 10212,
+        "price": 14.95,
+        "pkgID": 96,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Mount Panorama Circuit",
+        "category": "Road",
+        "configname": "",
+        "trackID": 219,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=219",
+        "sku": 10355,
+        "price": 14.95,
+        "pkgID": 146,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Myrtle Beach Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 286,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=286",
+        "sku": 10430,
+        "price": 11.95,
+        "pkgID": 240,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Nashville Fairgrounds Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 374,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=374",
+        "sku": 10486,
+        "price": 14.95,
+        "pkgID": 331,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Nashville Fairgrounds Speedway",
+        "category": "Oval",
+        "configname": "Mini",
+        "trackID": 380,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=380",
+        "sku": 10486,
+        "price": 14.95,
+        "pkgID": 331,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Nashville Superspeedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 400,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=400",
+        "sku": 10501,
+        "price": 14.95,
+        "pkgID": 353,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "New Hampshire Motor Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 131,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=131",
+        "sku": 10106,
+        "price": 14.95,
+        "pkgID": 72,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "New Hampshire Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 129,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=129",
+        "sku": 10106,
+        "price": 14.95,
+        "pkgID": 72,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "New Hampshire Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course with South Oval",
+        "trackID": 132,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=132",
+        "sku": 10106,
+        "price": 14.95,
+        "pkgID": 72,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "New Hampshire Motor Speedway",
+        "category": "Road",
+        "configname": "Road Course with North Oval",
+        "trackID": 130,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=130",
+        "sku": 10106,
+        "price": 14.95,
+        "pkgID": 72,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "New Hampshire Motor Speedway",
+        "category": "Oval",
+        "configname": "Legends",
+        "trackID": 222,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=222",
+        "sku": 10106,
+        "price": 14.95,
+        "pkgID": 72,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "New Smyrna Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 190,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=190",
+        "sku": 10298,
+        "price": 11.95,
+        "pkgID": 119,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "North Wilkesboro Speedway",
+        "category": "Oval",
+        "configname": "1987",
+        "trackID": 366,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=366",
+        "sku": 10476,
+        "price": 14.95,
+        "pkgID": 312,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Nürburgring Combined",
+        "category": "Road",
+        "configname": "Gesamtstrecke Short w/out Arena",
+        "trackID": 263,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=263",
+        "sku": 0,
+        "price": 0,
+        "pkgID": 186,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 1,
+        "nlapsSolo": 1
+    },
+    {
+        "name": "Nürburgring Combined",
+        "category": "Road",
+        "configname": "Gesamtstrecke 24h",
+        "trackID": 252,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=252",
+        "sku": 0,
+        "price": 0,
+        "pkgID": 186,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 1,
+        "nlapsSolo": 1
+    },
+    {
+        "name": "Nürburgring Combined",
+        "category": "Road",
+        "configname": "Gesamtstrecke VLN",
+        "trackID": 262,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=262",
+        "sku": 0,
+        "price": 0,
+        "pkgID": 186,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 1,
+        "nlapsSolo": 1
+    },
+    {
+        "name": "Nürburgring Combined",
+        "category": "Road",
+        "configname": "Gesamtstrecke Long",
+        "trackID": 264,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=264",
+        "sku": 0,
+        "price": 0,
+        "pkgID": 186,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 1,
+        "nlapsSolo": 1
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "category": "Road",
+        "configname": "Grand Prix w/out Arena",
+        "trackID": 257,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=257",
+        "sku": 10396,
+        "price": 14.95,
+        "pkgID": 185,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 250,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=250",
+        "sku": 10396,
+        "price": 14.95,
+        "pkgID": 185,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "category": "Road",
+        "configname": "BES/WEC",
+        "trackID": 255,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=255",
+        "sku": 10396,
+        "price": 14.95,
+        "pkgID": 185,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "category": "Road",
+        "configname": "Sprintstrecke",
+        "trackID": 259,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=259",
+        "sku": 10396,
+        "price": 14.95,
+        "pkgID": 185,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "category": "Road",
+        "configname": "Kurzanbindung w/out Arena",
+        "trackID": 260,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=260",
+        "sku": 10396,
+        "price": 14.95,
+        "pkgID": 185,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "category": "Road",
+        "configname": "Müllenbachschleife",
+        "trackID": 261,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=261",
+        "sku": 10396,
+        "price": 14.95,
+        "pkgID": 185,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Nürburgring Nordschleife",
+        "category": "Road",
+        "configname": "Industriefahrten",
+        "trackID": 249,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=249",
+        "sku": 10395,
+        "price": 14.95,
+        "pkgID": 184,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 1,
+        "nlapsSolo": 1
+    },
+    {
+        "name": "Nürburgring Nordschleife",
+        "category": "Road",
+        "configname": "Touristenfahrten",
+        "trackID": 253,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=253",
+        "sku": 10395,
+        "price": 14.95,
+        "pkgID": 184,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 1,
+        "nlapsSolo": 1
+    },
+    {
+        "name": "Okayama International Circuit",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 166,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=166",
+        "sku": 10267,
+        "price": 0,
+        "pkgID": 109,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Okayama International Circuit",
+        "category": "Road",
+        "configname": "Short",
+        "trackID": 167,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=167",
+        "sku": 10267,
+        "price": 0,
+        "pkgID": 109,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Oran Park Raceway",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 202,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=202",
+        "sku": 10319,
+        "price": 0,
+        "pkgID": 126,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oran Park Raceway",
+        "category": "Road",
+        "configname": "South",
+        "trackID": 208,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=208",
+        "sku": 10319,
+        "price": 0,
+        "pkgID": 126,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oran Park Raceway",
+        "category": "Road",
+        "configname": "North",
+        "trackID": 207,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=207",
+        "sku": 10319,
+        "price": 0,
+        "pkgID": 126,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Oran Park Raceway",
+        "category": "Road",
+        "configname": "North A",
+        "trackID": 209,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=209",
+        "sku": 10319,
+        "price": 0,
+        "pkgID": 126,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Oran Park Raceway",
+        "category": "Road",
+        "configname": "North B",
+        "trackID": 210,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=210",
+        "sku": 10319,
+        "price": 0,
+        "pkgID": 126,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Oran Park Raceway",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 211,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=211",
+        "sku": 10319,
+        "price": 0,
+        "pkgID": 126,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "International",
+        "trackID": 180,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=180",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Fosters",
+        "trackID": 181,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=181",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Island",
+        "trackID": 182,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=182",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Intl w/out Hislop",
+        "trackID": 183,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=183",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Intl w/out Brittens",
+        "trackID": 184,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=184",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Intl w/no Chicanes",
+        "trackID": 185,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=185",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Fosters w/Hislop",
+        "trackID": 186,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=186",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "category": "Road",
+        "configname": "Island Historic",
+        "trackID": 187,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=187",
+        "sku": 10290,
+        "price": 0,
+        "pkgID": 117,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Oxford Plains Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 12,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=12",
+        "sku": 10023,
+        "price": 0,
+        "pkgID": 10,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Phillip Island Circuit",
+        "category": "Road",
+        "configname": "",
+        "trackID": 152,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=152",
+        "sku": 10202,
+        "price": 14.95,
+        "pkgID": 93,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Phoenix Raceway",
+        "category": "Oval",
+        "configname": "Oval w/open dogleg",
+        "trackID": 236,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=236",
+        "sku": 10372,
+        "price": 14.95,
+        "pkgID": 163,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Phoenix Raceway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 235,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=235",
+        "sku": 10372,
+        "price": 14.95,
+        "pkgID": 163,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Pocono Raceway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 277,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=277",
+        "sku": 10423,
+        "price": 14.95,
+        "pkgID": 225,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Red Bull Ring",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 403,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=403",
+        "sku": 10506,
+        "price": 14.95,
+        "pkgID": 362,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Red Bull Ring",
+        "category": "Road",
+        "configname": "National",
+        "trackID": 404,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=404",
+        "sku": 10506,
+        "price": 14.95,
+        "pkgID": 362,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Red Bull Ring",
+        "category": "Road",
+        "configname": "North",
+        "trackID": 407,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=407",
+        "sku": 10506,
+        "price": 14.95,
+        "pkgID": 362,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Richmond Raceway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 31,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=31",
+        "sku": 10024,
+        "price": 14.95,
+        "pkgID": 23,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Road America",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 18,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=18",
+        "sku": 10025,
+        "price": 14.95,
+        "pkgID": 11,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Road America",
+        "category": "Road",
+        "configname": "Bend",
+        "trackID": 50,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=50",
+        "sku": 10025,
+        "price": 14.95,
+        "pkgID": 11,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Road Atlanta",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 127,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=127",
+        "sku": 10082,
+        "price": 14.95,
+        "pkgID": 67,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Road Atlanta",
+        "category": "Road",
+        "configname": "Club",
+        "trackID": 126,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=126",
+        "sku": 10082,
+        "price": 14.95,
+        "pkgID": 67,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Road Atlanta",
+        "category": "Road",
+        "configname": "Short",
+        "trackID": 128,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=128",
+        "sku": 10082,
+        "price": 14.95,
+        "pkgID": 67,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Rockingham Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 203,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=203",
+        "sku": 10328,
+        "price": 14.95,
+        "pkgID": 129,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Rockingham Speedway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 204,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=204",
+        "sku": 10328,
+        "price": 14.95,
+        "pkgID": 129,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Rockingham Speedway",
+        "category": "Road",
+        "configname": "Infield Road Course",
+        "trackID": 205,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=205",
+        "sku": 10328,
+        "price": 14.95,
+        "pkgID": 129,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Rockingham Speedway",
+        "category": "Road",
+        "configname": "Short Road Course",
+        "trackID": 206,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=206",
+        "sku": 10328,
+        "price": 14.95,
+        "pkgID": 129,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Sebring International Raceway",
+        "category": "Road",
+        "configname": "International",
+        "trackID": 95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=95",
+        "sku": 10042,
+        "price": 14.95,
+        "pkgID": 40,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sebring International Raceway",
+        "category": "Road",
+        "configname": "Club",
+        "trackID": 97,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=97",
+        "sku": 10042,
+        "price": 14.95,
+        "pkgID": 40,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sebring International Raceway",
+        "category": "Road",
+        "configname": "Modified",
+        "trackID": 96,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=96",
+        "sku": 10042,
+        "price": 14.95,
+        "pkgID": 40,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Silverstone Circuit",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 341,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=341",
+        "sku": 10424,
+        "price": 14.95,
+        "pkgID": 282,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Silverstone Circuit",
+        "category": "Road",
+        "configname": "International",
+        "trackID": 342,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=342",
+        "sku": 10424,
+        "price": 14.95,
+        "pkgID": 282,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Silverstone Circuit",
+        "category": "Road",
+        "configname": "National",
+        "trackID": 343,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=343",
+        "sku": 10424,
+        "price": 14.95,
+        "pkgID": 282,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 7
+    },
+    {
+        "name": "Snetterton Circuit",
+        "category": "Road",
+        "configname": "300",
+        "trackID": 297,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=297",
+        "sku": 10434,
+        "price": 14.95,
+        "pkgID": 247,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Snetterton Circuit",
+        "category": "Road",
+        "configname": "200",
+        "trackID": 298,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=298",
+        "sku": 10434,
+        "price": 14.95,
+        "pkgID": 247,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 7
+    },
+    {
+        "name": "Snetterton Circuit",
+        "category": "Road",
+        "configname": "100",
+        "trackID": 299,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=299",
+        "sku": 10434,
+        "price": 14.95,
+        "pkgID": 247,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Sonoma Raceway",
+        "category": "Road",
+        "configname": "IndyCar 2012-2018",
+        "trackID": 397,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=397",
+        "sku": 10027,
+        "price": 14.95,
+        "pkgID": 35,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sonoma Raceway",
+        "category": "Road",
+        "configname": "IndyCar 2008-2011",
+        "trackID": 102,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=102",
+        "sku": 10027,
+        "price": 14.95,
+        "pkgID": 35,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sonoma Raceway",
+        "category": "Road",
+        "configname": "Cup Historic",
+        "trackID": 48,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=48",
+        "sku": 10027,
+        "price": 14.95,
+        "pkgID": 35,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sonoma Raceway",
+        "category": "Road",
+        "configname": "Cup",
+        "trackID": 98,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=98",
+        "sku": 10027,
+        "price": 14.95,
+        "pkgID": 35,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sonoma Raceway",
+        "category": "Road",
+        "configname": "IndyCar pre-2008",
+        "trackID": 49,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=49",
+        "sku": 10027,
+        "price": 14.95,
+        "pkgID": 35,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Sonoma Raceway",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 312,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=312",
+        "sku": 10027,
+        "price": 14.95,
+        "pkgID": 35,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "South Boston Speedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 14,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=14",
+        "sku": 10028,
+        "price": 0,
+        "pkgID": 19,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Southern National Motorsports Park",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 256,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=256",
+        "sku": 10401,
+        "price": 0,
+        "pkgID": 194,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Stafford Motor Speedway",
+        "category": "Oval",
+        "configname": "Full Course",
+        "trackID": 11,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=11",
+        "sku": 10029,
+        "price": 11.95,
+        "pkgID": 12,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Summit Point Raceway",
+        "category": "Road",
+        "configname": "Summit Point Raceway",
+        "trackID": 9,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=9",
+        "sku": 10030,
+        "price": 0,
+        "pkgID": 13,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 7
+    },
+    {
+        "name": "Summit Point Raceway",
+        "category": "Road",
+        "configname": "Jefferson Circuit",
+        "trackID": 8,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=8",
+        "sku": 10030,
+        "price": 0,
+        "pkgID": 13,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Summit Point Raceway",
+        "category": "Road",
+        "configname": "Short",
+        "trackID": 24,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=24",
+        "sku": 10030,
+        "price": 0,
+        "pkgID": 13,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Summit Point Raceway",
+        "category": "Road",
+        "configname": "Jefferson Reverse",
+        "trackID": 142,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=142",
+        "sku": 10030,
+        "price": 0,
+        "pkgID": 13,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Summit Point Raceway",
+        "category": "Road",
+        "configname": "School",
+        "trackID": 159,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=159",
+        "sku": 10030,
+        "price": 0,
+        "pkgID": 13,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Suzuka International Racing Course",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 168,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=168",
+        "sku": 10282,
+        "price": 14.95,
+        "pkgID": 114,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Suzuka International Racing Course",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 173,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=173",
+        "sku": 10282,
+        "price": 14.95,
+        "pkgID": 114,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Suzuka International Racing Course",
+        "category": "Road",
+        "configname": "East",
+        "trackID": 174,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=174",
+        "sku": 10282,
+        "price": 14.95,
+        "pkgID": 114,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Suzuka International Racing Course",
+        "category": "Road",
+        "configname": "West",
+        "trackID": 175,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=175",
+        "sku": 10282,
+        "price": 14.95,
+        "pkgID": 114,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Suzuka International Racing Course",
+        "category": "Road",
+        "configname": "West w/chicane",
+        "trackID": 176,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=176",
+        "sku": 10282,
+        "price": 14.95,
+        "pkgID": 114,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Talladega Superspeedway",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 116,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=116",
+        "sku": 10066,
+        "price": 14.95,
+        "pkgID": 60,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Texas Motor Speedway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 357,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=357",
+        "sku": 10474,
+        "price": 14.95,
+        "pkgID": 310,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Texas Motor Speedway",
+        "category": "Oval",
+        "configname": "Legends Oval",
+        "trackID": 364,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=364",
+        "sku": 10474,
+        "price": 14.95,
+        "pkgID": 310,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "The Bullring",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 271,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=271",
+        "sku": 10413,
+        "price": 11.95,
+        "pkgID": 211,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "The Dirt Track at Charlotte",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 314,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=314",
+        "sku": 10441,
+        "price": 11.95,
+        "pkgID": 256,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "The Milwaukee Mile",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 94,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=94",
+        "sku": 10041,
+        "price": 14.95,
+        "pkgID": 41,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Thompson Speedway Motorsports Park",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 161,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=161",
+        "sku": 10216,
+        "price": 0,
+        "pkgID": 97,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 4,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "2000 Full",
+        "trackID": 324,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=324",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 9
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "2000 Moto",
+        "trackID": 325,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=325",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 9
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "2000 Short",
+        "trackID": 326,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=326",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "1000 Full",
+        "trackID": 327,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=327",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "1000 Outer",
+        "trackID": 328,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=328",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "1000 Chicane",
+        "trackID": 329,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=329",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "category": "Road",
+        "configname": "1000 Full Reverse",
+        "trackID": 333,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=333",
+        "sku": 10448,
+        "price": 0,
+        "pkgID": 267,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Twin Ring Motegi",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 195,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=195",
+        "sku": 10309,
+        "price": 14.95,
+        "pkgID": 123,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Twin Ring Motegi",
+        "category": "Road",
+        "configname": "East",
+        "trackID": 196,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=196",
+        "sku": 10309,
+        "price": 14.95,
+        "pkgID": 123,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Twin Ring Motegi",
+        "category": "Road",
+        "configname": "West",
+        "trackID": 197,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=197",
+        "sku": 10309,
+        "price": 14.95,
+        "pkgID": 123,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "Twin Ring Motegi",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 198,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=198",
+        "sku": 10309,
+        "price": 14.95,
+        "pkgID": 123,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "USA International Speedway",
+        "category": "Oval",
+        "configname": "Asphalt",
+        "trackID": 16,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=16",
+        "sku": 10019,
+        "price": 0,
+        "pkgID": 7,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "USA International Speedway",
+        "category": "Dirt Oval",
+        "configname": "Dirt",
+        "trackID": 275,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=275",
+        "sku": 10019,
+        "price": 0,
+        "pkgID": 7,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 2,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=2",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "South",
+        "trackID": 7,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=7",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 7
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "North",
+        "trackID": 4,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=4",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "Patriot",
+        "trackID": 3,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=3",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "Grand West",
+        "trackID": 5,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=5",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 3
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "Grand East",
+        "trackID": 6,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=6",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 3
+    },
+    {
+        "name": "Virginia International Raceway",
+        "category": "Road",
+        "configname": "Patriot Reverse",
+        "trackID": 141,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=141",
+        "sku": 10031,
+        "price": 14.95,
+        "pkgID": 14,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Volusia Speedway Park",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 279,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=279",
+        "sku": 10427,
+        "price": 11.95,
+        "pkgID": 233,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Watkins Glen International",
+        "category": "Road",
+        "configname": "Cup",
+        "trackID": 106,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=106",
+        "sku": 10060,
+        "price": 14.95,
+        "pkgID": 56,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "Watkins Glen International",
+        "category": "Road",
+        "configname": "Boot",
+        "trackID": 107,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=107",
+        "sku": 10060,
+        "price": 14.95,
+        "pkgID": 56,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Watkins Glen International",
+        "category": "Road",
+        "configname": "Classic Boot",
+        "trackID": 108,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=108",
+        "sku": 10060,
+        "price": 14.95,
+        "pkgID": 56,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "Watkins Glen International",
+        "category": "Road",
+        "configname": "Classic",
+        "trackID": 109,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=109",
+        "sku": 10060,
+        "price": 14.95,
+        "pkgID": 56,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "WeatherTech Raceway at Laguna Seca",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 47,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=47",
+        "sku": 10018,
+        "price": 0,
+        "pkgID": 34,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "WeatherTech Raceway at Laguna Seca",
+        "category": "Road",
+        "configname": "School",
+        "trackID": 158,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=158",
+        "sku": 10018,
+        "price": 0,
+        "pkgID": 34,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Weedsport Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 373,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=373",
+        "sku": 10485,
+        "price": 11.95,
+        "pkgID": 330,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Wild Horse Pass Motorsports Park",
+        "category": "Dirt Road",
+        "configname": "",
+        "trackID": 334,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=334",
+        "sku": 10456,
+        "price": 11.95,
+        "pkgID": 279,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "Wild West Motorsports Park",
+        "category": "Dirt Road",
+        "configname": "",
+        "trackID": 332,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=332",
+        "sku": 10454,
+        "price": 11.95,
+        "pkgID": 276,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "Williams Grove Speedway",
+        "category": "Dirt Oval",
+        "configname": "",
+        "trackID": 274,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=274",
+        "sku": 10416,
+        "price": 11.95,
+        "pkgID": 214,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "World Wide Technology Raceway",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 237,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=237",
+        "sku": 10376,
+        "price": 11.95,
+        "pkgID": 169,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "World Wide Technology Raceway",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 238,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=238",
+        "sku": 10376,
+        "price": 11.95,
+        "pkgID": 169,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "[Legacy] Charlotte Motor Speedway - 2008",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 40,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=40",
+        "sku": 10013,
+        "price": 0,
+        "pkgID": 31,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Charlotte Motor Speedway - 2008",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 37,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=37",
+        "sku": 10013,
+        "price": 0,
+        "pkgID": 31,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "[Legacy] Charlotte Motor Speedway - 2008",
+        "category": "Oval",
+        "configname": "Legends Oval",
+        "trackID": 39,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=39",
+        "sku": 10013,
+        "price": 0,
+        "pkgID": 31,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Charlotte Motor Speedway - 2008",
+        "category": "Road",
+        "configname": "Infield Road Course",
+        "trackID": 38,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=38",
+        "sku": 10013,
+        "price": 0,
+        "pkgID": 31,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 27,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=27",
+        "sku": 10015,
+        "price": 0,
+        "pkgID": 4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 26,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=26",
+        "sku": 10015,
+        "price": 0,
+        "pkgID": 4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "category": "Road",
+        "configname": "Moto",
+        "trackID": 28,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=28",
+        "sku": 10015,
+        "price": 0,
+        "pkgID": 4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "category": "Road",
+        "configname": "Short",
+        "trackID": 29,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=29",
+        "sku": 10015,
+        "price": 0,
+        "pkgID": 4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "category": "Dirt Road",
+        "configname": "Rallycross Short",
+        "trackID": 296,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=296",
+        "sku": 10015,
+        "price": 0,
+        "pkgID": 4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "category": "Dirt Road",
+        "configname": "Rallycross Long",
+        "trackID": 293,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=293",
+        "sku": 10015,
+        "price": 0,
+        "pkgID": 4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Kentucky Speedway - 2011",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 188,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=188",
+        "sku": 10293,
+        "price": 4.95,
+        "pkgID": 118,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Kentucky Speedway - 2011",
+        "category": "Oval",
+        "configname": "Legends",
+        "trackID": 189,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=189",
+        "sku": 10293,
+        "price": 4.95,
+        "pkgID": 118,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Lime Rock Park - 2008",
+        "category": "Road",
+        "configname": "Full Course",
+        "trackID": 1,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=1",
+        "sku": 10021,
+        "price": 0,
+        "pkgID": 9,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "[Legacy] Lime Rock Park - 2008",
+        "category": "Road",
+        "configname": "Chicane",
+        "trackID": 34,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=34",
+        "sku": 10021,
+        "price": 0,
+        "pkgID": 9,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 8
+    },
+    {
+        "name": "[Legacy] Lime Rock Park - 2008",
+        "category": "Road",
+        "configname": "School",
+        "trackID": 160,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=160",
+        "sku": 10021,
+        "price": 0,
+        "pkgID": 9,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            ""
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "[Legacy] Michigan International Speedway - 2009",
+        "category": "Oval",
+        "configname": "",
+        "trackID": 124,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=124",
+        "sku": 10075,
+        "price": 4.95,
+        "pkgID": 66,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Phoenix Raceway - 2008",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 104,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=104",
+        "sku": 10059,
+        "price": 0,
+        "pkgID": 55,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Phoenix Raceway - 2008",
+        "category": "Road",
+        "configname": "Road Course",
+        "trackID": 105,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=105",
+        "sku": 10059,
+        "price": 0,
+        "pkgID": 55,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "[Legacy] Phoenix Raceway - 2008",
+        "category": "Dirt Road",
+        "configname": "Rallycross",
+        "trackID": 306,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=306",
+        "sku": 10059,
+        "price": 0,
+        "pkgID": 55,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Pocono Raceway - 2009",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 136,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=136",
+        "sku": 10108,
+        "price": 4.95,
+        "pkgID": 74,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Pocono Raceway - 2009",
+        "category": "Road",
+        "configname": "International",
+        "trackID": 140,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=140",
+        "sku": 10108,
+        "price": 4.95,
+        "pkgID": 74,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "[Legacy] Pocono Raceway - 2009",
+        "category": "Road",
+        "configname": "East",
+        "trackID": 137,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=137",
+        "sku": 10108,
+        "price": 4.95,
+        "pkgID": 74,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Pocono Raceway - 2009",
+        "category": "Road",
+        "configname": "South",
+        "trackID": 138,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=138",
+        "sku": 10108,
+        "price": 4.95,
+        "pkgID": 74,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Pocono Raceway - 2009",
+        "category": "Road",
+        "configname": "North",
+        "trackID": 139,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=139",
+        "sku": 10108,
+        "price": 4.95,
+        "pkgID": 74,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Silverstone Circuit - 2008",
+        "category": "Road",
+        "configname": "Grand Prix",
+        "trackID": 41,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=41",
+        "sku": 10026,
+        "price": 4.95,
+        "pkgID": 32,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "[Legacy] Silverstone Circuit - 2008",
+        "category": "Road",
+        "configname": "Historical Grand Prix",
+        "trackID": 42,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=42",
+        "sku": 10026,
+        "price": 4.95,
+        "pkgID": 32,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 4
+    },
+    {
+        "name": "[Legacy] Silverstone Circuit - 2008",
+        "category": "Road",
+        "configname": "International",
+        "trackID": 43,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=43",
+        "sku": 10026,
+        "price": 4.95,
+        "pkgID": 32,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 5
+    },
+    {
+        "name": "[Legacy] Silverstone Circuit - 2008",
+        "category": "Road",
+        "configname": "Southern",
+        "trackID": 45,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=45",
+        "sku": 10026,
+        "price": 4.95,
+        "pkgID": 32,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "[Legacy] Silverstone Circuit - 2008",
+        "category": "Road",
+        "configname": "National",
+        "trackID": 44,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=44",
+        "sku": 10026,
+        "price": 4.95,
+        "pkgID": 32,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 7
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "category": "Oval",
+        "configname": "Oval",
+        "trackID": 121,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=121",
+        "sku": 10067,
+        "price": 4.95,
+        "pkgID": 61,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "category": "Oval",
+        "configname": "Legends Oval",
+        "trackID": 120,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=120",
+        "sku": 10067,
+        "price": 4.95,
+        "pkgID": 61,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "category": "Road",
+        "configname": "Road Course Combined",
+        "trackID": 122,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=122",
+        "sku": 10067,
+        "price": 4.95,
+        "pkgID": 61,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 6
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "category": "Road",
+        "configname": "Road Course Long",
+        "trackID": 117,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=117",
+        "sku": 10067,
+        "price": 4.95,
+        "pkgID": 61,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "category": "Road",
+        "configname": "Road Course Short A",
+        "trackID": 118,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=118",
+        "sku": 10067,
+        "price": 4.95,
+        "pkgID": 61,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "category": "Road",
+        "configname": "Road Course Short B",
+        "trackID": 119,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=119",
+        "sku": 10067,
+        "price": 4.95,
+        "pkgID": 61,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "track_paid"
+        ],
+        "nlapsQual": 2,
+        "nlapsSolo": 10
+    }
+]
