@@ -70,6 +70,7 @@ To help with the deployment on a Linux based system files in
 
 should provide help to 
 
+* prepare database
 * add a user dedicated to run the server
 * run the server as system service
 * configure an nginx proxy 
