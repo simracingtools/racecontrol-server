@@ -48,6 +48,8 @@ public class Stint {
 	long id;
 	private Duration startTime;
 	private Duration endTime;
+	private long startLap;
+	private long stopLap;
 	@ManyToOne(cascade = CascadeType.ALL)
 	private Driver driver;
 	@Column(nullable = false)

@@ -37,4 +37,5 @@ public class TrackTimeView {
 	private TableCellView stopTime;
 	private TableCellView duration;
 	private TableCellView driver;
+	private long laps;
 }

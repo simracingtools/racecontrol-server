@@ -92,6 +92,7 @@
                 <th>Car</th>
                 <th>Driver</th>
                 <th>Driving Time</th>
+                <th>Laps</th>
                 <th class="text-center" th:each="stintNum : ${sessionView.getMaxDriverStints()}" th:text="${'Stint ' + stintNum}">Stint 1</th>
             </tr>
         </thead>
@@ -104,6 +105,7 @@
                     <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
                     <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.proTeam ? 'PRO' : 'AM'}" data-toggle="tooltip" th:attr="title=${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
                     <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
+                    <td></td>
                     <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
 <!--                        <td colspan="16"></td>-->
                 </tr>
@@ -113,6 +115,7 @@
                         <td></td>
                         <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString() + ' text-nowrap'}" th:text="${driver.name.value}">Robert Bausdorf</td>
                         <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
+                        <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivenLaps'}" th:class="${driver.drivenLaps.displayType.getClassString() + 'text-center'}" th:text="${driver.drivenLaps.value}">2:09:22</td>
                         <div th:each="stint, stintStat : ${driver.stints}">
                             <td style="padding: 0 0 0 10px;">
                                 <table style="margin-bottom: 0;" class="table">
