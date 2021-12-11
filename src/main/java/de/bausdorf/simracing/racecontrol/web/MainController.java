@@ -32,6 +32,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -379,8 +380,14 @@ public class MainController extends ControllerBase {
 			if(bulletin.getViolationCategory() != null) {
 				RuleViolationCategory category = categoryRepository.findById(bulletin.getViolationCategory()).orElse(null);
 				if (category != null) {
-					violation = violationRepository.findRuleViolationByCategoryAndIdentifier(category,
-							bulletin.getViolationIdentifier()).orElse(null);
+					try {
+						violation = violationRepository.findRuleViolationByCategoryAndIdentifier(category,
+								bulletin.getViolationIdentifier()).orElse(null);
+					} catch(IncorrectResultSizeDataAccessException e) {
+						log.error("MainController.getIssuedBulletinsView: {} for category {}, identifier {}",
+								e.getMessage(), category.getCategoryCode(), bulletin.getViolationIdentifier());
+						continue;
+					}
 				}
 			}
 			if(bulletin.getSelectedPenaltyCode() != null) {
