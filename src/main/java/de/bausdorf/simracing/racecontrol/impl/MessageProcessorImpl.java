@@ -124,15 +124,15 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	private void processSessionMessage(Session session, int lap, SessionMessage clientData) {
+		if(session.getSessionLaps() < lap) {
+			session.setSessionLaps(lap);
+			sessionRepository.save(session);
+		}
 		if(!updateSession(session, clientData)) {
 			log.warn("Session update for state {} for {} already exists",
 					SessionStateType.ofTypeCode(clientData.getSessionState()),
 					session.getSessionId());
 			return;
-		}
-		if(session.getSessionLaps() < lap) {
-			session.setSessionLaps(lap);
-			sessionRepository.save(session);
 		}
 	}
 
