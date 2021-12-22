@@ -23,7 +23,6 @@ package de.bausdorf.simracing.racecontrol.web.model;
  */
 
 import java.time.Duration;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

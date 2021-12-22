@@ -39,6 +39,7 @@ public class StintView {
 	private TableCellView startTime;
 	private TableCellView stopTime;
 	private TableCellView duration;
+	private Long laps;
 	private Duration trackTime;
 	private Duration changeTime;
 	private String changeTimeStr;

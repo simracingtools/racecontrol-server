@@ -31,6 +31,7 @@ import de.bausdorf.simracing.racecontrol.live.api.EventType;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import de.bausdorf.simracing.racecontrol.web.security.SubscriptionType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -58,6 +59,7 @@ public class UserProfileView {
 	private Boolean enabled;
 	private Boolean locked;
 	private Boolean expired;
+	private Boolean racecontrol;
 
 	// Read-only
 	private String username;
@@ -68,6 +70,7 @@ public class UserProfileView {
 		this.email = user.getEmail();
 		this.imageUrl = user.getImageUrl();
 		this.iRacingId = user.getIRacingId();
+		this.iRacingName = user.getIRacingName();
 		this.userType = user.getUserType().name();
 		this.clientMessageAccessToken = user.getClientMessageAccessToken();
 		this.enabled = user.isEnabled();
@@ -86,12 +89,16 @@ public class UserProfileView {
 //		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
 //				? user.getLastSubscription().plus(this.subscriptionType.getDuration()).toLocalDate().toString()
 //				: "Not relevant";
+		this.racecontrol = user.getUserType() == RcUserType.SYSADMIN
+				|| user.getUserType() == RcUserType.RACE_DIRECTOR
+				|| user.getUserType() == RcUserType.STEWARD;
 	}
 
 	public RcUser apply(RcUser merge) {
-		merge.setName(name != null ? name : merge.getName());
+		merge.setName(name != null ? name : merge.getIRacingName());
 		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
 		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
+		merge.setIRacingName(iRacingId != 0 ? iRacingName : merge.getIRacingName());
 		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
 		return merge;
 	}

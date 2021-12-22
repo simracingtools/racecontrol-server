@@ -23,7 +23,9 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpCookie;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +33,16 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.api.ContentResponse;
+import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.http.HttpField;
+import org.eclipse.jetty.http.HttpFields;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +66,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.testcontainers.shaded.okhttp3.OkHttpClient;
 
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -61,7 +74,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @ActiveProfiles("test")
 @Slf4j
-public class IracingApiTest {
+class IracingApiTest {
 
 	private static String URL_MEMBERS_HOMEPAGE_BASE = "http://members.iracing.com";
 	private static String URL_MEMBERS_HOMEPAGE_BASE_SECURE = "https://members.iracing.com";
@@ -71,42 +84,63 @@ public class IracingApiTest {
 	private static String URI_ABSOLUTE_PATH_HOME = "/membersite/member/Home.do";
 	private static String URI_ABSOLUTE_PATH_STATS = "/membersite/member/results.jsp";
 
-	@Autowired
-	CookieHandlingRestTemplate restTemplate;
+	static final String SET_COOKIE = "Set-Cookie";
+	static final String COOKIE = "Cookie";
 
 	@Autowired
 	RacecontrolServerProperties props;
 
-	//@Test
+	private List<HttpCookie> cookies;
+	@Test
+	@Disabled
 	void testIracingLogin() {
 		try {
 			String urltext = URL_MEMBERS_HOMEPAGE_BASE_SECURE + URI_ABSOLUTE_PATH_LOGIN_TARGET;
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-			MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
-			map.add("username", props.getIRacingUsername());
-			map.add("password", props.getIRacingPassword());
-			map.add("utcoffset", "-60");
-			map.add("todaysdate", "");
+			SslContextFactory sslContextFactory = new SslContextFactory();
+			HttpClient httpClient = new HttpClient(sslContextFactory);
+			httpClient.setFollowRedirects(true);
+			httpClient.setUserAgentField(new HttpField(HttpHeader.USER_AGENT, "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36"));
+			httpClient.start();
+//			httpClient.setCookieStore();
 
-			HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<MultiValueMap<String, String>>(map, headers);
+			ContentResponse response = httpClient.GET("https://members.iracing.com/membersite/login.jsp");
+					;
+			log.info(response.getContentAsString());
 
-			ResponseEntity<String> response = restTemplate.postForEntity(urltext, request, String.class);
-			if(response.getStatusCode() == HttpStatus.FOUND) {
-				ResponseEntity<String> memberPage = restTemplate.getForEntity(response.getHeaders().get("Location").get(0).replaceFirst("http", "https"), String.class);
-				log.info(memberPage.toString());
-			}
+			String cookies = response.getHeaders().get(SET_COOKIE);
 
-			String searchUrl = "https://members.iracing.com/membersite/member/GetDriverStatus?searchTerms=Robert Bausdorf";
+			Request request = httpClient.POST("https://members.iracing.com/membersite/Login")
+					.header(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded")
+					.header(HttpHeader.COOKIE, cookies)
+					.param("username", "robbyb@mailbox.org")
+					.param("password", "2Zggq8ciRgCyKu")
+					.param("utcoffset", "-60")
+					.param("todaysdate", "");
+			addRequestHeaders(request);
+			response = request.send();
 
+			String ssoCookies = response.getHeaders().get(HttpHeader.COOKIE);
 
-			ResponseEntity<String> memberData = restTemplate.getForEntity(searchUrl, String.class);
+			log.info(response.getContentAsString());
 
-			log.info(memberData.toString());
-
+			String searchUrl = "https://members.iracing.com/membersite/member/GetDriverStatus?searchTerms=Robert%20Bausdorf";
+			response = httpClient.GET(searchUrl);
+			log.info(response.getContentAsString());
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+
+	private void addRequestHeaders(Request request) {
+		request.header(HttpHeader.REFERER, "https://members.iracing.com/membersite/login.jsp")
+				.header(HttpHeader.CONNECTION, "keep-alive")
+				.header(HttpHeader.ACCEPT, "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+				.header(HttpHeader.ACCEPT_CHARSET, "ISO-8859-1,utf-8;q=0.7,*;q=0.3")
+				.header(HttpHeader.ACCEPT_ENCODING, "gzip,deflate,sdch")
+				.header(HttpHeader.CACHE_CONTROL, "max-age=0")
+				.header(HttpHeader.HOST, "members.iracing.com")
+				.header(HttpHeader.ORIGIN, "members.iracing.com")
+				.header(HttpHeader.ACCEPT_LANGUAGE, "en-US,en;q=0.8");
 	}
 }

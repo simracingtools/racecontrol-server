@@ -47,14 +47,18 @@
                     <h4 style="margin: 0">RaceControl</h4>
                 </td>
                 <td style="padding: 0 6px; vertical-align: middle;">
-                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('events') || viewMode.equalsIgnoreCase('bulletins')}" th:href="@{/session(userId=${user.id}, sessionId=${sessionView.sessionId})}">
                         <h6 style="margin: 0;" class="d-inline">Driving times</h6>
                     </a>
                     <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('times')}">Driving Times</h6>&nbsp;&nbsp;
-                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times') || viewMode.equalsIgnoreCase('bulletins')}" th:href="@{/events(userId=${user.id}, teamId='All', sessionId=${sessionView.sessionId})}">
                         <h6 style="margin: 0" class="d-inline">Track Events</h6>
                     </a>
-                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('events')}">&nbsp;&nbsp;Track Events</h6>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('events')}">&nbsp;Track Events</h6>
+                    <a th:if="${viewMode.equalsIgnoreCase('team') || viewMode.equalsIgnoreCase('times') || viewMode.equalsIgnoreCase('events')}" th:href="@{/bulletins(userId=${user.id}, sessionId=${sessionView.sessionId})}">
+                        <h6 style="margin: 0" class="d-inline">&nbsp;Bulletins</h6>
+                    </a>
+                    <h6 style="margin: 0;" class="d-inline" th:if="${viewMode.equalsIgnoreCase('bulletins')}">&nbsp;&nbsp;Bulletins</h6>
                 </td>
                 <td style="padding: 0 6px; vertical-align: middle;">
                     <h5 th:if="${viewMode.equalsIgnoreCase('team')}" th:text="${'#' + selectedTeam.carNo.value + ' - ' + selectedTeam.name.value}"  th:style="${'background: #' + selectedTeam.carClassColor + '; margin: 0;'}"></h5>
@@ -81,53 +85,107 @@
         </table>
     </div>
 <!--    <div class="table-responsive" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">-->
-        <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
-            <thead>
-                <tr>
-                    <th>Team</th>
-                    <th>Car</th>
-                    <th>Driver</th>
-                    <th>Driving Time</th>
-                    <th class="text-center" th:each="stintNum : ${sessionView.getMaxDriverStints()}" th:text="${'Stint ' + stintNum}">Stint 1</th>
-                </tr>
-            </thead>
-            <tbody>
-                <div th:each="teamData : ${sessionView.teams}">
-                    <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
-                        <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
-                            <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
-                        </td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
-                        <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.avgTeamRating.value}" data-toggle="tooltip" th:attr="title=${teamData.proTeam ? 'PRO' : 'AM'}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
-                        <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
+    <table class="table" style="font-family: 'Roboto Mono', monospace;font-size: 12px;">
+        <thead>
+            <tr>
+                <th>Team</th>
+                <th>Car</th>
+                <th>Driver</th>
+                <th>Driving Time</th>
+                <th>Laps</th>
+                <th class="text-center" th:each="stintNum : ${sessionView.getMaxDriverStints()}" th:text="${'Stint ' + stintNum}">Stint 1</th>
+            </tr>
+        </thead>
+        <tbody>
+            <div th:each="teamData : ${sessionView.teams}">
+                <tr th:id="${'team-' + teamData.teamId + '-iRacingId'}">
+                    <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
+                        <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
+                    </td>
+                    <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
+                    <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.proTeam ? 'PRO' : 'AM'}" data-toggle="tooltip" th:attr="title=${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
+                    <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
+                    <td></td>
+                    <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carName'}" th:text="${teamData.carName}"></td>
 <!--                        <td colspan="16"></td>-->
+                </tr>
+                <div th:each="driver : ${teamData.drivers}">
+                    <tr th:id="${'driver-' + driver.getIRacingId()}">
+                        <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
+                        <td></td>
+                        <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString() + ' text-nowrap'}" th:text="${driver.name.value}">Robert Bausdorf</td>
+                        <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
+                        <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivenLaps'}" th:class="${driver.drivenLaps.displayType.getClassString() + 'text-center'}" th:text="${driver.drivenLaps.value}">2:09:22</td>
+                        <div th:each="stint, stintStat : ${driver.stints}">
+                            <td style="padding: 0 0 0 10px;">
+                                <table style="margin-bottom: 0;" class="table">
+                                    <tbody>
+                                    <tr>
+                                        <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
+                                        <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
+                                        <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </div>
                     </tr>
-                    <div th:each="driver : ${teamData.drivers}">
-                        <tr th:id="${'driver-' + driver.getIRacingId()}">
-                            <td style="padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-iRacingId'}" th:text="${driver.getIRacingId()}">111111</td>
-                            <td></td>
-                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-name'}" th:class="${driver.name.displayType.getClassString() + ' text-nowrap'}" th:text="${driver.name.value}">Robert Bausdorf</td>
-                            <td style="padding: 6px" th:id="${'driver-' + driver.getIRacingId() + '-drivingTime'}" th:class="${driver.drivingTime.displayType.getClassString() + 'text-center'}" th:text="${driver.drivingTime.value}">2:09:22</td>
-                            <div th:each="stint, stintStat : ${driver.stints}">
-                                <td style="padding: 0 0 0 10px;">
-                                    <table style="margin-bottom: 0;" class="table">
-                                        <tbody>
-                                        <tr>
-                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-start'}" th:class="${stint.startTime.displayType.getClassString() + 'text-center'}" th:text="${stint.getStartTime().value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">0:00:00</td>
-                                            <td style="border: 0;  padding: 6px; cursor: pointer;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-end'}" th:class="${stint.stopTime.displayType.getClassString() + 'text-center'}" th:text="${stint.stopTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + stint.changeTimeStr}" th:onclick="'sendRcTimestamp(' + ${stint.changeTime != null ? stint.changeTime.toMillis() : 0} + ', ' + ${teamData.teamId} + ', ' + ${user.iRacingId} + ');'">1:03:23</td>
-                                            <td style="border: 0;  padding: 6px;" th:id="${'driver-' + driver.getIRacingId() + '-' + stintStat.index + '-duration'}" th:class="${stint.duration.displayType.getClassString() + 'text-center'}" th:text="${stint.duration.value}">1:03:14<br></td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </div>
-                        </tr>
-                    </div>
                 </div>
-            </tbody>
-        </table>
+            </div>
+        </tbody>
+    </table>
 <!--    </div>-->
+<!--    <div th:fragment="rc-model(redirectTarget)" th:with="redirectTarget=${redirectTarget} ? 'session'">-->
+    <div th:fragment="rc-model(redirectTarget)">
+        <div th:if="${user.userType.equalsIgnoreCase('SYSADMIN') || user.userType.equalsIgnoreCase('RACE_DIRECTOR') || user.userType.equalsIgnoreCase('STEWARD')}" id="rc-bulletin-model" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/issueBulletin(redirectTo=${redirectTarget}, userId=${user.id})}" th:object="${nextBulletinView}">
+                        <div class="modal-header">
+                            <input type="hidden" th:field="*{sessionId}">
+                            <input type="hidden" th:field="*{bulletinNo}">
+                            <h4 class="modal-title" th:text="${'Race control bulletin #' + nextBulletinView.bulletinNo}">Race control bulletin #---</h4>
+                            <input type="text" th:field="*{sessionTime}" style="margin-left: 81px; width: 70px;" oninput="sessionTimeChange()">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>car #</label>
+                                <input type="text" th:field="*{carNo}" style="width: 35px;" value="999">
+                                <label style="margin-left: 5px;">Violation</label>
+                                <select th:field="*{violationId}" style="margin-left: 3px;width: 300px;" onchange="violationSelect()">
+                                    <option id="violation-0" value="0" selected="">None</option>
+                                    <optgroup th:each="cat : ${ruleViolations}" th:label="${cat.description}" th:data="${cat.code}">
+                                        <option th:each="violationView : ${cat.violations}" th:id="${'violation-' + violationView.id}" th:value="${violationView.id}" th:text="${violationView.getDescription()}" th:data="${violationView.getPenaltyCodesAsString()}">CAT1 A) Causing a collision</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                            <div id="penalty-params" class="form-group" style="display: none;">
+                                <label>Penalty</label>
+                                <select th:field="*{selectedPenaltyCode}" style="margin-left: 3px;" onclick="penaltySelect()">
+                                    <option th:each="pen : ${penaltyViews}" th:value="${pen.code}" th:text="${pen.description}" th:data="${pen.needsTimeParam}">This is item 1</option>
+                                </select>
+                                <label id="penaltySecondsLabel" style="margin-left: 4px;">Sec</label>
+                                <input th:field="*{penaltySeconds}" type="number" style="margin-left: 5px; width: 60px" onchange="penaltySecondsChange()">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block">Message</label>
+                                <input th:field="*{message}" class="d-block" type="text" style="width: 465px;" oninput="messageChange()">
+                            </div>
+                            <p id="bulletin-preview">#R2-01 car #999&nbsp;</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="Submit">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>

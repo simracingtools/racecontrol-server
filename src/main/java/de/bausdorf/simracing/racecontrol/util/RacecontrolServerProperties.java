@@ -37,10 +37,13 @@ public class RacecontrolServerProperties {
     private String version;
     private String serverBaseUrl;
     private int maxDrivingTimeRequiresRestMinutes;
+    private int formationLapMinutes;
     private int maxDrivingTimeMinutes;
     private int minRestTimeMinutes;
     private double fairShareFactor;
     private int proAmDiscriminator;
     private String iRacingUsername;
     private String iRacingPassword;
+    private String discordBulletinUrl;
+    private String jythonHome;
 }

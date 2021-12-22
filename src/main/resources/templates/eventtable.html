@@ -77,7 +77,7 @@
                                 </thead>
                                 <tbody>
                                     <tr th:each="teamData : ${sessionView.teams}">
-                                        <td class="text-right" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px;'}" th:text="${teamData.carNo.value}"></td>
+                                        <td class="text-right" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px; cursor: pointer;'}" th:text="${teamData.carNo.value}" onclick="showRcBulletinDialog(this.innerText, -1)"></td>
                                         <td class="text-left" style="padding: 6px;">
                                             <a th:href="@{/events(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">All</a>
                                         </td>
@@ -95,6 +95,7 @@
                                         <th style="padding: 6px;">Time</th>
                                         <th style="padding: 6px;">Type</th>
                                         <th style="padding: 6px;">Lap</th>
+                                        <th style="padding: 6px;">Car #</th>
                                         <th style="padding: 6px;">Driver</th>
                                         <th style="padding: 6px;">Team</th>
                                         <th style="padding: 6px;">Car</th>
@@ -105,17 +106,10 @@
                                         <td style="padding: 6px; cursor: pointer;" th:id="${'event-time-' + eventStats.index}" th:text="${event.eventTime.value}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + event.eventTime.value}" th:class="${event.eventTime.displayType.getClassString()}" th:onclick="'sendRcTimestamp(' + ${event.sessionTime.toMillis()} + ', ' + ${event.teamId} + ', ' + ${user.iRacingId} + ');'">1:04:11</td>
                                         <td style="padding: 6px; cursor: pointer" th:id="${'event-type-' + eventStats.index}" th:text="${event.eventType.value}" th:class="${event.eventType.displayType.getClassString()}" data-toggle="tooltip" th:attr="title=${'Set replay position: ' + event.eventTime.value}" th:onclick="'sendRcTimestamp(' + ${event.sessionTime.toMillis()} + ', ' + ${event.teamId} + ', ' + ${user.iRacingId} + ');'">OFFTRACK</td>
                                         <td style="padding: 6px;" th:id="${'event-lap-' + eventStats.index}" th:text="${event.lap.value}" th:class="${event.lap.displayType.getClassString()}"></td>
+                                        <td style="padding: 6px; cursor: pointer;" th:id="${'event-carno-' + eventStats.index}" th:text="${event.carNo.value}" th:class="${event.carNo.displayType.getClassString()}" th:onclick="'showRcBulletinDialog(this.innerText, ' + ${eventStats.index} + ')'"></td>
                                         <td style="padding: 6px;" th:id="${'event-drivername-' + eventStats.index}" th:text="${event.driverName.value}" th:class="${event.driverName.displayType.getClassString()}">Robert Bausdorf</td>
                                         <td style="padding: 6px;" th:id="${'event-teamname-' + eventStats.index}" th:text="${event.teamName.value}" th:class="${event.teamName.displayType.getClassString()}">123456</td>
                                         <td style="padding: 6px;" th:id="${'event-carname-' + eventStats.index}" th:text="${event.carName.value}" th:class="${event.carName.displayType.getClassString()}">123456</td>
-                                    </tr>
-                                    <tr id="event-row-prototype" style="display: none;">
-                                        <td id="event-time-" style="padding: 6px; cursor: pointer;" data-toggle="tooltip" ></td>
-                                        <td id="event-type-" style="padding: 6px; cursor: pointer;" data-toggle="tooltip" ></td>
-                                        <td id="event-lap-" style="padding: 6px;"></td>
-                                        <td id="event-drivername-" style="padding: 6px;"></td>
-                                        <td id="event-teamname-" style="padding: 6px;"></td>
-                                        <td id="event-carname-" style="padding: 6px;"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -125,6 +119,8 @@
             </tbody>
         </table>
     </div>
+    <div th:replace="timetable.html :: rc-model (redirectTarget='events')"></div>
+
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>

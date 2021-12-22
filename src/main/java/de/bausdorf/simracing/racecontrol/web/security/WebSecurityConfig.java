@@ -46,7 +46,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -56,7 +55,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
-@EnableOAuth2Client
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @Slf4j
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements AccessDeniedHandler {
@@ -75,17 +73,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements A
 
 	@Override
 	public void configure(WebSecurity web) {
-		web.ignoring().antMatchers("/_ah/**", "/clientmessage",
+		web.ignoring().antMatchers("/_ah/**", "/actuator/**", "/clientmessage",
 				"/rcclient/**", "/timingclient/**", "/app/**", "/timing/**", "/rc/**",
-				"/", "/index", "/session/**", "/team**", "/events/**", "/assets/**", "/webjars/**");
+				"/", "/index", "/session/**", "/team**", "/events/**", "/issueBulletin", "/bulletins",
+				"/assets/**", "/webjars/**");
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-				.antMatchers("!/_ah", "!/clientmessage",
+				.antMatchers("!/_ah", "!/actuator/**", "!/clientmessage",
 						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
-						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/assets/**", "!/webjars/**")
+						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/issueBulletin", "!/bulletins/**",
+						"!/assets/**", "!/webjars/**")
 					.permitAll()
 					.anyRequest().authenticated()
 				.and()

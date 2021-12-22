@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web.security;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -37,15 +38,21 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.bausdorf.simracing.racecontrol.live.api.EventType;
+import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class GoogleUserService extends OidcUserService implements UserDetailsService {
 
     private final RcUserRepository userRepository;
+    private final IRacingClient iRacingClient;
 
-    public GoogleUserService(@Autowired RcUserRepository userRepository) {
+    public GoogleUserService(@Autowired RcUserRepository userRepository, @Autowired IRacingClient iRacingClient) {
         this.userRepository = userRepository;
+        this.iRacingClient = iRacingClient;
     }
 
     @Override
@@ -56,11 +63,21 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
         String userId = (String) attributes.get("sub");
         Optional<RcUser> user = userRepository.findById(userId);
         if(!user.isPresent()) {
+            final String userName = (String) attributes.get("name");
+            List<MemberInfo> nameSearch = iRacingClient.searchMembers(userName);
+            MemberInfo identifiedMember = null;
+            if(nameSearch.size() > 1) {
+                nameSearch.stream().forEach(s -> log.info(s.toString()));
+            } else if(nameSearch.size() == 1) {
+                identifiedMember = nameSearch.get(0);
+            } else {
+                log.info("No iRacing user named {} found", userName);
+            }
             userRepository.save(RcUser.builder()
                     .email((String) attributes.get("email"))
                     .oauthId(userId)
                     .imageUrl((String) attributes.get("picture"))
-                    .name((String) attributes.get("name"))
+                    .name(userName)
                     .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : RcUserType.NEW)
                     .created(ZonedDateTime.now())
                     .subscriptionType(SubscriptionType.NONE)
@@ -70,6 +87,8 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
                     .locked(false)
                     .expired(false)
                     .enabled(true)
+                    .iRacingId(identifiedMember != null ? identifiedMember.getCustid() : 0L)
+                    .iRacingName(identifiedMember != null ? identifiedMember.getName() : null)
                     .build()
             );
         } else {

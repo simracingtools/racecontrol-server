@@ -124,15 +124,15 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	private void processSessionMessage(Session session, int lap, SessionMessage clientData) {
+		if(session.getSessionLaps() < lap) {
+			session.setSessionLaps(lap);
+			sessionRepository.save(session);
+		}
 		if(!updateSession(session, clientData)) {
 			log.warn("Session update for state {} for {} already exists",
 					SessionStateType.ofTypeCode(clientData.getSessionState()),
 					session.getSessionId());
 			return;
-		}
-		if(session.getSessionLaps() < lap) {
-			session.setSessionLaps(lap);
-			sessionRepository.save(session);
 		}
 	}
 
@@ -216,7 +216,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				viewBuilder.buildEventView(event));
 	}
 
-	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime) {
+	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime, long sessionLap) {
 		Stint stint = driver.getLastStint();
 		if(stint == null) {
 			stint = Stint.builder()
@@ -230,6 +230,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 			case ON_TRACK:
 				if(stint.getState() == StintStateType.UNDEFINED) {
 					stint.setStartTime(sessionTime);
+					stint.setStartLap(sessionLap);
 					stint.setState(StintStateType.RUNNING);
 					log.info("{} starting stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
 				} else if(stint.getState() == StintStateType.IN_PIT) {
@@ -237,6 +238,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 							.sessionId(driver.getSessionId())
 							.driver(driver)
 							.startTime(sessionTime)
+							.startLap(sessionLap)
 							.state(StintStateType.RUNNING)
 							.build());
 					log.info("{} starting stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
@@ -248,6 +250,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 			case ENTER_PITLANE:
 				if(stint.getState() == StintStateType.RUNNING) {
 					stint.setEndTime(sessionTime);
+					stint.setStopLap(sessionLap);
 					stint.setState(StintStateType.IN_PIT);
 					log.info("{} ending stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
 				} else if(stint.getState() == StintStateType.UNDEFINED) {
@@ -377,6 +380,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 					log.info("{} end stint (checkered flag) at {}", currentDriver.getName(),
 							TimeTools.longDurationString(session.getLastUpdate()));
 					stint.setEndTime(session.getLastUpdate());
+					stint.setStopLap(session.getSessionLaps());
 				} else {
 					log.info("{} ended last stint at {}", currentDriver.getName(), TimeTools.longDurationString(stint.getEndTime()));
 				}
@@ -386,7 +390,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 
 	private void updateDriver(Session session, Driver existingDriver, EventMessage message) {
 		if (session.getSessionState() == SessionStateType.RACING) {
-			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime());
+			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime(), message.getLap());
 		}
 		if (message.getEventType() != existingDriver.getLastEventType()) {
 			existingDriver.setLastEventType(message.getEventType());

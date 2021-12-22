@@ -37,5 +37,6 @@ public class DriverView {
 	private String iRating;
 	private List<StintView> stints;
 	private TableCellView drivingTime;
+	private TableCellView drivenLaps;
 	int drivingMillis;
 }

@@ -218,8 +218,10 @@ public class ViewBuilder {
 	public DriverView buildDriverView(Driver driver) {
 		List<StintView> stintViews = buildStintViews(driver);
 		Duration trackTime = Duration.ZERO;
+		long trackLaps = 0L;
 		for(StintView s : stintViews) {
 			trackTime = trackTime.plus(s.getTrackTime());
+			trackLaps += s.getLaps();
 		}
 		return DriverView.builder()
 						.name(TableCellView.builder()
@@ -231,6 +233,10 @@ public class ViewBuilder {
 						.stints(stintViews)
 						.drivingTime(TableCellView.builder()
 								.value(TimeTools.shortDurationString(trackTime))
+								.displayType(CssClassType.TBL_SUCCESS)
+								.build())
+						.drivenLaps(TableCellView.builder()
+								.value(Long.toString(trackLaps))
 								.displayType(CssClassType.TBL_SUCCESS)
 								.build())
 						.drivingMillis((int)trackTime.toMillis())
@@ -250,21 +256,21 @@ public class ViewBuilder {
 		if(changes.isEmpty()) {
 			// No driver change yet or single driver
 			currentStintView = new StintViewData(Duration.ZERO, Duration.ofHours(25), Duration.ZERO,
-					true, false, new ArrayList<>());
+					0,true, false, new ArrayList<>());
 		}
 		for(DriverChange change : changes) {
 			if(currentStintView == null) {
 				if(change.getChangeToId() != driver.getIracingId()) {
 					// first stint
 					currentStintView = new StintViewData(Duration.ZERO, change.getChangeTime(), Duration.ZERO,
-							true, false, new ArrayList<>());
+							0,true, false, new ArrayList<>());
 					currentStintView.calculateTrackTime(driver);
 					stintViews.add(buildStintView(currentStintView));
 					lastStintView = currentStintView;
 					currentStintView = null;
 				} else {
 					currentStintView = new StintViewData(change.getChangeTime(), Duration.ZERO, Duration.ZERO,
-							true, false, 	new ArrayList<>());
+							0,true, false, 	new ArrayList<>());
 				}
 			} else {
 				if(change.getChangeFromId() == driver.getIracingId()) {
@@ -304,8 +310,9 @@ public class ViewBuilder {
 						.build())
 				.duration(TableCellView.builder()
 						.value(TimeTools.shortDurationString(data.getTrackTime()))
-						.displayType(complianceCheck.isStintDurationCompliant(data.getTrackTime()) ? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER)
+						.displayType(complianceCheck.isStintDurationCompliant(data.getTrackTime(), data.startTime.equals(Duration.ZERO)) ? CssClassType.TBL_SUCCESS : CssClassType.TBL_DANGER)
 						.build())
+				.laps(data.getTrackLaps())
 				.changeTime(data.isUnfinished() ? data.getStartTime() : data.getStopTime())
 				.changeTimeStr(data.isUnfinished() ? TimeTools.shortDurationString(data.getStartTime()) : TimeTools.shortDurationString(data.getStopTime()))
 				.trackTime(data.getTrackTime())
@@ -336,6 +343,7 @@ public class ViewBuilder {
 		private Duration startTime;
 		private Duration stopTime;
 		private Duration trackTime;
+		private long trackLaps;
 		private boolean startTimeCompliant;
 		private boolean unfinished;
 		private List<TrackTimeView> trackTimeViews;
@@ -362,6 +370,8 @@ public class ViewBuilder {
 			} else {
 				stintsBetween.forEach(s -> {
 					addTrackTime(s.getStintDuration());
+					long stintLaps = s.getStopLap() - s.getStartLap();
+					trackLaps += stintLaps;
 					trackTimeViews.add(TrackTimeView.builder()
 							.startTime(TableCellView.builder()
 									.value(TimeTools.shortDurationString(s.getStartTime()))
@@ -379,6 +389,7 @@ public class ViewBuilder {
 									.value(driver.getName())
 									.displayType(CssClassType.DEFAULT)
 									.build())
+							.laps(stintLaps)
 							.build());
 				});
 			}

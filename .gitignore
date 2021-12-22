@@ -36,3 +36,9 @@ build/
 /mvnw
 /mvnw.cmd
 /bootstrap-export/
+/application.properties
+/application-local.properties
+/*.jar
+/cookie.tmp
+/logback.xml
+/metrics.conf
