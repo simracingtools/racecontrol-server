@@ -38,7 +38,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.live.api.EventType;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import lombok.extern.slf4j.Slf4j;
