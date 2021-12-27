@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.4.0</version>
+    <version>2.6.2</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>de.bausdorf.simracing</groupId>
@@ -20,7 +20,6 @@
 
   <properties>
     <java.version>1.8</java.version>
-    <oauth.autoconfigure.version>2.3.4.RELEASE</oauth.autoconfigure.version>
     <testcontainers.version>1.14.3</testcontainers.version>
     <socksjs-client.version>1.1.2</socksjs-client.version>
     <stomp-websocket.version>2.3.3-1</stomp-websocket.version>
@@ -29,11 +28,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>org.springframework.security.oauth.boot</groupId>
-        <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-        <version>${oauth.autoconfigure.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -52,10 +46,6 @@
             <artifactId>asm</artifactId>
           </exclusion>
         </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security.oauth.boot</groupId>
-      <artifactId>spring-security-oauth2-autoconfigure</artifactId>
     </dependency>
 
     <!-- Spring web -->
