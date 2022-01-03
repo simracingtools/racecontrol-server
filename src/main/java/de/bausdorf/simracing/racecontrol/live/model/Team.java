@@ -22,20 +22,19 @@ package de.bausdorf.simracing.racecontrol.live.model;
  * #L%
  */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@RequiredArgsConstructor
 @Entity
 public class Team extends BaseEntity {
 	private String name;
@@ -47,10 +46,6 @@ public class Team extends BaseEntity {
 	String carClassColor;
 	@OneToMany(mappedBy = "team", fetch = FetchType.EAGER)
 	private List<Driver> drivers;
-
-	public Team() {
-		drivers = new ArrayList<>();
-	}
 
 	@Builder
 	public Team(String sessionId, long teamId, String name, long currentDriverId, String carNo,
@@ -80,5 +75,18 @@ public class Team extends BaseEntity {
 	public String toString() {
 		return "Team(name=" + this.getName() + ", currentDriverId=" + this.getCurrentDriverId() + ", carNo=" + this.getCarNo() + ", drivers="
 				+ this.getDrivers() + ")";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Team team = (Team) o;
+		return sessionId != null && Objects.equals(sessionId, team.sessionId);
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
 	}
 }

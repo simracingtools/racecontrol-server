@@ -31,14 +31,23 @@ import javax.persistence.Id;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Entity
 public class Car {
 	@Id
 	private long carId;
 
 	private String name;
-	private long maxFuel;
+	private String brand;
+	private double maxFuel;
+
+	@Builder
+	public Car(long carId, String name, String brand, double maxFuel) {
+		this.carId = carId;
+		this.name = name;
+		this.brand = brand;
+		this.maxFuel = maxFuel;
+	}
 
 	@Override
 	public boolean equals(Object o) {

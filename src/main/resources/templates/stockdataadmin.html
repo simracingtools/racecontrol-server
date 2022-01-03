@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu"></div>
+
+        <div class="row">
+                <div class="col">
+                    <div>
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <a th:class="${'nav-link ' + (activeTab.equalsIgnoreCase('cars') ? 'active' : '')}" th:href="@{/stockdata(activeTab='cars')}" role="tab">Cars</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a th:class="${'nav-link ' + (activeTab.equalsIgnoreCase('tracks') ? 'active' : '')}" th:href="@{/stockdata(activeTab='tracks')}" role="tab">Tracks</a>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <a th:class="${'nav-link ' + (activeTab.equalsIgnoreCase('configs') ? 'active' : '')}" th:href="@{/stockdata(activeTab='configs')}" role="tab">Track config</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div th:class="${'tab-pane ' + (activeTab.equalsIgnoreCase('cars') ? 'active' : '')}" role="tabpanel" id="tab-cars">
+                                <div class="row">
+                                    <div class="col-md-5 col-lg-7">
+                                        <div class="table-responsive" style="font-size: 12px;">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>CarId</th>
+                                                        <th>Name</th>
+                                                        <th>Brand</th>
+                                                        <th>max Fuel</th>
+                                                        <th></th>
+                                                        <th><button class="btn btn-primary" type="button"><i class="fas fa-plus-square"></i></button></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr th:each="car : ${carViews}">
+                                                        <td th:text="${car.carId}">127</td>
+                                                        <td th:text="${car.name}">Chevrolet Corvette C8.R GTE</td>
+                                                        <td th:text="${car.brand}">Chevrolet</td>
+                                                        <td th:text="${car.maxFuel}">110</td>
+                                                        <td>
+                                                            <button class="btn btn-danger" type="button">
+                                                                <i class="fas fa-trash-alt"></i>
+                                                            </button>
+                                                        </td>
+                                                        <td>
+                                                            <a th:href="@{/stockdata(selectedCarId=${car.carId}, activeTab=${activeTab})}">
+                                                                <button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-lg-5 offset-lg-0">
+                                        <form method="post" th:action="@{/savecar}" th:object="${selectedCar}">
+                                            <div class="form-group">
+                                                <label class="d-block">CarId</label>
+                                                <input type="number" required="" th:field="*{carId}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="d-block">Name</label>
+                                                <input type="text" required="" th:field="*{name}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="d-block">Brand</label>
+                                                <input type="text" th:field="*{brand}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="d-block">max. Fuel</label>
+                                                <input type="number" required="" th:field="*{maxFuel}">
+                                            </div>
+                                            <div class="form-group text-right">
+                                                <button class="btn btn-primary text-right" type="submit">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:class="${'tab-pane ' + (activeTab.equalsIgnoreCase('tracks') ? 'active' : '')}" role="tabpanel" id="tab-tracks">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="table-responsive" style="font-size: 12px;">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>PkgId</th>
+                                                        <th>Name</th>
+                                                        <th></th>
+                                                        <th><button class="btn btn-primary" type="button"><i class="fas fa-plus-square"></i></button></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr th:each="track : ${trackViews}">
+                                                        <td th:text="${track.pkgId}">186</td>
+                                                        <td th:text="${track.name}">Nürburgring Combined</td>
+                                                        <td>
+                                                            <button class="btn btn-danger" type="button"><i class="fas fa-trash-alt"></i></button>
+                                                        </td>
+                                                        <td>
+                                                            <a th:href="@{/stockdata(selectedTrackId=${track.pkgId}, activeTab=${activeTab})}">
+                                                                <button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-lg-6">
+                                        <form method="post" th:action="@{/savecar}" th:object="${selectedTrack}">
+                                            <div class="form-group">
+                                                <label class="d-block">PkgId</label>
+                                                <input type="number" required="" th:field="*{pkgId}">
+                                            </div>
+                                            <div class="form-group">
+                                                <label class="d-block">Name</label>
+                                                <input type="text" required="" th:field="*{name}">
+                                            </div>
+                                            <div class="form-group text-right">
+                                                <button class="btn btn-primary text-right" type="submit">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div th:class="${'tab-pane ' + (activeTab.equalsIgnoreCase('configs') ? 'active' : '')}" role="tabpanel" id="tab-configs">
+                                <div class="row">
+                                    <div class="col-md-5 col-lg-6">
+                                        <label>Track:&nbsp;</label>
+                                        <select id="trackSelector" class="float-right" style="max-width: 400px;min-width: 250px;" th:onchange="'selectTrackForConfig(this);'" th:value="${selectedConfiguration.track != null ? selectedConfiguration.track.pkgId : selectedTrack.pkgId}">
+                                            <option value="0" th:selected="${selectedTrack.pkgId == 0 ? true : false}">None</option>
+                                            <option th:each="t : ${trackViews}" th:value="${t.pkgId}" th:text="${t.name}" th:selected="${selectedTrack.pkgId == t.pkgId ? true : false}"></option>
+                                        </select>
+                                        <div class="table-responsive" style="font-size: 12px;">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>TrackId</th>
+                                                        <th>Name</th>
+                                                        <th></th>
+                                                        <th><button class="btn btn-primary" type="button"><i class="fas fa-plus-square"></i></button></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr th:each="trackConfig : ${configurationViews}">
+                                                        <td th:text="${trackConfig.trackId}">263</td>
+                                                        <td th:text="${trackConfig.configName}">Gesamtstrecke Short w/out Arena</td>
+                                                        <td>
+                                                            <button class="btn btn-danger" type="button"><i class="fas fa-trash-alt"></i></button>
+                                                        </td>
+                                                        <td>
+                                                            <a th:href="@{/stockdata(selectedTrackConfigId=${trackConfig.trackId}, selectedTrackId=${selectedTrack.pkgId}, activeTab=${activeTab})}">
+                                                                <button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5 col-lg-6">
+                                        <form method="post" th:action="@{/savetrackconfig}" th:object="${selectedConfiguration}">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label class="d-block">TrackId</label>
+                                                        <input type="text" required="" th:field="*{trackId}">
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label class="d-block">Configuration name</label>
+                                                        <input type="text" required="" th:field="*{configName}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group text-right">
+                                                <button class="btn btn-primary text-right" type="submit">Save</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <div th:insert="index :: footer"></div>
+        </div>
+    </div>
+
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+</body>
+
+</html>

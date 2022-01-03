@@ -25,8 +25,12 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 import lombok.*;
 import org.hibernate.Hibernate;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -35,17 +39,27 @@ import javax.persistence.Id;
 @Entity
 public class Track {
 	@Id
-	private long trackId;
+	private long pkgId;
 
-	private String screenName;
-	private String shortName;
+	private String name;
+
+	@Builder
+	public Track(long pkgId, String name) {
+		this.pkgId = pkgId;
+		this.name = name;
+		this.configurations = new ArrayList<>();
+	}
+
+	@OneToMany(mappedBy = "track", cascade = CascadeType.ALL)
+	@ToString.Exclude
+	private List<TrackConfiguration> configurations;
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
 		Track track = (Track) o;
-		return trackId != track.trackId;
+		return pkgId != track.pkgId;
 	}
 
 	@Override

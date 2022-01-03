@@ -50,7 +50,7 @@ public class TrackEvent {
 	@ManyToOne
 	OrganizationalUnit organizingUnit;
 	@ManyToOne
-	private Track track;
+	private TrackConfiguration track;
 	@OneToMany(mappedBy = "id")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ToString.Exclude

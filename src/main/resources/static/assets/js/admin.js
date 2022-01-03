@@ -36,6 +36,14 @@ function confirmSessionRemove(index) {
   $("#session-remove-confirm-" + index).modal('show');
 }
 
+function selectTrackForConfig() {
+  var trackId = $("#trackSelector option:selected").val();
+  var configId = $("#trackId").val();
+  window.location = '/stockdata?activeTab=configs'
+      + '&selectedTrackId=' + trackId
+      + '&selectedTrackConfigId=' + configId;
+}
+
 function selectTimezoneFromUtcOffset(timezone) {
   if (!timezone) {
     var utcOffsetHours = moment().utcOffset() / 60;
@@ -46,7 +54,7 @@ function selectTimezoneFromUtcOffset(timezone) {
       tz = tz + utcOffsetHours;
     }
     $("#timezone > option").each(function() {
-      if (this.value == tz) {
+      if (this.value === tz) {
         this.selected = true;
       }
     });
