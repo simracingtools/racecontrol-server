@@ -42,3 +42,4 @@ build/
 /cookie.tmp
 /logback.xml
 /metrics.conf
+/htmlexport/
