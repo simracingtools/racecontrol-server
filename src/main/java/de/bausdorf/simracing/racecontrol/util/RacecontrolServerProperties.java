@@ -45,5 +45,4 @@ public class RacecontrolServerProperties {
     private String iRacingUsername;
     private String iRacingPassword;
     private String discordBulletinUrl;
-    private String jythonHome;
 }

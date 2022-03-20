@@ -24,7 +24,6 @@ package de.bausdorf.simracing.racecontrol.web.security;
 
 import java.time.ZonedDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -64,15 +63,15 @@ public class GoogleUserService extends OidcUserService implements UserDetailsSer
         Optional<RcUser> user = userRepository.findById(userId);
         if(!user.isPresent()) {
             final String userName = (String) attributes.get("name");
-            List<MemberInfo> nameSearch = iRacingClient.searchMembers(userName);
+//            List<MemberInfo> nameSearch = iRacingClient.getMemberInfo(userName);
             MemberInfo identifiedMember = null;
-            if(nameSearch.size() > 1) {
-                nameSearch.stream().forEach(s -> log.info(s.toString()));
-            } else if(nameSearch.size() == 1) {
-                identifiedMember = nameSearch.get(0);
-            } else {
-                log.info("No iRacing user named {} found", userName);
-            }
+//            if(nameSearch.size() > 1) {
+//                nameSearch.stream().forEach(s -> log.info(s.toString()));
+//            } else if(nameSearch.size() == 1) {
+//                identifiedMember = nameSearch.get(0);
+//            } else {
+//                log.info("No iRacing user named {} found", userName);
+//            }
             userRepository.save(RcUser.builder()
                     .email((String) attributes.get("email"))
                     .oauthId(userId)

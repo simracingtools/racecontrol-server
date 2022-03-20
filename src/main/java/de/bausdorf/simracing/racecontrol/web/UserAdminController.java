@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -115,8 +116,9 @@ public class UserAdminController extends ControllerBase {
 	@Transactional
 	public String saveUserProfile(@ModelAttribute UserProfileView profileView, Model model) {
 		RcUser currentUser = currentUser();
-		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()) {
-			List<MemberInfo> idSearch = iRacingClient.searchMembers(Long.toString(profileView.getIRacingId()));
+		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()
+				|| currentUser.getIRacingName() == null || currentUser.getIRacingName().isEmpty()) {
+			List<MemberInfo> idSearch = iRacingClient.getMemberInfo(List.of(profileView.getIRacingId()));
 			if(idSearch.isEmpty()) {
 				log.warn("No iRacing user with id {} found", profileView.getIRacingId());
 			} else {
