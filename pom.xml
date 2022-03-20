@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.6.2</version>
+    <version>2.6.3</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>de.bausdorf.simracing</groupId>
@@ -19,11 +19,12 @@
   <description>Server to support iRacing race control</description>
 
   <properties>
-    <java.version>1.8</java.version>
-    <testcontainers.version>1.14.3</testcontainers.version>
-    <socksjs-client.version>1.1.2</socksjs-client.version>
-    <stomp-websocket.version>2.3.3-1</stomp-websocket.version>
-    <momentjs.version>2.24.0</momentjs.version>
+    <java.version>11</java.version>
+    <testcontainers.version>1.16.3</testcontainers.version>
+    <socksjs-client.version>1.5.1</socksjs-client.version>
+    <stomp-websocket.version>2.3.4</stomp-websocket.version>
+    <momentjs.version>2.29.1</momentjs.version>
+    <madiadb-client.version>2.7.3</madiadb-client.version>
   </properties>
 
   <dependencyManagement>
@@ -137,15 +138,11 @@
     </dependency>
 
     <!-- For iRacing website access -->
+    <!-- https://mvnrepository.com/artifact/de.bausdorf.simracing/ir-data-api-client -->
     <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython</artifactId>
-      <version>2.7.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-      <version>4.5.13</version>
+      <groupId>de.bausdorf.simracing</groupId>
+      <artifactId>ir-data-api-client</artifactId>
+      <version>0.5.0</version>
     </dependency>
 
 
@@ -186,7 +183,7 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>2.7.0</version>
+      <version>${madiadb-client.version}</version>
       <scope>test</scope>
     </dependency>
 
