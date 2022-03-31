@@ -22,9 +22,11 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
+import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
@@ -45,4 +47,9 @@ public class RacecontrolServerProperties {
     private String iRacingUsername;
     private String iRacingPassword;
     private String discordBulletinUrl;
+
+    @Bean
+    ConfigProperties configProperties() {
+        return new ConfigProperties();
+    }
 }

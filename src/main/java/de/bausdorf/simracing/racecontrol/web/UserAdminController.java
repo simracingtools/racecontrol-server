@@ -106,6 +106,15 @@ public class UserAdminController extends ControllerBase {
 		RcUser user = currentUser();
 		if(user.getIRacingId() == 0) {
 			addWarning("Please provide your iRacing Id !", model);
+		} else {
+			Optional<MemberInfo> idSearch = iRacingClient.getMemberInfo(user.getIRacingId());
+			if(idSearch.isPresent()) {
+				if(!idSearch.get().getName().equalsIgnoreCase(user.getName())) {
+					addWarning("Your iRacing name does not match your profile name", model);
+				}
+			} else {
+				addWarning("iRacing ID " + user.getIRacingId() + " is unknown in iRacing", model);
+			}
 		}
 		model.addAttribute("profileView", new UserProfileView(user));
 		return PROFILE_VIEW;
@@ -118,13 +127,22 @@ public class UserAdminController extends ControllerBase {
 		RcUser currentUser = currentUser();
 		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()
 				|| currentUser.getIRacingName() == null || currentUser.getIRacingName().isEmpty()) {
-			List<MemberInfo> idSearch = iRacingClient.getMemberInfo(List.of(profileView.getIRacingId()));
+			Optional<MemberInfo> idSearch = iRacingClient.getMemberInfo(profileView.getIRacingId());
 			if(idSearch.isEmpty()) {
-				log.warn("No iRacing user with id {} found", profileView.getIRacingId());
+				log.warn("{}: No iRacing user with id {} found", currentUser.getName(), profileView.getIRacingId());
+				profileView.setIRacingName(currentUser.getIRacingName());
+				profileView.setIRacingId(currentUser.getIRacingId());
+				profileView.setUserType(RcUserType.NEW.toString());
 			} else {
-				MemberInfo identifiedMember = idSearch.stream()
-						.filter(s -> s.getCustid() == profileView.getIRacingId()).findFirst().orElse(null);
-				profileView.setIRacingName(identifiedMember != null ? identifiedMember.getName() : profileView.getIRacingName());
+				if(idSearch.get().getName().equalsIgnoreCase(profileView.getName())) {
+					profileView.setIRacingName(idSearch.get().getName());
+					if(currentUser.getUserType() == RcUserType.NEW) {
+						profileView.setUserType(RcUserType.REGISTERED_USER.toString());
+					}
+				} else {
+					profileView.setUserType(RcUserType.NEW.toString());
+					log.warn("iRacing name {} does not match profile name {}", idSearch.get().getName(), profileView.getName());
+				}
 			}
 		}
 		RcUser userToSave = profileView.apply(currentUser);

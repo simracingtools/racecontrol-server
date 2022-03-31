@@ -25,18 +25,16 @@ package de.bausdorf.simracing.racecontrol.web;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import de.bausdorf.simracing.racecontrol.web.security.*;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
-import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
-import de.bausdorf.simracing.racecontrol.web.security.RcUser;
-import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
-import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 
 public class ControllerBase {
 
@@ -65,12 +63,16 @@ public class ControllerBase {
 	}
 
 	protected RcUser currentUser() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Optional<RcUser> details = auth != null ? userRepository.findById(auth.getName()) : Optional.empty();
+		Optional<RcUser> details = Optional.empty();
+		if(SecurityContextHolder.getContext().getAuthentication() instanceof KeycloakAuthenticationToken) {
+			KeycloakAuthenticationToken token = (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+			AccessToken auth = token.getAccount().getKeycloakSecurityContext().getToken();
+			details =auth != null ? userRepository.findById(auth.getSubject()) : Optional.empty();
+		}
 		return details.orElseGet(() -> RcUser.builder()
 				.name("Unknown")
 				.oauthId("")
-				.eventFilter(GoogleUserService.defaultEventFilter())
+				.eventFilter(RcAuthenticationProvider.defaultEventFilter())
 				.userType(RcUserType.NEW)
 				.created(ZonedDateTime.now())
 				.build());

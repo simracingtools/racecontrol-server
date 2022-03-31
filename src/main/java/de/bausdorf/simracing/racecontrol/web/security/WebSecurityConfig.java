@@ -32,123 +32,78 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
+import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
+import org.keycloak.adapters.springsecurity.filter.KeycloakAuthenticationProcessingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
-import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 
-@Configuration
+@KeycloakConfiguration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 @Slf4j
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter implements AccessDeniedHandler {
+public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter implements AccessDeniedHandler {
 
 	public static final String ROLE_PREFIX = "ROLE_";
 
-	private final GoogleUserService userService;
-	private final RcUserRepository registrationRepository;
+	private final RcAuthenticationProvider authenticationProvider;
 
-	public WebSecurityConfig(@Autowired GoogleUserService userService,
-			@Autowired	RcUserRepository registrationRepository) {
-		super(false);
-		this.userService = userService;
-		this.registrationRepository = registrationRepository;
+	public WebSecurityConfig(@Autowired RcAuthenticationProvider authenticationProvider) {
+		super();
+		this.authenticationProvider = authenticationProvider;
 	}
 
 	@Override
-	public void configure(WebSecurity web) {
-		web.ignoring().antMatchers("/_ah/**", "/actuator/**", "/clientmessage",
-				"/rcclient/**", "/timingclient/**", "/app/**", "/timing/**", "/rc/**",
-				"/", "/index", "/session/**", "/team**", "/events/**", "/issueBulletin", "/bulletins",
-				"/assets/**", "/webjars/**");
+	protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
+		return new RegisterSessionAuthenticationStrategy(
+				new SessionRegistryImpl());
+	}
+
+	@Autowired
+	public void configureGlobal(AuthenticationManagerBuilder auth) {
+		auth.authenticationProvider(authenticationProvider);
+	}
+
+	@Override
+	@Bean
+	protected KeycloakAuthenticationProcessingFilter keycloakAuthenticationProcessingFilter() throws Exception {
+		KeycloakAuthenticationProcessingFilter filter = new KeycloakAuthenticationProcessingFilter(this.authenticationManagerBean());
+		filter.setSessionAuthenticationStrategy(this.sessionAuthenticationStrategy());
+		return filter;
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
+		super.configure(http);
 		http.authorizeRequests()
-				.antMatchers("!/_ah", "!/actuator/**", "!/clientmessage",
-						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
-						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/issueBulletin", "!/bulletins/**",
-						"!/assets/**", "!/webjars/**")
-					.permitAll()
-					.anyRequest().authenticated()
+				.antMatchers("/").permitAll()
+				.antMatchers("/assets/**").permitAll()
+//				.antMatchers("!/_ah", "!/actuator/**", "!/clientmessage",
+//						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
+//						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/issueBulletin", "!/bulletins/**",
+//						"!/assets/**", "!/webjars/**")
+//					.permitAll()
+				.anyRequest().authenticated()
 				.and()
-				.rememberMe()
-					.key("ir-race-control")
-					.tokenValiditySeconds(90000)
-				.and()
-				.oauth2Login()
-					.authorizationEndpoint()
-//					.authorizationRequestResolver(
-//						new CustomAuthorizationRequestResolver(
-//								registrationRepository))
-				.and()
-				.defaultSuccessUrl("/index.html")
-				.userInfoEndpoint()
-					.userAuthoritiesMapper(this.userAuthoritiesMapper())
-						.oidcUserService(userService)
-					.and()
-				.and()
-					.logout()
-						.logoutSuccessUrl("/")
-				.and()
-			.exceptionHandling().accessDeniedHandler(this);
-
-
-	}
-
-	private GrantedAuthoritiesMapper userAuthoritiesMapper() {
-		return authorities -> {
-			Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
-
-			authorities.forEach(authority -> {
-				if (authority instanceof OidcUserAuthority) {
-					OidcUserAuthority oidcUserAuthority = (OidcUserAuthority)authority;
-
-					determineUserRoles(oidcUserAuthority.getIdToken().getSubject())
-							.forEach(mappedAuthorities::add);
-				} else if (authority instanceof OAuth2UserAuthority) {
-					OAuth2UserAuthority oauth2UserAuthority = (OAuth2UserAuthority)authority;
-
-					determineUserRoles(oauth2UserAuthority.getAttributes().get("sub").toString())
-							.forEach(mappedAuthorities::add);
-				}
-			});
-
-			return mappedAuthorities;
-		};
-	}
-
-	@Transactional
-	public List<SimpleGrantedAuthority> determineUserRoles(String userId) {
-		RcUser rcUser = registrationRepository.findById(userId).orElse(null);
-		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		if (rcUser != null) {
-			rcUser.setLastAccess(ZonedDateTime.now());
-			if (!rcUser.isEnabled()) {
-				authorities.clear();
-				authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + RcUserType.NEW.name()));
-				rcUser.setUserType(RcUserType.NEW);
-			}
-			authorities.add(new SimpleGrantedAuthority(ROLE_PREFIX + rcUser.getUserType().name()));
-		}
-		return authorities;
+				.exceptionHandling().accessDeniedHandler(this);
 	}
 
 	@Override

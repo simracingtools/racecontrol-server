@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.bausdorf.simracing.racecontrol.web.security.RcAuthenticationProvider;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.KeycloakDeployment;
+import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.lang.NonNull;
@@ -66,10 +70,12 @@ import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
-import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import lombok.extern.slf4j.Slf4j;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Slf4j
@@ -144,6 +150,16 @@ public class MainController extends ControllerBase {
 		}
 		model.addAttribute("selectView", selectView);
 		return INDEX_VIEW;
+	}
+
+	@GetMapping("/logout")
+	public String logout(HttpServletRequest servletRequest) throws ServletException {
+		RefreshableKeycloakSecurityContext c =
+				(RefreshableKeycloakSecurityContext) servletRequest.getAttribute(KeycloakSecurityContext.class.getName());
+		KeycloakDeployment d = c.getDeployment();
+		c.logout(d);
+		servletRequest.logout();
+		return "redirect:/";
 	}
 
 	@PostMapping({"/session"})
@@ -320,7 +336,7 @@ public class MainController extends ControllerBase {
 			RcUser user = currentUser.orElse(RcUser.builder()
 					.name("Unknown")
 					.created(ZonedDateTime.now())
-					.eventFilter(GoogleUserService.defaultEventFilter())
+					.eventFilter(RcAuthenticationProvider.defaultEventFilter())
 					.userType(RcUserType.NEW)
 					.build());
 			model.addAttribute("user", new UserProfileView(user));
@@ -328,7 +344,7 @@ public class MainController extends ControllerBase {
 		}
 		return RcUser.builder()
 				.name("Unknown")
-				.eventFilter(GoogleUserService.defaultEventFilter())
+				.eventFilter(RcAuthenticationProvider.defaultEventFilter())
 				.created(ZonedDateTime.now())
 				.userType(RcUserType.NEW)
 				.build();

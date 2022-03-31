@@ -23,6 +23,8 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.client.IrDataClient;
+import de.bausdorf.simracing.irdataapi.client.impl.IrDataClientImpl;
+import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
 import de.bausdorf.simracing.irdataapi.model.AuthResponseDto;
 import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
 import org.junit.jupiter.api.Disabled;
@@ -42,17 +44,17 @@ import static org.junit.jupiter.api.Assertions.fail;
 class IracingApiTest {
 
 	@Autowired
-	RacecontrolServerProperties props;
+	ConfigProperties props;
 
-	private IrDataClient dataClient = new IrDataClient();
+	private final IrDataClient dataClient = new IrDataClientImpl();
 
 	@Test
 	@Disabled("Intergation test to run manually")
 	void testIracingLogin() {
 		try {
 			LoginRequestDto irLoginRequest = LoginRequestDto.builder()
-					.email(props.getIRacingUsername())
-					.password(props.getIRacingPassword())
+					.email(props.getUser())
+					.password(props.getPassword())
 					.build();
 			AuthResponseDto responseDto = dataClient.authenticate(irLoginRequest);
 			log.info(responseDto.toString());

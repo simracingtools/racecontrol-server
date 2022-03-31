@@ -29,10 +29,7 @@ import java.util.stream.Collectors;
 
 import de.bausdorf.simracing.racecontrol.live.api.EventType;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
-import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
-import de.bausdorf.simracing.racecontrol.web.security.RcUser;
-import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
-import de.bausdorf.simracing.racecontrol.web.security.SubscriptionType;
+import de.bausdorf.simracing.racecontrol.web.security.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -83,7 +80,7 @@ public class UserProfileView {
 		this.eventFilter = user.getEventFilter() != null ? user.getEventFilter().stream()
 						.map(EventType::name)
 						.collect(Collectors.toList())
-				: GoogleUserService.defaultEventFilter().stream()
+				: RcAuthenticationProvider.defaultEventFilter().stream()
 						.map(EventType::name)
 						.collect(Collectors.toList());
 //		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
@@ -99,6 +96,7 @@ public class UserProfileView {
 		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
 		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
 		merge.setIRacingName(iRacingId != 0 ? iRacingName : merge.getIRacingName());
+		merge.setUserType(userType != null ? RcUserType.valueOf(userType) : merge.getUserType());
 		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
 		return merge;
 	}

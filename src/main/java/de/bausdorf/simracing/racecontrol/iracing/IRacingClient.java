@@ -25,13 +25,17 @@ package de.bausdorf.simracing.racecontrol.iracing;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import de.bausdorf.simracing.irdataapi.client.AuthorizationException;
 import de.bausdorf.simracing.irdataapi.client.DataApiException;
 import de.bausdorf.simracing.irdataapi.client.IrDataClient;
+import de.bausdorf.simracing.irdataapi.client.impl.IrDataClientImpl;
+import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
 import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
 import de.bausdorf.simracing.irdataapi.model.MembersInfoDto;
+import de.bausdorf.simracing.irdataapi.tools.StockDataCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,12 +46,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class IRacingClient {
 
-	private final RacecontrolServerProperties serverProperties;
+	private final ConfigProperties serverProperties;
 	private final IrDataClient dataClient;
+	private final StockDataCache dataCache;
 
-	public IRacingClient(@Autowired RacecontrolServerProperties serverProperties) {
+	public IRacingClient(@Autowired ConfigProperties serverProperties) {
 		this.serverProperties = serverProperties;
-		this.dataClient = new IrDataClient();
+		this.dataClient = new IrDataClientImpl();
+		this.dataCache = new StockDataCache(serverProperties.getCacheDirectory());
+	}
+
+	public StockDataCache getDataCache() {
+		if(!dataCache.isInitialized()) {
+			authenticate();
+			dataCache.fetchFromService(dataClient);
+		}
+		return dataCache;
+	}
+
+	public Optional<MemberInfo> getMemberInfo(Long ircacingId) {
+		return getMemberInfo(List.of(ircacingId)).stream().findFirst();
 	}
 
 	public List<MemberInfo> getMemberInfo(List<Long> ircacingIds) {
@@ -56,8 +74,8 @@ public class IRacingClient {
 			MembersInfoDto membersInfos = dataClient.getMembersInfo(ircacingIds);
 			return Arrays.stream(membersInfos.getMembers())
 					.map(s -> MemberInfo.builder()
-							.custid(s.getCust_id().intValue())
-							.name(s.getDisplay_name())
+							.custid(s.getCustId().intValue())
+							.name(s.getDisplayName())
 							.build())
 					.collect(Collectors.toList());
 		} catch(Exception e) {
@@ -69,8 +87,8 @@ public class IRacingClient {
 	private void authenticate() {
 		if(!dataClient.isAuthenticated()) {
 			LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-					.email(serverProperties.getIRacingUsername())
-					.password(serverProperties.getIRacingPassword())
+					.email(serverProperties.getUser())
+					.password(serverProperties.getPassword())
 					.build();
 			try {
 				dataClient.authenticate(loginRequestDto);
