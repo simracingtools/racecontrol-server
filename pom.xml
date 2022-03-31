@@ -25,10 +25,18 @@
     <stomp-websocket.version>2.3.4</stomp-websocket.version>
     <momentjs.version>2.29.1</momentjs.version>
     <madiadb-client.version>2.7.3</madiadb-client.version>
+    <ir-data-api.version>0.9.0</ir-data-api.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.keycloak.bom</groupId>
+        <artifactId>keycloak-adapter-bom</artifactId>
+        <version>17.0.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -39,14 +47,8 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        <exclusions>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-        </exclusions>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-spring-boot-starter</artifactId>
     </dependency>
 
     <!-- Spring web -->
@@ -138,11 +140,10 @@
     </dependency>
 
     <!-- For iRacing website access -->
-    <!-- https://mvnrepository.com/artifact/de.bausdorf.simracing/ir-data-api-client -->
     <dependency>
       <groupId>de.bausdorf.simracing</groupId>
       <artifactId>ir-data-api-client</artifactId>
-      <version>0.5.0</version>
+      <version>${ir-data-api.version}</version>
     </dependency>
 
 
@@ -186,7 +187,6 @@
       <version>${madiadb-client.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -205,7 +205,6 @@
         <version>2.0.0</version>
         <configuration>
           <licenseName>gpl_v3</licenseName>
-          <!--          <licenseResolver>${project.baseUri}/src/license</licenseResolver>-->
           <excludes>
             <exclude>*.eot</exclude>
             <exclude>*.svg</exclude>
