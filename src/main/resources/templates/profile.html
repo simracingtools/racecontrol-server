@@ -36,11 +36,11 @@
                 <div class="col-md-5 col-lg-5">
                     <div class="form-group">
                         <label class="d-block">Name</label>
-                        <input type="text" th:field="*{name}">
+                        <input type="text" readonly="" th:field="*{name}">
                     </div>
                     <div class="form-group">
                         <label class="d-block">Email</label>
-                        <input type="email" disabled="" readonly="" th:field="*{email}">
+                        <input type="email" readonly="" th:field="*{email}">
                     </div>
                     <div class="form-group">
                         <label class="d-block">Created</label>
@@ -52,10 +52,10 @@
                         <label class="d-block">iRacingId</label>
                         <input type="number" min="1" required="" placeholder="000000" step="1" th:field="*{iRacingId}">
                     </div>
-                    <div class="form-group">
-                        <label class="d-block">iRacing Name</label>
-                        <input type="text" disabled="" readonly="" th:field="*{iRacingName}">
-                    </div>
+<!--                    <div class="form-group">-->
+<!--                        <label class="d-block">iRacing Name</label>-->
+<!--                        <input type="text" disabled="" readonly="" th:field="*{iRacingName}">-->
+<!--                    </div>-->
                     <div class="form-group">
                         <label class="d-block">Prefered timezone</label>
                         <select style="height: 30px;" th:field="*{timezone}">

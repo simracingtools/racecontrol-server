@@ -45,7 +45,6 @@ public class UserProfileView {
 	private String email;
 	private String imageUrl;
 	private long iRacingId;
-	private String iRacingName;
 	private String clientMessageAccessToken;
 	private String userType;
 	private SubscriptionType subscriptionType;
@@ -67,7 +66,6 @@ public class UserProfileView {
 		this.email = user.getEmail();
 		this.imageUrl = user.getImageUrl();
 		this.iRacingId = user.getIRacingId();
-		this.iRacingName = user.getIRacingName();
 		this.userType = user.getUserType().name();
 		this.clientMessageAccessToken = user.getClientMessageAccessToken();
 		this.enabled = user.isEnabled();
@@ -83,19 +81,15 @@ public class UserProfileView {
 				: RcAuthenticationProvider.defaultEventFilter().stream()
 						.map(EventType::name)
 						.collect(Collectors.toList());
-//		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
-//				? user.getLastSubscription().plus(this.subscriptionType.getDuration()).toLocalDate().toString()
-//				: "Not relevant";
 		this.racecontrol = user.getUserType() == RcUserType.SYSADMIN
 				|| user.getUserType() == RcUserType.RACE_DIRECTOR
 				|| user.getUserType() == RcUserType.STEWARD;
 	}
 
 	public RcUser apply(RcUser merge) {
-		merge.setName(name != null ? name : merge.getIRacingName());
 		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
+		merge.setName(name != null ? name : merge.getName());
 		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
-		merge.setIRacingName(iRacingId != 0 ? iRacingName : merge.getIRacingName());
 		merge.setUserType(userType != null ? RcUserType.valueOf(userType) : merge.getUserType());
 		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
 		return merge;

@@ -47,6 +47,10 @@ public class RacecontrolServerProperties {
     private String iRacingUsername;
     private String iRacingPassword;
     private String discordBulletinUrl;
+    private String keycloakUser;
+    private String keycloakPassword;
+    private String keycloakServer;
+    private String keycloakRealm;
 
     @Bean
     ConfigProperties configProperties() {

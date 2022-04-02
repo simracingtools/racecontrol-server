@@ -40,21 +40,29 @@ public class RcAuthenticationProvider implements org.springframework.security.au
 
         AccessToken userDetails = token.getAccount().getKeycloakSecurityContext().getToken();
         final String userId = userDetails.getSubject();
-        final String userName = userDetails.getName();
         final long iRacingId = Long.parseLong((String)userDetails.getOtherClaims().get("iRacingID"));
         Optional<RcUser> user = userRepository.findById(userId);
         if(user.isEmpty()) {
 
             Optional<MemberInfo> identifiedMember = iRacingClient.getMemberInfo(iRacingId);
+            RcUserType newUserType = RcUserType.REGISTERED_USER;
             if(identifiedMember.isEmpty()) {
-                log.info("No iRacing user with id {} found", iRacingId);
+                log.warn("No iRacing user with id {} found", iRacingId);
+                newUserType = RcUserType.NEW;
+            } else {
+                Optional<RcUser> existingUserForId = userRepository.findByiRacingId(iRacingId);
+                if(existingUserForId.isPresent()) {
+                    log.warn("iRacing ID {} already registered for user with email {}", iRacingId, existingUserForId.get().getEmail());
+                    newUserType = RcUserType.NEW;
+                    identifiedMember = Optional.empty();
+                }
             }
             userRepository.save(RcUser.builder()
                     .email(userDetails.getEmail())
                     .oauthId(userId)
                     .imageUrl(userDetails.getPicture())
-                    .name(userName)
-                    .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : RcUserType.NEW)
+                    .name(identifiedMember.map(MemberInfo::getName).orElse(null))
+                    .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : newUserType)
                     .created(ZonedDateTime.now())
                     .subscriptionType(SubscriptionType.NONE)
                     .eventFilter(defaultEventFilter())
@@ -64,7 +72,6 @@ public class RcAuthenticationProvider implements org.springframework.security.au
                     .expired(false)
                     .enabled(true)
                     .iRacingId(identifiedMember.map(MemberInfo::getCustid).orElse(0))
-                    .iRacingName(identifiedMember.map(MemberInfo::getName).orElse(null))
                     .build()
             );
         } else {

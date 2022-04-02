@@ -25,6 +25,7 @@
     <stomp-websocket.version>2.3.4</stomp-websocket.version>
     <momentjs.version>2.29.1</momentjs.version>
     <madiadb-client.version>2.7.3</madiadb-client.version>
+    <keycloak.version>17.0.1</keycloak.version>
     <ir-data-api.version>0.9.1</ir-data-api.version>
   </properties>
 
@@ -33,7 +34,7 @@
       <dependency>
         <groupId>org.keycloak.bom</groupId>
         <artifactId>keycloak-adapter-bom</artifactId>
-        <version>17.0.1</version>
+        <version>${keycloak.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -50,7 +51,11 @@
       <groupId>org.keycloak</groupId>
       <artifactId>keycloak-spring-boot-starter</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-admin-client</artifactId>
+      <version>${keycloak.version}</version>
+    </dependency>
     <!-- Spring web -->
     <dependency>
         <groupId>org.springframework.boot</groupId>

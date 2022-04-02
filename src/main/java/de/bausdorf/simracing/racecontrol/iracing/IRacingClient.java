@@ -37,10 +37,11 @@ import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
 import de.bausdorf.simracing.irdataapi.model.MembersInfoDto;
 import de.bausdorf.simracing.irdataapi.tools.StockDataCache;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Component
 @Slf4j
@@ -85,17 +86,23 @@ public class IRacingClient {
 	}
 
 	private void authenticate() {
-		if(!dataClient.isAuthenticated()) {
-			LoginRequestDto loginRequestDto = LoginRequestDto.builder()
-					.email(serverProperties.getUser())
-					.password(serverProperties.getPassword())
-					.build();
-			try {
-				dataClient.authenticate(loginRequestDto);
-			} catch (DataApiException | AuthorizationException e) {
-				log.error(e.getMessage());
-			} catch (Exception e) {
-				log.error(e.getMessage(), e);
+		try {
+			dataClient.getMemberSummary(229120L);
+		} catch (HttpClientErrorException e) {
+			if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
+				log.warn("IrDataClient not authorized - try to authenticate");
+				LoginRequestDto loginRequestDto = LoginRequestDto.builder()
+						.email(serverProperties.getUser())
+						.password(serverProperties.getPassword())
+						.build();
+				try {
+					dataClient.authenticate(loginRequestDto);
+					log.info("IrDataClient authentication success");
+				} catch (DataApiException | AuthorizationException exx) {
+					log.error(exx.getMessage());
+				} catch (Exception ex) {
+					log.error(ex.getMessage(), ex);
+				}
 			}
 		}
 	}

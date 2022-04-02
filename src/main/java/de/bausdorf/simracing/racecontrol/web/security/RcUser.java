@@ -54,7 +54,6 @@ public class RcUser implements UserDetails {
 	private String email;
 	private String imageUrl;
 	private long iRacingId;
-	private String iRacingName;
 	private String clientMessageAccessToken;
 	private RcUserType userType;
 	private ZoneId timezone;
