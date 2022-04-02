@@ -25,7 +25,7 @@
     <stomp-websocket.version>2.3.4</stomp-websocket.version>
     <momentjs.version>2.29.1</momentjs.version>
     <madiadb-client.version>2.7.3</madiadb-client.version>
-    <ir-data-api.version>0.9.0</ir-data-api.version>
+    <ir-data-api.version>0.9.1</ir-data-api.version>
   </properties>
 
   <dependencyManagement>
