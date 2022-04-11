@@ -28,7 +28,6 @@ import org.hibernate.Hibernate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Getter
 @Setter
@@ -40,8 +39,10 @@ public class BalancedCar {
 	@GeneratedValue
 	private long id;
 
-	@ManyToOne
-	private Car car;
+	private long carId;
+	private long carClassId;
+	private String carName;
+	private double maxFuel;
 	private int fuelPercent;
 	private int weightPenalty;
 	private int enginePowerPercent;

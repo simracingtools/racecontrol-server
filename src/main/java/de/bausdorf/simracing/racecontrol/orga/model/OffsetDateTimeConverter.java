@@ -1,3 +1,5 @@
+package de.bausdorf.simracing.racecontrol.orga.model;
+
 /*-
  * #%L
  * racecontrol-server
@@ -19,6 +21,20 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-$(document).ready(function(){
-	$('[data-bss-tooltip]').tooltip();
-});
+
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
+import java.time.OffsetDateTime;
+
+@Converter
+public class OffsetDateTimeConverter implements AttributeConverter<OffsetDateTime, String> {
+    @Override
+    public String convertToDatabaseColumn(OffsetDateTime offsetDateTime) {
+        return offsetDateTime.toString();
+    }
+
+    @Override
+    public OffsetDateTime convertToEntityAttribute(String s) {
+        return OffsetDateTime.parse(s);
+    }
+}

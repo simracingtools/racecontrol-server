@@ -22,7 +22,6 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.model.Car;
 import de.bausdorf.simracing.racecontrol.orga.model.Track;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

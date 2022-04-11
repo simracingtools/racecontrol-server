@@ -24,10 +24,12 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 
 import lombok.*;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -42,17 +44,27 @@ public class EventSeries {
 
 	private String title;
 	private String logoUrl;
-	private String discordLink;
 	private String discordInvite;
+	private long iRLeagueID;
+	private String iRLeagueName;
+	private String description;
+	@Convert(converter = OffsetDateTimeConverter.class)
+	private OffsetDateTime registrationOpens;
+	@Convert(converter = OffsetDateTimeConverter.class)
+	private OffsetDateTime registrationCloses;
 	@ManyToOne
-	RuleSet ruleSet;
-	@ManyToOne
-	OrganizationalUnit organizingUnit;
-	@OneToMany(mappedBy = "id")
+	private RuleSet ruleSet;
+
+	@OneToMany(mappedBy = "eventId")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ToString.Exclude
+	private List<Person> staff;
+	@OneToMany(mappedBy = "eventId")
+	@LazyCollection(LazyCollectionOption.FALSE)
+	@Cascade(org.hibernate.annotations.CascadeType.ALL)
+	@ToString.Exclude
 	private List<CarClass> carClassPreset;
-	@OneToMany(mappedBy = "id")
+	@OneToMany(mappedBy = "eventId")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ToString.Exclude
 	private List<TrackEvent> trackEvents;

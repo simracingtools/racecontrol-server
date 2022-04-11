@@ -29,7 +29,6 @@ import org.hibernate.Hibernate;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
 
 @Getter
 @Setter
@@ -44,10 +43,6 @@ public class Registration {
 	private String name;
 	private String emailContact;
 	private String discordHandle;
-	@ManyToOne
-	private CarClass carClass;
-	@ManyToOne
-	private Car car;
 	private RegistrationStateType state;
 
 	@Override

@@ -1,3 +1,5 @@
+package de.bausdorf.simracing.racecontrol.web.security;
+
 /*-
  * #%L
  * racecontrol-server
@@ -19,6 +21,17 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-$(document).ready(function(){
-	$('[data-bss-tooltip]').tooltip();
-});
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
+
+@Configuration
+public class ThymeleafConfig {
+
+    @Bean
+    public Java8TimeDialect java8TimeDialect() {
+        return new Java8TimeDialect();
+    }
+
+}

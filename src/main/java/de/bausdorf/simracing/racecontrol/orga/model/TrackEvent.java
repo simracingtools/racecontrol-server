@@ -42,13 +42,12 @@ public class TrackEvent {
 	@GeneratedValue
 	private long id;
 
+	private long eventId;
 	private String title;
 	private ZonedDateTime dateTime;
 	private TrackEventType type;
 	@ManyToOne
 	RuleSet ruleSet;
-	@ManyToOne
-	OrganizationalUnit organizingUnit;
 	@ManyToOne
 	private TrackConfiguration track;
 	@OneToMany(mappedBy = "id")

@@ -39,10 +39,8 @@ public class Person {
 	@GeneratedValue
 	private long id;
 
+	private long eventId;
 	private String name;
-	private String email;
-	@ManyToOne(cascade = CascadeType.ALL)
-	private OrganizationalUnit organization;
 	private OrgaRoleType role;
 
 	@Override

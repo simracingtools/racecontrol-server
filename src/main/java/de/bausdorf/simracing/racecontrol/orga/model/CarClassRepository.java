@@ -4,7 +4,7 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2021 bausdorf engineering
+ * Copyright (C) 2020 - 2022 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,39 +22,10 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import lombok.*;
-import org.hibernate.Hibernate;
+import org.springframework.data.repository.CrudRepository;
 
-import javax.persistence.*;
 import java.util.List;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
-@Entity
-public class CarClass {
-	@Id
-	@GeneratedValue
-	private long id;
-
-	private long eventId;
-	private String name;
-	private int maxSlots;
-	private int wildcards;
-	@OneToMany(mappedBy = "carClassId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	private List<BalancedCar> cars;
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		CarClass carClass = (CarClass) o;
-		return id != carClass.id;
-	}
-
-	@Override
-	public int hashCode() {
-		return getClass().hashCode();
-	}
+public interface CarClassRepository extends CrudRepository<CarClass, Long> {
+    List<CarClass> findAllByEventId(long eventId);
 }

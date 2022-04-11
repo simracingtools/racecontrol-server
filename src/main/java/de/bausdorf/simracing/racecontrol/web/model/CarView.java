@@ -22,7 +22,7 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.model.Car;
+import de.bausdorf.simracing.racecontrol.orga.model.BalancedCar;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -35,24 +35,24 @@ import org.springframework.lang.Nullable;
 @Builder
 public class CarView {
     private long carId;
+    private long carClassId;
     private String name;
-    private String brand;
     private double maxFuel;
 
-    public void updateEntity(Car entity) {
+    public void updateEntity(BalancedCar entity) {
         entity.setCarId(carId);
-        entity.setName(name);
-        entity.setBrand(brand);
+        entity.setCarName(name);
+        entity.setCarClassId(carClassId);
         entity.setMaxFuel(maxFuel);
     }
-    public static CarView buildFromEntity(@Nullable Car entity) {
+    public static CarView buildFromEntity(@Nullable BalancedCar entity) {
         if(entity == null) {
             return buildEmpty();
         }
         return CarView.builder()
                 .carId(entity.getCarId())
-                .name(entity.getName())
-                .brand(entity.getBrand())
+                .carClassId(entity.getCarClassId())
+                .name(entity.getCarName())
                 .maxFuel(entity.getMaxFuel())
                 .build();
     }
@@ -60,8 +60,8 @@ public class CarView {
     public static CarView buildEmpty() {
         return CarView.builder()
                 .carId(0)
+                .carClassId(0)
                 .name("")
-                .brand("")
                 .maxFuel(0.0D)
                 .build();
     }

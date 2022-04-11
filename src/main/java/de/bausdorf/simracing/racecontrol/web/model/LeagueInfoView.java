@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.model;
 
 /*-
  * #%L
@@ -22,14 +22,14 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import org.springframework.data.repository.CrudRepository;
+import lombok.*;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface CarRepository extends CrudRepository<Car, Long> {
-
-    Optional<Car> findByName(String name);
-    List<Car> findCarsByBrand(String brand);
-    List<Car> findAllByNameNotContainingOrderByNameAsc(String exclusion);
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class LeagueInfoView {
+    private long leagueId;
+    private String leagueName;
 }

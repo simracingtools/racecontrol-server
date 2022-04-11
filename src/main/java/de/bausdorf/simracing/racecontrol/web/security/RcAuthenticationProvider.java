@@ -1,5 +1,27 @@
 package de.bausdorf.simracing.racecontrol.web.security;
 
+/*-
+ * #%L
+ * racecontrol-server
+ * %%
+ * Copyright (C) 2020 - 2022 bausdorf engineering
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.live.api.EventType;
@@ -87,10 +109,8 @@ public class RcAuthenticationProvider implements org.springframework.security.au
     private Authentication generateAuthenticationToken(Authentication authentication, Optional<RcUser>  user) {
         KeycloakAuthenticationToken token = (KeycloakAuthenticationToken)authentication;
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        Iterator<?> var4 = token.getAccount().getRoles().iterator();
 
-        while(var4.hasNext()) {
-            String role = (String)var4.next();
+        for (String role : token.getAccount().getRoles()) {
             grantedAuthorities.add(new KeycloakRole(role));
         }
         user.ifPresent(u -> grantedAuthorities.add(new KeycloakRole(u.getUserType().toString())));

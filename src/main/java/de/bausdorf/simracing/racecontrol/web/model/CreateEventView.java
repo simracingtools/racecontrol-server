@@ -1,0 +1,102 @@
+package de.bausdorf.simracing.racecontrol.web.model;
+
+/*-
+ * #%L
+ * racecontrol-server
+ * %%
+ * Copyright (C) 2020 - 2022 bausdorf engineering
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
+import de.bausdorf.simracing.racecontrol.orga.model.CarClass;
+import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
+import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.lang.Nullable;
+
+import java.time.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class CreateEventView {
+    private long eventId;
+    private String title;
+    private String logoUrl;
+    private String discordInvite;
+    private String description;
+    private long irLeagueID;
+    private String irLeagueName;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime registrationOpens;
+    private String registrationOpensTZ;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime registrationCloses;
+    private String registrationClosesTZ;
+    private List<CarClassView> carClassPreset = new ArrayList<>();
+    private List<PersonView> organizingStaff = new ArrayList<>();
+
+    public EventSeries toEntity(@Nullable EventSeries eventSeries) {
+        if (eventSeries == null) {
+            eventSeries = new EventSeries();
+        }
+        eventSeries.setId(eventId);
+        eventSeries.setTitle(title == null ? eventSeries.getTitle() : title);
+        eventSeries.setLogoUrl(logoUrl == null ? eventSeries.getLogoUrl() : logoUrl);
+        eventSeries.setDiscordInvite(discordInvite == null ? eventSeries.getDiscordInvite() : discordInvite);
+        eventSeries.setIRLeagueName(irLeagueName == null ? eventSeries.getIRLeagueName() : irLeagueName);
+        eventSeries.setIRLeagueID(irLeagueID == 0 ? eventSeries.getIRLeagueID() : irLeagueID);
+        eventSeries.setDescription(description == null ? eventSeries.getDescription() : description);
+        eventSeries.setRegistrationOpens(registrationOpens == null ? eventSeries.getRegistrationOpens()
+                : OffsetDateTime.of(registrationOpens, ZoneOffset.of(registrationOpensTZ)));
+        eventSeries.setRegistrationCloses(registrationCloses == null ? eventSeries.getRegistrationCloses()
+                : OffsetDateTime.of(registrationCloses, ZoneOffset.of(registrationClosesTZ)));
+        return eventSeries;
+    }
+
+    public static CreateEventView fromEntity(EventSeries eventSeries) {
+        return CreateEventView.builder()
+                .eventId(eventSeries.getId())
+                .title(eventSeries.getTitle())
+                .logoUrl(eventSeries.getLogoUrl())
+                .discordInvite(eventSeries.getDiscordInvite())
+                .irLeagueID(eventSeries.getIRLeagueID())
+                .irLeagueName(eventSeries.getIRLeagueName())
+                .description(eventSeries.getDescription())
+                .registrationOpens(eventSeries.getRegistrationOpens().toLocalDateTime())
+                .registrationOpensTZ(eventSeries.getRegistrationOpens().getOffset().toString())
+                .registrationCloses(eventSeries.getRegistrationCloses().toLocalDateTime())
+                .registrationClosesTZ(eventSeries.getRegistrationCloses().getOffset().toString())
+                .carClassPreset(CarClassView.fromEntityList(eventSeries.getCarClassPreset()))
+                .organizingStaff(PersonView.fromEntityList(eventSeries.getStaff()))
+                .build();
+    }
+
+    public static CreateEventView createEmpty() {
+        return CreateEventView.builder()
+                .registrationOpens(LocalDateTime.now())
+                .registrationOpensTZ(ZonedDateTime.now().getOffset().toString())
+                .registrationClosesTZ(ZonedDateTime.now().getOffset().toString())
+                .build();
+    }
+}

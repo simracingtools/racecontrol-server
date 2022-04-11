@@ -1,0 +1,250 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu"></div>
+
+        <form method="post" th:action="@{/create-event}" th:object="${eventView}">
+            <input type="hidden" th:field="*{eventId}">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="d-block" style="width: 6em;">Event Name</label>
+                                <input type="text" style="width: 30em;" th:field="*{title}" required="">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 8em;">Discord invite</label>
+                                <input type="text" style="width: 30em;" th:field="*{discordInvite}">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 6em;">Description</label>
+                                <textarea class="form-control-lg" style="font-size: 12px;width: 40em;height: 6em;" th:field="*{description}"></textarea>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <picture>
+                                <img th:src="*{logoUrl}"/>
+                            </picture>
+                            <button class="btn btn-primary float-right" type="button">
+                                <i class="far fa-edit"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;">Registration opens</label>
+                                <input type="datetime-local" th:field="*{registrationOpens}">
+                                <select th:field="*{registrationOpensTZ}">
+                                    <option value="-07:00">PDT</option>
+                                    <option value="-06:00">MDT</option>
+                                    <option value="-05:00">CDT</option>
+                                    <option value="-04:00">EDT</option>
+                                    <option value="-03:00">Brazil</option>
+                                    <option value="Z">UTC</option>
+                                    <option value="+01:00">BST</option>
+                                    <option value="+02:00">CEST</option>
+                                    <option value="+03:00">MSK</option>
+                                    <option value="+04:00">Dubai</option>
+                                    <option value="+05:30">IST</option>
+                                    <option value="+08:00">CST</option>
+                                    <option value="+09:00">JST</option>
+                                    <option value="+10:00">AEST</option>
+                                    <option value="+12:00">NZST</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;">Registration closes</label>
+                                <input type="datetime-local" th:field="*{registrationCloses}">
+                                <select th:field="*{registrationClosesTZ}">
+                                    <option value="-07:00">PDT</option>
+                                    <option value="-06:00">MDT</option>
+                                    <option value="-05:00">CDT</option>
+                                    <option value="-04:00">EDT</option>
+                                    <option value="-03:00">Brazil</option>
+                                    <option value="Z">UTC</option>
+                                    <option value="+01:00">BST</option>
+                                    <option value="+02:00">CEST</option>
+                                    <option value="+03:00">MSK</option>
+                                    <option value="+04:00">Dubai</option>
+                                    <option value="+05:30">IST</option>
+                                    <option value="+08:00">CST</option>
+                                    <option value="+09:00">JST</option>
+                                    <option value="+10:00">AEST</option>
+                                    <option value="+12:00">NZST</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;">iRacing League ID</label>
+                                <input type="number" th:field="*{irLeagueID}">
+                                <button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check league in iRacing" onclick="checkIRacingLeagueId();">
+                                    <i class="far fa-question-circle"></i>
+                                </button>
+                                <input type="text" style="width: 17em;margin-top: 10px;" readonly="" th:field="*{irLeagueName}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label>Car classes</label>
+                            <button class="btn btn-primary float-right" type="button" data-target="#carclass-modal" data-toggle="modal" th:disabled="*{eventId == 0}">
+                                <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" th:title="*{eventId == 0} ? 'Save event first before beeing able to add car classes' : 'Add car class'"></i>
+                            </button>
+                            <div class="table-responsive">
+                                <table id="carClassTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 3em;padding-right: 2px;padding-left: 2px;">Class</th>
+                                            <th>Cars</th>
+                                            <th style="width: 2em;padding-right: 2px;padding-left: 2px;">Slots</th>
+                                            <th style="width: 3em;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="carClass,carClassStat : *{carClassPreset}">
+                                            <td style="font-size: 14px;" th:text="${carClass.name}" th:onclick="'editCarClass(' + ${carClassStat.index} + ');'">SP9</td>
+                                            <td style="font-size: 12px;padding: 2px;">
+                                                <span class="d-block" th:each="car: ${carClass.cars}" th:text="${car.name}">Lamborghini Huracan Evo GT3</span>
+                                            </td>
+                                            <td style="font-size: 14px;" th:text="${carClass.slots} + '/' + ${carClass.wildcards}">15/2</td>
+                                            <td style="padding: 2px;">
+                                                <button class="btn btn-danger" type="button" th:onclick="'confirmCarClassRemove(' + ${carClassStat.index} + ')'">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                                <div th:replace="index.html::deleteModal('carclass-remove-confirm-' + ${carClassStat.index}, 'Do you really want to remove car class ' + ${carClass.name} + ' ?', @{/remove-car-class(classId=${carClass.id})})"></div>
+                                            </td>
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_id'" th:value="${carClass.id}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_name'" th:value="${carClass.name}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_slots'" th:value="${carClass.slots}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_wildcards'" th:value="${carClass.wildcards}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_carIds'" th:value="${carClass.carIds}">
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label>Organizing staff</label>
+                            <button class="btn btn-primary float-right" type="button" th:disabled="*{eventId == 0}">
+                                <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" title="Add person"></i>
+                            </button>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 7em;">Name</th>
+                                            <th>Role</th>
+                                            <th style="width: 3em;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td style="font-size: 12px;">Robert Bausdorf</td>
+                                            <td style="font-size: 12px;">RACE DIRECTOR</td>
+                                            <td style="padding: 2px;"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-size: 12px;"></td>
+                                            <td style="font-size: 12px;"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-right" type="submit">Save</button></div>
+            </div>
+        </form>
+        <div class="modal fade" role="dialog" tabindex="-1" id="carclass-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add car class</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:object="${editCarClassView}" th:action="@{/event-save-carclass}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label style="width: 8em;">Car class name</label>
+                                <input type="text" th:field="*{name}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Slots/Wildcards</label>
+                                <input type="number" style="width: 4em;" th:field="*{slots}">
+                                <input type="number" style="width: 4em;" th:field="*{wildcards}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Cars</label>
+                                <select style="height: 10em;" class="form-control" multiple="" th:field="*{carIds}">
+                                    <option th:each="car : ${allCars}" th:value="${car.carId}" th:text="${car.name}"></option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal fade" role="dialog" tabindex="-1" id="staff-modal">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group"><label style="width: 6em;">iRacing ID</label><input type="number" style="width: 5em;" placeholder="000000" required=""><button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing"><i class="far fa-question-circle"></i></button></div>
+                            <div class="form-group"><label style="width: 6em;">Name</label><input type="text" required="" readonly=""></div>
+                            <div class="form-group"><label style="width: 6em;">Role</label><select>
+                                    <option value="12" selected="">RACE DIRECTOR</option>
+                                    <option value="13">STEWARD</option>
+                                    <option value="14">STAFF</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Add</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:insert="index :: footer"></div>
+    </div>
+
+    <script src="assets/js/admin.js"></script>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+</body>
+
+</html>

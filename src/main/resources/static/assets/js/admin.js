@@ -36,12 +36,40 @@ function confirmSessionRemove(index) {
   $("#session-remove-confirm-" + index).modal('show');
 }
 
+function confirmCarClassRemove(index) {
+  $("#carclass-remove-confirm-" + index).modal('show');
+}
+
 function selectTrackForConfig() {
   var trackId = $("#trackSelector option:selected").val();
   var configId = $("#trackId").val();
   window.location = '/stockdata?activeTab=configs'
       + '&selectedTrackId=' + trackId
       + '&selectedTrackConfigId=' + configId;
+}
+
+function editCarClass(ccIndex) {
+  $("#carclass-modal #id").val($("#carClass" + ccIndex + "_id").val());
+  $("#carclass-modal #name").val($("#carClass" + ccIndex + "_name").val());
+  $("#carclass-modal #slots").val($("#carClass" + ccIndex + "_slots").val());
+  $("#carclass-modal #wildcards").val($("#carClass" + ccIndex + "_wildcards").val());
+  const options = $("#carClass" + ccIndex + "_carIds").val();
+  const array = $.parseJSON(options);
+  $("#carclass-modal #carIds").val(array);
+  $("#carclass-modal").modal('show');
+}
+
+function checkIRacingLeagueId() {
+  $("#irLeagueName").val("");
+  $.ajax({
+    type: "GET",
+    dataType: "json",
+    url: "/rest/leagueInfo/" + $("#irLeagueID").val(),
+    success: function (data) {
+      $("#irLeagueID").val(data.leagueId);
+      $("#irLeagueName").val(data.leagueName);
+    }
+  });
 }
 
 function selectTimezoneFromUtcOffset(timezone) {

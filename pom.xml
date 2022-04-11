@@ -238,14 +238,14 @@
         <configuration>
           <licenseName>gpl_v3</licenseName>
           <excludes>
-            <exclude>*.eot</exclude>
-            <exclude>*.svg</exclude>
-            <exclude>*.ttf</exclude>
-            <exclude>*.woff</exclude>
-            <exclude>*.woff2</exclude>
-            <exclude>*.json</exclude>
-            <exclude>*.py</exclude>
-            <exclude>*.sql</exclude>
+            <exclude>**/*.eot</exclude>
+            <exclude>**/*.svg</exclude>
+            <exclude>**/*.ttf</exclude>
+            <exclude>**/*.woff</exclude>
+            <exclude>**/*.woff2</exclude>
+            <exclude>**/*.json</exclude>
+            <exclude>**/*.py</exclude>
+            <exclude>**/*.sql</exclude>
           </excludes>
         </configuration>
       </plugin>

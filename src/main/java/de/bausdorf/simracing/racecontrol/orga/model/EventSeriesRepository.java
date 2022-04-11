@@ -1,3 +1,5 @@
+package de.bausdorf.simracing.racecontrol.orga.model;
+
 /*-
  * #%L
  * racecontrol-server
@@ -19,6 +21,9 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-$(document).ready(function(){
-	$('[data-bss-tooltip]').tooltip();
-});
+
+import org.springframework.data.repository.CrudRepository;
+
+public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
+
+}

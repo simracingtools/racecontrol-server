@@ -33,6 +33,7 @@ import de.bausdorf.simracing.irdataapi.client.DataApiException;
 import de.bausdorf.simracing.irdataapi.client.IrDataClient;
 import de.bausdorf.simracing.irdataapi.client.impl.IrDataClientImpl;
 import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
+import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
 import de.bausdorf.simracing.irdataapi.model.MembersInfoDto;
 import de.bausdorf.simracing.irdataapi.tools.StockDataCache;
@@ -83,6 +84,18 @@ public class IRacingClient {
 			log.error(e.getMessage(), e);
 		}
 		return Collections.emptyList();
+	}
+
+	public LeagueInfoDto getLeagueInfo(long leagueId) {
+		try {
+			authenticate();
+			return dataClient.getLeagueInfo(leagueId);
+		} catch(HttpClientErrorException clientError) {
+			log.warn("iRacing http error {}: {}",clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
 	}
 
 	private void authenticate() {
