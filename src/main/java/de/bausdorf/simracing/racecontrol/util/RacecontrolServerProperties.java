@@ -51,6 +51,8 @@ public class RacecontrolServerProperties {
     private String keycloakPassword;
     private String keycloakServer;
     private String keycloakRealm;
+    private String fileUploadBasePath;
+    private String uploadBaseUri;
 
     @Bean
     ConfigProperties configProperties() {

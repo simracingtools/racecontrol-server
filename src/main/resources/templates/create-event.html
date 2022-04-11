@@ -47,13 +47,14 @@
                                 <textarea class="form-control-lg" style="font-size: 12px;width: 40em;height: 6em;" th:field="*{description}"></textarea>
                             </div>
                         </div>
-                        <div class="col">
-                            <picture>
-                                <img th:src="*{logoUrl}"/>
-                            </picture>
-                            <button class="btn btn-primary float-right" type="button">
+                        <div class="col-lg-2">
+                            <button class="btn btn-primary float-right" type="button" data-target="#logo-upload-modal" data-toggle="modal">
                                 <i class="far fa-edit"></i>
                             </button>
+                            <picture class="float-right">
+                                <img th:if="*{logoUrl != null}" width="100px" th:src="*{logoUrl}"/>
+                                <img th:if="*{logoUrl == null}" width="100px" src="assets/img/default_logo.jpg"/>
+                            </picture>
                         </div>
                     </div>
                     <div class="row">
@@ -216,24 +217,46 @@
                     </form>
                 </div>
             </div>
-            <div class="modal fade" role="dialog" tabindex="-1" id="staff-modal">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+        </div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="staff-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group"><label style="width: 6em;">iRacing ID</label><input type="number" style="width: 5em;" placeholder="000000" required=""><button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing"><i class="far fa-question-circle"></i></button></div>
+                        <div class="form-group"><label style="width: 6em;">Name</label><input type="text" required="" readonly=""></div>
+                        <div class="form-group"><label style="width: 6em;">Role</label><select>
+                            <option value="12" selected="">RACE DIRECTOR</option>
+                            <option value="13">STEWARD</option>
+                            <option value="14">STAFF</option>
+                        </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Add</button></div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="logo-upload-modal" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form id="upload-logo-form" method="post" th:action="@{/event-logo-upload}" enctype="multipart/form-data">
                         <div class="modal-header">
-                            <h4 class="modal-title">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            <h4 class="modal-title">Upload event logo</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                         </div>
                         <div class="modal-body">
-                            <div class="form-group"><label style="width: 6em;">iRacing ID</label><input type="number" style="width: 5em;" placeholder="000000" required=""><button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing"><i class="far fa-question-circle"></i></button></div>
-                            <div class="form-group"><label style="width: 6em;">Name</label><input type="text" required="" readonly=""></div>
-                            <div class="form-group"><label style="width: 6em;">Role</label><select>
-                                    <option value="12" selected="">RACE DIRECTOR</option>
-                                    <option value="13">STEWARD</option>
-                                    <option value="14">STAFF</option>
-                                </select>
+                            <div class="form-group">
+                                <label>Event logo file</label>
+                                <input class="form-control-file" type="file" name="file"/>
+                                <input class="form-control" type="hidden" name="eventId" th:value="${eventView.getEventId()}"/>
                             </div>
                         </div>
-                        <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Add</button></div>
-                    </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Upload</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

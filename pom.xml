@@ -246,6 +246,8 @@
             <exclude>**/*.json</exclude>
             <exclude>**/*.py</exclude>
             <exclude>**/*.sql</exclude>
+            <exclude>**/*.jpg</exclude>
+            <exclude>**/*.png</exclude>
           </excludes>
         </configuration>
       </plugin>

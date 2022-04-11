@@ -27,6 +27,9 @@ import de.bausdorf.simracing.irdataapi.tools.CarCategoryEnum;
 import de.bausdorf.simracing.irdataapi.tools.StockDataTools;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
+import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
+import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.EditCarClassView;
 import de.bausdorf.simracing.racecontrol.web.model.CarView;
 import de.bausdorf.simracing.racecontrol.web.model.CreateEventView;
@@ -39,7 +42,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -55,14 +65,17 @@ public class EventAdminController extends ControllerBase {
     private final CarClassRepository carClassRepository;
     private final BalancedCarRepository balancedCarRepository;
     private final IRacingClient iRacingClient;
+    private final UploadFileManager uploadFileManager;
 
     public EventAdminController(@Autowired EventSeriesRepository eventRepository,
                                 @Autowired CarClassRepository carClassRepository,
                                 @Autowired BalancedCarRepository balancedCarRepository,
+                                @Autowired UploadFileManager uploadFileManager,
                                 @Autowired IRacingClient iRacingClient) {
         this.eventRepository = eventRepository;
         this.carClassRepository = carClassRepository;
         this.balancedCarRepository = balancedCarRepository;
+        this.uploadFileManager = uploadFileManager;
         this.iRacingClient = iRacingClient;
     }
 
@@ -105,7 +118,7 @@ public class EventAdminController extends ControllerBase {
         return redirectView(CREATE_EVENT_VIEW, eventSeriesToSave.getId(), error);
     }
 
-    @PostMapping("event-save-carclass")
+    @PostMapping("/event-save-carclass")
     @Transactional
     public String addCarClass(@ModelAttribute EditCarClassView carClassView) {
         AtomicReference<String> error = new AtomicReference<>();
@@ -130,7 +143,7 @@ public class EventAdminController extends ControllerBase {
         return redirectView(CREATE_EVENT_VIEW, carClassView.getEventId(), error.get());
     }
 
-    @GetMapping("remove-car-class")
+    @GetMapping("/remove-car-class")
     @Transactional
     public String removeCarClass(@RequestParam long classId) {
         Optional<CarClass> carClass = carClassRepository.findById(classId);
@@ -144,6 +157,27 @@ public class EventAdminController extends ControllerBase {
                 () -> error.set("No car class found for id " + classId)
         );
         return redirectView(CREATE_EVENT_VIEW, eventId.get(), error.get());
+    }
+
+    @PostMapping("/event-logo-upload")
+    @Transactional
+    public String eventLogoUpload(@RequestParam("file") MultipartFile multipartFile, @RequestParam("eventId") String eventId) {
+        AtomicReference<String> error = new AtomicReference<>(null);
+        Optional<EventSeries> series = eventRepository.findById(Long.parseLong(eventId));
+        series.ifPresentOrElse(
+                event -> {
+                    try {
+                        String logoUrl = uploadFileManager.uploadEventFile(multipartFile, eventId, FileTypeEnum.LOGO);
+                        event.setLogoUrl(logoUrl);
+                        eventRepository.save(event);
+                    } catch (IOException e) {
+                        log.error(e.getMessage(), e);
+                        error.set("Could not save uploaded file " + multipartFile.getOriginalFilename());
+                    }
+                },
+                () -> error.set("Event series not found for id " + eventId)
+        );
+        return redirectView(CREATE_EVENT_VIEW, Long.parseLong(eventId), error.get());
     }
 
     @ModelAttribute(name="allCars")
