@@ -110,7 +110,7 @@
                                         <a class="dropdown-item" th:href="@{/useradmin}">Users</a>
                                         <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>
                                         <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>
-                                        <a class="dropdown-item" th:href="@{/stockdata}">Car/Track data</a>
+                                        <a class="dropdown-item" th:href="@{/create-event}">Create event</a>
                                     </div>
                                 </div>
                                 <span class="navbar-text actions">
@@ -141,6 +141,30 @@
                 </div>
                 <div class="col-md-4 col-lg-3"></div>
             </div>
+            <div th:fragment="deleteModal(modalId, modalText, modalAction)">
+                <div th:id="${modalId}" class="modal fade" role="dialog" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Confirm remove</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p th:text="${modalText}">Do you really want to remove site user ?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <a th:href="${modalAction}">
+                                    <button class="btn btn-primary" type="button">Remove</button>
+                                </a>
+                                <button class="btn btn-light" type="button" data-dismiss="modal">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row align-items-end" style="font-size: 10px;" th:fragment="footer">
                 <div class="col"><span>(C) 2020 bausdorf engineering&nbsp;</span></div>
                 <div class="col text-right"><span th:text="${serverVersion}">race control server version&nbsp;</span></div>

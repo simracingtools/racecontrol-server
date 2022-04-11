@@ -103,27 +103,7 @@
                 <button class="btn btn-primary" type="button" th:onclick="'confirmUserRemove(' + ${userStat.index} + ')'">
                   <i class="far fa-trash-alt" style="font-size: 20px;"></i>
                 </button>
-                <div th:id="'user-remove-confirm-' + ${userStat.index}" class="modal fade" role="dialog" tabindex="-1">
-                  <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h4 class="modal-title">Confirm remove</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                          <span aria-hidden="true">×</span>
-                        </button>
-                      </div>
-                      <div class="modal-body">
-                        <p th:text="'Do you really want to delete user ' + ${u.name} + ' ?'">Do you really want to remove site user ?</p>
-                      </div>
-                      <div class="modal-footer">
-                        <a th:href="@{/deletesiteuser(userId=${u.oauthId})}">
-                          <button class="btn btn-primary" type="button">Remove</button>
-                        </a>
-                        <button class="btn btn-light" type="button" data-dismiss="modal">Cancel</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <div th:replace="index.html::deleteModal('user-remove-confirm-' + ${userStat.index}, 'Do you really want to delete user ' + ${u.name} + ' ?', @{/deletesiteuser(userId=${u.oauthId})})"></div>
               </td>
             </tr>
             </tbody>
