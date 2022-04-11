@@ -43,3 +43,4 @@ build/
 /logback.xml
 /metrics.conf
 /htmlexport/
+/.cache/
