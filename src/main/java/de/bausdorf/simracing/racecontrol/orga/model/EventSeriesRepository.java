@@ -24,6 +24,11 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 
 import org.springframework.data.repository.CrudRepository;
 
-public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.List;
 
+public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
+    List<EventSeries> findAllByRegistrationOpensBeforeAndRegistrationClosesAfterOrderByRegistrationOpensDesc(OffsetDateTime openBefore, OffsetDateTime closeAfter);
+    List<EventSeries> findAllByRegistrationOpensBeforeAndEndDateAfterAndActiveOrderByStartDateAsc(OffsetDateTime regCloseBefore, LocalDate dateAfter, boolean active);
 }

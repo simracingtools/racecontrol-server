@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Notable">
     <link rel="stylesheet" href="assets/css/buttonnav.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="/webjars/jquery-ui/jquery-ui.css">
 </head>
 
 <body>
@@ -74,18 +75,15 @@
                     </div>
                 </div>
             </div>
-            <div class="row" th:fragment="menu">
+            <div class="row" th:fragment="menu" th:with="title=${title} ?: 'Overview'">
                 <div class="col">
                     <!-- Start: Navigation with Button -->
                     <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
                         <div class="container">
-<!--                            <a class="navbar-brand" href="#">Company Name</a><button data-toggle="collapse" class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>-->
-                            <div class="collapse navbar-collapse"
-                                 id="navcol-1">
+                            <div class="collapse navbar-collapse" id="navcol-1">
                                 <ul class="nav navbar-nav mr-auto">
                                     <li class="nav-item">
-                                        <a th:if="${navigation.equalsIgnoreCase('sessionSelect')}" class="nav-link active" th:href="@{/index(userId=${user.id})}">Select Sessions</a>
-                                        <a th:if="${!navigation.equalsIgnoreCase('sessionSelect')}" class="nav-link" th:href="@{/index(userId=${user.id})}">Select Sessions</a>
+                                        <h4 th:text="${title}">Overview</h4>
                                     </li>
 <!--                                    <li class="nav-item">-->
 <!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('userAdmin')}" class="nav-link active" th:href="@{/useradmin}">Manage Users</a>-->
@@ -124,7 +122,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row" style="padding-bottom: 1em;">
                 <div class="col-md-4 col-lg-3"></div>
                 <div class="col-md-4 col-lg-6">
                     <form th:action="@{/session}" method="post" th:object="${selectView}">
@@ -136,10 +134,49 @@
                             </select>
                         </div>
                         <button
-                            class="btn btn-primary d-block" type="submit">Go to session</button>
+                            class="btn btn-primary d-block float-right" type="submit">Go to session</button>
                     </form>
                 </div>
                 <div class="col-md-4 col-lg-3"></div>
+            </div>
+            <div class="row">
+                <div class="col" th:if="${!eventViews.isEmpty()}">
+                    <h3>Upcoming Events</h3>
+                </div>
+            </div>
+            <div th:each="event: ${eventViews}" class="row" style="border-radius: 5px;color: rgb(0,1,1);border-style: solid;border-color: rgba(40,87,159,0.47);">
+                <div class="col-xl-1" style="padding-right: 0;padding-left: 0;">
+                    <img width="100px" th:src="${event.logoUrl}"/>
+                </div>
+                <div class="col">
+                    <h4 class="d-inline" th:text="${event.title}">Testevent</h4>
+                    <a th:if="${user.userType.toString().equalsIgnoreCase('SYSADMIN')}" th:href="@{/create-event(eventId=${event.eventId})}" style="padding-left: 5px;">
+                        <i class="fa fa-edit"></i>
+                    </a>
+                    <p>
+                        <span th:text="*{#temporals.format(event.startDate, 'dd.MM.yyyy')}">30.09.2022</span>
+                        <span> - </span>
+                        <span th:text="*{#temporals.format(event.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
+                    </p>
+                    <p th:text="${event.description}">Paragraph</p>
+                    <span>Discord</span><a th:href="${event.discordInvite}" target="_blank" style="padding-left: 1em;" th:text="${event.discordInvite}">Link</a>
+                </div>
+                <div class="col-xl-4">
+                    <div class="row">
+                        <div class="col">
+                            <h4>Registration open</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3"><span>from</span></div>
+                        <div class="col"><span th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.2022 13:00 CEST</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3"><span>until</span></div>
+                        <div class="col"><span th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span></div>
+                    </div>
+                </div>
+                <div class="col-xl-2 text-center"><button class="btn btn-primary" type="button" style="margin-top: 1em;">Register</button></div>
             </div>
             <div th:fragment="deleteModal(modalId, modalText, modalAction)">
                 <div th:id="${modalId}" class="modal fade" role="dialog" tabindex="-1">
@@ -165,7 +202,7 @@
                 </div>
             </div>
 
-            <div class="row align-items-end" style="font-size: 10px;" th:fragment="footer">
+            <div class="row align-items-end" style="font-size: 10px; padding-top: 1em;" th:fragment="footer">
                 <div class="col"><span>(C) 2020 bausdorf engineering&nbsp;</span></div>
                 <div class="col text-right"><span th:text="${serverVersion}">race control server version&nbsp;</span></div>
             </div>

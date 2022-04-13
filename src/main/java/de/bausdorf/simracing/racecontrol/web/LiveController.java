@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -79,8 +80,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Slf4j
-public class MainController extends ControllerBase {
-	public static final String INDEX_VIEW = "index";
+public class LiveController extends ControllerBase {
 	public static final String SESSION_VIEW = "timetable";
 	public static final String TEAM_VIEW = "teamtable";
 	public static final String EVENT_VIEW = "eventtable";
@@ -106,16 +106,16 @@ public class MainController extends ControllerBase {
 	final ViewBuilder viewBuilder;
 	final DiscordNotifier discordNotifier;
 
-	public MainController(@Autowired SessionRepository sessionRepository,
-			@Autowired TeamRepository teamRepository,
-			@Autowired DriverChangeRepository changeRepository,
-			@Autowired EventRepository eventRepository,
-			@Autowired RcBulletinRepository bulletinRepository,
-			@Autowired RuleViolationRepository violationRepository,
-			@Autowired RuleViolationCategoryRepository categoryRepository,
-			@Autowired PenaltyRepository penaltyRepository,
-			@Autowired ViewBuilder viewBuilder,
-			@Autowired DiscordNotifier discordNotifier) {
+	public LiveController(@Autowired SessionRepository sessionRepository,
+						  @Autowired TeamRepository teamRepository,
+						  @Autowired DriverChangeRepository changeRepository,
+						  @Autowired EventRepository eventRepository,
+						  @Autowired RcBulletinRepository bulletinRepository,
+						  @Autowired RuleViolationRepository violationRepository,
+						  @Autowired RuleViolationCategoryRepository categoryRepository,
+						  @Autowired PenaltyRepository penaltyRepository,
+						  @Autowired ViewBuilder viewBuilder,
+						  @Autowired DiscordNotifier discordNotifier) {
 		this.sessionRepository = sessionRepository;
 		this.teamRepository = teamRepository;
 		this.changeRepository = changeRepository;
@@ -129,56 +129,8 @@ public class MainController extends ControllerBase {
 		this.activeNav = "sessionSelect";
 	}
 
-	@GetMapping({"/", "/index", "index.html"})
-	public String index(@RequestParam Optional<String> error, @RequestParam Optional<String> userId, Model model) {
-		error.ifPresent(s -> addError(s, model));
-		currentUserProfile(userId, model);
-		List<SessionOptionView> sessionOptions = new ArrayList<>();
-		SessionSelectView selectView = SessionSelectView.builder()
-				.userId(userId.orElse(currentUser().getOauthId()))
-				.selectedSessionId("")
-				.sessions(sessionOptions)
-				.build();
-		for(Session session :  sessionRepository.findAllByCreatedBeforeOrderByCreatedDesc(ZonedDateTime.now())) {
-			sessionOptions.add(SessionOptionView.builder()
-					.sessionId(session.getSessionId())
-					.displayName(session.getCreated().format(DateTimeFormatter.ofPattern("dd.MM.yy HH:mm "))
-							+ session.getTrackName() + " "
-							+ session.getSessionDuration().toHours() + "h "
-							+ session.getSessionType())
-					.build());
-		}
-		model.addAttribute("selectView", selectView);
-		return INDEX_VIEW;
-	}
-
-	@GetMapping("/logout")
-	public String logout(HttpServletRequest servletRequest) throws ServletException {
-		RefreshableKeycloakSecurityContext c =
-				(RefreshableKeycloakSecurityContext) servletRequest.getAttribute(KeycloakSecurityContext.class.getName());
-		KeycloakDeployment d = c.getDeployment();
-		c.logout(d);
-		servletRequest.logout();
-		return "redirect:/";
-	}
-
-	@PostMapping({"/session"})
-	public String session(SessionSelectView selectView) {
-		try {
-			String redirectUri = "redirect:session?";
-			if(!selectView.getUserId().isEmpty()) {
-				redirectUri += USER_ID_PARAM + selectView.getUserId() + "&";
-			}
-			return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(selectView.getSelectedSessionId(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage(), e);
-		}
-		return INDEX_VIEW;
-	}
-
 	@GetMapping({"/session"})
 	public String session(@RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
-		currentUserProfile(userId, model);
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		if(selectedSession.isPresent()) {
@@ -193,33 +145,28 @@ public class MainController extends ControllerBase {
 
 	@GetMapping("/team")
 	public String team(@RequestParam long teamId, @RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
-		RcUser user = currentUserProfile(userId, model);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId);
 		if(selectedSession.isPresent() && team.isPresent()) {
 			TeamDetailView teamView = viewBuilder.buildFromTeamView(
-					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId(), user);
+					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId(), currentUser());
 			model.addAttribute(VIEW_MODE, "team");
 			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), null));
 			model.addAttribute(NEXT_BULLETIN_VIEW, prepareNextBulletin(sessionId));
 			model.addAttribute("selectedTeam", teamView);
 		} else {
-			try {
-				String redirectUri = "redirect:session?";
-				if(userId.isPresent()) {
-					redirectUri += USER_ID_PARAM + userId.get() + "&";
-				}
-				return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(sessionId, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				log.error(e.getMessage(), e);
+			String redirectUri = "redirect:session?";
+			if(userId.isPresent()) {
+				redirectUri += USER_ID_PARAM + userId.get() + "&";
 			}
+			return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(sessionId, StandardCharsets.UTF_8);
 		}
 		return TEAM_VIEW;
 	}
 
 	@GetMapping("/events")
 	public String getEvents(@RequestParam String teamId, @RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
-		RcUser user = currentUserProfile(userId, model);
+		RcUser user = currentUser();
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		if(selectedSession.isPresent()) {
@@ -243,7 +190,6 @@ public class MainController extends ControllerBase {
 	@GetMapping("/bulletins")
 	@Transactional
 	public String getBulletins(@RequestParam String sessionId, @RequestParam Optional<String> userId, Model model) {
-		currentUserProfile(userId, model);
 		List<Team> teamsInSession = teamRepository.findBySessionIdOrderByNameAsc(sessionId);
 		Optional<Session> selectedSession = sessionRepository.findBySessionId(sessionId);
 		if(selectedSession.isPresent()) {
@@ -262,7 +208,6 @@ public class MainController extends ControllerBase {
 	public String issueBulletin(@ModelAttribute RcBulletinView nextBulletinView,
 			@RequestParam String redirectTo,
 			@RequestParam Optional<String> userId, Model model) {
-		currentUserProfile(userId, model);
 		Optional<RcBulletin> bulletin = bulletinRepository.findBySessionIdAndBulletinNo(
 				nextBulletinView.getSessionId(), nextBulletinView.getBulletinNo());
 		if(bulletin.isPresent()) {
@@ -277,18 +222,14 @@ public class MainController extends ControllerBase {
 			redirectTo = "session";
 		}
 		String paramString = "?teamId=All" + userId.map(s -> "&userId=" + s).orElse("");
-		try {
-			paramString += "&sessionId=" + URLEncoder.encode(nextBulletinView.getSessionId(), UTF_8);
-		} catch(UnsupportedEncodingException e) {
-			log.warn(e.getMessage(), e);
-		}
+		paramString += "&sessionId=" + URLEncoder.encode(nextBulletinView.getSessionId(), StandardCharsets.UTF_8);
 		return "redirect:" + redirectTo + paramString;
 	}
 
 	@GetMapping("/sendBulletin")
 	@Transactional
 	public String sendBulletin(@RequestParam String sessionId, @RequestParam long bulletinNo, @RequestParam Optional<String> userId, Model model) {
-		RcUser user = currentUserProfile(userId, model);
+		RcUser user = currentUser();
 		RcBulletin bulletin = bulletinRepository.findBySessionIdAndBulletinNo(sessionId, bulletinNo).orElse(null);
 		if(bulletin != null) {
 			if(isUserRaceControl(user)) {
@@ -300,18 +241,14 @@ public class MainController extends ControllerBase {
 			}
 		}
 		String paramString = userId.map(s -> USER_ID_PARAM + s + "&").orElse("");
-		try {
-			paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, UTF_8);
-		} catch(UnsupportedEncodingException e) {
-			log.warn(e.getMessage(), e);
-		}
+		paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, StandardCharsets.UTF_8);
 		return "redirect:bulletins?" + paramString;
 	}
 
 	@GetMapping("/voidBulletin")
 	@Transactional
 	public String voidBulletin(@RequestParam String sessionId, @RequestParam long bulletinNo, @RequestParam Optional<String> userId, Model model) {
-		RcUser user = currentUserProfile(userId, model);
+		RcUser user = currentUser();
 		RcBulletin bulletin = bulletinRepository.findBySessionIdAndBulletinNo(sessionId, bulletinNo).orElse(null);
 		if(bulletin != null) {
 			if(isUserRaceControl(user)) {
@@ -322,32 +259,8 @@ public class MainController extends ControllerBase {
 			}
 		}
 		String paramString = userId.map(s -> USER_ID_PARAM + s + "&").orElse("");
-		try {
-			paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, UTF_8);
-		} catch(UnsupportedEncodingException e) {
-			log.warn(e.getMessage(), e);
-		}
+		paramString += SESSION_ID_PARAM + URLEncoder.encode(sessionId, StandardCharsets.UTF_8);
 		return "redirect:bulletins?" + paramString;
-	}
-
-	private RcUser currentUserProfile(Optional<String> userId, Model model) {
-		if(userId.isPresent()) {
-			Optional<RcUser> currentUser = userRepository.findById(userId.get());
-			RcUser user = currentUser.orElse(RcUser.builder()
-					.name("Unknown")
-					.created(ZonedDateTime.now())
-					.eventFilter(RcAuthenticationProvider.defaultEventFilter())
-					.userType(RcUserType.NEW)
-					.build());
-			model.addAttribute("user", new UserProfileView(user));
-			return user;
-		}
-		return RcUser.builder()
-				.name("Unknown")
-				.eventFilter(RcAuthenticationProvider.defaultEventFilter())
-				.created(ZonedDateTime.now())
-				.userType(RcUserType.NEW)
-				.build();
 	}
 
 	@ModelAttribute("ruleViolations")
@@ -400,7 +313,7 @@ public class MainController extends ControllerBase {
 						violation = violationRepository.findRuleViolationByCategoryAndIdentifier(category,
 								bulletin.getViolationIdentifier()).orElse(null);
 					} catch(IncorrectResultSizeDataAccessException e) {
-						log.error("MainController.getIssuedBulletinsView: {} for category {}, identifier {}",
+						log.error("LiveController.getIssuedBulletinsView: {} for category {}, identifier {}",
 								e.getMessage(), category.getCategoryCode(), bulletin.getViolationIdentifier());
 						continue;
 					}

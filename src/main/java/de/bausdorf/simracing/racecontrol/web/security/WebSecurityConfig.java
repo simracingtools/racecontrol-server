@@ -96,11 +96,18 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 		http.authorizeRequests()
 				.antMatchers("/").permitAll()
 				.antMatchers("/assets/**").permitAll()
-//				.antMatchers("!/_ah", "!/actuator/**", "!/clientmessage",
-//						"!/rcclient/**", "!/timingclient/**", "!/app/**", "!/timing/**", "!/rc/**",
-//						"!/", "!/index", "!/session/**", "!/team/**", "!/events/**", "!/issueBulletin", "!/bulletins/**",
-//						"!/assets/**", "!/webjars/**")
-//					.permitAll()
+				.antMatchers("/webjars/**").permitAll()
+				.antMatchers("/app/**").permitAll()
+				.antMatchers("/clientmessage/**").permitAll()
+				.antMatchers("/rcclient/**").permitAll()
+				.antMatchers("/rc/**").permitAll()
+				.antMatchers("/timingclient/**").permitAll()
+				.antMatchers("/timning/**").permitAll()
+				.antMatchers("/session/**").permitAll()
+				.antMatchers("/team/**").permitAll()
+				.antMatchers("/events/**").permitAll()
+				.antMatchers("/issueBulletin/**").permitAll()
+				.antMatchers("/bulletins/**").permitAll()
 				.anyRequest().authenticated()
 				.and()
 				.exceptionHandling().accessDeniedHandler(this);

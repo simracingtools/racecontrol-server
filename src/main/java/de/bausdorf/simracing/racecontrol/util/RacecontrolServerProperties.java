@@ -53,9 +53,14 @@ public class RacecontrolServerProperties {
     private String keycloakRealm;
     private String fileUploadBasePath;
     private String uploadBaseUri;
+    private long leagueInfoCacheMaxAgeMinutes;
 
     @Bean
     ConfigProperties configProperties() {
         return new ConfigProperties();
+    }
+
+    public long getLeagueInfoCacheMaxAgeMillis() {
+        return leagueInfoCacheMaxAgeMinutes * 60000L;
     }
 }

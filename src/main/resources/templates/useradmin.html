@@ -28,7 +28,7 @@
   <div class="container" style="width: 80%;background-color: rgb(255,255,255);">
     <header th:replace="index :: header"></header>
     <div th:replace="index :: messages"></div>
-    <div th:replace="index :: menu"></div>
+    <div th:replace="index :: menu(title='User administration')"></div>
 
     <form method="post" th:object="${searchView}" th:action="@{/usersearch}">
       <div class="form-row">

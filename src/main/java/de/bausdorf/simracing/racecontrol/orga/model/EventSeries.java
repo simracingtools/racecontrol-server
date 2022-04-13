@@ -29,6 +29,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -52,6 +53,9 @@ public class EventSeries {
 	private OffsetDateTime registrationOpens;
 	@Convert(converter = OffsetDateTimeConverter.class)
 	private OffsetDateTime registrationCloses;
+	private LocalDate startDate;
+	private LocalDate endDate;
+	private boolean active;
 	@ManyToOne
 	private RuleSet ruleSet;
 

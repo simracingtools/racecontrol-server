@@ -1,10 +1,10 @@
-package de.bausdorf.simracing.racecontrol.orga.api;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2021 bausdorf engineering
+ * Copyright (C) 2020 - 2022 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,8 +22,12 @@ package de.bausdorf.simracing.racecontrol.orga.api;
  * #L%
  */
 
-public enum OrgaRoleType {
-	STAFF,
-	STEWARD,
-	RACE_DIRECTOR
+import org.springframework.data.repository.CrudRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface PersonRepository extends CrudRepository<Person, Long> {
+    List<Person> findAllByEventId(long eventId);
+    Optional<Person> findByEventIdAndIracingId(long eventId, long iRacingId);
 }

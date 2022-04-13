@@ -40,8 +40,11 @@ public class Person {
 	private long id;
 
 	private long eventId;
+	private long iracingId;
 	private String name;
 	private OrgaRoleType role;
+	private boolean leagueMember;
+	private boolean registered;
 
 	@Override
 	public boolean equals(Object o) {

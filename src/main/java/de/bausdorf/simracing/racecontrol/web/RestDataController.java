@@ -24,19 +24,36 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
+import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.web.model.LeagueInfoView;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.StringUtils;
+
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
 @RequestMapping("/rest")
 public class RestDataController {
     private final IRacingClient dataClient;
+    private final RcUserRepository userRepository;
+    private final LeagueDataCache leagueDataCache;
 
-    public RestDataController(@Autowired IRacingClient iRacingClient) {
+    public RestDataController(@Autowired IRacingClient iRacingClient,
+                              @Autowired RcUserRepository userRepository,
+                              @Autowired LeagueDataCache leagueDataCache) {
         this.dataClient = iRacingClient;
+        this.userRepository = userRepository;
+        this.leagueDataCache = leagueDataCache;
     }
 
     @GetMapping("/leagueInfo/{leagueId}")
@@ -52,5 +69,80 @@ public class RestDataController {
                 .leagueId(leagueId)
                 .leagueName("League not found")
                 .build();
+    }
+
+    @GetMapping("/memberInfo/{memberId}")
+    public PersonSearchItem checkMemberId(@PathVariable Long memberId) {
+        Optional<MemberInfo> memberInfo = dataClient.getMemberInfo(memberId);
+        AtomicReference<PersonSearchItem> item = new AtomicReference<>(PersonSearchItem.builder()
+                .iracingId("0")
+                .label("")
+                .value("")
+                .registered(false)
+                .leagueMember(false)
+                .build());
+        memberInfo.ifPresent(
+                member -> {
+                    String memberName = memberNameWithoutMiddleInitial(member.getName());
+                    item.set(PersonSearchItem.builder()
+                            .leagueMember(false)
+                            .registered(false)
+                            .iracingId(Integer.toString(member.getCustid()))
+                            .value(memberName)
+                            .label(memberName)
+                            .build());
+                }
+        );
+        return item.get();
+    }
+
+    @Data
+    @Builder
+    public static class PersonSearchItem {
+        private String label;
+        private String value;
+        private String iracingId;
+        private boolean registered;
+        private boolean leagueMember;
+    }
+
+    @GetMapping("staff-search")
+    public List<PersonSearchItem> stateItems(@RequestParam(value = "q", required = false) String query,
+                                             @RequestParam(value = "league", required = false) String leagueId) {
+        Map<String, PersonSearchItem> matches = userRepository.findByNameContaining(StringUtils.isEmpty(query) ? "" : query).stream()
+                .limit(15)
+                .map(rcUser -> PersonSearchItem.builder()
+                        .label(rcUser.getName())
+                        .value(rcUser.getName())
+                        .iracingId(Long.toString(rcUser.getIRacingId()))
+                        .registered(true)
+                        .leagueMember(false)
+                        .build()
+                )
+                .collect(Collectors.toMap(PersonSearchItem::getValue, item -> item));
+
+        if(!StringUtils.isEmptyOrWhitespace(leagueId) && matches.size() < 15) {
+            LeagueInfoDto leagueInfo = leagueDataCache.getLeagueInfo(Long.parseLong(leagueId));
+            Arrays.stream(leagueInfo.getRoster())
+                    .filter(member -> member.getDisplayName().contains(StringUtils.isEmpty(query) ? "" : query))
+                    .forEach(member -> {
+                        String memberNameWithoutMiddleInitial = memberNameWithoutMiddleInitial(member.getDisplayName());
+                        PersonSearchItem item = PersonSearchItem.builder()
+                                .label(memberNameWithoutMiddleInitial)
+                                .value(memberNameWithoutMiddleInitial)
+                                .iracingId(member.getCustId().toString())
+                                .leagueMember(true)
+                                .registered(matches.containsKey(memberNameWithoutMiddleInitial))
+                                .build();
+                        matches.put(memberNameWithoutMiddleInitial, item);
+                    });
+
+        }
+        return new ArrayList<>(matches.values());
+    }
+
+    private String memberNameWithoutMiddleInitial(@NonNull String iRacingName) {
+        String[] nameParts = iRacingName.split(" ");
+        return nameParts[0] + " " + nameParts[nameParts.length - 1];
     }
 }

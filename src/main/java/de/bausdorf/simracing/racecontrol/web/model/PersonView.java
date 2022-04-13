@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.Person;
 import lombok.*;
 
@@ -34,15 +35,37 @@ import java.util.stream.Collectors;
 @Builder
 @ToString
 public class PersonView {
-    private Long iRacingId;
+    private long id;
+    private long iracingId;
+    private long eventId;
     private String name;
     private String role;
+    private Boolean leagueMember;
+    private Boolean registered;
+
+    public Person toEntity(Person person) {
+        if(person == null) {
+            person = new Person();
+        }
+        person.setId(id == 0 ? person.getId() : id);
+        person.setEventId(eventId == 0 ? person.getEventId() : eventId);
+        person.setName(name == null ? person.getName() : name);
+        person.setRole(role == null ? person.getRole() : OrgaRoleType.valueOf(role));
+        person.setIracingId(iracingId == 0 ? person.getIracingId() : iracingId);
+        person.setLeagueMember(leagueMember == null ? person.isLeagueMember() : leagueMember);
+        person.setRegistered(registered == null ? person.isRegistered() : registered);
+        return person;
+    }
 
     public static PersonView fromEntity(Person person) {
         return PersonView.builder()
-                .iRacingId(person.getId())
+                .id(person.getId())
+                .iracingId(person.getIracingId())
                 .name(person.getName())
+                .eventId(person.getEventId())
                 .role(person.getRole().name())
+                .registered(person.isRegistered())
+                .leagueMember(person.isLeagueMember())
                 .build();
     }
 

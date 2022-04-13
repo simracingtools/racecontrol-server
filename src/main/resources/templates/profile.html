@@ -28,7 +28,7 @@
     <div class="container">
         <header th:replace="index :: header"></header>
         <div th:replace="index :: messages"></div>
-        <div th:replace="index :: menu"></div>
+        <div th:replace="index :: menu(title='User profile')"></div>
 
         <form th:action="@{/profile}" th:object="${profileView}" method="post">
             <div class="row">

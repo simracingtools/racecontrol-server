@@ -26,6 +26,7 @@ import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
 import de.bausdorf.simracing.irdataapi.tools.CarCategoryEnum;
 import de.bausdorf.simracing.irdataapi.tools.StockDataTools;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
@@ -33,6 +34,7 @@ import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.EditCarClassView;
 import de.bausdorf.simracing.racecontrol.web.model.CarView;
 import de.bausdorf.simracing.racecontrol.web.model.CreateEventView;
+import de.bausdorf.simracing.racecontrol.web.model.PersonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,12 +46,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -64,17 +61,20 @@ public class EventAdminController extends ControllerBase {
     private final EventSeriesRepository eventRepository;
     private final CarClassRepository carClassRepository;
     private final BalancedCarRepository balancedCarRepository;
+    private final PersonRepository personRepository;
     private final IRacingClient iRacingClient;
     private final UploadFileManager uploadFileManager;
 
     public EventAdminController(@Autowired EventSeriesRepository eventRepository,
                                 @Autowired CarClassRepository carClassRepository,
                                 @Autowired BalancedCarRepository balancedCarRepository,
+                                @Autowired PersonRepository personRepository,
                                 @Autowired UploadFileManager uploadFileManager,
                                 @Autowired IRacingClient iRacingClient) {
         this.eventRepository = eventRepository;
         this.carClassRepository = carClassRepository;
         this.balancedCarRepository = balancedCarRepository;
+        this.personRepository = personRepository;
         this.uploadFileManager = uploadFileManager;
         this.iRacingClient = iRacingClient;
     }
@@ -95,6 +95,9 @@ public class EventAdminController extends ControllerBase {
             model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
         }
         model.addAttribute("editCarClassView", EditCarClassView.builder()
+                .eventId(eventId.orElse(0L))
+                .build());
+        model.addAttribute("editStaffView", PersonView.builder()
                 .eventId(eventId.orElse(0L))
                 .build());
 
@@ -180,6 +183,29 @@ public class EventAdminController extends ControllerBase {
         return redirectView(CREATE_EVENT_VIEW, Long.parseLong(eventId), error.get());
     }
 
+    @PostMapping("event-save-person")
+    String saveStaffPerson(@ModelAttribute PersonView personView) {
+        Optional<Person> staff = personRepository.findByEventIdAndIracingId(personView.getEventId(), personView.getIracingId());
+        Person toSave = personView.toEntity(staff.orElse(new Person()));
+        personRepository.save(toSave);
+        return redirectView(CREATE_EVENT_VIEW, personView.getEventId(), null);
+    }
+
+    @GetMapping("remove-staff")
+    String removeStaffPerson(@RequestParam long personId) {
+        Optional<Person> person = personRepository.findById(personId);
+        AtomicLong eventId = new AtomicLong(0L);
+        AtomicReference<String> error = new AtomicReference<>(null);
+        person.ifPresentOrElse(
+                p -> {
+                    eventId.set(p.getEventId());
+                    personRepository.delete(p);
+                },
+                () -> error.set("No person found for id " + personId)
+        );
+        return redirectView(CREATE_EVENT_VIEW, eventId.get(), error.get());
+    }
+
     @ModelAttribute(name="allCars")
     public List<CarView> allCars() {
         return StockDataTools.carsByCategory(iRacingClient.getDataCache().getCars(), CarCategoryEnum.ROAD, false).stream()
@@ -190,6 +216,11 @@ public class EventAdminController extends ControllerBase {
                         .build())
                 .sorted(Comparator.comparing(CarView::getName))
                 .collect(Collectors.toList());
+    }
+
+    @ModelAttribute(name="staffRoles")
+    public List<OrgaRoleType> staffRoles() {
+        return Arrays.stream(OrgaRoleType.values()).collect(Collectors.toList());
     }
 
     private String redirectView(String viewName, long eventId, String error) {

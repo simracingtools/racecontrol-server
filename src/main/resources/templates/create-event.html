@@ -26,7 +26,7 @@
     <div class="container">
         <header th:replace="index :: header"></header>
         <div th:replace="index :: messages"></div>
-        <div th:replace="index :: menu"></div>
+        <div th:replace="index :: menu(title='Create/Edit event')"></div>
 
         <form method="post" th:action="@{/create-event}" th:object="${eventView}">
             <input type="hidden" th:field="*{eventId}">
@@ -36,18 +36,34 @@
                         <div class="col">
                             <div class="form-group">
                                 <label class="d-block" style="width: 6em;">Event Name</label>
-                                <input type="text" style="width: 30em;" th:field="*{title}" required="">
+                                <input type="text" class="form-control" th:field="*{title}" required="">
                             </div>
                             <div class="form-group">
                                 <label class="d-block" style="width: 8em;">Discord invite</label>
-                                <input type="text" style="width: 30em;" th:field="*{discordInvite}">
+                                <input type="text" class="form-control" th:field="*{discordInvite}">
                             </div>
                             <div class="form-group">
                                 <label class="d-block" style="width: 6em;">Description</label>
-                                <textarea class="form-control-lg" style="font-size: 12px;width: 40em;height: 6em;" th:field="*{description}"></textarea>
+                                <textarea class="form-control-lg form-control" style="font-size: 12px;height: 6em;" th:field="*{description}"></textarea>
                             </div>
                         </div>
-                        <div class="col-lg-2">
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label>Start date</label>
+                                <input class="form-control" type="date" th:field="*{startDate}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>End date</label>
+                                <input class="form-control" type="date" th:field="*{endDate}"/>
+                            </div>
+                            <div class="form-group"><label>Event state</label>
+                                <div class="form-check form-control">
+                                    <input id="formCheck-1" class="form-check-input" type="checkbox" th:field="*{active}"/>
+                                    <label class="form-check-label" for="formCheck-1">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
                             <button class="btn btn-primary float-right" type="button" data-target="#logo-upload-modal" data-toggle="modal">
                                 <i class="far fa-edit"></i>
                             </button>
@@ -150,7 +166,7 @@
                         </div>
                         <div class="col">
                             <label>Organizing staff</label>
-                            <button class="btn btn-primary float-right" type="button" th:disabled="*{eventId == 0}">
+                            <button class="btn btn-primary float-right" type="button" data-target="#staff-modal" data-toggle="modal" th:disabled="*{eventId == 0}">
                                 <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" title="Add person"></i>
                             </button>
                             <div class="table-responsive">
@@ -158,20 +174,32 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 7em;">Name</th>
+                                            <th></th>
                                             <th>Role</th>
                                             <th style="width: 3em;"></th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td style="font-size: 12px;">Robert Bausdorf</td>
-                                            <td style="font-size: 12px;">RACE DIRECTOR</td>
-                                            <td style="padding: 2px;"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
-                                        </tr>
-                                        <tr>
-                                            <td style="font-size: 12px;"></td>
-                                            <td style="font-size: 12px;"></td>
-                                            <td></td>
+                                        <tr th:each="person, personStat: *{organizingStaff}">
+                                            <td style="font-size: 12px;" th:text="${person.name}" th:onclick="'editStaffPerson(' + ${personStat.index} + ');'">Robert Bausdorf</td>
+                                            <td class="text-center">
+                                                <i th:if="${person.registered || person.leagueMember}" th:class="'far fa-check-circle ' + ${(person.registered && person.leagueMember) ? 'text-success' : (person.registered ? 'text-warning' : 'text-danger')}"></i>
+                                                <i th:if="${!person.registered && !person.leagueMember}" class="far fa-question-circle text-danger"></i>
+                                            </td>
+                                            <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
+                                            <td style="padding: 2px;">
+                                                <button class="btn btn-danger" type="button" th:onclick="'confirmStaffRemove(' + ${personStat.index} + ')'">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                                <div th:replace="index.html::deleteModal('staff-remove-confirm-' + ${personStat.index}, 'Do you really want to remove ' + ${person.name} + ' ?', @{/remove-staff(personId=${person.id})})"></div>
+                                            </td>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_id'" th:value="${person.id}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingId'" th:value="${person.iracingId}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_eventId'" th:value="${person.eventId}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_name'" th:value="${person.name}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_role'" th:value="${person.role}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_registered'" th:value="${person.registered}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_leagueMember'" th:value="${person.leagueMember}"/>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -224,17 +252,35 @@
                     <div class="modal-header">
                         <h4 class="modal-title">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
-                    <div class="modal-body">
-                        <div class="form-group"><label style="width: 6em;">iRacing ID</label><input type="number" style="width: 5em;" placeholder="000000" required=""><button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing"><i class="far fa-question-circle"></i></button></div>
-                        <div class="form-group"><label style="width: 6em;">Name</label><input type="text" required="" readonly=""></div>
-                        <div class="form-group"><label style="width: 6em;">Role</label><select>
-                            <option value="12" selected="">RACE DIRECTOR</option>
-                            <option value="13">STEWARD</option>
-                            <option value="14">STAFF</option>
-                        </select>
+                    <form method="post" th:object="${editStaffView}" th:action="@{/event-save-person}">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{eventId}"/>
+                        <input type="hidden" th:field="*{registered}">
+                        <input type="hidden" th:field="*{leagueMember}">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label style="width: 6em;">iRacing ID</label>
+                                <input type="number" style="width: 5em;" placeholder="000000" required="" th:field="*{iracingId}"/>
+                                <button id="check-ir-id" class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing" onclick="checkIRacingMemberId();">
+                                    <i class="far fa-question-circle"></i>
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 6em;">Name</label>
+                                <input type="text" style="width: 20em;" required="" th:field="*{name}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 6em;">Role</label>
+                                <select th:field="*{role}">
+                                    <option th:each="role: ${staffRoles}" th:value="${role.toString()}" th:text="${role.toString()}">RACE DIRECTOR</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button><button class="btn btn-primary" type="button">Add</button></div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -264,10 +310,38 @@
         <div th:insert="index :: footer"></div>
     </div>
 
-    <script src="assets/js/admin.js"></script>
     <script src="assets/js/jquery.min.js"></script>
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="/webjars/jquery-ui/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(function() {
+                $("#staff-modal #name").autocomplete({
+                    minLength : 2,
+                    appendTo: "#staff-modal",
+                    source : function(request, response) {
+                        $.ajax({
+                            url : "/rest/staff-search",
+                            dataType : "json",
+                            data : {
+                                q : request.term,
+                                league : $("#irLeagueID").val()
+                            },
+                            success : function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    select: function(event, ui) {
+                        personSelected(ui.item);
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

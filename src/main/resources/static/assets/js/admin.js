@@ -40,6 +40,18 @@ function confirmCarClassRemove(index) {
   $("#carclass-remove-confirm-" + index).modal('show');
 }
 
+function confirmStaffRemove(index) {
+  $("#staff-remove-confirm-" + index).modal('show');
+}
+
+function personSelected(data) {
+  $("#staff-modal #iracingId").val(data.iracingId);
+  $("#staff-modal #name").val(data.value);
+  $("#staff-modal #leagueMember").val(data.leagueMember);
+  $("#staff-modal #registered").val(data.registered);
+  $("#staff-modal #check-ir-id").prop("disabled",true);
+}
+
 function selectTrackForConfig() {
   var trackId = $("#trackSelector option:selected").val();
   var configId = $("#trackId").val();
@@ -59,6 +71,17 @@ function editCarClass(ccIndex) {
   $("#carclass-modal").modal('show');
 }
 
+function editStaffPerson(personIndex) {
+  $("#staff-modal #id").val($("#staff" + personIndex + "_id").val());
+  $("#staff-modal #iracingId").val($("#staff" + personIndex + "_iracingId").val());
+  $("#staff-modal #eventId").val($("#staff" + personIndex + "_eventId").val());
+  $("#staff-modal #name").val($("#staff" + personIndex + "_name").val());
+  $("#staff-modal #role").val($("#staff" + personIndex + "_role").val());
+  $("#staff-modal #registered").val($("#staff" + personIndex + "_registered").val());
+  $("#staff-modal #leagueMember").val($("#staff" + personIndex + "leagueMember").val());
+  $("#staff-modal").modal('show');
+}
+
 function checkIRacingLeagueId() {
   $("#irLeagueName").val("");
   $.ajax({
@@ -68,6 +91,21 @@ function checkIRacingLeagueId() {
     success: function (data) {
       $("#irLeagueID").val(data.leagueId);
       $("#irLeagueName").val(data.leagueName);
+    }
+  });
+}
+
+function checkIRacingMemberId() {
+  $("#staff-modal #name").val("");
+  $.ajax({
+    type: "GET",
+    dataType: "json",
+    url: "/rest/memberInfo/" + $("#staff-modal #iracingId").val(),
+    success: function (data) {
+      $("#staff-modal #name").val(data.value);
+      $("#staff-modal #iracingId").val(data.iracingId);
+      $("#staff-modal #leagueMember").val(data.leagueMember);
+      $("#staff-modal #registered").val(data.registered);
     }
   });
 }
