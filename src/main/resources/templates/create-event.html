@@ -35,31 +35,31 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                                <label class="d-block" style="width: 6em;">Event Name</label>
+                                <label class="d-block" style="width: 6em;" th:for="*{title}">Event Name</label>
                                 <input type="text" class="form-control" th:field="*{title}" required="">
                             </div>
                             <div class="form-group">
-                                <label class="d-block" style="width: 8em;">Discord invite</label>
+                                <label class="d-block" style="width: 8em;" th:for="*{discordInvite}">Discord invite</label>
                                 <input type="text" class="form-control" th:field="*{discordInvite}">
                             </div>
                             <div class="form-group">
-                                <label class="d-block" style="width: 6em;">Description</label>
+                                <label class="d-block" style="width: 6em;" th:for="*{description}">Description</label>
                                 <textarea class="form-control-lg form-control" style="font-size: 12px;height: 6em;" th:field="*{description}"></textarea>
                             </div>
                         </div>
                         <div class="col-2">
                             <div class="form-group">
-                                <label>Start date</label>
+                                <label th:for="*{startDate}">Start date</label>
                                 <input class="form-control" type="date" th:field="*{startDate}"/>
                             </div>
                             <div class="form-group">
-                                <label>End date</label>
+                                <label th:for="*{endDate}">End date</label>
                                 <input class="form-control" type="date" th:field="*{endDate}"/>
                             </div>
                             <div class="form-group"><label>Event state</label>
                                 <div class="form-check form-control">
                                     <input id="formCheck-1" class="form-check-input" type="checkbox" th:field="*{active}"/>
-                                    <label class="form-check-label" for="formCheck-1">Active</label>
+                                    <label class="form-check-label" for="formCheck-1" th:for="*{active}">Active</label>
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="form-group">
-                                <label class="d-block" style="width: 10em;">Registration opens</label>
+                                <label class="d-block" style="width: 10em;" th:for="*{registrationOpens}">Registration opens</label>
                                 <input type="datetime-local" th:field="*{registrationOpens}">
                                 <select th:field="*{registrationOpensTZ}">
                                     <option value="-07:00">PDT</option>
@@ -97,7 +97,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="d-block" style="width: 10em;">Registration closes</label>
+                                <label class="d-block" style="width: 10em;" th:for="*{registrationCloses}">Registration closes</label>
                                 <input type="datetime-local" th:field="*{registrationCloses}">
                                 <select th:field="*{registrationClosesTZ}">
                                     <option value="-07:00">PDT</option>
@@ -118,7 +118,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="d-block" style="width: 10em;">iRacing League ID</label>
+                                <label class="d-block" style="width: 10em;" th:for="*{irLeagueID}">iRacing League ID</label>
                                 <input type="number" th:field="*{irLeagueID}">
                                 <button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check league in iRacing" onclick="checkIRacingLeagueId();">
                                     <i class="far fa-question-circle"></i>
@@ -183,8 +183,10 @@
                                         <tr th:each="person, personStat: *{organizingStaff}">
                                             <td style="font-size: 12px;" th:text="${person.name}" th:onclick="'editStaffPerson(' + ${personStat.index} + ');'">Robert Bausdorf</td>
                                             <td class="text-center">
-                                                <i th:if="${person.registered || person.leagueMember}" th:class="'far fa-check-circle ' + ${(person.registered && person.leagueMember) ? 'text-success' : (person.registered ? 'text-warning' : 'text-danger')}"></i>
-                                                <i th:if="${!person.registered && !person.leagueMember}" class="far fa-question-circle text-danger"></i>
+                                                <i th:if="${person.registered || person.leagueMember}"
+                                                   th:class="'far fa-check-circle ' + ${(person.registered && person.leagueMember) ? 'text-success' : (person.registered ? 'text-warning' : 'text-danger')}"
+                                                   th:title="${(person.registered && person.leagueMember) ? 'League member and registered here' : (person.registered ? 'Registered here but not a league member' : 'Valid iRacing ID but not registered here and not a league member')}" data-toggle="tooltip"></i>
+                                                <i th:if="${!person.registered && !person.leagueMember}" class="far fa-question-circle text-danger" data-toggle="tootltip" title="Unchecked iRacing Id"></i>
                                             </td>
                                             <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
                                             <td style="padding: 2px;">

@@ -85,22 +85,6 @@
                                     <li class="nav-item">
                                         <h4 th:text="${title}">Overview</h4>
                                     </li>
-<!--                                    <li class="nav-item">-->
-<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('userAdmin')}" class="nav-link active" th:href="@{/useradmin}">Manage Users</a>-->
-<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('userAdmin')}" class="nav-link" th:href="@{/useradmin}">Manage Users</a>-->
-<!--                                    </li>-->
-<!--                                    <li class="nav-item">-->
-<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link active" th:href="@{/sessionadmin}">Manage Sessions</a>-->
-<!--                                        <a th:if="${user.userType.equalsIgnoreCase('SYSADMIN') && !navigation.equalsIgnoreCase('sessionAdmin')}" class="nav-link" th:href="@{/sessionadmin}">Manage Sessions</a>-->
-<!--                                    </li>-->
-<!--                                    <li th:if="${user.userType.equalsIgnoreCase('SYSADMIN')}" class="nav-item dropdown">-->
-<!--                                        <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>-->
-<!--                                        <div class="dropdown-menu">-->
-<!--                                            <a class="dropdown-item" th:href="@{/useradmin}">Users</a>-->
-<!--                                            <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>-->
-<!--                                            <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>-->
-<!--                                        </div>-->
-<!--                                    </li>-->
                                 </ul>
                                 <div class="dropdown">
                                     <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>
@@ -108,6 +92,7 @@
                                         <a class="dropdown-item" th:href="@{/useradmin}">Users</a>
                                         <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>
                                         <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>
+                                        <a class="dropdown-item" th:href="@{/workflow-admin}">Workflows</a>
                                         <a class="dropdown-item" th:href="@{/create-event}">Create event</a>
                                     </div>
                                 </div>
@@ -123,21 +108,27 @@
             </div>
 
             <div class="row" style="padding-bottom: 1em;">
-                <div class="col-md-4 col-lg-3"></div>
-                <div class="col-md-4 col-lg-6">
+                <div class="col-1 col-sm-1 col-md-1 col-lg-2 col-xl-2"></div>
+                <div class="col-10 col-sm-10 col-md-10 col-lg-8 col-xl-8">
                     <form th:action="@{/session}" method="post" th:object="${selectView}">
                         <input type="hidden" th:field="*{userId}">
                         <div class="form-group">
-                            <label class="d-inline float-left" th:for="*{selectedSessionId}">Select session</label>
-                            <select class="form-control" th:field="*{selectedSessionId}">
-                                <option th:each="singleSession : *{sessions}" th:value="${singleSession.sessionId}" th:text="${singleSession.displayName}"></option>
-                            </select>
+                            <label class="d-inline float-left" th:for="*{selectedSessionId}">Available event sessions</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Select session</span>
+                                </div>
+                                <select class="form-control" th:field="*{selectedSessionId}">
+                                    <option th:each="singleSession : *{sessions}" th:value="${singleSession.sessionId}" th:text="${singleSession.displayName}"></option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-primary" type="submit">Go!</button>
+                                </div>
+                            </div>
                         </div>
-                        <button
-                            class="btn btn-primary d-block float-right" type="submit">Go to session</button>
                     </form>
                 </div>
-                <div class="col-md-4 col-lg-3"></div>
+                <div class="col-1 col-sm-1 col-md-1 col-lg-2 col-xl-2"></div>
             </div>
             <div class="row">
                 <div class="col" th:if="${!eventViews.isEmpty()}">
@@ -145,12 +136,12 @@
                 </div>
             </div>
             <div th:each="event: ${eventViews}" class="row" style="border-radius: 5px;color: rgb(0,1,1);border-style: solid;border-color: rgba(40,87,159,0.47);">
-                <div class="col-xl-1" style="padding-right: 0;padding-left: 0;">
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-1" style="padding-right: 0;padding-left: 0;">
                     <img width="100px" th:src="${event.logoUrl}"/>
                 </div>
-                <div class="col">
+                <div class="col-sm-10 col-md-6 col-lg-6">
                     <h4 class="d-inline" th:text="${event.title}">Testevent</h4>
-                    <a th:if="${user.userType.toString().equalsIgnoreCase('SYSADMIN')}" th:href="@{/create-event(eventId=${event.eventId})}" style="padding-left: 5px;">
+                    <a th:if="${user.racedirection}" th:href="@{/create-event(eventId=${event.eventId})}" style="padding-left: 5px;">
                         <i class="fa fa-edit"></i>
                     </a>
                     <p>
@@ -161,7 +152,7 @@
                     <p th:text="${event.description}">Paragraph</p>
                     <span>Discord</span><a th:href="${event.discordInvite}" target="_blank" style="padding-left: 1em;" th:text="${event.discordInvite}">Link</a>
                 </div>
-                <div class="col-xl-4">
+                <div class="col-md-4 col-lg-4 col-xl-3">
                     <div class="row">
                         <div class="col">
                             <h4>Registration open</h4>
@@ -176,7 +167,9 @@
                         <div class="col"><span th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span></div>
                     </div>
                 </div>
-                <div class="col-xl-2 text-center"><button class="btn btn-primary" type="button" style="margin-top: 1em;">Register</button></div>
+                <div class="col-xl-2 text-center">
+                    <button class="btn btn-primary" type="button" style="margin-top: 1em;">Register</button>
+                </div>
             </div>
             <div th:fragment="deleteModal(modalId, modalText, modalAction)">
                 <div th:id="${modalId}" class="modal fade" role="dialog" tabindex="-1">

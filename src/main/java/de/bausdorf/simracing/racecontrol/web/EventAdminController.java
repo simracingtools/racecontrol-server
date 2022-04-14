@@ -23,13 +23,12 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
-import de.bausdorf.simracing.irdataapi.tools.CarCategoryEnum;
+import de.bausdorf.simracing.irdataapi.tools.CarCategoryType;
 import de.bausdorf.simracing.irdataapi.tools.StockDataTools;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
-import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.EditCarClassView;
 import de.bausdorf.simracing.racecontrol.web.model.CarView;
@@ -208,7 +207,7 @@ public class EventAdminController extends ControllerBase {
 
     @ModelAttribute(name="allCars")
     public List<CarView> allCars() {
-        return StockDataTools.carsByCategory(iRacingClient.getDataCache().getCars(), CarCategoryEnum.ROAD, false).stream()
+        return StockDataTools.carsByCategory(iRacingClient.getDataCache().getCars(), CarCategoryType.ROAD, false).stream()
                 .filter(car -> Arrays.stream(car.getCarTypes()).anyMatch(type -> type.getCarType().equalsIgnoreCase("road")))
                 .map(car -> CarView.builder()
                         .carId(car.getCarId())
@@ -220,7 +219,7 @@ public class EventAdminController extends ControllerBase {
 
     @ModelAttribute(name="staffRoles")
     public List<OrgaRoleType> staffRoles() {
-        return Arrays.stream(OrgaRoleType.values()).collect(Collectors.toList());
+        return OrgaRoleType.racecontrolValues();
     }
 
     private String redirectView(String viewName, long eventId, String error) {

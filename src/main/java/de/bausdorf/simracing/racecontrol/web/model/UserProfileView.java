@@ -56,6 +56,7 @@ public class UserProfileView {
 	private Boolean locked;
 	private Boolean expired;
 	private Boolean racecontrol;
+	private Boolean racedirection;
 
 	// Read-only
 	private String username;
@@ -84,6 +85,8 @@ public class UserProfileView {
 		this.racecontrol = user.getUserType() == RcUserType.SYSADMIN
 				|| user.getUserType() == RcUserType.RACE_DIRECTOR
 				|| user.getUserType() == RcUserType.STEWARD;
+		this.racedirection = user.getUserType() == RcUserType.SYSADMIN
+				|| user.getUserType() == RcUserType.RACE_DIRECTOR;
 	}
 
 	public RcUser apply(RcUser merge) {

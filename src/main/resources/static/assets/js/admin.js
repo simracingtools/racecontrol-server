@@ -44,6 +44,10 @@ function confirmStaffRemove(index) {
   $("#staff-remove-confirm-" + index).modal('show');
 }
 
+function confirmStateRemove(id) {
+  $("#state-remove-confirm-" + id).modal('show');
+}
+
 function personSelected(data) {
   $("#staff-modal #iracingId").val(data.iracingId);
   $("#staff-modal #name").val(data.value);
@@ -80,6 +84,28 @@ function editStaffPerson(personIndex) {
   $("#staff-modal #registered").val($("#staff" + personIndex + "_registered").val());
   $("#staff-modal #leagueMember").val($("#staff" + personIndex + "leagueMember").val());
   $("#staff-modal").modal('show');
+}
+
+function editWorkflowState(workflowIndex, entryIndex) {
+  $("#workflow-modal #id").val($("#workflow" + workflowIndex + entryIndex + "_id").val());
+  $("#workflow-modal #workflowName").val($("#workflow" + workflowIndex + entryIndex + "_workflowName").val());
+  $("#workflow-modal #stateKey").val($("#workflow" + workflowIndex + entryIndex + "_stateKey").text());
+  $("#workflow-modal #description").val($("#workflow" + workflowIndex + entryIndex + "_desc").text());
+  const followUps = $("#workflow" + workflowIndex + entryIndex + "_followUpIds").val();
+  $("#workflow-modal #followUpIds").val($.parseJSON(followUps));
+  const roles = $("#workflow" + workflowIndex + entryIndex + "_dutyRoleIndices").val();
+  $("#workflow-modal #dutyRoleIndices").val($.parseJSON(roles));
+  $("#workflow-modal #color").val($("#workflow" + workflowIndex + entryIndex + "_color").val());
+  $("#workflow-modal #textColor").val($("#workflow" + workflowIndex + entryIndex + "_textColor").val());
+  const initialState = $("#workflow" + workflowIndex + entryIndex + "_initialState").val();
+  if(initialState === "true") {
+    $("#workflow-modal #initialState1").prop("checked", true);
+  } else {
+    $("#workflow-modal #initialState1").prop("checked", false);
+  }
+
+//  $("#workflow-modal #initialState").val($("#workflow" + workflowIndex + entryIndex + "_initialState").val());
+  $("#workflow-modal").modal('show');
 }
 
 function checkIRacingLeagueId() {

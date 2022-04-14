@@ -1,0 +1,197 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu(title='Workflow administration')"></div>
+
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <div>
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li th:each="workflowName : ${workflowStateViews.keySet()}" class="nav-item" role="presentation">
+<!--                                    <a th:class="'nav-link d-inline' + ${activeFlow.equalsIgnoreCase(workflowName) ? ' active' : ''}" role="tab" data-toggle="tab" th:href="@{/workflow-admin(workflow=${workflowName})}" th:text="${workflowName}">-->
+                                    <a th:class="'nav-link d-inline' + ${activeFlow.equalsIgnoreCase(workflowName) ? ' active' : ''}" role="tab" th:href="@{/workflow-admin(workflow=${workflowName})}" th:text="${workflowName}">
+                                        Team Registration
+                                    </a>
+<!--                                    <button class="btn btn-danger d-inline" type="button" style="padding-top: 1px;padding-bottom: 1px;padding-right: 7px;padding-left: 7px;">-->
+<!--                                        <i class="far fa-trash-alt"></i>-->
+<!--                                    </button>-->
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="btn btn-primary" type="button" style="padding-top: 3px;padding-bottom: 3px;padding-right: 9px;padding-left: 9px;" data-target="#add-workflow-modal" data-toggle="modal">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div th:each="workflowName,wfStat : ${workflowStateViews.keySet()}" th:class="'tab-pane' + ${activeFlow.equalsIgnoreCase(workflowName) ? ' active' : ''}" role="tabpanel" th:id="${'#wf-tab-' + workflowName}">
+                                    <h4 class="d-inline">Task states</h4>
+                                    <button class="btn btn-primary d-inline" type="button" style="padding-top: 3px;padding-bottom: 3px;padding-right: 9px;padding-left: 9px;" data-target="#workflow-modal" data-toggle="modal">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+
+                                    <div class="table-responsive" style="font-size: 14px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="padding: 3px;" class="text-center">ID</th>
+                                                    <th style="padding: 3px;" class="text-center">Initial state</th>
+                                                    <th style="padding: 3px;">Name</th>
+                                                    <th style="padding: 3px;">possible follow-up</th>
+                                                    <th style="padding: 3px;">can be done by</th>
+                                                    <th style="padding: 3px;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="entry, entryStat: ${workflowStateViews.get(workflowName)}">
+                                                    <td th:style="'padding: 3px; cursor: pointer; vertical-align: middle;background-color: ' + ${entry.color} + '; color: ' + ${entry.textColor} + ';'"
+                                                        th:text="${entry.stateKey}" th:id="${'workflow' + wfStat.index + entryStat.index + '_stateKey'}"
+                                                        th:onclick="'editWorkflowState(' + ${wfStat.index} + ', ' + ${entryStat.index} + ');'" class="text-center">TEAM_REGISTRATION</td>
+                                                    <td style="padding: 3px;vertical-align: middle;" class="text-center">
+                                                        <i th:if="${entry.initialState}" class="far fa-check-circle text-success"></i>
+                                                    </td>
+                                                    <td style="padding: 3px;vertical-align: middle;" th:text="${entry.description}" th:id="${'workflow' + wfStat.index + entryStat.index + '_desc'}">Team Registration</td>
+                                                    <td style="padding: 3px;vertical-align: middle;">
+                                                        <input type="hidden" th:value="${entry.id}" th:id="${'workflow' + wfStat.index + entryStat.index + '_id'}">
+                                                        <input type="hidden" th:value="${workflowName}" th:id="${'workflow' + wfStat.index + entryStat.index + '_workflowName'}">
+                                                        <input type="hidden" th:value="${entry.followUpIds}" th:id="${'workflow' + wfStat.index + entryStat.index + '_followUpIds'}">
+                                                        <input type="hidden" th:value="${entry.color}" th:id="${'workflow' + wfStat.index + entryStat.index + '_color'}">
+                                                        <input type="hidden" th:value="${entry.textColor}" th:id="${'workflow' + wfStat.index + entryStat.index + '_textColor'}">
+                                                        <input type="hidden" th:value="${entry.initialState}" th:id="${'workflow' + wfStat.index + entryStat.index + '_initialState'}">
+                                                        <div th:each="wfKey: ${entry.followUps}">
+                                                            <span th:text="${wfKey.stateKey}">ASSIGN NO</span>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 3px;vertical-align: middle;">
+                                                        <input type="hidden" th:value="${entry.dutyRoleIndices}" th:id="${'workflow' + wfStat.index + entryStat.index + '_dutyRoleIndices'}">
+                                                        <div th:each="dutyRole: ${entry.dutyRoles}">
+                                                            <span th:text="${dutyRole}">MEMBER</span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center" style="padding: 3px;vertical-align: middle;">
+                                                        <button class="btn btn-danger" type="button" th:onclick="'confirmStateRemove(' + ${entry.id} + ');'">
+                                                            <i class="far fa-trash-alt"></i>
+                                                        </button>
+                                                        <div th:replace="index.html :: deleteModal('state-remove-confirm-' + ${entry.id}, ${'Do you really want to delete state ' + entry.stateKey + ' from workflow ' + workflowName}, @{/delete-workflow-state(workflowStateId=${entry.id})})"></div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="workflow-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/save-workflow-state}" th:object="${editWorkflowStateView}">
+                        <div class="modal-header">
+                            <h4 class="modal-title d-inline">Edit workflow state</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body" style="font-size: 14px;">
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{workflowName}">
+                            <div class="form-group">
+                                <label style="width: 8em;" th:for="*{stateKey}">Task key</label>
+                                <input type="text" class="form-control" required="" th:field="*{stateKey}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;"  th:for="*{description}">Task name</label>
+                                <input type="text" class="form-control" required="" th:field="*{description}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;" th:for="*{dutyRoleIndices}">Duty roles</label>
+                                <select class="form-control" multiple="" style="font-size: 14px;" required="" th:field="*{dutyRoleIndices}">
+                                    <option th:each="role : ${allOrgaRoles}" th:value="${role.code()}" th:text="${role.toString()}">STAFF</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;" th:for="*{followUpIds}">Follow ups</label>
+                                <select class="form-control" multiple="" style="font-size: 14px;" th:field="*{followUpIds}">
+                                    <option th:each="state: ${allCurrentWorkflowStates}" th:value="${state.id}" th:text="${state.stateKey}">DECLINE</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label style="margin-right: 1em;">Color</label>
+                                <input type="color" style="color: rgb(3,0,0);" required="" th:field="*{color}">
+                                <label style="margin-left: 2em;margin-right: 1em;">Text color</label>
+                                <input type="color" style="margin-right: 2em;" required="" th:field="*{textColor}">
+                                <div class="form-check d-inline">
+                                    <input class="form-check-input" type="checkbox" th:field="*{initialState}">
+                                    <label class="form-check-label" th:for="*{initialState}">Initial state</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="add-workflow-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/add-workflow}" th:object="${addWorkflowView}">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Add workflow</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body" style="font-size: 14px;">
+                            <div class="form-group">
+                                <label th:for="*{workflowName}">Workflow name</label>
+                                <input class="form-control" type="text" required="" th:field="*{workflowName}"></div>
+                            <div class="form-group">
+                                <label th:for="*{initialStateKey}">Initial state ID</label>
+                                <input class="form-control" type="text" required="" th:field="*{initialStateKey}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:insert="index :: footer"></div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+
+</html>

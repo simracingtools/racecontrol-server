@@ -22,8 +22,53 @@ package de.bausdorf.simracing.racecontrol.orga.api;
  * #L%
  */
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum OrgaRoleType {
-	STAFF,
-	STEWARD,
-	RACE_DIRECTOR
+	SUPPORT(false, 1),
+	PARTICIPANT(false, 2),
+	STAFF(true, 3),
+	STEWARD(true, 4),
+	RACE_DIRECTOR(true, 5);
+
+	private final boolean racecontrol;
+	private final int code;
+
+	OrgaRoleType(boolean racecontrol, int code) {
+		this.racecontrol = racecontrol;
+		this.code = code;
+	}
+
+	public boolean isRacecontrol() {
+		return racecontrol;
+	}
+
+	public boolean isParticipant() {
+		return !racecontrol;
+	}
+
+	public int code() {
+		return code;
+	}
+
+	public static List<OrgaRoleType> racecontrolValues() {
+		return Arrays.stream(OrgaRoleType.values()).filter(OrgaRoleType::isRacecontrol).collect(Collectors.toList());
+	}
+
+	public static List<OrgaRoleType> participantValues() {
+		return Arrays.stream(OrgaRoleType.values()).filter(OrgaRoleType::isParticipant).collect(Collectors.toList());
+	}
+
+	public static OrgaRoleType ofCode(int enumCode) {
+		switch (enumCode) {
+			case 1: return SUPPORT;
+			case 2: return PARTICIPANT;
+			case 3: return STAFF;
+			case 4: return STEWARD;
+			case 5: return RACE_DIRECTOR;
+			default: throw new IllegalArgumentException("Unknown OrgaRoleType code '" + enumCode + "'");
+		}
+	}
 }
