@@ -49,6 +49,15 @@
                         </div>
                         <div class="col-2">
                             <div class="form-group">
+                                <label>Min team drivers</label>
+                                <input class="form-control" type="number" th:field="*{minTeamDrivers}"/></div>
+                            <div class="form-group">
+                                <label>Max team drivers</label>
+                                <input class="form-control" type="number"  th:field="*{maxTeamDrivers}"/>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
                                 <label th:for="*{startDate}">Start date</label>
                                 <input class="form-control" type="date" th:field="*{startDate}"/>
                             </div>

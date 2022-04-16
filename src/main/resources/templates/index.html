@@ -138,36 +138,100 @@
                 <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding-right: 0;padding-left: 0;">
                     <img width="100px" th:src="${event.logoUrl}"/>
                 </div>
-                <div class="col-9 col-sm-10 col-md-6 col-lg-5">
+                <div class="col-9 col-sm-10 col-md-10 col-lg-3 col-xl-4">
                     <h4 class="d-inline" th:text="${event.title}">Testevent</h4>
                     <a th:if="${user.racedirection}" th:href="@{/create-event(eventId=${event.eventId})}" style="padding-left: 5px;">
                         <i class="fa fa-edit"></i>
                     </a>
                     <p>
-                        <span th:text="*{#temporals.format(event.startDate, 'dd.MM.yyyy')}">30.09.2022</span>
+                        <span th:text="${#temporals.format(event.startDate, 'dd.MM.yyyy')}">30.09.2022</span>
                         <span> - </span>
-                        <span th:text="*{#temporals.format(event.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
+                        <span th:text="${#temporals.format(event.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
                     </p>
                     <p th:text="${event.description}">Paragraph</p>
                     <span>Discord</span><a th:href="${event.discordInvite}" target="_blank" style="padding-left: 1em;" th:text="${event.discordInvite}">Link</a>
                 </div>
-                <div class="col-md-5 col-lg-4 col-xl-3">
+                <div class="col-md-5 col-lg-4 col-xl-4">
                     <div class="row">
                         <div class="col-lg-12">
                             <h4>Registration open</h4>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-3"><span>from</span></div>
+                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"><span>from</span></div>
                         <div class="col-10 col-sm-10 col-md-10 col-lg-10"><span th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.2022 13:00 CEST</span></div>
                     </div>
                     <div class="row">
-                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-3><span>until</span></div>
-                        <div class="col"><span th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span></div>
+                        <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"><span>until</span></div>
+                        <div class="col-10 col-sm-10 col-md-10 col-lg-10"><span th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span></div>
+                    </div>
+                    <div class="row">
+                        <div class="col text-center">
+                            <button th:if="${event.isRegistrationOpen()}" class= "btn btn-primary" type="button" style="margin-top: 1em;" th:data-target="${'#register-modal-' + event.eventId}" data-toggle="modal">Register</button>
+                            <button th:if="${!event.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
+                        </div>
+                        <div th:id="${'register-modal-' + event.eventId}" class="modal fade" role="dialog" tabindex="-1">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title" th:text="${'Register for ' + event.title}">Register for</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div th:if="${user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                                            <p>Before you may register for this event you have to login !</p>
+                                            <a href="/index.html">
+                                                <button class="btn btn-primary" type="button">Login</button>
+                                            </a>
+                                        </div>
+                                        <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                                            <p>
+                                                We appreciate your interest to participate in our event!
+                                            </p>
+                                            <p class="text-left">
+                                        <span>
+                                            To be able to register successfully please keep your <strong>iRacing team ID</strong>
+                                            and <strong>iRacing team name</strong> at hand.
+                                        </span>
+                                                <span th:text="${event.irLeagueName}"></span>
+                                            </p>
+                                            <a class="d-block" th:href="@{/team-registration(eventId=${event.eventId})}">
+                                                <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register new team</button>
+                                            </a>
+                                            <a class="d-block" href="#">
+                                                <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register as team member</button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-2 col-xl-2 text-center">
-                    <button class="btn btn-primary" type="button" style="margin-top: 1em;">Register</button>
+                <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                    <div class="table-responsive text-center" style="font-size: 12px;" th:fragment="tableAvailableSlots(event)">
+                        <table class="table text-center">
+                            <caption>Available registration slots.</caption>
+                            <thead>
+                            <tr>
+                                <th style="padding: 3px;">Car class</th>
+                                <th style="padding: 3px;">Available slots/wildcards</th>
+                                <th style="padding: 3px;">Registrations on waiting list</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="classSlots : ${event.availableSlots}">
+                                <td style="padding: 3px;" th:text="${classSlots.name}">SP9</td>
+                                <td style="padding: 3px;">
+                                    <span th:text="${classSlots.availableSlots}">15</span>
+                                    <span>/</span>
+                                    <span th:text="${classSlots.wildcards}">2</span>
+                                </td>
+                                <td style="padding: 3px;" th:text="${classSlots.onWaitingList}">0</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div th:fragment="deleteModal(modalId, modalText, modalAction)">

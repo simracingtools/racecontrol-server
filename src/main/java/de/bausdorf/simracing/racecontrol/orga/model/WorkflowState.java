@@ -46,6 +46,7 @@ public class WorkflowState {
     private String color;
     private String textColor;
     private boolean initialState;
+    private boolean inActive;
     @ElementCollection(targetClass = OrgaRoleType.class)
     @CollectionTable(name="state_duty_roles")
     @Enumerated(EnumType.STRING)

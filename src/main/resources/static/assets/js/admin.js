@@ -103,8 +103,13 @@ function editWorkflowState(workflowIndex, entryIndex) {
   } else {
     $("#workflow-modal #initialState1").prop("checked", false);
   }
+  const inActive = $("#workflow" + workflowIndex + entryIndex + "_inActive").val();
+  if(inActive === "true") {
+    $("#workflow-modal #inActive1").prop("checked", true);
+  } else {
+    $("#workflow-modal #inActive1").prop("checked", false);
+  }
 
-//  $("#workflow-modal #initialState").val($("#workflow" + workflowIndex + entryIndex + "_initialState").val());
   $("#workflow-modal").modal('show');
 }
 

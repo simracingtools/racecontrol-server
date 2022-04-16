@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,27 +33,42 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.UUID;
 
 @Component
 @Slf4j
 public class UploadFileManager {
+    public static final String EVENT_SUBDIR = "/event-";
     private final RacecontrolServerProperties config;
 
     public UploadFileManager(@Autowired RacecontrolServerProperties config) {
         this.config = config;
     }
 
-    public String uploadEventFile(MultipartFile multipartFile, String eventId, FileTypeEnum type) throws IOException {
+    public String uploadEventFile(@NonNull MultipartFile multipartFile, @NonNull String eventId, @NonNull FileTypeEnum type) throws IOException {
         Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
-                + "/event-" + eventId + '/' + type.getDestination());
+                + EVENT_SUBDIR + eventId + '/' + type.getDestination());
+        saveFile(fileDestinationDir, multipartFile, multipartFile.getOriginalFilename());
+        return getFileUri(eventId, type, multipartFile.getOriginalFilename());
+    }
+
+    public String uploadTeamLogo(@NonNull MultipartFile multipartFile, @NonNull String eventId, @NonNull String teamIRacingId, @NonNull FileTypeEnum type) throws IOException {
+        Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
+                + EVENT_SUBDIR + eventId + '/' + type.getDestination());
+        String fileExtension = Objects.requireNonNull(multipartFile.getOriginalFilename()).split("\\.")[1];
+        saveFile(fileDestinationDir, multipartFile, "teamlogo-" + teamIRacingId + "." + fileExtension);
+        return getFileUri(eventId, type, multipartFile.getOriginalFilename());
+    }
+
+    private void saveFile(Path fileDestinationDir, MultipartFile multipartFile, String destinationFileName) throws IOException {
         log.debug("Try to upload to {}", fileDestinationDir);
         checkAndCreateDirectories(fileDestinationDir);
-        Path destinationFile = Paths.get(fileDestinationDir.toFile().getAbsolutePath(), multipartFile.getOriginalFilename());
+        Path destinationFile = Paths.get(fileDestinationDir.toFile().getAbsolutePath(), destinationFileName);
         try (OutputStream os = Files.newOutputStream(destinationFile)) {
             os.write(multipartFile.getBytes());
             log.info("Uploaded {}", destinationFile);
         }
-        return getFileUri(eventId, type, multipartFile.getOriginalFilename());
     }
 
     private void checkAndCreateDirectories(Path fileDestinationDir) throws IOException {
@@ -64,7 +80,7 @@ public class UploadFileManager {
     }
 
     private String getFileUri(String eventId, FileTypeEnum fileType, String fileName) {
-        return config.getUploadBaseUri() + "/event-" + eventId + '/' + fileType.getDestination() + fileName;
+        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + fileType.getDestination() + fileName;
     }
 
 }

@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 /*-
  * #%L
@@ -22,18 +22,20 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-    private final String destination;
-
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
+@Data
+@AllArgsConstructor
+@Builder
+public class CreateRegistrationView {
+    private long eventId;
+    private String teamName;
+    private String likedNumbers;
+    private Long iracingId;
+    private String logoUrl;
+    private boolean driver;
+    private boolean leagueMember;
+    private long carId;
 }

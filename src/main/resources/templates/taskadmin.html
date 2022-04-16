@@ -39,9 +39,6 @@
                                     <a th:class="'nav-link d-inline' + ${activeFlow.equalsIgnoreCase(workflowName) ? ' active' : ''}" role="tab" th:href="@{/workflow-admin(workflow=${workflowName})}" th:text="${workflowName}">
                                         Team Registration
                                     </a>
-<!--                                    <button class="btn btn-danger d-inline" type="button" style="padding-top: 1px;padding-bottom: 1px;padding-right: 7px;padding-left: 7px;">-->
-<!--                                        <i class="far fa-trash-alt"></i>-->
-<!--                                    </button>-->
                                 </li>
                                 <li class="nav-item" role="presentation">
                                     <button class="btn btn-primary" type="button" style="padding-top: 3px;padding-bottom: 3px;padding-right: 9px;padding-left: 9px;" data-target="#add-workflow-modal" data-toggle="modal">
@@ -61,7 +58,7 @@
                                             <thead>
                                                 <tr>
                                                     <th style="padding: 3px;" class="text-center">ID</th>
-                                                    <th style="padding: 3px;" class="text-center">Initial state</th>
+                                                    <th style="padding: 3px;" class="text-center">Initial/Final state</th>
                                                     <th style="padding: 3px;">Name</th>
                                                     <th style="padding: 3px;">possible follow-up</th>
                                                     <th style="padding: 3px;">can be done by</th>
@@ -75,6 +72,7 @@
                                                         th:onclick="'editWorkflowState(' + ${wfStat.index} + ', ' + ${entryStat.index} + ');'" class="text-center">TEAM_REGISTRATION</td>
                                                     <td style="padding: 3px;vertical-align: middle;" class="text-center">
                                                         <i th:if="${entry.initialState}" class="far fa-check-circle text-success"></i>
+                                                        <i th:if="${entry.inActive}" class="far fa-times-circle text-danger"></i>
                                                     </td>
                                                     <td style="padding: 3px;vertical-align: middle;" th:text="${entry.description}" th:id="${'workflow' + wfStat.index + entryStat.index + '_desc'}">Team Registration</td>
                                                     <td style="padding: 3px;vertical-align: middle;">
@@ -84,6 +82,7 @@
                                                         <input type="hidden" th:value="${entry.color}" th:id="${'workflow' + wfStat.index + entryStat.index + '_color'}">
                                                         <input type="hidden" th:value="${entry.textColor}" th:id="${'workflow' + wfStat.index + entryStat.index + '_textColor'}">
                                                         <input type="hidden" th:value="${entry.initialState}" th:id="${'workflow' + wfStat.index + entryStat.index + '_initialState'}">
+                                                        <input type="hidden" th:value="${entry.inActive}" th:id="${'workflow' + wfStat.index + entryStat.index + '_inActive'}">
                                                         <div th:each="wfKey: ${entry.followUps}">
                                                             <span th:text="${wfKey.stateKey}">ASSIGN NO</span>
                                                         </div>
@@ -142,13 +141,17 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label style="margin-right: 1em;">Color</label>
-                                <input type="color" style="color: rgb(3,0,0);" required="" th:field="*{color}">
-                                <label style="margin-left: 2em;margin-right: 1em;">Text color</label>
-                                <input type="color" style="margin-right: 2em;" required="" th:field="*{textColor}">
-                                <div class="form-check d-inline">
+                                <label style="margin-right: 0.5em;">Color</label>
+                                <input type="color" required="" th:field="*{color}">
+                                <label style="margin-left: 1em;margin-right: 0.5em;">Text color</label>
+                                <input type="color" required="" th:field="*{textColor}">
+                                <div class="form-check d-inline" style="margin-left: 1em;">
                                     <input class="form-check-input" type="checkbox" th:field="*{initialState}">
                                     <label class="form-check-label" th:for="*{initialState}">Initial state</label>
+                                </div>
+                                <div class="form-check d-inline" style="margin-left: 1em;">
+                                    <input class="form-check-input" type="checkbox" th:field="*{inActive}">
+                                    <label class="form-check-label" th:for="*{inActive}">Final state</label>
                                 </div>
                             </div>
                         </div>
@@ -171,6 +174,10 @@
                             <div class="form-group">
                                 <label th:for="*{workflowName}">Workflow name</label>
                                 <input class="form-control" type="text" required="" th:field="*{workflowName}"></div>
+                            <div class="form-group">
+                                <label th:for="*{initialStateKey}">Initial state ID</label>
+                                <input class="form-control" type="text" required="" th:field="*{initialStateKey}">
+                            </div>
                             <div class="form-group">
                                 <label th:for="*{initialStateKey}">Initial state ID</label>
                                 <input class="form-control" type="text" required="" th:field="*{initialStateKey}">

@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
@@ -22,18 +22,11 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import java.time.OffsetDateTime;
 
-    private final String destination;
-
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
+public interface WorkflowItem {
+    OffsetDateTime getCreated();
+    Person getCreatedBy();
+    long getEventId();
+    WorkflowState getWorkflowState();
 }

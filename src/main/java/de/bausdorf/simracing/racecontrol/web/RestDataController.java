@@ -26,7 +26,7 @@ import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
-import de.bausdorf.simracing.racecontrol.web.model.LeagueInfoView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.LeagueInfoView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.Builder;
 import lombok.Data;

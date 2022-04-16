@@ -25,8 +25,10 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkflowStateRepository extends CrudRepository<WorkflowState, Long> {
     List<WorkflowState> findAllByWorkflowName(String workflowName);
+    Optional<WorkflowState> findByWorkflowNameAndInitialState(String workflowName, boolean initialState);
     List<WorkflowState> findDistinctByWorkflowName(String workflowName);
 }

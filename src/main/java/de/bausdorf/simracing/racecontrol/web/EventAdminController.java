@@ -30,12 +30,13 @@ import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
 import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
-import de.bausdorf.simracing.racecontrol.web.model.EditCarClassView;
-import de.bausdorf.simracing.racecontrol.web.model.CarView;
-import de.bausdorf.simracing.racecontrol.web.model.CreateEventView;
-import de.bausdorf.simracing.racecontrol.web.model.PersonView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.EditCarClassView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.CarView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.CreateEventView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.PersonView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -48,14 +49,13 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
 public class EventAdminController extends ControllerBase {
-    public static final String CREATE_EVENT_VIEW = "create-event";
-    public static final String EVENT_VIEW_MODEL_KEY = "eventView";
+    private static final String CREATE_EVENT_VIEW = "create-event";
+    private static final String EVENT_VIEW_MODEL_KEY = "eventView";
 
     private final EventSeriesRepository eventRepository;
     private final CarClassRepository carClassRepository;
@@ -79,8 +79,9 @@ public class EventAdminController extends ControllerBase {
     }
 
     @GetMapping("/create-event")
-    public String createEvent(@RequestParam Optional<Long> eventId, @RequestParam Optional<String> error, Model model) {
-        error.ifPresent(e -> addError(e, model));
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
+    public String createEvent(@RequestParam Optional<Long> eventId, @RequestParam Optional<String> messages, Model model) {
+        messages.ifPresent(e -> decodeMessagesToModel(e, model));
 
         if (eventId.isPresent()) {
             Optional<EventSeries> eventSeries = eventRepository.findById(eventId.get());
@@ -104,33 +105,33 @@ public class EventAdminController extends ControllerBase {
     }
 
     @PostMapping("/create-event")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     @Transactional
-    public String createEvent(@ModelAttribute CreateEventView eventView) {
-        String error = null;
+    public String createEvent(@ModelAttribute CreateEventView eventView, Model model) {
         EventSeries eventSeriesToSave = null;
         if (eventView.getEventId() != 0) {
             Optional<EventSeries> eventSeries = eventRepository.findById(eventView.getEventId());
             if (eventSeries.isEmpty()) {
-                error = "Event series with id " + eventView.getEventId() + " does not exist";
+                addError("Event series with id " + eventView.getEventId() + " does not exist", model);
             } else {
                 eventSeriesToSave = eventSeries.get();
             }
         }
         eventSeriesToSave = eventRepository.save(eventView.toEntity(eventSeriesToSave));
-        return redirectView(CREATE_EVENT_VIEW, eventSeriesToSave.getId(), error);
+        return redirectView(eventSeriesToSave.getId(), messagesEncoded(model));
     }
 
     @PostMapping("/event-save-carclass")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     @Transactional
-    public String addCarClass(@ModelAttribute EditCarClassView carClassView) {
-        AtomicReference<String> error = new AtomicReference<>();
+    public String addCarClass(@ModelAttribute EditCarClassView carClassView, Model model) {
         if(carClassView.getId() != 0) {
             CarClass carClass = carClassRepository.findById(carClassView.getId()).orElse(null);
             if(carClass != null) {
                 balancedCarRepository.deleteAllByCarClassId(carClass.getId());
                 carClassRepository.save(updateCarData(carClassView.toEntity(carClass)));
             } else {
-                error.set("Car class with id " + carClassView.getId() + " not found");
+                addError("Car class with id " + carClassView.getId() + " not found", model);
             }
         } else {
             Optional<EventSeries> eventSeriesOptional = eventRepository.findById(carClassView.getEventId());
@@ -140,31 +141,32 @@ public class EventAdminController extends ControllerBase {
                         eventSeries.getCarClassPreset().add(finalCarClass);
                         eventRepository.save(eventSeries);
                     },
-                    () -> error.set("No event series with id " + carClassView.getEventId() + " found."));
+                    () -> addError("No event series with id " + carClassView.getEventId() + " found.", model));
         }
-        return redirectView(CREATE_EVENT_VIEW, carClassView.getEventId(), error.get());
+        return redirectView(carClassView.getEventId(), messagesEncoded(model));
     }
 
     @GetMapping("/remove-car-class")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     @Transactional
-    public String removeCarClass(@RequestParam long classId) {
+    public String removeCarClass(@RequestParam long classId, Model model) {
         Optional<CarClass> carClass = carClassRepository.findById(classId);
         AtomicLong eventId = new AtomicLong();
-        AtomicReference<String> error = new AtomicReference<>(null);
         carClass.ifPresentOrElse(
                 cc -> {
                     eventId.set(cc.getEventId());
                     carClassRepository.delete(cc);
                 },
-                () -> error.set("No car class found for id " + classId)
+                () -> addError("No car class found for id " + classId, model)
         );
-        return redirectView(CREATE_EVENT_VIEW, eventId.get(), error.get());
+        return redirectView(eventId.get(), messagesEncoded(model));
     }
 
     @PostMapping("/event-logo-upload")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     @Transactional
-    public String eventLogoUpload(@RequestParam("file") MultipartFile multipartFile, @RequestParam("eventId") String eventId) {
-        AtomicReference<String> error = new AtomicReference<>(null);
+    public String eventLogoUpload(@RequestParam("file") MultipartFile multipartFile,
+                                  @RequestParam("eventId") String eventId, Model model) {
         Optional<EventSeries> series = eventRepository.findById(Long.parseLong(eventId));
         series.ifPresentOrElse(
                 event -> {
@@ -174,35 +176,38 @@ public class EventAdminController extends ControllerBase {
                         eventRepository.save(event);
                     } catch (IOException e) {
                         log.error(e.getMessage(), e);
-                        error.set("Could not save uploaded file " + multipartFile.getOriginalFilename());
+                        addError("Could not save uploaded file " + multipartFile.getOriginalFilename(), model);
                     }
                 },
-                () -> error.set("Event series not found for id " + eventId)
+                () -> addError("Event series not found for id " + eventId, model)
         );
-        return redirectView(CREATE_EVENT_VIEW, Long.parseLong(eventId), error.get());
+        return redirectView(Long.parseLong(eventId), messagesEncoded(model));
     }
 
     @PostMapping("event-save-person")
-    String saveStaffPerson(@ModelAttribute PersonView personView) {
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
+    @Transactional
+    public String saveStaffPerson(@ModelAttribute PersonView personView) {
         Optional<Person> staff = personRepository.findByEventIdAndIracingId(personView.getEventId(), personView.getIracingId());
         Person toSave = personView.toEntity(staff.orElse(new Person()));
         personRepository.save(toSave);
-        return redirectView(CREATE_EVENT_VIEW, personView.getEventId(), null);
+        return redirectView(personView.getEventId(), null);
     }
 
     @GetMapping("remove-staff")
-    String removeStaffPerson(@RequestParam long personId) {
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
+    @Transactional
+    public String removeStaffPerson(@RequestParam long personId, Model model) {
         Optional<Person> person = personRepository.findById(personId);
         AtomicLong eventId = new AtomicLong(0L);
-        AtomicReference<String> error = new AtomicReference<>(null);
         person.ifPresentOrElse(
                 p -> {
                     eventId.set(p.getEventId());
                     personRepository.delete(p);
                 },
-                () -> error.set("No person found for id " + personId)
+                () -> addError("No person found for id " + personId, model)
         );
-        return redirectView(CREATE_EVENT_VIEW, eventId.get(), error.get());
+        return redirectView(eventId.get(), messagesEncoded(model));
     }
 
     @ModelAttribute(name="allCars")
@@ -222,10 +227,10 @@ public class EventAdminController extends ControllerBase {
         return OrgaRoleType.racecontrolValues();
     }
 
-    private String redirectView(String viewName, long eventId, String error) {
-        return "redirect:/" + viewName
+    private String redirectView(long eventId, String messagesEncoded) {
+        return "redirect:/" + EventAdminController.CREATE_EVENT_VIEW
                 + (eventId != 0 ? "?eventId=" + eventId : "")
-                + (error != null ? "&error=" + error : "");
+                + (messagesEncoded != null ? "&messages=" + messagesEncoded : "");
     }
 
     private CarClass updateCarData(CarClass carClass) {

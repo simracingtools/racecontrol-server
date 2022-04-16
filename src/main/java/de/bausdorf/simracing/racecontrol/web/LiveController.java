@@ -22,20 +22,14 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import de.bausdorf.simracing.racecontrol.web.security.RcAuthenticationProvider;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.KeycloakDeployment;
-import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.lang.NonNull;
@@ -63,20 +57,14 @@ import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationCategory;
 import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationCategoryRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationRepository;
 import de.bausdorf.simracing.racecontrol.web.model.PenaltySelectView;
-import de.bausdorf.simracing.racecontrol.web.model.RcBulletinView;
-import de.bausdorf.simracing.racecontrol.web.model.RcIssuedBulletinView;
+import de.bausdorf.simracing.racecontrol.web.model.live.RcBulletinView;
+import de.bausdorf.simracing.racecontrol.web.model.live.RcIssuedBulletinView;
 import de.bausdorf.simracing.racecontrol.web.model.RuleViolationCategorySelectView;
 import de.bausdorf.simracing.racecontrol.web.model.RuleViolationView;
-import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
-import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
-import de.bausdorf.simracing.racecontrol.web.model.TeamDetailView;
-import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
+import de.bausdorf.simracing.racecontrol.web.model.live.TeamDetailView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @Slf4j
@@ -211,7 +199,8 @@ public class LiveController extends ControllerBase {
 		Optional<RcBulletin> bulletin = bulletinRepository.findBySessionIdAndBulletinNo(
 				nextBulletinView.getSessionId(), nextBulletinView.getBulletinNo());
 		if(bulletin.isPresent()) {
-			return "redirect:index.html?error=" + "Bulletin " + bulletin.get().getBulletinNo() + " exists in this session";
+			addError("Bulletin " + bulletin.get().getBulletinNo() + " exists in this session", model);
+			return "redirect:index.html?messages=" + messagesEncoded(model);
 		} else {
 			RuleViolation violation = violationRepository.findById(nextBulletinView.getViolationId()).orElse(null);
 			Penalty penalty = penaltyRepository.findById(nextBulletinView.getSelectedPenaltyCode()).orElse(null);

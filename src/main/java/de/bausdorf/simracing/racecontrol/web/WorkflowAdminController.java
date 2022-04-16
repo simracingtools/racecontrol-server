@@ -25,10 +25,11 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.WorkflowState;
 import de.bausdorf.simracing.racecontrol.orga.model.WorkflowStateRepository;
-import de.bausdorf.simracing.racecontrol.web.model.AddWorkflowView;
-import de.bausdorf.simracing.racecontrol.web.model.WorkflowStateEditView;
-import de.bausdorf.simracing.racecontrol.web.model.WorkflowStateInfoView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.AddWorkflowView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowStateEditView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowStateInfoView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -54,6 +55,7 @@ public class WorkflowAdminController extends ControllerBase {
     }
 
     @GetMapping("/workflow-admin")
+    @Secured({"ROLE_SYSADMIN"})
     public String getWorkflowAdminView(@RequestParam Optional<String> error, Optional<String> workflow, Model model) {
         error.ifPresent(e -> addError(e, model));
 
@@ -88,6 +90,7 @@ public class WorkflowAdminController extends ControllerBase {
     }
 
     @PostMapping("/add-workflow")
+    @Secured({"ROLE_SYSADMIN"})
     @Transactional
     public String addWorkflow(@ModelAttribute AddWorkflowView addWorkflowView) {
         List<WorkflowState> existingStates = stateRepository.findDistinctByWorkflowName(addWorkflowView.getWorkflowName());
@@ -109,6 +112,7 @@ public class WorkflowAdminController extends ControllerBase {
     }
 
     @PostMapping("/save-workflow-state")
+    @Secured({"ROLE_SYSADMIN"})
     @Transactional
     public String saveWorkflowState(@ModelAttribute WorkflowStateEditView editWorkflowStateView) {
         Optional<WorkflowState> existingState = stateRepository.findById(editWorkflowStateView.getId());
@@ -119,6 +123,7 @@ public class WorkflowAdminController extends ControllerBase {
     }
 
     @GetMapping("/delete-workflow-state")
+    @Secured({"ROLE_SYSADMIN"})
     String deleteWorkflowState(@RequestParam String workflowStateId) {
         Optional<WorkflowState> workflowState = stateRepository.findById(Long.parseLong(workflowStateId));
         AtomicReference<String> workflowName = new AtomicReference<>(null);

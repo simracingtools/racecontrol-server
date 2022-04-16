@@ -79,11 +79,12 @@ public class RcAuthenticationProvider implements org.springframework.security.au
                     identifiedMember = Optional.empty();
                 }
             }
-            userRepository.save(RcUser.builder()
+
+            user = Optional.of(userRepository.save(RcUser.builder()
                     .email(userDetails.getEmail())
                     .oauthId(userId)
                     .imageUrl(userDetails.getPicture())
-                    .name(identifiedMember.map(MemberInfo::getName).orElse(null))
+                    .name(usernameFromIRacingName(identifiedMember.map(MemberInfo::getName).orElse(null)))
                     .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : newUserType)
                     .created(ZonedDateTime.now())
                     .subscriptionType(SubscriptionType.NONE)
@@ -94,7 +95,7 @@ public class RcAuthenticationProvider implements org.springframework.security.au
                     .expired(false)
                     .enabled(true)
                     .iRacingId(identifiedMember.map(MemberInfo::getCustid).orElse(0))
-                    .build()
+                    .build())
             );
         } else {
             if(user.get().getEventFilter().isEmpty()) {
@@ -106,6 +107,14 @@ public class RcAuthenticationProvider implements org.springframework.security.au
         return generateAuthenticationToken(authentication, user);
     }
 
+    private String usernameFromIRacingName(String iRacingName) {
+        if(iRacingName != null) {
+            String[] nameParts = iRacingName.split(" ");
+            return nameParts[0] + " " + nameParts[nameParts.length - 1];
+        }
+        return null;
+    }
+
     private Authentication generateAuthenticationToken(Authentication authentication, Optional<RcUser>  user) {
         KeycloakAuthenticationToken token = (KeycloakAuthenticationToken)authentication;
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
@@ -114,7 +123,6 @@ public class RcAuthenticationProvider implements org.springframework.security.au
             grantedAuthorities.add(new KeycloakRole(role));
         }
         user.ifPresent(u -> grantedAuthorities.add(new KeycloakRole(u.getUserType().toString())));
-
         return new KeycloakAuthenticationToken(token.getAccount(), token.isInteractive(), authoritiesMapper.mapAuthorities(grantedAuthorities));
     }
 

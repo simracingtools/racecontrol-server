@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 /*-
  * #%L
@@ -22,18 +22,14 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import lombok.*;
 
-    private final String destination;
-
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class LeagueInfoView {
+    private long leagueId;
+    private String leagueName;
 }

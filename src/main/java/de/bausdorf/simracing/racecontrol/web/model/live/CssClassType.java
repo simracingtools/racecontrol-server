@@ -1,10 +1,10 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.web.model.live;
 
 /*-
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2022 bausdorf engineering
+ * Copyright (C) 2020 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,18 +22,32 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import lombok.Getter;
 
-    private final String destination;
+public enum CssClassType {
+	DEFAULT("", ""),
+	TBL_SUCCESS("table-success", ""),
+	TBL_WARNING("table-warning", ""),
+	TBL_DANGER("table-danger", ""),
+	TBL_INFO("table-info", ""),
+	TBL_DARK("table-dark", ""),
+	TBL_SECONDARY("table-secondary", ""),
+	TBL_PRIMARY("table-primary", "");
 
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
+	@Getter
+	final
+	String backgroundClass;
 
-    public String getDestination() {
-        return destination;
-    }
+	@Getter
+	final
+	String textClass;
+
+	CssClassType(String backgroundClass, String textClass) {
+		this.backgroundClass = backgroundClass;
+		this.textClass = textClass;
+	}
+
+	public String getClassString() {
+		return backgroundClass + " " + textClass;
+	}
 }

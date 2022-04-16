@@ -1,10 +1,10 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.model.live;
 
 /*-
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2022 bausdorf engineering
+ * Copyright (C) 2020 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,11 +22,33 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import org.springframework.data.repository.CrudRepository;
-
 import java.util.List;
 
-public interface CarClassRepository extends CrudRepository<CarClass, Long> {
-    List<CarClass> findAllByEventId(long eventId);
-    List<CarClass> findAllByEventIdOrderByName(long eventId);
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+@Builder
+public class TeamView {
+	private TableCellView name;
+	private TableCellView carNo;
+	private String carName;
+	private String carClass;
+	private String carClassColor;
+	private TableCellView avgTeamRating;
+	private List<DriverView> drivers;
+	private boolean proTeam;
+	private long teamId;
+
+	public int getMaxDriverStints() {
+		int maxStints = 0;
+		for(DriverView driver : drivers) {
+			if(maxStints < driver.getStints().size()) {
+				maxStints = driver.getStints().size();
+			}
+		}
+		return maxStints;
+	}
 }

@@ -1,10 +1,10 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.web.model.live;
 
 /*-
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2022 bausdorf engineering
+ * Copyright (C) 2020 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,18 +22,19 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-    private final String destination;
-
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+public class SessionAdminView {
+	private String sessionId;
+	private String created;
+	private String trackName;
+	private String duration;
+	private String type;
 }

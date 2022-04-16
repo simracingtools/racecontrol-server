@@ -52,6 +52,7 @@ public class RcUser implements UserDetails {
 
 	private String name;
 	private String email;
+	private String discordHandle;
 	private String imageUrl;
 	private long iRacingId;
 	private String clientMessageAccessToken;

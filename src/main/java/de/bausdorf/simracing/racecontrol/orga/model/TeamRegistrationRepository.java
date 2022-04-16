@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
@@ -22,18 +22,10 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import org.springframework.data.repository.CrudRepository;
 
-    private final String destination;
+import java.util.List;
 
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
+public interface TeamRegistrationRepository extends CrudRepository<TeamRegistration, Long> {
+    List<TeamRegistration> findAllByEventId(long eventId);
 }

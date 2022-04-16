@@ -1,0 +1,163 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu(title='Team registration')"></div>
+
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col">
+                        <div class="row">
+                            <div class="col-3 col-sm-2 col-md-2 col-lg-1 col-xl-1" style="padding: 0;">
+                                <picture class="float-right"><img width="95px" style="width: 95px;" th:src="${eventView.logoUrl}"/></picture>
+                            </div>
+                            <div class="col-9 col-sm-5 col-md-6 col-lg-7 col-xl-7">
+                                <h5 th:text="${eventView.title}">Testevent</h5>
+                                <p>
+                                    <span th:text="${#temporals.format(eventView.startDate, 'dd.MM.yyyy')}">12.11.2022</span>
+                                    <span>  -  </span>
+                                    <span th:text="${#temporals.format(eventView.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
+                                </p>
+                                <p style="font-size: 14px;margin-bottom: 2px;" th:text="${eventView.description}">4th running of the most iconic Winter event. Broadcasted by racespotTV.</p>
+                                <span style="font-size: 12px;">iRacing League </span>
+                                <a href="#" style="font-size: 12px;" th:text="${eventView.irLeagueName}">Winter 24h of the Nürburgring</a>
+                            </div>
+                            <div class="col-sm-5 col-md-4 col-lg-4 col-xl-4">
+                                <div th:replace="index.html :: tableAvailableSlots(${eventView})"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <form method="post" th:action="@{/save-registration}" th:object="${createRegistrationView}">
+                                    <div class="row">
+                                        <div class="col-sm-2 col-md-2 col-lg-1 col-xl-1 text-center">
+                                            <div class="d-block"></div>
+                                        </div>
+                                        <div class="col-sm-10 col-md-10 col-lg-7 col-xl-7">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <input type="hidden" th:field="*{eventId}">
+                                                        <input type="hidden" th:field="*{leagueMember}">
+                                                        <input type="hidden" th:field="*{logoUrl}">
+                                                        <label>Team name (as used in iRacing)</label>
+                                                        <input class="form-control" type="text" required="" th:field="*{teamName}"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Liked car numbers (only numbers, no leading zeros, separated by comma)</label>
+                                                        <input class="form-control" type="text" th:field="*{likedNumbers}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xl-4">
+                                                    <div class="form-group">
+                                                        <label>Team iRacing ID</label><i class="far fa-question-circle text-info" data-toggle="tooltip" title="Organizing staff will check the ID and decline all registrations on invalid team ID&#39;s." style="margin-left: 5px;"></i>
+                                                        <input class="form-control" type="number" required="" th:field="*{iracingId}"/>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <div class="form-check" th:field="*{driver}">
+                                                            <input id="formCheck-1" class="form-check-input" type="checkbox" />
+                                                            <label class="form-check-label" for="formCheck-1">I&#39;ll be a driver in this team.</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div class="form-group">
+                                                        <label class="d-inline" style="width: 8em;">Car and class</label>
+                                                        <i class="far fa-question-circle text-info" data-toggle="tooltip" title="Car and car class changes are possible after registration only by permission of event organizers and if registration slot availability is given." style="margin-left: 5px;"></i>
+                                                        <select class="form-control" style="margin-top: 8px;" required="" th:field="*{carId}">
+                                                            <optgroup th:each="carClass: ${carsInClasses}" label="SP9">
+                                                                <option th:each="car: ${carClass.cars}" th:value="${car.carId}" th:text="${car.name}">BMW M4 GT3</option>
+                                                            </optgroup>
+                                                        </select>
+                                                    </div>
+                                                    <div class="form-group"><i class="far fa-question-circle text-info" data-toggle="tooltip" title="You may declare yourself a driver after successful registration"></i></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-3 col-xl-4">
+                                            <ul class="list-group">
+                                                <li class="list-group-item list-group-item-info">
+                                                    <span>Every team ID can only be registered once per event.</span>
+                                                </li>
+                                                <li class="list-group-item list-group-item-warning" th:if="*{!leagueMember}">
+                                                    <span>You may register a team but you have to join the iRacing League linked to this event to be able to participate!</span>
+                                                </li>
+                                                <li class="list-group-item list-group-item-info">
+                                                    <span>You can add team members after successful team registration.</span>
+                                                </li>
+                                                <li class="list-group-item list-group-item-warning" style="display: none;">
+                                                    <span>No more Slots available for this car class! You may register, but you'll be added to the waiting list!</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col text-center"><button class="btn btn-primary" type="submit">Register Team</button></div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="team-upload-modal" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form id="upload-logo-form" method="post" th:action="@{/team-logo-upload}" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Upload event logo</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Event logo file</label>
+                                <input class="form-control-file" type="file" name="file"/>
+                                <input class="form-control" type="hidden" name="eventId" th:value="${eventView.getEventId()}"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:insert="index :: footer"></div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+
+</html>

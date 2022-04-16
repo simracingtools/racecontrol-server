@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import de.bausdorf.simracing.racecontrol.iracing.KeyCloakClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -55,12 +54,9 @@ public class UserAdminController extends ControllerBase {
 	public static final String ADMIN_VIEW = "useradmin";
 
 	private final IRacingClient iRacingClient;
-	private final KeyCloakClient keyCloakClient;
 
-	public UserAdminController(@Autowired IRacingClient iRacingClient,
-							   @Autowired KeyCloakClient keyCloakClient) {
+	public UserAdminController(@Autowired IRacingClient iRacingClient) {
 		this.iRacingClient = iRacingClient;
-		this.keyCloakClient = keyCloakClient;
 	}
 
 	@GetMapping("/useradmin")
@@ -104,7 +100,8 @@ public class UserAdminController extends ControllerBase {
 
 	@GetMapping("/profile")
 	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER", "ROLE_NEW"})
-	public String getUserProfile(@RequestParam Optional<String> error, Model model) {
+	public String getUserProfile(@RequestParam Optional<String> messages, Model model) {
+		messages.ifPresent(s -> decodeMessagesToModel(s, model));
 		this.activeNav = "userProfile";
 		RcUser user = currentUser();
 		if(user.getIRacingId() == 0) {
@@ -115,7 +112,6 @@ public class UserAdminController extends ControllerBase {
 				addWarning("iRacing ID " + user.getIRacingId() + " is unknown in iRacing", model);
 			}
 		}
-		error.ifPresent(s -> addError(s, model));
 		model.addAttribute("profileView", new UserProfileView(user));
 		return PROFILE_VIEW;
 	}
@@ -123,20 +119,19 @@ public class UserAdminController extends ControllerBase {
 	@PostMapping("/profile")
 	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER", "ROLE_NEW"})
 	@Transactional
-	public String saveUserProfile(@ModelAttribute UserProfileView profileView) {
+	public String saveUserProfile(@ModelAttribute UserProfileView profileView, Model model) {
 		RcUser currentUser = currentUser();
-		String error = null;
 		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()
 				|| currentUser.getName() == null || currentUser.getName().isEmpty()) {
 			Optional<MemberInfo> idSearch = iRacingClient.getMemberInfo(profileView.getIRacingId());
 			if(idSearch.isEmpty()) {
 				log.warn("{}: No iRacing user with id {} found", currentUser.getName(), profileView.getIRacingId());
 				profileView.setIRacingId(currentUser.getIRacingId());
-				error = "iRacing ID " + profileView.getIRacingId() + " not present in iRacing service.";
+				addError("iRacing ID " + profileView.getIRacingId() + " not present in iRacing service.", model);
 			} else {
 				Optional<RcUser> userForChangedId = userRepository.findByiRacingId(profileView.getIRacingId());
 				if(userForChangedId.isPresent() && !userForChangedId.get().getOauthId().equals(currentUser.getOauthId())) {
-					error = "A user for iRacingID " + profileView.getIRacingId() + " is already registered";
+					addError("A user for iRacingID " + profileView.getIRacingId() + " is already registered", model);
 					profileView.setIRacingId(currentUser.getIRacingId());
 				} else {
 					profileView.setName(idSearch.get().getName());
@@ -148,8 +143,8 @@ public class UserAdminController extends ControllerBase {
 		}
 		RcUser userToSave = profileView.apply(currentUser);
 		userRepository.save(userToSave);
-//		keyCloakClient.syncUser(userToSave);
-		return "redirect:/profile" + (error != null ? "?error=" + error : "");
+		String messagesEncoded = messagesEncoded(model);
+		return "redirect:/profile" + (messagesEncoded != null ? "?messages=" + messagesEncoded : "");
 	}
 
 	@GetMapping("/deletesiteuser")

@@ -23,9 +23,13 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.bausdorf.simracing.racecontrol.web.security.*;
+import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
 
+@Slf4j
 public class ControllerBase {
 
 	public static final String MESSAGES = "messages";
@@ -46,6 +51,7 @@ public class ControllerBase {
 	RacecontrolServerProperties config;
 
 	String activeNav = "";
+	ObjectMapper mapper = new ObjectMapper();
 
 	@ModelAttribute("navigation")
 	String activeNav() {
@@ -76,6 +82,31 @@ public class ControllerBase {
 				.userType(RcUserType.NEW)
 				.created(ZonedDateTime.now())
 				.build());
+	}
+
+	protected String messagesEncoded(Model model) {
+		try {
+			Messages messages = ((Messages)model.getAttribute(MESSAGES));
+			if(messages == null || messages.isEmpty()) {
+				return null;
+			}
+			String messagesJson = mapper.writeValueAsString(messages.toArray());
+			return Base64.getEncoder().encodeToString(messagesJson.getBytes());
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
+		}
+		return null;
+	}
+
+	protected void decodeMessagesToModel(String messagesEncoded, Model model) {
+		try {
+			String messagesDecoded = new String(Base64.getDecoder().decode(messagesEncoded));
+			Messages messages = null;
+			messages = mapper.readValue(messagesDecoded, Messages.class);
+			model.addAttribute(MESSAGES, messages);
+		} catch (JsonProcessingException e) {
+			log.error(e.getMessage(), e);
+		}
 	}
 
 	@ModelAttribute(MESSAGES)

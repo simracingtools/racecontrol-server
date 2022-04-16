@@ -24,62 +24,44 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 
 import lombok.*;
 import org.hibernate.Hibernate;
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Entity
-public class EventSeries {
+public class TeamRegistration implements WorkflowItem {
 	@Id
 	@GeneratedValue
 	private long id;
 
-	private String title;
+	private long eventId;
+	private String teamName;
+	private String likedCarNumbers;
+	private String assignedCarNumber;
+	private Long iracingId;
 	private String logoUrl;
-	private String discordInvite;
-	private long iRLeagueID;
-	private String iRLeagueName;
-	private String description;
-	@Convert(converter = OffsetDateTimeConverter.class)
-	private OffsetDateTime registrationOpens;
-	@Convert(converter = OffsetDateTimeConverter.class)
-	private OffsetDateTime registrationCloses;
-	private LocalDate startDate;
-	private LocalDate endDate;
-	private boolean active;
 	@ManyToOne
-	private RuleSet ruleSet;
-	private long minTeamDrivers;
-	private long maxTeamDrivers;
-
-	@OneToMany(mappedBy = "eventId")
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@ToString.Exclude
-	private List<Person> staff;
-	@OneToMany(mappedBy = "eventId")
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@Cascade(org.hibernate.annotations.CascadeType.ALL)
-	@ToString.Exclude
-	private List<CarClass> carClassPreset;
-	@OneToMany(mappedBy = "eventId")
-	@LazyCollection(LazyCollectionOption.FALSE)
-	@ToString.Exclude
-	private List<TrackEvent> trackEvents;
+	private Person createdBy;
+	@Convert(converter = OffsetDateTimeConverter.class)
+	OffsetDateTime created;
+	@ManyToOne
+	BalancedCar car;
+	private boolean wildcard;
+	@ManyToOne
+	WorkflowState workflowState;
+	@OneToMany
+	private List<Person> teamMembers = new ArrayList<>();
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		EventSeries that = (EventSeries) o;
+		TeamRegistration that = (TeamRegistration) o;
 		return id != that.id;
 	}
 

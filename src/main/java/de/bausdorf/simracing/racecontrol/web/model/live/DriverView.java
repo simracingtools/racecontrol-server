@@ -1,10 +1,10 @@
-package de.bausdorf.simracing.racecontrol.util;
+package de.bausdorf.simracing.racecontrol.web.model.live;
 
 /*-
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2022 bausdorf engineering
+ * Copyright (C) 2020 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,18 +22,21 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-public enum FileTypeEnum {
-    LOGO(""),
-    PAINT("paints/"),
-    DOCUMENT("documents/");
+import java.util.List;
 
-    private final String destination;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-    FileTypeEnum(String subdirectory) {
-        this.destination = subdirectory;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
+@Data
+@AllArgsConstructor
+@Builder
+public class DriverView {
+	private String iRacingId;
+	private TableCellView name;
+	private String iRating;
+	private List<StintView> stints;
+	private TableCellView drivingTime;
+	private TableCellView drivenLaps;
+	int drivingMillis;
 }

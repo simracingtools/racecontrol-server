@@ -25,9 +25,9 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.racecontrol.live.model.Session;
 import de.bausdorf.simracing.racecontrol.live.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
-import de.bausdorf.simracing.racecontrol.web.model.EventInfoView;
-import de.bausdorf.simracing.racecontrol.web.model.SessionOptionView;
-import de.bausdorf.simracing.racecontrol.web.model.SessionSelectView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.EventInfoView;
+import de.bausdorf.simracing.racecontrol.web.model.live.SessionOptionView;
+import de.bausdorf.simracing.racecontrol.web.model.live.SessionSelectView;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -60,15 +60,21 @@ public class IndexController extends ControllerBase {
 
     private final SessionRepository sessionRepository;
     private final EventSeriesRepository eventRepository;
+    private final EventOrganizer eventOrganizer;
 
     public IndexController(@Autowired SessionRepository sessionRepository,
-                           @Autowired EventSeriesRepository eventRepository) {
+                           @Autowired EventSeriesRepository eventRepository,
+                           @Autowired EventOrganizer eventOrganizer) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
+        this.eventOrganizer = eventOrganizer;
     }
 
     @GetMapping({"/", "/index", "index.html"})
-    public String index(@RequestParam Optional<String> error, @RequestParam Optional<String> userId, Model model) {
+    public String index(@RequestParam Optional<String> error,
+                        @RequestParam Optional<String> userId,
+                        @RequestParam Optional<String> messages, Model model) {
+        messages.ifPresent(m -> decodeMessagesToModel(m, model));
         error.ifPresent(s -> addError(s, model));
         List<SessionOptionView> sessionOptions = new ArrayList<>();
         SessionSelectView selectView = SessionSelectView.builder()
@@ -90,6 +96,7 @@ public class IndexController extends ControllerBase {
         List<EventInfoView> eventInfoViews = EventInfoView.fromEntityList(
               eventRepository.findAllByRegistrationOpensBeforeAndEndDateAfterAndActiveOrderByStartDateAsc(
                       OffsetDateTime.now(), LocalDate.now(), true));
+        eventInfoViews.forEach(e -> e.setAvailableSlots(eventOrganizer.getAvailableGridSlots(e.getEventId())));
         model.addAttribute("eventViews", eventInfoViews);
         return INDEX_VIEW;
     }

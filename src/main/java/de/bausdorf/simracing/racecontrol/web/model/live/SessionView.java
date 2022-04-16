@@ -1,8 +1,8 @@
-package de.bausdorf.simracing.racecontrol.web;
+package de.bausdorf.simracing.racecontrol.web.model.live;
 
 /*-
  * #%L
- * tt-cloud-server
+ * racecontrol-server
  * %%
  * Copyright (C) 2020 bausdorf engineering
  * %%
@@ -22,30 +22,37 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@NoArgsConstructor
-public class Messages extends ArrayList<Message> {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-    public List<Message> errors() {
-        return this.stream()
-                .filter(s -> s.getType().equalsIgnoreCase(Message.ERROR))
-                .collect(Collectors.toList());
-    }
+@Data
+@AllArgsConstructor
+@Builder
+public class SessionView {
 
-    public List<Message> warnings() {
-        return this.stream()
-                .filter(s -> s.getType().equalsIgnoreCase(Message.WARN))
-                .collect(Collectors.toList());
-    }
+	private String sessionId;
+	private TableCellView trackName;
+	private TableCellView sessionDuration;
+	private TableCellView sessionType;
+	private TableCellView sessionState;
+	private List<TeamView> teams;
+	private int maxStintColumns;
 
-    public List<Message> infos() {
-        return this.stream()
-                .filter(s -> s.getType().equalsIgnoreCase(Message.INFO))
-                .collect(Collectors.toList());
-    }
+	public List<Integer> getMaxDriverStints() {
+		int maxStints = 0;
+		for (TeamView team : teams) {
+			if (maxStints < team.getMaxDriverStints()) {
+				maxStints = team.getMaxDriverStints();
+			}
+		}
+		ArrayList<Integer> retVal = new ArrayList<>();
+		for (int i = 0; i < maxStints; i++) {
+			retVal.add(i + 1);
+		}
+		return retVal;
+	}
 }

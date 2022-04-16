@@ -59,8 +59,8 @@ import de.bausdorf.simracing.racecontrol.live.model.Team;
 import de.bausdorf.simracing.racecontrol.live.model.TeamRepository;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import de.bausdorf.simracing.racecontrol.web.ViewBuilder;
-import de.bausdorf.simracing.racecontrol.web.model.ClientAck;
-import de.bausdorf.simracing.racecontrol.web.model.ClientConnectMessage;
+import de.bausdorf.simracing.racecontrol.web.model.live.ClientAck;
+import de.bausdorf.simracing.racecontrol.web.model.live.ClientConnectMessage;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -132,7 +132,6 @@ public class MessageProcessorImpl implements MessageProcessor {
 			log.warn("Session update for state {} for {} already exists",
 					SessionStateType.ofTypeCode(clientData.getSessionState()),
 					session.getSessionId());
-			return;
 		}
 	}
 
