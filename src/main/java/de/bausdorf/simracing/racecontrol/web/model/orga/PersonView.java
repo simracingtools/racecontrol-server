@@ -58,6 +58,11 @@ public class PersonView {
     }
 
     public static PersonView fromEntity(Person person) {
+        if(person == null) {
+            return PersonView.builder()
+                    .name("")
+                    .build();
+        }
         return PersonView.builder()
                 .id(person.getId())
                 .iracingId(person.getIracingId())

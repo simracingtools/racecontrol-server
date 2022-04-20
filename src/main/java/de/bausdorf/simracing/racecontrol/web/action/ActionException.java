@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.action;
 
 /*-
  * #%L
@@ -22,12 +22,11 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import java.time.OffsetDateTime;
-
-public interface WorkflowItem {
-    OffsetDateTime getCreated();
-    Person getCreatedBy();
-    long getEventId();
-    String getName();
-    WorkflowState getWorkflowState();
+public class ActionException extends Exception {
+    public ActionException(String message) {
+        super(message);
+    }
+    public ActionException(String message, Throwable e) {
+        super(message, e);
+    }
 }

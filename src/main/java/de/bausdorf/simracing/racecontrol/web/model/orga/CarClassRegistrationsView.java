@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 /*-
  * #%L
@@ -22,12 +22,23 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface WorkflowItem {
-    OffsetDateTime getCreated();
-    Person getCreatedBy();
-    long getEventId();
-    String getName();
-    WorkflowState getWorkflowState();
+import java.util.List;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class CarClassRegistrationsView {
+    private long carClassId;
+    private String name;
+    private long maxSlots;
+    private long availableSlots;
+    private long wildcards;
+    private long onWaitingList;
+    List<TeamRegistrationView> registrations;
 }

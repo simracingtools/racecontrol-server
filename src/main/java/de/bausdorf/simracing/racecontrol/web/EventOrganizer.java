@@ -1,26 +1,138 @@
 package de.bausdorf.simracing.racecontrol.web;
 
-import de.bausdorf.simracing.racecontrol.orga.model.CarClass;
-import de.bausdorf.simracing.racecontrol.orga.model.CarClassRepository;
-import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
-import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistrationRepository;
-import de.bausdorf.simracing.racecontrol.web.model.orga.AvailableSlotsView;
+/*-
+ * #%L
+ * racecontrol-server
+ * %%
+ * Copyright (C) 2020 - 2022 bausdorf engineering
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/gpl-3.0.html>.
+ * #L%
+ */
+
+import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
+import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @Component
 public class EventOrganizer {
+    public static final String ASSET_BASE_URL = "https://images-static.iracing.com";
     private final CarClassRepository carClassRepository;
     private final TeamRegistrationRepository registrationRepository;
-
+    private final WorkflowActionRepository actionRepository;
+    private final WorkflowStateRepository stateRepository;
+    private final IRacingClient dataClient;
     public EventOrganizer(@Autowired CarClassRepository carClassRepository,
-                          @Autowired TeamRegistrationRepository registrationRepository) {
+                          @Autowired TeamRegistrationRepository registrationRepository,
+                          @Autowired WorkflowActionRepository actionRepository,
+                          @Autowired WorkflowStateRepository stateRepository,
+                          @Autowired IRacingClient dataClient) {
         this.carClassRepository = carClassRepository;
         this.registrationRepository = registrationRepository;
+        this.stateRepository = stateRepository;
+        this.dataClient = dataClient;
+        this.actionRepository = actionRepository;
+    }
+
+    public List<CarClassRegistrationsView> getTeamRegistrationsCarClassList(long eventId) {
+        List<CarClassRegistrationsView> resultList = new ArrayList<>();
+        List<TeamRegistration> eventRegistrations = registrationRepository.findAllByEventId(eventId);
+        List<CarClass> eventClasses = carClassRepository.findAllByEventId(eventId);
+        eventClasses.forEach(carClass -> {
+            AtomicLong availableSlotsCount = new AtomicLong(carClass.getMaxSlots());
+            AtomicLong wildcards = new AtomicLong(carClass.getWildcards());
+            AtomicLong onWaitingList = new AtomicLong(0L);
+            AtomicReference<TeamRegistrationView[]> regArray = new AtomicReference<>(new TeamRegistrationView[carClass.getMaxSlots()]);
+            AtomicReference<List<TeamRegistrationView>> waitingList = new AtomicReference<>(new ArrayList<>());
+            AtomicReference<CarClassRegistrationsView> classView = new AtomicReference<>(new CarClassRegistrationsView());
+            AtomicLong regCount = new AtomicLong(0L);
+            eventRegistrations.stream()
+                    .filter(r -> (r.getCar().getCarClassId() == carClass.getId()
+                            && !r.getWorkflowState().isInActive()))
+                    .forEach(r -> {
+                        if (availableSlotsCount.get() > 0) {
+                            availableSlotsCount.decrementAndGet();
+                        } else {
+                            onWaitingList.incrementAndGet();
+                        }
+                        if (r.isWildcard() && wildcards.get() > 0) {
+                            wildcards.decrementAndGet();
+                        }
+                        CarAssetDto assets = getCarAsset(r.getCar().getCarId());
+                        TeamRegistrationView view = TeamRegistrationView.fromEntity(r);
+                        if(assets != null) {
+                            view.getCar().setCarLogoUrl(ASSET_BASE_URL + assets.getLogo());
+                        }
+                        if(view.isWildcard()) {
+                            for(int i = 0; i < carClass.getWildcards(); i++) {
+                                if(regArray.get()[i] == null) {
+                                    regArray.get()[i] = view;
+                                    break;
+                                }
+                            }
+                        } else if(regCount.get() < carClass.getMaxSlots()){
+                            for(int i = carClass.getWildcards(); i < carClass.getMaxSlots(); i++) {
+                                if (regArray.get()[i] == null) {
+                                    regArray.get()[i] = view;
+                                    break;
+                                }
+                            }
+                        } else {
+                            waitingList.get().add(view);
+                        }
+                        regCount.incrementAndGet();
+                    });
+            for(int i = 0; i < carClass.getMaxSlots(); i++) {
+                if(regArray.get()[i] == null) {
+                    regArray.get()[i] = TeamRegistrationView.builder()
+                            .teamName(i < carClass.getWildcards() ? "Free wildcard" : "Free slot")
+                            .workflowState(WorkflowStateInfoView.builder()
+                                    .build())
+                            .car(BalancedCarView.builder()
+                                    .carLogoUrl("")
+                                    .carName("")
+                                    .carClassId(0)
+                                    .build())
+                            .build();
+                }
+                waitingList.get().add(i, regArray.get()[i]);
+            }
+            classView.get().setRegistrations(waitingList.get());
+            classView.get().setMaxSlots(carClass.getMaxSlots());
+            classView.get().setCarClassId(carClass.getId());
+            classView.get().setName(carClass.getName());
+            classView.get().setAvailableSlots(availableSlotsCount.get());
+            classView.get().setWildcards(wildcards.get());
+            classView.get().setOnWaitingList(onWaitingList.get());
+            resultList.add(classView.get());
+        });
+        return resultList;
     }
 
     public List<AvailableSlotsView> getAvailableGridSlots(long eventId) {
@@ -56,5 +168,124 @@ public class EventOrganizer {
             carClassMap.add(availableSlots);
         });
         return carClassMap;
+    }
+
+    String declineRegistration(WorkflowActionEditView editView, Person actor) {
+        WorkflowAction currentAction = getWorkflowAction(editView.getId());
+        if(currentAction != null) {
+            TeamRegistration registration = getTeamRegistration(currentAction.getWorkflowItemId());
+            if(registration == null) {
+                return "Registration not found for action";
+            }
+
+            try {
+                updateCurrentAction(currentAction, actor, editView);
+            } catch(IllegalStateException e) {
+                return e.getMessage();
+            }
+
+            registration.setWorkflowState(currentAction.getTargetState());
+            registrationRepository.save(registration);
+
+            createFollowUpAction(currentAction, actor, editView.getDueDate());
+        } else {
+            return "Current action not found";
+        }
+        return "";
+    }
+
+    public List<WorkflowActionInfoView> getActiveWorkflowActionListForRole(long eventId, String workflowName, @NonNull Person currentPerson) {
+        List<Long> workflowIds = (currentPerson.getRole().isParticipant())
+                ? myRegistrationIds(currentPerson) : null;
+        List<WorkflowAction> actionList = actionRepository.findAllByEventIdAndWorkflowNameOrderByCreatedDesc(eventId, workflowName);
+        List<WorkflowActionInfoView> resultList = actionList.stream()
+                .filter(a -> a.getSourceState().getFollowUps().stream()
+                        .anyMatch(s -> s.getDutyRoles().contains(currentPerson.getRole())) && a.getTargetState() == null)
+                .filter(a -> workflowIds == null || workflowIds.contains(a.getWorkflowItemId()))
+                .map(action -> mapWorkflowAction(workflowName, action))
+                .collect(Collectors.toList());
+        resultList.addAll(actionList.stream()
+                .filter(a -> a.getSourceState().getFollowUps().stream()
+                        .anyMatch(s -> s.getDutyRoles().contains(currentPerson.getRole())) && a.getTargetState() != null)
+                .map(action -> mapWorkflowAction(workflowName, action))
+                .collect(Collectors.toList()));
+        if(workflowIds != null) {
+            resultList.addAll(actionList.stream()
+                    .filter(a -> a.getSourceState().getFollowUps().stream()
+                            .noneMatch(s -> s.getDutyRoles().contains(currentPerson.getRole())) && a.getTargetState() != null)
+                    .filter(a -> workflowIds.contains(a.getWorkflowItemId()))
+                    .map(action -> mapWorkflowAction(workflowName, action))
+                    .collect(Collectors.toList()));
+        }
+        return resultList;
+    }
+
+    public boolean checkUniqueCarNumber(long eventId, @NonNull String carNo) {
+        return registrationRepository.findAllByEventId(eventId).stream()
+                .noneMatch(r -> !r.getWorkflowState().isInActive() && carNo.equalsIgnoreCase(r.getAssignedCarNumber()));
+    }
+
+    public List<Long> myRegistrationIds(Person person) {
+        List<TeamRegistration> registrations = registrationRepository.findAllByEventId(person.getEventId());
+        return registrations.stream()
+                .filter(r -> r.getCreatedBy().getId() == person.getId()
+                        || r.getTeamMembers().stream().anyMatch(p -> p.getId() == person.getId()))
+                .map(TeamRegistration::getId)
+                .collect(Collectors.toList());
+    }
+
+    public TeamRegistration getTeamRegistration(long registrationId) {
+        return registrationRepository.findById(registrationId).orElse(null);
+    }
+
+    public TeamRegistration saveRegistration(TeamRegistration registration) {
+        return registrationRepository.save(registration);
+    }
+
+    public WorkflowAction getWorkflowAction(long actionId) {
+        return actionRepository.findById(actionId).orElse(null);
+    }
+
+    private CarAssetDto getCarAsset(long carId) {
+        return dataClient.getDataCache().getCarAssets().values().stream()
+                .filter(asset -> asset.getCarId() == carId).findFirst().orElse(null);
+    }
+
+    private WorkflowActionInfoView mapWorkflowAction(String workflowName, WorkflowAction action){
+        WorkflowActionInfoView infoView = WorkflowActionInfoView.fromEntity(action);
+        if(workflowName.equalsIgnoreCase("TeamRegistration")) {
+            Optional<TeamRegistration> registration = registrationRepository.findById(action.getWorkflowItemId());
+            if(action.getSourceState().getStateKey().equalsIgnoreCase("TEAM_REGISTRATION")) {
+                registration.ifPresent(r -> infoView.setEditActionMessage(r.getLikedCarNumbers()));
+            }
+            registration.ifPresent(r -> infoView.setTeamName(r.getTeamName()));
+        }
+        return infoView;
+    }
+
+    public WorkflowAction updateCurrentAction(@NonNull WorkflowAction currentAction, @NonNull Person actor, @NonNull WorkflowActionEditView editAction) {
+        currentAction.setDoneAt(OffsetDateTime.now());
+        currentAction.setDoneBy(actor);
+        currentAction.setMessage(editAction.getMessage());
+        WorkflowState targetState = stateRepository.findWorkflowStateByWorkflowNameAndStateKey(
+                currentAction.getWorkflowName(), editAction.getTargetStateKey()).orElse(null);
+        if(targetState == null) {
+            throw new IllegalStateException("Target state " + editAction.getTargetStateKey() + " not found.");
+        }
+        currentAction.setTargetState(targetState);
+        return actionRepository.save(currentAction);
+    }
+
+    public WorkflowAction createFollowUpAction(WorkflowAction currentAction, Person actor, LocalDateTime dueDate) {
+        WorkflowAction followUp = WorkflowAction.builder()
+                .eventId(currentAction.getEventId())
+                .workflowName(currentAction.getTargetState().getWorkflowName())
+                .workflowItemId(currentAction.getWorkflowItemId())
+                .created(OffsetDateTime.now())
+                .createdBy(actor)
+                .sourceState(currentAction.getTargetState())
+                .dueDate(dueDate != null ? OffsetDateTime.of(dueDate, ZoneOffset.UTC) : null)
+                .build();
+        return actionRepository.save(followUp);
     }
 }

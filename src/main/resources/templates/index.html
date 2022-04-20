@@ -139,7 +139,9 @@
                     <img width="100px" th:src="${event.logoUrl}"/>
                 </div>
                 <div class="col-9 col-sm-10 col-md-10 col-lg-3 col-xl-4">
-                    <h4 class="d-inline" th:text="${event.title}">Testevent</h4>
+                    <a th:href="@{/event-detail(eventId=${event.eventId})}">
+                        <h4 class="d-inline" th:text="${event.title}">Testevent</h4>
+                    </a>
                     <a th:if="${user.racedirection}" th:href="@{/create-event(eventId=${event.eventId})}" style="padding-left: 5px;">
                         <i class="fa fa-edit"></i>
                     </a>

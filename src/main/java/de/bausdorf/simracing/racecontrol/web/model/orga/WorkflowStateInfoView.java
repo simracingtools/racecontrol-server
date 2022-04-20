@@ -28,6 +28,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,28 +46,43 @@ public class WorkflowStateInfoView {
     private Boolean initialState;
     private Boolean inActive;
     private List<String> dutyRoles;
-    private List<WorkflowState> followUps;
+    private List<WorkflowStateInfoView> followUps;
     private List<Long> followUpIds;
     private List<Long> dutyRoleIndices;
 
+    public String getColorStyleString() {
+        return "background-color: " + getColor() + "; color: " + getTextColor() + ";";
+    }
+
     public static WorkflowStateInfoView fromEntity(WorkflowState state) {
-        return WorkflowStateInfoView.builder()
-                .id(state.getId())
-                .stateKey(state.getStateKey())
-                .workflowName(state.getWorkflowName())
-                .description(state.getDescription())
-                .color(state.getColor())
-                .textColor(state.getTextColor())
-                .initialState(state.isInitialState())
-                .inActive(state.isInActive())
-                .dutyRoles(state.getDutyRoles().stream().map(OrgaRoleType::toString).collect(Collectors.toList()))
-                .followUps(state.getFollowUps())
-                .followUpIds(state.getFollowUps().stream().map(WorkflowState::getId).collect(Collectors.toList()))
-                .dutyRoleIndices(state.getDutyRoles().stream().map(role -> Long.valueOf(role.code())).collect(Collectors.toList()))
-                .build();
+        if(state != null) {
+            return WorkflowStateInfoView.builder()
+                    .id(state.getId())
+                    .stateKey(state.getStateKey())
+                    .workflowName(state.getWorkflowName())
+                    .description(state.getDescription())
+                    .color(state.getColor())
+                    .textColor(state.getTextColor())
+                    .initialState(state.isInitialState())
+                    .inActive(state.isInActive())
+                    .dutyRoles(state.getDutyRoles().stream().map(OrgaRoleType::toString).collect(Collectors.toList()))
+                    .followUps(state.getFollowUps().stream()
+                            .sorted(Comparator.comparing(WorkflowState::isInActive))
+                            .map(WorkflowStateInfoView::fromEntity)
+                            .collect(Collectors.toList()))
+                    .followUpIds(state.getFollowUps().stream()
+                            .sorted(Comparator.comparing(WorkflowState::isInActive))
+                            .map(WorkflowState::getId)
+                            .collect(Collectors.toList()))
+                    .dutyRoleIndices(state.getDutyRoles().stream().map(role -> Long.valueOf(role.code())).collect(Collectors.toList()))
+                    .build();
+        }
+        return null;
     }
 
     public static List<WorkflowStateInfoView> fromEntityList(List<WorkflowState> states) {
-        return states.stream().map(WorkflowStateInfoView::fromEntity).collect(Collectors.toList());
+        return states.stream()
+                .map(WorkflowStateInfoView::fromEntity)
+                .collect(Collectors.toList());
     }
 }

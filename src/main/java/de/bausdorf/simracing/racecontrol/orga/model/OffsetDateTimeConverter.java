@@ -30,11 +30,17 @@ import java.time.OffsetDateTime;
 public class OffsetDateTimeConverter implements AttributeConverter<OffsetDateTime, String> {
     @Override
     public String convertToDatabaseColumn(OffsetDateTime offsetDateTime) {
+        if(offsetDateTime == null) {
+            return null;
+        }
         return offsetDateTime.toString();
     }
 
     @Override
     public OffsetDateTime convertToEntityAttribute(String s) {
+        if(s == null) {
+            return null;
+        }
         return OffsetDateTime.parse(s);
     }
 }

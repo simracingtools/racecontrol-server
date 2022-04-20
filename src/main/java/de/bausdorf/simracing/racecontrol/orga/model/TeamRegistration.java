@@ -57,6 +57,11 @@ public class TeamRegistration implements WorkflowItem {
 	@OneToMany
 	private List<Person> teamMembers = new ArrayList<>();
 
+	@Transient
+	public String getName() {
+		return teamName;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

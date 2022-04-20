@@ -29,6 +29,7 @@ import java.util.Optional;
 
 public interface WorkflowStateRepository extends CrudRepository<WorkflowState, Long> {
     List<WorkflowState> findAllByWorkflowName(String workflowName);
+    Optional<WorkflowState> findWorkflowStateByWorkflowNameAndStateKey(String workflowName, String stateKey);
     Optional<WorkflowState> findByWorkflowNameAndInitialState(String workflowName, boolean initialState);
     List<WorkflowState> findDistinctByWorkflowName(String workflowName);
 }

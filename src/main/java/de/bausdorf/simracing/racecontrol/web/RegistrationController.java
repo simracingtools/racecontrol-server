@@ -22,7 +22,6 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
@@ -54,7 +53,6 @@ public class RegistrationController extends ControllerBase {
     private final WorkflowStateRepository workflowStateRepository;
     private final WorkflowActionRepository workflowActionRepository;
     private final TeamRegistrationRepository registrationRepository;
-    private final IRacingClient iRacingClient;
     private final LeagueDataCache leagueDataCache;
     private final EventOrganizer eventOrganizer;
 
@@ -64,7 +62,6 @@ public class RegistrationController extends ControllerBase {
                                   @Autowired TeamRegistrationRepository registrationRepository,
                                   @Autowired WorkflowStateRepository workflowStateRepository,
                                   @Autowired WorkflowActionRepository workflowActionRepository,
-                                  @Autowired IRacingClient iRacingClient,
                                   @Autowired LeagueDataCache leagueDataCache,
                                   @Autowired EventOrganizer eventOrganizer) {
         this.eventRepository = eventRepository;
@@ -73,7 +70,6 @@ public class RegistrationController extends ControllerBase {
         this.registrationRepository = registrationRepository;
         this.workflowStateRepository = workflowStateRepository;
         this.workflowActionRepository = workflowActionRepository;
-        this.iRacingClient = iRacingClient;
         this.leagueDataCache = leagueDataCache;
         this.eventOrganizer = eventOrganizer;
     }
@@ -125,6 +121,7 @@ public class RegistrationController extends ControllerBase {
         registration.setLikedCarNumbers(createRegistrationView.getLikedNumbers());
         registration.setTeamName(createRegistrationView.getTeamName());
         registration.setLogoUrl(createRegistrationView.getLogoUrl());
+        registration.setIracingId(createRegistrationView.getIracingId());
         Optional<BalancedCar> car = balancedCarRepository.findById(createRegistrationView.getCarId());
         if(car.isPresent()) {
             registration.setCar(car.get());
@@ -142,6 +139,7 @@ public class RegistrationController extends ControllerBase {
         } else {
             registration.setWorkflowState(initialWorkflowState);
             registration.getTeamMembers().add(creator);
+
             registration = registrationRepository.save(registration);
             createWorkFlowAction(registration);
             addInfo("Your application for registration was processed successfully.", model);

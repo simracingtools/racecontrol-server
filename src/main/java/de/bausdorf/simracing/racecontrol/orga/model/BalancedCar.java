@@ -43,9 +43,9 @@ public class BalancedCar {
 	private long carClassId;
 	private String carName;
 	private double maxFuel;
-	private int fuelPercent;
-	private int weightPenalty;
-	private int enginePowerPercent;
+	private double fuelPercent;
+	private double weightPenalty;
+	private double enginePowerPercent;
 
 	@Override
 	public boolean equals(Object o) {

@@ -1,0 +1,318 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu(title=${eventView.title})"></div>
+
+        <div class="row" style="margin: 0;margin-left: 0;">
+            <div class="col" style="padding: 0;">
+                <div class="row" style="margin: 0;">
+                    <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding: 0;">
+                        <picture class="float-right"><img width="95px" style="width: 95px;" th:href="${eventView.logoUrl}"/></picture>
+                    </div>
+                    <div class="col-9 col-sm-10 col-md-7 col-lg-5 col-xl-6">
+                        <p>
+                            <span th:text="${#temporals.format(eventView.startDate, 'dd.MM.yyyy')}">12.11.2022</span>
+                            <span>  -  </span>
+                            <span th:text="${#temporals.format(eventView.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
+                        </p>
+                        <p style="font-size: 14px;margin-bottom: 2px;" th:text="${eventView.description}">4th running of the most iconic Winter event. Broadcasted by racespotTV.</p>
+                        <span style="font-size: 12px;">iRacing League </span>
+                        <a href="#" style="font-size: 12px;" th:text="${eventView.irLeagueName}">Winter 24h of the Nürburgring</a>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-6 col-xl-5">
+                        <div class="row">
+                            <div class="col-sm-10 col-xl-12">
+                                <span>Registration open</span>
+<!--                                <button class="btn btn-primary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;">Register</button>-->
+                            </div>
+                        </div>
+                        <div class="row" style="font-size: 14px;">
+                            <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>from</span></div>
+                            <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
+                                <span th:text="${#temporals.format(eventView.registrationOpens, 'dd.MM.yyyy HH:mm ') + eventView.registrationOpensTZ}">12.04.</span>
+                            </div>
+                            <div class="col-4 col-sm-4 col-lg-5 col-xl-5">
+                                <span>100 d 12 H 44 m 13 s</span>
+                            </div>
+                        </div>
+                        <div class="row" style="font-size: 14px;">
+                            <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>until</span></div>
+                            <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
+                                <span th:text="${#temporals.format(eventView.registrationCloses, 'dd.MM.yyyy HH:mm ') + eventView.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
+                            </div>
+                            <div class="col-4 col-sm-4 col-lg-5 col-xl-5"><span>100 d 12 H 44 m 13 s</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin: 0;margin-right: 0;">
+                    <div class="col">
+                        <div style="font-size: 14px;">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-toggle="tab" href="#tab-tasks">Tasks</a></li>
+                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-6">BOP</a></li>
+                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-7">Documents</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div id="tab-tasks" class="tab-pane active" role="tabpanel">
+                                    <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive">
+                                        <table class="table" style="font-size: 12px;">
+                                            <thead>
+                                            <tr>
+                                                <th style="padding: 3px;">State</th>
+                                                <th style="padding: 3px;">created</th>
+                                                <th style="padding: 3px;">last change</th>
+                                                <th style="padding: 3px;">TODO's</th>
+                                                <th style="padding: 3px;"></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="action : ${actions}" th:id="'action-tr-' + ${action.id}">
+                                                <td th:style="'padding: 3px; ' + ${action.sourceState.getColorStyleString()}">
+                                                    <input type="hidden" th:value="${action.id}" id="id">
+                                                    <input type="hidden" th:value="${action.editActionMessage}" id="editActionMessage">
+                                                    <input type="hidden" th:value="${action.workflowItemId}" id="workflowItemId">
+                                                    <span th:text="${action.sourceState.description}">Team Registration</span>
+                                                    <div>
+                                                        <span th:text="${action.teamName}">PCF Racing Red</span>
+                                                    </div>
+                                                </td>
+                                                <td style="padding: 3px;">
+                                                    <span th:text="${#temporals.format(action.created, 'dd.MM.yyyy HH:mm')}">14.04.2022 16:59</span>
+                                                    <div>
+                                                        <span th:text="${' by ' + action.createdBy.name}">by John Doe</span>
+                                                    </div>
+                                                </td>
+                                                <td style="padding: 3px;">
+                                                    <span th:text="${action.targetState != null ? #temporals.format(action.doneAt, 'dd.MM.yyyy HH:mm') : ''}">14.04.2022 17:18</span>
+                                                    <div>
+                                                        <span th:text="${action.targetState != null ? ('by ' + action.doneBy.name) : ''}">by Robert Bausdorf</span>
+                                                    </div>
+                                                </td>
+                                                <td style="padding: 3px;">
+                                                    <div th:if="${action.targetState == null}" class="d-block" th:each="state: ${action.targetStates}">
+                                                        <span th:style="${state.getColorStyleString()}" th:text="${state.description}">Assign car no</span>
+                                                    </div>
+                                                    <span th:if="${action.targetState != null}" th:text="${action.targetState.description}" th:style="${action.targetState.getColorStyleString()}">Assign car no</span>
+                                                </td>
+                                                <td class="text-center" style="padding: 3px;" th:if="${!action.targetStates.isEmpty()}">
+                                                    <button th:if="${!action.sourceState.inActive && action.targetState == null}" class="btn btn-primary" type="button" th:onclick="'editWorkflowAction(' + ${action.id} + ');'" style="padding-top: 3px;padding-bottom: 3px;padding-right: 10px;padding-left: 12px;">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <div th:if="${!action.sourceState.inActive && action.targetState == null}" th:replace="action-modals.html :: ${action.workflowName +  '-' + action.sourceState.stateKey + '-modal'}(${action}, '/team-registration-action', ${editAction})"></div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div th:if="${currentPerson.name.isEmpty()}" class="text-center" style="margin-top: 5em;">
+                                        <p>You currently have no team registered, and you are not a member of an existing team.</p>
+                                        <p>When either one of this becomes true you'll find your todo's here.</p>
+                                        <button th:if="${eventView.isRegistrationOpen()}" class= "btn btn-primary" type="button" style="margin-top: 1em;" th:data-target="${'#register-modal-' + eventView.eventId}" data-toggle="modal">Register</button>
+                                        <button th:if="${!eventView.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
+                                        <div th:id="${'register-modal-' + eventView.eventId}" class="modal fade" role="dialog" tabindex="-1">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h4 class="modal-title" th:text="${'Register for ' + eventView.title}">Register for</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                                                            <p>
+                                                                We appreciate your interest to participate in our event!
+                                                            </p>
+                                                            <p class="text-left">
+                                                                <span>
+                                                                    To be able to register successfully please keep your <strong>iRacing team ID</strong>
+                                                                    and <strong>iRacing team name</strong> at hand.
+                                                                </span>
+                                                                <span th:text="${eventView.irLeagueName}"></span>
+                                                            </p>
+                                                            <a class="d-block" th:href="@{/team-registration(eventId=${eventView.eventId})}">
+                                                                <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register new team</button>
+                                                            </a>
+                                                            <a class="d-block" href="#">
+                                                                <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register as team member</button>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="tab-6" class="tab-pane" role="tabpanel">
+                                    <p>Content for tab 6.</p>
+                                </div>
+                                <div id="tab-7" class="tab-pane" role="tabpanel">
+                                    <p>Content for tab 7.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-5 col-xl-5" style="padding-right: 5px;padding-left: 5px;">
+                        <h6>Current Registrations</h6>
+                        <div style="font-size: 12px;">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation" th:each="carClass, carClassStat : ${teamRegistrations}">
+                                    <a th:class="${'nav-link' + (carClassStat.index == 0 ? ' active' : '')}" role="tab" data-toggle="tab" th:href="${'#tab-' + carClass.name}" style="padding: 2px;font-size: 14px;">
+                                        <span th:text="${carClass.name}">SP9</span><span th:text="${' (' + carClass.availableSlots + '/' + carClass.maxSlots} + ')'"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div th:each="carClass,carClassStat : ${teamRegistrations}" th:id="${'tab-' + carClass.name}" th:class="${'tab-pane' + (carClassStat.index == 0 ? ' active' : '')}" role="tabpanel">
+                                    <div class="table-responsive" style="font-size: 14px;">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="padding: 3px;">car #</th>
+                                                    <th style="padding: 3px;">Team</th>
+                                                    <th style="padding: 3px;"></th>
+                                                    <th style="padding: 3px;">Car</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody style="padding: 3px;">
+                                                <tr th:style="${'padding: 3px; ' + (regStat.index < carClass.getMaxSlots() ? registration.getColorStyleString() : 'background-color: #d5d5d5')}" th:each="registration, regStat : ${carClass.registrations}">
+                                                    <td class="text-right" style="padding: 3px; font-size: 14px;" th:text="${registration.assignedCarNumber}">34</td>
+                                                    <td style="padding: 3px;font-size: 14px;" th:text="${registration.teamName}">Sikania Endurance Motosport TCR</td>
+                                                    <td style="padding: 3px;font-size: 14px;">
+                                                        <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="20px" style="font-size: 12px;" />
+                                                    </td>
+                                                    <td style="padding: 3px;font-size: 14px;" th:text="${registration.car.carName}">Audi RS3 LMS</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin: 0;">
+                    <div class="col">
+                        <h6 class="d-inline" style="font-size: 16px;">Event sessions</h6><button class="btn btn-primary" type="button" style="height: 25px;padding-top: 0;padding-bottom: 0;margin-top: 2px;margin-bottom: 2px;padding-right: 6px;padding-left: 6px;margin-left: 10px;"><i class="fas fa-plus"></i></button>
+                        <div class="table-responsive" style="font-size: 14px;">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Date</th>
+                                    <th>Mode</th>
+                                    <th>Duration</th>
+                                    <th>Track</th>
+                                    <th>Track Conditions</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Sunrise Practice</td>
+                                    <td>12.11.2022 20:00 CET</td>
+                                    <td><span>Open Practice</span></td>
+                                    <td>02:00</td>
+                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
+                                    <td><span class="d-block">30.11.2022 07:30</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
+                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>Sunset Practice</td>
+                                    <td>21.11.2022 19:00 CET</td>
+                                    <td><span>Open Practice</span></td>
+                                    <td>02:00</td>
+                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
+                                    <td><span class="d-block">30.11.2022 16:15</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
+                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>Preparation Race</td>
+                                    <td>12.12.2022 15:00 CET</td>
+                                    <td>
+                                        <div><span>Open Practice</span><span class="float-right">00:10</span></div>
+                                        <div><span>Lone Qualify</span><span class="float-right"> 2 laps / 00:30</span></div>
+                                        <div><span>Race</span><span class="float-right"> 06:00</span></div>
+                                    </td>
+                                    <td>06:40</td>
+                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
+                                    <td><span class="d-block">30.11.2022 15:00</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
+                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
+                                </tr>
+                                <tr>
+                                    <td>Main Race</td>
+                                    <td>17.12.2022 15:00 CET</td>
+                                    <td>
+                                        <div><span>Open Practice</span><span class="float-right">00:40</span></div>
+                                        <div><span>Lone Qualify</span><span class="float-right"> 2 laps / 00:20</span></div>
+                                        <div><span>Race</span><span class="float-right"> 24:00</span></div>
+                                    </td>
+                                    <td>25:00</td>
+                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
+                                    <td><span class="d-block">30.11.2022 15:00</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
+                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" role="dialog" tabindex="-1" id="team-upload-modal" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form id="upload-logo-form" method="post" th:action="@{/team-logo-upload}" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Upload event logo</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Event logo file</label>
+                                <input class="form-control-file" type="file" name="file"/>
+                                <input class="form-control" type="hidden" name="eventId" th:value="${eventView.getEventId()}"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:insert="index :: footer"></div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+
+</html>

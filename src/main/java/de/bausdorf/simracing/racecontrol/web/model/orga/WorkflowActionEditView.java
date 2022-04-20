@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 /*-
  * #%L
@@ -22,12 +22,22 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import java.time.OffsetDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface WorkflowItem {
-    OffsetDateTime getCreated();
-    Person getCreatedBy();
-    long getEventId();
-    String getName();
-    WorkflowState getWorkflowState();
+import java.time.LocalDateTime;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class WorkflowActionEditView {
+    private Long id;
+    private Long eventId;
+    private Long workflowItemId;
+    private LocalDateTime dueDate;
+    private String targetStateKey;
+    private String message;
 }

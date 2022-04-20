@@ -86,6 +86,25 @@ function editStaffPerson(personIndex) {
   $("#staff-modal").modal('show');
 }
 
+function editWorkflowAction(actionId) {
+  $("#TeamRegistration-modal-" + actionId + " #id").val($("#action-tr-" + actionId + " #id").val());
+  $("#TeamRegistration-modal-" + actionId + " #eventId").val($("#action-tr-" + actionId + " #eventId").val());
+  $("#TeamRegistration-modal-" + actionId + " #workflowItemId").val($("#action-tr-" + actionId + " #workflowItemId").val());
+  $("#TeamRegistration-modal-" + actionId + " #message").val($("#action-tr-" + actionId + " #editActionMessage").val());
+  $("#TeamRegistration-modal-" + actionId).modal('show');
+}
+
+function changeFormGroupDisplay(actionId) {
+  const stateKey = $("#TeamRegistration-modal-" + actionId + " #targetStateKey").val();
+  $("#TeamRegistration-modal-" + actionId + " #targetStateKey > option").each(function() {
+    if(this.value === stateKey) {
+      $("#TeamRegistration-modal-" + actionId + " #" + this.value).show();
+    } else {
+      $("#TeamRegistration-modal-" + actionId + " #" + this.value).hide();
+    }
+  });
+}
+
 function editWorkflowState(workflowIndex, entryIndex) {
   $("#workflow-modal #id").val($("#workflow" + workflowIndex + entryIndex + "_id").val());
   $("#workflow-modal #workflowName").val($("#workflow" + workflowIndex + entryIndex + "_workflowName").val());

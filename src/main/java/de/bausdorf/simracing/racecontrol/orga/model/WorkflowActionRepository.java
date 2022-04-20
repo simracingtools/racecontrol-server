@@ -28,6 +28,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface WorkflowActionRepository extends CrudRepository<WorkflowAction, Long> {
-    List<WorkflowAction> findAllByEventIdAndWorkflowName(long eventId, String workflowName);
+    List<WorkflowAction> findAllByEventIdAndWorkflowNameOrderByCreatedDesc(long eventId, String workflowName);
     List<WorkflowAction> findAllByEventIdAndTargetStateIn(long eventId, Collection<WorkflowState> targetState);
 }

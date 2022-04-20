@@ -1,0 +1,118 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 - 2022 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>action templates</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Notable">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik+Mono+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Timmana">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div th:fragment="TeamRegistration-TEAM_REGISTRATION-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Team Registration</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
+                        <div class="modal-body">
+                            <div th:fragment="action-modal-common(action, editAction)">
+                                <h4 th:text="${action.message}">FBP RED</h4>
+                                <input type="hidden" th:field="*{id}">
+                                <input type="hidden" th:field="*{eventId}">
+                                <input type="hidden" th:field="*{workflowItemId}">
+                                <div class="form-group text-left">
+                                    <label style="font-size: 14px;">Proceed to</label>
+                                    <select class="form-control" required="" th:field="*{targetStateKey}" th:oninput="'changeFormGroupDisplay(' + ${action.id} + ');'">
+                                        <option th:each="state : ${action.sourceState.followUps}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
+                                    </select>
+                                </div>
+                                <div class="form-group text-left">
+                                    <label style="font-size: 14px;">Due date</label>
+                                    <input class="form-control" type="date" th:field="*{dueDate}">
+                                </div>
+                            </div>
+                            <div id="ASSIGNED_CAR_NO" class="form-group text-left" style="display: block">
+                                <label th:for="*{message}" style="font-size: 14px;">Assign Car#</label>
+                                <input class="form-control" type="text" th:field="*{message}">
+                            </div>
+                            <div id="DECLINED" class="form-group text-left" style="display: none;">
+                                <label th:for="*{message}" style="font-size: 14px;">Decline message</label>
+                                <input class="form-control" type="text" th:field="*{message}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="TeamRegistration-ASSIGNED_CAR_NO-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Team Registration</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
+                        <div class="modal-body">
+                            <div th:replace="action-modals.html :: action-modal-common(${action}, ${editAction})"></div>
+                            <div id="DISCORD_PREPARED" class="form-group text-left" style="display: block;">
+                                <label th:for="*{message}" style="font-size: 14px;">Team Discord channel</label>
+                                <input class="form-control" type="text" th:field="*{message}">
+                            </div>
+                            <div id="DECLINED" class="form-group text-left" style="display: none;">
+                                <label th:for="*{message}" style="font-size: 14px;">Decline message</label>
+                                <input class="form-control" type="text" th:field="*{message}">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
