@@ -54,7 +54,11 @@ public class TeamRegistration implements WorkflowItem {
 	private boolean wildcard;
 	@ManyToOne
 	WorkflowState workflowState;
-	@OneToMany
+	@ManyToMany
+//	@JoinTable(
+//			name = "team_members",
+//			joinColumns = @JoinColumn(name = "member_id"),
+//			inverseJoinColumns = @JoinColumn(name = "team_id"))
 	private List<Person> teamMembers = new ArrayList<>();
 
 	@Transient

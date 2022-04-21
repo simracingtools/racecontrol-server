@@ -115,6 +115,14 @@ public class RegistrationController extends ControllerBase {
     @PostMapping("/save-registration")
     @Transactional
     public String checkAndSaveRegistration(@ModelAttribute CreateRegistrationView createRegistrationView, Model model) {
+        Person creator = buildCreator(createRegistrationView);
+
+        List<TeamRegistration> myRegistrations = registrationRepository.findAllByEventIdAndTeamMembersContaining(
+                createRegistrationView.getEventId(), creator);
+        if(!myRegistrations.isEmpty()) {
+            myRegistrations.forEach(r -> addWarning("You are already member of team " + r.getTeamName(), model));
+        }
+
         TeamRegistration registration = new TeamRegistration();
         registration.setEventId(createRegistrationView.getEventId());
         registration.setCreated(OffsetDateTime.now());
@@ -129,7 +137,6 @@ public class RegistrationController extends ControllerBase {
             addError("Car ID " + createRegistrationView.getCarId() + " does not exist.", model);
         }
 
-        Person creator = buildCreator(createRegistrationView);
         registration.setCreatedBy(creator);
 
         WorkflowState initialWorkflowState = workflowStateRepository

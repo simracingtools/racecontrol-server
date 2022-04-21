@@ -195,28 +195,15 @@ public class EventOrganizer {
     }
 
     public List<WorkflowActionInfoView> getActiveWorkflowActionListForRole(long eventId, String workflowName, @NonNull Person currentPerson) {
-        List<Long> workflowIds = (currentPerson.getRole().isParticipant())
-                ? myRegistrationIds(currentPerson) : null;
         List<WorkflowAction> actionList = actionRepository.findAllByEventIdAndWorkflowNameOrderByCreatedDesc(eventId, workflowName);
         List<WorkflowActionInfoView> resultList = actionList.stream()
-                .filter(a -> a.getSourceState().getFollowUps().stream()
-                        .anyMatch(s -> s.getDutyRoles().contains(currentPerson.getRole())) && a.getTargetState() == null)
-                .filter(a -> workflowIds == null || workflowIds.contains(a.getWorkflowItemId()))
-                .map(action -> mapWorkflowAction(workflowName, action))
+                .filter(a -> filterMyOpenTasks(a, currentPerson))
+                .map(action -> mapWorkflowAction(workflowName, action, currentPerson))
                 .collect(Collectors.toList());
         resultList.addAll(actionList.stream()
-                .filter(a -> a.getSourceState().getFollowUps().stream()
-                        .anyMatch(s -> s.getDutyRoles().contains(currentPerson.getRole())) && a.getTargetState() != null)
-                .map(action -> mapWorkflowAction(workflowName, action))
+                .filter(a -> filterMyClosedTasks(a, currentPerson))
+                .map(action -> mapWorkflowAction(workflowName, action, currentPerson))
                 .collect(Collectors.toList()));
-        if(workflowIds != null) {
-            resultList.addAll(actionList.stream()
-                    .filter(a -> a.getSourceState().getFollowUps().stream()
-                            .noneMatch(s -> s.getDutyRoles().contains(currentPerson.getRole())) && a.getTargetState() != null)
-                    .filter(a -> workflowIds.contains(a.getWorkflowItemId()))
-                    .map(action -> mapWorkflowAction(workflowName, action))
-                    .collect(Collectors.toList()));
-        }
         return resultList;
     }
 
@@ -246,12 +233,42 @@ public class EventOrganizer {
         return actionRepository.findById(actionId).orElse(null);
     }
 
+    private boolean filterMyOpenTasks(WorkflowAction action, Person currentPerson) {
+        boolean isOpenTask =  action.getTargetState() == null;
+
+        boolean maySeeTask;
+        if(currentPerson.getRole().isParticipant()) {
+            maySeeTask = myRegistrationIds(currentPerson).contains(action.getWorkflowItemId());
+        } else {
+            maySeeTask = action.getSourceState().getFollowUps().stream()
+                    .anyMatch(s -> s.getDutyRoles().contains(currentPerson.getRole()));
+
+        }
+
+        return isOpenTask && maySeeTask;
+    }
+
+    private boolean filterMyClosedTasks(WorkflowAction action, Person currentPerson) {
+        boolean isClosedTask = action.getTargetState() != null;
+
+        boolean maySeeTask;
+        if(currentPerson.getRole().isParticipant()) {
+            maySeeTask = myRegistrationIds(currentPerson).contains(action.getWorkflowItemId());
+        } else {
+            maySeeTask = action.getSourceState().getFollowUps().stream()
+                .anyMatch(s -> s.getDutyRoles().contains(currentPerson.getRole()));
+
+        }
+
+        return maySeeTask && isClosedTask;
+    }
+
     private CarAssetDto getCarAsset(long carId) {
         return dataClient.getDataCache().getCarAssets().values().stream()
                 .filter(asset -> asset.getCarId() == carId).findFirst().orElse(null);
     }
 
-    private WorkflowActionInfoView mapWorkflowAction(String workflowName, WorkflowAction action){
+    private WorkflowActionInfoView mapWorkflowAction(String workflowName, WorkflowAction action, @NonNull Person currentPerson){
         WorkflowActionInfoView infoView = WorkflowActionInfoView.fromEntity(action);
         if(workflowName.equalsIgnoreCase("TeamRegistration")) {
             Optional<TeamRegistration> registration = registrationRepository.findById(action.getWorkflowItemId());
@@ -260,6 +277,10 @@ public class EventOrganizer {
             }
             registration.ifPresent(r -> infoView.setTeamName(r.getTeamName()));
         }
+        List<WorkflowStateInfoView> statesForPerson = infoView.getTargetStates().stream()
+                .filter(state -> state.getDutyRoles().contains(currentPerson.getRole().toString()))
+                .collect(Collectors.toList());
+        infoView.setTargetStates(statesForPerson);
         return infoView;
     }
 

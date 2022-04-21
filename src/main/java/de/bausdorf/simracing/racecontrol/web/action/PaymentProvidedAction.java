@@ -22,29 +22,15 @@ package de.bausdorf.simracing.racecontrol.web.action;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.model.Person;
 import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
-import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowActionEditView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.transaction.Transactional;
+@Component("PAYMENT_PROVIDED")
+public class PaymentProvidedAction extends SimpleAction {
 
-@Component("DECLINED")
-public class DeclineRegistrationAction extends WorkflowAction {
-
-    public DeclineRegistrationAction(@Autowired EventOrganizer eventOrganizer) {
+    public PaymentProvidedAction(@Autowired EventOrganizer eventOrganizer) {
         super(eventOrganizer);
     }
 
-    @Override
-    @Transactional
-    public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
-        de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
-        if(currentAction != null) {
-            getEventOrganizer().saveRegistration(updateCurrentAction(editView, currentAction, actor));
-        } else {
-            throw new ActionException("Current action not found");
-        }
-    }
 }

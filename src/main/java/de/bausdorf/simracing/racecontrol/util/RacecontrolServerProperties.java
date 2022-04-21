@@ -54,6 +54,8 @@ public class RacecontrolServerProperties {
     private String fileUploadBasePath;
     private String uploadBaseUri;
     private long leagueInfoCacheMaxAgeMinutes;
+    private String discordBotToken;
+    private String discordGuildId;
 
     @Bean
     ConfigProperties configProperties() {

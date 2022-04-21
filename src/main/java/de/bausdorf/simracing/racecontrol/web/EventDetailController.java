@@ -107,6 +107,11 @@ public class EventDetailController extends ControllerBase {
             try {
                 Person currentPerson = currentPerson(editAction.getEventId());
                 String actionKey = editAction.getTargetStateKey();
+
+                // Remove comma in action message because there may be duplicate ID's in forms.
+                String actionMessage = editAction.getMessage().replace(",", "");
+                editAction.setMessage(actionMessage);
+
                 WorkflowAction action = appContext.getBean(actionKey, WorkflowAction.class);
                 action.performAction(editAction, currentPerson);
             } catch (ActionException | NoSuchBeanDefinitionException e) {

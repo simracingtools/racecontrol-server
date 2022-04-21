@@ -82,6 +82,7 @@ public class WorkflowStateInfoView {
 
     public static List<WorkflowStateInfoView> fromEntityList(List<WorkflowState> states) {
         return states.stream()
+                .sorted(Comparator.comparing(WorkflowState::isInActive))
                 .map(WorkflowStateInfoView::fromEntity)
                 .collect(Collectors.toList());
     }

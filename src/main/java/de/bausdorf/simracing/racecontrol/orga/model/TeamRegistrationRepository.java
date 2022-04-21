@@ -28,4 +28,5 @@ import java.util.List;
 
 public interface TeamRegistrationRepository extends CrudRepository<TeamRegistration, Long> {
     List<TeamRegistration> findAllByEventId(long eventId);
+    List<TeamRegistration> findAllByEventIdAndTeamMembersContaining(long eventId, Person member);
 }

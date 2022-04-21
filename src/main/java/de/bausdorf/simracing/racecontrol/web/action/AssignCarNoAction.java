@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web.action;
  */
 
 import de.bausdorf.simracing.racecontrol.orga.model.Person;
+import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
 import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
 import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowActionEditView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +31,32 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 
-@Component("DECLINED")
-public class DeclineRegistrationAction extends WorkflowAction {
+@Component("ASSIGNED_CAR_NO")
+public class AssignCarNoAction extends WorkflowAction {
 
-    public DeclineRegistrationAction(@Autowired EventOrganizer eventOrganizer) {
+    public AssignCarNoAction(@Autowired EventOrganizer eventOrganizer) {
         super(eventOrganizer);
     }
 
     @Override
     @Transactional
     public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
-        de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
-        if(currentAction != null) {
-            getEventOrganizer().saveRegistration(updateCurrentAction(editView, currentAction, actor));
-        } else {
-            throw new ActionException("Current action not found");
+        try {
+            Long.parseLong(editView.getMessage());
+            if(!getEventOrganizer().checkUniqueCarNumber(editView.getEventId(), editView.getMessage())) {
+                throw new ActionException("Car # " + editView.getMessage() + " is not unique.");
+            }
+            de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
+            if(currentAction != null) {
+                TeamRegistration registration = updateCurrentAction(editView, currentAction, actor);
+                registration.setAssignedCarNumber(editView.getMessage());
+                getEventOrganizer().saveRegistration(registration);
+                getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
+            } else {
+                throw new ActionException("Current action not found");
+            }
+        } catch(NumberFormatException e) {
+            throw new ActionException("Car # to be assigned is not a number: " + editView.getMessage());
         }
     }
 }

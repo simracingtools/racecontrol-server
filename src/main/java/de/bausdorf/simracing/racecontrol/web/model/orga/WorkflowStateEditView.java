@@ -87,6 +87,7 @@ public class WorkflowStateEditView {
     }
 
     private void fetchFollowUpStates(WorkflowState state, WorkflowStateRepository stateRepository) {
+        state.getFollowUps().clear();
         for(Long followUpId: followUpIds) {
             Optional<WorkflowState> workflowState = stateRepository.findById(followUpId);
             if(workflowState.isPresent() && !state.getFollowUps().contains(workflowState.get())) {

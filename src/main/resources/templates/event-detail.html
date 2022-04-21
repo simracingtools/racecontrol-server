@@ -28,7 +28,7 @@
         <div th:replace="index :: messages"></div>
         <div th:replace="index :: menu(title=${eventView.title})"></div>
 
-        <div class="row" style="margin: 0;margin-left: 0;">
+        <div class="row" style="margin: 0;">
             <div class="col" style="padding: 0;">
                 <div class="row" style="margin: 0;">
                     <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding: 0;">
@@ -48,7 +48,38 @@
                         <div class="row">
                             <div class="col-sm-10 col-xl-12">
                                 <span>Registration open</span>
-<!--                                <button class="btn btn-primary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;">Register</button>-->
+                                <button th:if="${eventView.isRegistrationOpen()}" class= "btn btn-primary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;" th:data-target="${'#register-modal-' + eventView.eventId}" data-toggle="modal">Register</button>
+                                <button th:if="${!eventView.isRegistrationOpen()}" class= "btn btn-secondary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;">Register</button>
+                                <div th:id="${'register-modal-' + eventView.eventId}" class="modal fade" role="dialog" tabindex="-1">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" th:text="${'Register for ' + eventView.title}">Register for</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                                                    <p>
+                                                        We appreciate your interest to participate in our event!
+                                                    </p>
+                                                    <p class="text-left">
+                                                                <span>
+                                                                    To be able to register successfully please keep your <strong>iRacing team ID</strong>
+                                                                    and <strong>iRacing team name</strong> at hand.
+                                                                </span>
+                                                        <span th:text="${eventView.irLeagueName}"></span>
+                                                    </p>
+                                                    <a class="d-block" th:href="@{/team-registration(eventId=${eventView.eventId})}">
+                                                        <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register new team</button>
+                                                    </a>
+                                                    <a class="d-block" href="#">
+                                                        <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register as team member</button>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="row" style="font-size: 14px;">
@@ -69,7 +100,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="margin: 0;margin-right: 0;">
+                <div class="row" style="margin: 0;">
                     <div class="col">
                         <div style="font-size: 14px;">
                             <ul class="nav nav-tabs" role="tablist">
@@ -86,7 +117,7 @@
                                                 <th style="padding: 3px;">State</th>
                                                 <th style="padding: 3px;">created</th>
                                                 <th style="padding: 3px;">last change</th>
-                                                <th style="padding: 3px;">TODO's</th>
+                                                <th style="padding: 3px;">Possible Actions</th>
                                                 <th style="padding: 3px;"></th>
                                             </tr>
                                             </thead>
@@ -117,7 +148,8 @@
                                                     <div th:if="${action.targetState == null}" class="d-block" th:each="state: ${action.targetStates}">
                                                         <span th:style="${state.getColorStyleString()}" th:text="${state.description}">Assign car no</span>
                                                     </div>
-                                                    <span th:if="${action.targetState != null}" th:text="${action.targetState.description}" th:style="${action.targetState.getColorStyleString()}">Assign car no</span>
+                                                    <span class="d-block" th:if="${action.targetState != null}" th:text="${action.targetState.description}" th:style="${action.targetState.getColorStyleString()}">Assign car no</span>
+                                                    <span class="d-block" th:if="${action.targetState != null}" th:text="${action.message}"></span>
                                                 </td>
                                                 <td class="text-center" style="padding: 3px;" th:if="${!action.targetStates.isEmpty()}">
                                                     <button th:if="${!action.sourceState.inActive && action.targetState == null}" class="btn btn-primary" type="button" th:onclick="'editWorkflowAction(' + ${action.id} + ');'" style="padding-top: 3px;padding-bottom: 3px;padding-right: 10px;padding-left: 12px;">
@@ -134,36 +166,6 @@
                                         <p>When either one of this becomes true you'll find your todo's here.</p>
                                         <button th:if="${eventView.isRegistrationOpen()}" class= "btn btn-primary" type="button" style="margin-top: 1em;" th:data-target="${'#register-modal-' + eventView.eventId}" data-toggle="modal">Register</button>
                                         <button th:if="${!eventView.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
-                                        <div th:id="${'register-modal-' + eventView.eventId}" class="modal fade" role="dialog" tabindex="-1">
-                                            <div class="modal-dialog" role="document">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title" th:text="${'Register for ' + eventView.title}">Register for</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
-                                                            <p>
-                                                                We appreciate your interest to participate in our event!
-                                                            </p>
-                                                            <p class="text-left">
-                                                                <span>
-                                                                    To be able to register successfully please keep your <strong>iRacing team ID</strong>
-                                                                    and <strong>iRacing team name</strong> at hand.
-                                                                </span>
-                                                                <span th:text="${eventView.irLeagueName}"></span>
-                                                            </p>
-                                                            <a class="d-block" th:href="@{/team-registration(eventId=${eventView.eventId})}">
-                                                                <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register new team</button>
-                                                            </a>
-                                                            <a class="d-block" href="#">
-                                                                <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register as team member</button>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                                 <div id="tab-6" class="tab-pane" role="tabpanel">
