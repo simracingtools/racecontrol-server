@@ -72,7 +72,7 @@ public class JdaClient extends ListenerAdapter {
                     .enableCache(CacheFlag.ROLE_TAGS, CacheFlag.CLIENT_STATUS)
                     .addEventListeners(this)
                     .build();
-        } catch (LoginException e) {
+        } catch (LoginException | IllegalStateException e) {
             log.error(e.getMessage());
         }
     }
