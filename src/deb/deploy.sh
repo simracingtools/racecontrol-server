@@ -66,7 +66,7 @@ if [ "$TEMPLATES_COPIED" == "true" ]; then
 else
   echo "Files deployed, try to restart service"
   sudo service racecontrol start
-  service racecontrol status
+  sudo service racecontrol status
 fi
 
 echo
