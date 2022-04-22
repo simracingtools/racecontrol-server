@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEPLOY_DIR=/opt/racecontrol
+DEPLOY_DIR=/opt/race-control
 FILE_OWNERSHIP=racecontrol:racecontrol
 TARGET_DIR=$(pwd)/target
 
@@ -18,7 +18,7 @@ if [ -d "$DEPLOY_DIR" ]; then
 else
   echo "Deploy directory $DEPLOY_DIR does not exist - try to create ..."
   sudo mkdir -p $DEPLOY_DIR
-  sudo chmod $FILE_OWNERSHIP $DEPLOY_DIR
+  sudo chown "$FILE_OWNERSHIP" $DEPLOY_DIR
   echo "ok"
 fi
 
@@ -58,7 +58,7 @@ fi
 SOURCE_FILE=$(ls target/racecontrol-server*.jar)
 echo "Copy $SOURCE_FILE to $DEPLOY_DIR"
 sudo cp "$SOURCE_FILE" $DEPLOY_DIR/racecontrol-server.jar
-sudo chmod $FILE_OWNERSHIP $DEPLOY_DIR/*
+sudo chown "$FILE_OWNERSHIP" $DEPLOY_DIR/*
 
 if [ "$TEMPLATES_COPIED" == "true" ]; then
   echo
