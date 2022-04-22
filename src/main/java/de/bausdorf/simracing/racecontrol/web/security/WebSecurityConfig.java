@@ -110,7 +110,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 				.antMatchers("/rcclient/**").permitAll()
 				.antMatchers("/rc/**").permitAll()
 				.antMatchers("/timingclient/**").permitAll()
-				.antMatchers("/timning/**").permitAll()
+				.antMatchers("/timing/**").permitAll()
 				.antMatchers("/session/**").permitAll()
 				.antMatchers("/team/**").permitAll()
 				.antMatchers("/events/**").permitAll()
