@@ -36,9 +36,8 @@ import java.util.List;
 @Setter
 @ToString
 @RequiredArgsConstructor
-@Entity
+@Deprecated // Will be replaced by ir-data-api type
 public class Track {
-	@Id
 	private long pkgId;
 
 	private String name;
@@ -50,7 +49,6 @@ public class Track {
 		this.configurations = new ArrayList<>();
 	}
 
-	@OneToMany(mappedBy = "track", cascade = CascadeType.ALL)
 	@ToString.Exclude
 	private List<TrackConfiguration> configurations;
 

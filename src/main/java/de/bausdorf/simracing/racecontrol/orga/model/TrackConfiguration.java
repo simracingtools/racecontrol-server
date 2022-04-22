@@ -36,13 +36,10 @@ import javax.persistence.ManyToOne;
 @Getter
 @Setter
 @ToString
-@Entity
+@Deprecated // Will be replaced by ir-data-api type
 public class TrackConfiguration {
-    @Id
     private long trackId;
 
-    @ManyToOne
-    @JoinColumn(name = "track_pkg_id")
     private Track track;
     private String configName;
 

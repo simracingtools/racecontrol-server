@@ -46,10 +46,6 @@ public class TrackEvent {
 	private String title;
 	private ZonedDateTime dateTime;
 	private TrackEventType type;
-	@ManyToOne
-	RuleSet ruleSet;
-	@ManyToOne
-	private TrackConfiguration track;
 	@OneToMany(mappedBy = "id")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ToString.Exclude
