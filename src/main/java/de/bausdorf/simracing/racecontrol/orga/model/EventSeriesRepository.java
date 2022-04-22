@@ -29,6 +29,6 @@ import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
-    List<EventSeries> findAllByRegistrationOpensBeforeAndRegistrationClosesAfterOrderByRegistrationOpensDesc(OffsetDateTime openBefore, OffsetDateTime closeAfter);
+    List<EventSeries> findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate openBefore, boolean active);
     List<EventSeries> findAllByRegistrationOpensBeforeAndEndDateAfterAndActiveOrderByStartDateAsc(OffsetDateTime regCloseBefore, LocalDate dateAfter, boolean active);
 }

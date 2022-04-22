@@ -94,8 +94,7 @@ public class IndexController extends ControllerBase {
         model.addAttribute("selectView", selectView);
 
         List<EventInfoView> eventInfoViews = EventInfoView.fromEntityList(
-              eventRepository.findAllByRegistrationOpensBeforeAndEndDateAfterAndActiveOrderByStartDateAsc(
-                      OffsetDateTime.now(), LocalDate.now(), true));
+              eventRepository.findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate.now(), true));
         eventInfoViews.forEach(e -> e.setAvailableSlots(eventOrganizer.getAvailableGridSlots(e.getEventId())));
         model.addAttribute("eventViews", eventInfoViews);
         return INDEX_VIEW;
