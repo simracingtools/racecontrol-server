@@ -93,7 +93,15 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
-		http.authorizeRequests()
+		http
+				.csrf()
+				.ignoringAntMatchers("/timingclient/**")
+				.ignoringAntMatchers("/rcclient/**")
+				.and()
+				.headers()
+				.frameOptions().sameOrigin()
+				.and()
+				.authorizeRequests()
 				.antMatchers("/").permitAll()
 				.antMatchers("/assets/**").permitAll()
 				.antMatchers("/webjars/**").permitAll()
