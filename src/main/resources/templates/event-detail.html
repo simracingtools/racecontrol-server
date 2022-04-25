@@ -34,7 +34,7 @@
                     <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding: 0;">
                         <picture class="float-right"><img width="95px" style="width: 95px;" th:href="${eventView.logoUrl}"/></picture>
                     </div>
-                    <div class="col-9 col-sm-10 col-md-7 col-lg-5 col-xl-6">
+                    <div class="col">
                         <p>
                             <span th:text="${#temporals.format(eventView.startDate, 'dd.MM.yyyy')}">12.11.2022</span>
                             <span>  -  </span>
@@ -44,7 +44,7 @@
                         <span style="font-size: 12px;">iRacing League </span>
                         <a href="#" style="font-size: 12px;" th:text="${eventView.irLeagueName}">Winter 24h of the Nürburgring</a>
                     </div>
-                    <div class="col-sm-12 col-md-4 col-lg-6 col-xl-5">
+                    <div class="col-sm-12 col-md-4 col-lg-6 col-xl-4">
                         <div class="row">
                             <div class="col-sm-10 col-xl-12">
                                 <span>Registration open</span>
@@ -111,7 +111,7 @@
                             <div class="tab-content">
                                 <div id="tab-tasks" class="tab-pane active" role="tabpanel">
                                     <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive">
-                                        <table class="table" style="font-size: 12px;">
+                                        <table class="table" style="font-size: 14px;">
                                             <thead>
                                             <tr>
                                                 <th style="padding: 3px;">State</th>
@@ -177,7 +177,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-12 col-lg-5 col-xl-5" style="padding-right: 5px;padding-left: 5px;">
+                    <div class="col-md-12 col-lg-5 col-xl-4" style="padding-right: 5px;padding-left: 5px;">
                         <h6>Current Registrations</h6>
                         <div style="font-size: 12px;">
                             <ul class="nav nav-tabs" role="tablist">

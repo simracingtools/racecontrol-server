@@ -22,3 +22,12 @@
 .ui-autocomplete {
     z-index: 100;
 }
+
+.container {
+    max-width: 1600px;
+}
+
+.row {
+    margin-left: 1em;
+    margin-right: 1em;
+}
