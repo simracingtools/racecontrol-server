@@ -64,26 +64,26 @@ public class PrepareDisordAction extends WorkflowAction {
     public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
         de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
         if(currentAction != null) {
-            TeamRegistration registration = updateCurrentAction(editView, currentAction, actor);
-//                TeamRegistration registration = getEventOrganizer().getTeamRegistration(currentAction.getWorkflowItemId());
+//            TeamRegistration registration = updateCurrentAction(editView, currentAction, actor);
+            TeamRegistration registration = getEventOrganizer().getTeamRegistration(currentAction.getWorkflowItemId());
             prepareDiscord(registration, actor, editView.getMessage());
-            getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
+//            getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
         } else {
             throw new ActionException("Current action not found");
         }
     }
 
     private void prepareDiscord(TeamRegistration registration, Person actor, String actionMessage) {
-        Guild guild = jdaClient.getConnectedGuild();
+        Guild guild = jdaClient.getGuildById(registration.getEventId());
         String discordName = !StringUtils.isEmpty(actionMessage) ? actionMessage.trim() : registration.getTeamName();
 
         if(guild != null) {
-            Role role = jdaClient.getRole(discordName).orElse(null);
+            Role role = jdaClient.getRole(registration.getEventId(), discordName).orElse(null);
             if(role == null) {
                 RoleAction action = guild.createRole().setName(discordName).setPermissions(allowedForMember);
                 role = action.complete();
             }
-            Category category = jdaClient.getCategory(discordName).orElse(null);
+            Category category = jdaClient.getCategory(registration.getEventId(), discordName).orElse(null);
             if(category == null) {
                 ChannelAction<Category> action = guild.createCategory(discordName)
                         .addMemberPermissionOverride(role.getIdLong(), allowedForMember, null)
@@ -92,13 +92,13 @@ public class PrepareDisordAction extends WorkflowAction {
                         .addRolePermissionOverride(jdaClient.getRoleRaceControl().getIdLong(), allowedForMember, null)
                         .addRolePermissionOverride(jdaClient.getRoleOrganization().getIdLong(), allowedForMember, null)
                         .addRolePermissionOverride(jdaClient.getRoleEveryone().getIdLong(), null, allowedForMember)
-                        .setPosition(jdaClient.getTeamParentCategory().getPosition());
+                        .setPosition(jdaClient.getTeamSpacerCategory(registration.getEventId()).getPosition());
                 category = action.complete();
             }
             if(category.getChannels().stream().noneMatch(channel -> channel.getName().equals("text"))) {
                 TextChannel textChannel = category.createTextChannel("text").complete();
                 Role mentionedRole = role;
-                getPresetPosts().forEach(m -> {
+                getPresetPosts(registration.getEventId()).forEach(m -> {
                     String text = m.getContentDisplay();
                     textChannel.sendMessage(text)
                             .mention(mentionedRole)
@@ -112,7 +112,7 @@ public class PrepareDisordAction extends WorkflowAction {
                         .complete();
             }
 
-            Member discordMember = jdaClient.getMember(actor.getName()).orElse(null);
+            Member discordMember = jdaClient.getMember(registration.getEventId(), actor.getName()).orElse(null);
             if(discordMember != null) {
                 Optional<CarClass> carClass = carClassRepository.findById(registration.getCar().getCarClassId());
                 carClass.ifPresent(cc -> {
@@ -132,8 +132,8 @@ public class PrepareDisordAction extends WorkflowAction {
         }
     }
 
-    private List<Message> getPresetPosts() {
-        MessageHistory presetHistory = jdaClient.getPresetChannel().getHistoryFromBeginning(5).complete();
+    private List<Message> getPresetPosts(long eventId) {
+        MessageHistory presetHistory = jdaClient.getPresetChannel(eventId).getHistoryFromBeginning(5).complete();
         if(!presetHistory.isEmpty()) {
             return presetHistory.getRetrievedHistory();
         }

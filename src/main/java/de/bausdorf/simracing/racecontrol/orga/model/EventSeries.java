@@ -46,6 +46,9 @@ public class EventSeries {
 	private String title;
 	private String logoUrl;
 	private String discordInvite;
+	private long discordGuildId;
+	private long discordPresetChannelId;
+	private long discordSpacerCategoryId;
 	private long iRLeagueID;
 	private String iRLeagueName;
 	private String description;

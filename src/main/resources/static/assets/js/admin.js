@@ -104,6 +104,15 @@ function changeFormGroupDisplay(actionId) {
   });
 }
 
+function selectNotMachingChannels() {
+  $("#discord-modal #selectedItems option").each(function() {
+    const optionStyle = $(this).prop("class");
+    if( optionStyle === "text-danger") {
+      $(this).prop("selected", true);
+    }
+  });
+}
+
 function editWorkflowState(workflowIndex, entryIndex) {
   $("#workflow-modal #id").val($("#workflow" + workflowIndex + entryIndex + "_id").val());
   $("#workflow-modal #workflowName").val($("#workflow" + workflowIndex + entryIndex + "_workflowName").val());

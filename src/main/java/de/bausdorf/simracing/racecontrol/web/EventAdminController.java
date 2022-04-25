@@ -25,16 +25,17 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
 import de.bausdorf.simracing.irdataapi.tools.CarCategoryType;
 import de.bausdorf.simracing.irdataapi.tools.StockDataTools;
+import de.bausdorf.simracing.racecontrol.discord.JdaClient;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
 import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
-import de.bausdorf.simracing.racecontrol.web.model.orga.EditCarClassView;
-import de.bausdorf.simracing.racecontrol.web.model.orga.CarView;
-import de.bausdorf.simracing.racecontrol.web.model.orga.CreateEventView;
-import de.bausdorf.simracing.racecontrol.web.model.orga.PersonView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.*;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -45,6 +46,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -61,21 +63,27 @@ public class EventAdminController extends ControllerBase {
     private final CarClassRepository carClassRepository;
     private final BalancedCarRepository balancedCarRepository;
     private final PersonRepository personRepository;
+    private final TeamRegistrationRepository registrationRepository;
     private final IRacingClient iRacingClient;
     private final UploadFileManager uploadFileManager;
+    private final JdaClient jdaClient;
 
     public EventAdminController(@Autowired EventSeriesRepository eventRepository,
                                 @Autowired CarClassRepository carClassRepository,
                                 @Autowired BalancedCarRepository balancedCarRepository,
                                 @Autowired PersonRepository personRepository,
+                                @Autowired TeamRegistrationRepository registrationRepository,
                                 @Autowired UploadFileManager uploadFileManager,
-                                @Autowired IRacingClient iRacingClient) {
+                                @Autowired IRacingClient iRacingClient,
+                                @Autowired JdaClient jdaClient) {
         this.eventRepository = eventRepository;
         this.carClassRepository = carClassRepository;
         this.balancedCarRepository = balancedCarRepository;
         this.personRepository = personRepository;
+        this.registrationRepository = registrationRepository;
         this.uploadFileManager = uploadFileManager;
         this.iRacingClient = iRacingClient;
+        this.jdaClient = jdaClient;
     }
 
     @GetMapping("/create-event")
@@ -87,6 +95,7 @@ public class EventAdminController extends ControllerBase {
             Optional<EventSeries> eventSeries = eventRepository.findById(eventId.get());
             if(eventSeries.isPresent()) {
                 model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.fromEntity(eventSeries.get()));
+                model.addAttribute("discordCleanupView", getDiscordTeamCategories(eventSeries.get()));
             } else {
                 addWarning("Event with id " + eventId.get() + " not found", model);
                 model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
@@ -117,8 +126,11 @@ public class EventAdminController extends ControllerBase {
                 eventSeriesToSave = eventSeries.get();
             }
         }
-        eventSeriesToSave = eventRepository.save(eventView.toEntity(eventSeriesToSave));
-        return redirectView(eventSeriesToSave.getId(), messagesEncoded(model));
+        if(eventSeriesToSave != null && checkDiscord(eventSeriesToSave, model)) {
+            eventSeriesToSave = eventRepository.save(eventView.toEntity(eventSeriesToSave));
+            return redirectView(eventSeriesToSave.getId(), messagesEncoded(model));
+        }
+        return redirectView(0L, messagesEncoded(model));
     }
 
     @PostMapping("/event-save-carclass")
@@ -210,6 +222,30 @@ public class EventAdminController extends ControllerBase {
         return redirectView(eventId.get(), messagesEncoded(model));
     }
 
+    @PostMapping("/delete-from-discord")
+    public String cleanupDiscord(@ModelAttribute DiscordCleanupView discordCleanupView, Model model) {
+        Guild guild = jdaClient.getApi().getGuildById(discordCleanupView.getServerId());
+        if(guild != null) {
+            for(String id : discordCleanupView.getSelectedItems()) {
+                Messages messages = ((Messages)model.getAttribute(MESSAGES));
+                if(messages != null && messages.size() > 10) {
+                    break;
+                }
+                String[] idParts = id.split(":");
+                GuildChannel channel = guild.getChannelById(GuildChannel.class, idParts[0]);
+                if(channel != null) {
+                    try {
+                        deleteOnDiscord(channel, guild, idParts[1]);
+                    } catch(IllegalStateException | InsufficientPermissionException e) {
+                        log.error(e.getMessage());
+                        addError("Cannot delete category/channel " + channel.getName() + ": " + e.getMessage(), model);
+                    }
+                }
+            }
+        }
+        return redirectView(discordCleanupView.getEventId(), messagesEncoded(model));
+    }
+
     @ModelAttribute(name="allCars")
     public List<CarView> allCars() {
         return StockDataTools.carsByCategory(iRacingClient.getDataCache().getCars(), CarCategoryType.ROAD, false).stream()
@@ -244,5 +280,95 @@ public class EventAdminController extends ControllerBase {
             });
         });
         return carClass;
+    }
+
+    private void deleteOnDiscord(Channel channel, Guild guild, String categoryId) {
+        channel.delete().complete();
+        Category category = guild.getCategoryById(categoryId);
+        if(category != null && category.getChannels().isEmpty()) {
+            category.delete().complete();
+        }
+    }
+
+    private boolean checkDiscord(@NonNull EventSeries eventSeriesToSave, Model model) {
+        boolean discordOk = true;
+        if(eventSeriesToSave.getDiscordGuildId() != 0) {
+            Guild guild = jdaClient.getApi().getGuildById(eventSeriesToSave.getDiscordGuildId());
+            if (guild != null) {
+                if(!checkSpacerCategory(eventSeriesToSave, guild, model) || !checkpresetChannel(eventSeriesToSave, guild, model)) {
+                    discordOk = false;
+                }
+            } else {
+                addError("Discord server id invalid", model);
+            }
+        }
+        return discordOk;
+    }
+
+    private boolean checkSpacerCategory(EventSeries eventSeriesToSave, Guild guild, Model model) {
+        boolean discordOk = true;
+        if (eventSeriesToSave.getDiscordSpacerCategoryId() != 0) {
+            Category cat = guild.getCategoryById(eventSeriesToSave.getDiscordSpacerCategoryId());
+            if (cat == null) {
+                discordOk = false;
+                addError("Discord spacer category is invalid", model);
+            }
+        }
+        return discordOk;
+    }
+
+    private boolean checkpresetChannel(EventSeries eventSeriesToSave, Guild guild, Model model) {
+        boolean discordOk = true;
+        if (eventSeriesToSave.getDiscordPresetChannelId() != 0) {
+            MessageChannel chan = guild.getTextChannelById(eventSeriesToSave.getDiscordPresetChannelId());
+            if (chan == null) {
+                discordOk = false;
+                addError("Discord preset channel does not exist", model);
+            }
+        }
+        return discordOk;
+    }
+
+    private DiscordCleanupView getDiscordTeamCategories(EventSeries event) {
+        List<TeamRegistration> registrations = registrationRepository.findAllByEventId(event.getId());
+        return DiscordCleanupView.builder()
+                .categories(jdaClient.getTeamCategories(event.getDiscordGuildId(), event.getDiscordSpacerCategoryId()).stream()
+                        .map(category -> {
+                            DiscordItemView categoryView = DiscordItemView.builder()
+                                    .id(category.getIdLong())
+                                    .name(category.getName())
+                                    .type(DiscordItemView.DiscordItemType.CATEGORY)
+                                    .children(category.getChannels().stream()
+                                            .map(channel -> DiscordItemView.builder()
+                                                    .id(channel.getIdLong())
+                                                    .name(channel.getName())
+                                                    .type(channel.getType() == ChannelType.TEXT ? DiscordItemView.DiscordItemType.TEXT_CHANNEL : DiscordItemView.DiscordItemType.VOICE_CHANNEL)
+                                                    .children(List.of())
+                                                    .inEvent(channelInEvent(registrations, category))
+                                                    .categoryId(category.getIdLong())
+                                                    .build())
+                                            .collect(Collectors.toList())
+                                    )
+                                    .build();
+                            categoryView.setInEvent(categoryView.getChildren().stream().anyMatch(DiscordItemView::isInEvent));
+                            return categoryView;
+                        })
+                        .collect(Collectors.toList())
+                )
+                .selectedItems(new ArrayList<>())
+                .eventId(event.getId())
+                .serverId(event.getDiscordGuildId())
+                .build();
+    }
+
+    private boolean channelInEvent(List<TeamRegistration> allRegistrations, Category category) {
+        return allRegistrations.stream()
+                .filter(r -> r.getTeamName().equalsIgnoreCase(category.getName()))
+                .anyMatch(r ->
+                    category.getChannels().stream()
+                            .anyMatch(c -> (c.getType() == ChannelType.VOICE && c.getName().startsWith("#" + r.getAssignedCarNumber()))
+                                            || (c.getType() == ChannelType.TEXT && c.getName().equals("text"))
+                                    )
+                );
     }
 }

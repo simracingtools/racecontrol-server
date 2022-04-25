@@ -22,6 +22,8 @@ package de.bausdorf.simracing.racecontrol.discord;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
+import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,32 +41,32 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
+import javax.swing.*;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class JdaClient extends ListenerAdapter {
+    private final EventSeriesRepository eventSeriesRepository;
+
     @Getter
     private JDA api;
-    @Getter
-    private Guild connectedGuild;
-    private final RacecontrolServerProperties config;
     @Getter
     private Role roleRaceControl;
     @Getter
     private Role roleOrganization;
     @Getter
     private Role roleEveryone;
-    @Getter
-    private Category teamParentCategory;
-    @Getter
-    private TextChannel presetChannel;
 
-    public JdaClient(@Autowired RacecontrolServerProperties config) {
-        this.config = config;
+    public JdaClient(@Autowired RacecontrolServerProperties config,
+                     @Autowired EventSeriesRepository eventSeriesRepository) {
+        this.eventSeriesRepository = eventSeriesRepository;
         try {
             this.api = JDABuilder.createDefault(config.getDiscordBotToken())
                     .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES)
@@ -77,7 +79,13 @@ public class JdaClient extends ListenerAdapter {
         }
     }
 
-    public Optional<Member> getMember(String iRacingName) {
+    public Guild getGuildById(long eventId) {
+        Optional<EventSeries> eventSeries = eventSeriesRepository.findById(eventId);
+        return eventSeries.map(series -> api.getGuildById(series.getDiscordGuildId())).orElse(null);
+    }
+
+    public Optional<Member> getMember(long eventId, String iRacingName) {
+        Guild connectedGuild = getGuildById(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getMembers().stream()
                     .filter(member -> member.getEffectiveName().contains(iRacingName))
@@ -86,7 +94,8 @@ public class JdaClient extends ListenerAdapter {
         return Optional.empty();
     }
 
-    public Optional<Category> getCategory(String categoryName) {
+    public Optional<Category> getCategory(long eventId, String categoryName) {
+        Guild connectedGuild = getGuildById(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getCategories().stream()
                     .filter(cat -> cat.getName().equalsIgnoreCase(categoryName))
@@ -95,13 +104,49 @@ public class JdaClient extends ListenerAdapter {
         return Optional.empty();
     }
 
-    public Optional<Role> getRole(String roleName) {
+    public Optional<Role> getRole(long eventId, String roleName) {
+        Guild connectedGuild = getGuildById(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getRoles().stream()
                     .filter(role -> role.getName().equalsIgnoreCase(roleName))
                     .findFirst();
         }
         return Optional.empty();
+    }
+
+    public Category getTeamSpacerCategory(long eventId) {
+        Optional<EventSeries> eventSeries = eventSeriesRepository.findById(eventId);
+        if(eventSeries.isPresent()) {
+            Guild guild = api.getGuildById(eventSeries.get().getDiscordGuildId());
+            if(guild!=null) {
+                return guild.getCategoryById(eventSeries.get().getDiscordSpacerCategoryId());
+            }
+        }
+        return null;
+    }
+
+    public MessageChannel getPresetChannel(long eventId) {
+        Optional<EventSeries> eventSeries = eventSeriesRepository.findById(eventId);
+        if(eventSeries.isPresent()) {
+            Guild guild = api.getGuildById(eventSeries.get().getDiscordGuildId());
+            if(guild != null ) {
+                return guild.getChannelById(MessageChannel.class, eventSeries.get().getDiscordPresetChannelId());
+            }
+        }
+        return null;
+    }
+
+    public List<Category> getTeamCategories(long discordGuildId, long spacerCategoryId) {
+        Guild guild = api.getGuildById(discordGuildId);
+        if(guild != null ) {
+            Category spacer = guild.getCategoryById(spacerCategoryId);
+            if(spacer != null) {
+                return guild.getCategories().stream()
+                        .filter(cat -> cat.getPosition() > spacer.getPosition())
+                        .collect(Collectors.toList());
+            }
+        }
+        return List.of();
     }
 
     @Override
@@ -112,41 +157,6 @@ public class JdaClient extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         log.debug("JDA guild ready: {}({})", event.getGuild().getName(), event.getGuild().getId());
-        if(event.getGuild().getId().equals(config.getDiscordGuildId())) {
-            this.connectedGuild = event.getGuild();
-            log.info("Connected to discord server {}", connectedGuild.getName());
-            if(log.isDebugEnabled()) {
-                connectedGuild.getMembers().forEach(m -> log.debug("Member: {}({})", m.getNickname(), m.getEffectiveName()));
-                connectedGuild.getCategories().forEach(cat -> {
-                    if(cat.getName().equalsIgnoreCase("----------------------------------------")) {
-                        log.info("Team parent category found");
-                        this.teamParentCategory = cat;
-                    }
-                    log.debug("Category: {}({})", cat.getName(), cat.getPosition());
-                });
-                connectedGuild.getChannels().forEach(chan -> {
-                    if(chan.getName().equalsIgnoreCase("presets")) {
-                        presetChannel = (TextChannel) chan;
-                        log.info("Preset channel identified");
-                    }
-                    log.debug("Channel: {}", chan.getName());
-                });
-                connectedGuild.getRoles().forEach(role -> {
-                    if(role.getName().equalsIgnoreCase("RaceControl")) {
-                        roleRaceControl = role;
-                        log.info("Role RaceControl identified");
-                    } else if(role.getName().equalsIgnoreCase("Organization")) {
-                        roleOrganization = role;
-                        log.info("Role Organization identified");
-                    } else if(role.getName().equalsIgnoreCase("@everyone")) {
-                        roleEveryone = role;
-                        log.info("Role @everyone identified");
-                    }
-                    log.debug("Role: {}", role.getName());
-                });
-            }
-
-        }
     }
 
     @Override

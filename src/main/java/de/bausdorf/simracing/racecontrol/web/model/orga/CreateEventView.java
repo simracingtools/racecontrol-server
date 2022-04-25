@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,6 +31,7 @@ import org.springframework.lang.Nullable;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -41,6 +43,9 @@ public class CreateEventView {
     private String title;
     private String logoUrl;
     private String discordInvite;
+    private long discordGuildId;
+    private long discordPresetChannelId;
+    private long discordSpacerCategoryId;
     private String description;
     private long irLeagueID;
     private String irLeagueName;
@@ -68,6 +73,9 @@ public class CreateEventView {
         eventSeries.setTitle(title == null ? eventSeries.getTitle() : title);
         eventSeries.setLogoUrl(logoUrl == null ? eventSeries.getLogoUrl() : logoUrl);
         eventSeries.setDiscordInvite(discordInvite == null ? eventSeries.getDiscordInvite() : discordInvite);
+        eventSeries.setDiscordGuildId(discordGuildId == 0 ? eventSeries.getDiscordGuildId() : discordGuildId);
+        eventSeries.setDiscordPresetChannelId(discordPresetChannelId == 0 ? eventSeries.getDiscordPresetChannelId() : discordPresetChannelId);
+        eventSeries.setDiscordSpacerCategoryId(discordSpacerCategoryId == 0 ? eventSeries.getDiscordSpacerCategoryId() : discordSpacerCategoryId);
         eventSeries.setIRLeagueName(irLeagueName == null ? eventSeries.getIRLeagueName() : irLeagueName);
         eventSeries.setIRLeagueID(irLeagueID == 0 ? eventSeries.getIRLeagueID() : irLeagueID);
         eventSeries.setDescription(description == null ? eventSeries.getDescription() : description);
@@ -89,6 +97,9 @@ public class CreateEventView {
                 .title(eventSeries.getTitle())
                 .logoUrl(eventSeries.getLogoUrl())
                 .discordInvite(eventSeries.getDiscordInvite())
+                .discordGuildId(eventSeries.getDiscordGuildId())
+                .discordPresetChannelId(eventSeries.getDiscordPresetChannelId())
+                .discordSpacerCategoryId(eventSeries.getDiscordSpacerCategoryId())
                 .irLeagueID(eventSeries.getIRLeagueID())
                 .irLeagueName(eventSeries.getIRLeagueName())
                 .description(eventSeries.getDescription())
@@ -102,7 +113,11 @@ public class CreateEventView {
                 .maxTeamDrivers(eventSeries.getMaxTeamDrivers())
                 .minTeamDrivers(eventSeries.getMinTeamDrivers())
                 .carClassPreset(CarClassView.fromEntityList(eventSeries.getCarClassPreset()))
-                .organizingStaff(PersonView.fromEntityList(eventSeries.getStaff()))
+                .organizingStaff(PersonView.fromEntityList(
+                        eventSeries.getStaff().stream()
+                                .filter(p -> p.getRole().isRacecontrol())
+                                .collect(Collectors.toList()))
+                )
                 .build();
     }
 
