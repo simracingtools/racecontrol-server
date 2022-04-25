@@ -25,9 +25,12 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.racecontrol.live.model.Session;
 import de.bausdorf.simracing.racecontrol.live.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
 import de.bausdorf.simracing.racecontrol.web.model.orga.EventInfoView;
 import de.bausdorf.simracing.racecontrol.web.model.live.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.live.SessionSelectView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationSelectView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -36,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,12 +48,16 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
@@ -95,11 +103,23 @@ public class IndexController extends ControllerBase {
 
         List<EventInfoView> eventInfoViews = EventInfoView.fromEntityList(
               eventRepository.findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate.now(), true));
-        eventInfoViews.forEach(e -> e.setAvailableSlots(eventOrganizer.getAvailableGridSlots(e.getEventId())));
+        eventInfoViews.forEach(e -> {
+            e.setAvailableSlots(eventOrganizer.getAvailableGridSlots(e.getEventId()));
+            e.setUserRegistrations(eventOrganizer.myRegistrations(e.getEventId(), currentUser()).stream()
+                            .filter(IndexController.distinctByKey(TeamRegistration::getTeamName))
+                            .map(TeamRegistrationView::fromEntity)
+                            .collect(Collectors.toList()));
+        });
         model.addAttribute("eventViews", eventInfoViews);
+        model.addAttribute("teamRegistrationSelectView", new TeamRegistrationSelectView());
         return INDEX_VIEW;
     }
 
+    @PostMapping("/register-car-for-team")
+    public String forwardTeamRegistration(@ModelAttribute TeamRegistrationSelectView teamRegistrationSelect) {
+        return "redirect:/team-registration?eventId=" + teamRegistrationSelect.getEventId()
+                + "&teamId=" + teamRegistrationSelect.getTeamId();
+    }
     @GetMapping("/logout")
     public String logout(HttpServletRequest servletRequest) throws ServletException {
         RefreshableKeycloakSecurityContext c =
@@ -117,5 +137,12 @@ public class IndexController extends ControllerBase {
             redirectUri += USER_ID_PARAM + selectView.getUserId() + "&";
         }
         return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(selectView.getSelectedSessionId(), StandardCharsets.UTF_8);
+    }
+
+    public static <T> Predicate<T> distinctByKey(
+            Function<? super T, ?> keyExtractor) {
+
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return t -> seen.putIfAbsent(keyExtractor.apply(t), Boolean.TRUE) == null;
     }
 }

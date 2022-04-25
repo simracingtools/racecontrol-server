@@ -26,9 +26,11 @@ import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.util.StringUtils;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -47,15 +49,18 @@ public class EventOrganizer {
     private final TeamRegistrationRepository registrationRepository;
     private final WorkflowActionRepository actionRepository;
     private final WorkflowStateRepository stateRepository;
+    private final PersonRepository personRepository;
     private final IRacingClient dataClient;
     public EventOrganizer(@Autowired CarClassRepository carClassRepository,
                           @Autowired TeamRegistrationRepository registrationRepository,
                           @Autowired WorkflowActionRepository actionRepository,
                           @Autowired WorkflowStateRepository stateRepository,
+                          @Autowired PersonRepository personRepository,
                           @Autowired IRacingClient dataClient) {
         this.carClassRepository = carClassRepository;
         this.registrationRepository = registrationRepository;
         this.stateRepository = stateRepository;
+        this.personRepository = personRepository;
         this.dataClient = dataClient;
         this.actionRepository = actionRepository;
     }
@@ -89,40 +94,11 @@ public class EventOrganizer {
                         if(assets != null) {
                             view.getCar().setCarLogoUrl(ASSET_BASE_URL + assets.getLogo());
                         }
-                        if(view.isWildcard()) {
-                            for(int i = 0; i < carClass.getWildcards(); i++) {
-                                if(regArray.get()[i] == null) {
-                                    regArray.get()[i] = view;
-                                    break;
-                                }
-                            }
-                        } else if(regCount.get() < carClass.getMaxSlots()){
-                            for(int i = carClass.getWildcards(); i < carClass.getMaxSlots(); i++) {
-                                if (regArray.get()[i] == null) {
-                                    regArray.get()[i] = view;
-                                    break;
-                                }
-                            }
-                        } else {
-                            waitingList.get().add(view);
-                        }
+                        fillRegisteredSlots(view, carClass, regArray, regCount, waitingList);
                         regCount.incrementAndGet();
                     });
-            for(int i = 0; i < carClass.getMaxSlots(); i++) {
-                if(regArray.get()[i] == null) {
-                    regArray.get()[i] = TeamRegistrationView.builder()
-                            .teamName(i < carClass.getWildcards() ? "Free wildcard" : "Free slot")
-                            .workflowState(WorkflowStateInfoView.builder()
-                                    .build())
-                            .car(BalancedCarView.builder()
-                                    .carLogoUrl("")
-                                    .carName("")
-                                    .carClassId(0)
-                                    .build())
-                            .build();
-                }
-                waitingList.get().add(i, regArray.get()[i]);
-            }
+            fillEmptySlots(carClass, regArray, waitingList);
+
             classView.get().setRegistrations(waitingList.get());
             classView.get().setMaxSlots(carClass.getMaxSlots());
             classView.get().setCarClassId(carClass.getId());
@@ -170,30 +146,6 @@ public class EventOrganizer {
         return carClassMap;
     }
 
-    String declineRegistration(WorkflowActionEditView editView, Person actor) {
-        WorkflowAction currentAction = getWorkflowAction(editView.getId());
-        if(currentAction != null) {
-            TeamRegistration registration = getTeamRegistration(currentAction.getWorkflowItemId());
-            if(registration == null) {
-                return "Registration not found for action";
-            }
-
-            try {
-                updateCurrentAction(currentAction, actor, editView);
-            } catch(IllegalStateException e) {
-                return e.getMessage();
-            }
-
-            registration.setWorkflowState(currentAction.getTargetState());
-            registrationRepository.save(registration);
-
-            createFollowUpAction(currentAction, actor, editView.getDueDate());
-        } else {
-            return "Current action not found";
-        }
-        return "";
-    }
-
     public List<WorkflowActionInfoView> getActiveWorkflowActionListForRole(long eventId, String workflowName, @NonNull Person currentPerson) {
         List<WorkflowAction> actionList = actionRepository.findAllByEventIdAndWorkflowNameOrderByCreatedDesc(eventId, workflowName);
         List<WorkflowActionInfoView> resultList = actionList.stream()
@@ -212,11 +164,23 @@ public class EventOrganizer {
                 .noneMatch(r -> !r.getWorkflowState().isInActive() && carNo.equalsIgnoreCase(r.getAssignedCarNumber()));
     }
 
-    public List<Long> myRegistrationIds(Person person) {
-        List<TeamRegistration> registrations = registrationRepository.findAllByEventId(person.getEventId());
-        return registrations.stream()
+    public List<TeamRegistration> myRegistrations(long eventId, @NonNull RcUser currentUser) {
+        Person currentPerson = personRepository.findByEventIdAndIracingId(eventId, currentUser.getIRacingId()).orElse(null);
+        if(currentPerson != null) {
+            return myRegistrations(currentPerson);
+        }
+        return List.of();
+    }
+
+    public List<TeamRegistration> myRegistrations(Person person) {
+        return  registrationRepository.findAllByEventId(person.getEventId()).stream()
                 .filter(r -> r.getCreatedBy().getId() == person.getId()
                         || r.getTeamMembers().stream().anyMatch(p -> p.getId() == person.getId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Long> myRegistrationIds(Person person) {
+        return myRegistrations(person).stream()
                 .map(TeamRegistration::getId)
                 .collect(Collectors.toList());
     }
@@ -231,6 +195,55 @@ public class EventOrganizer {
 
     public WorkflowAction getWorkflowAction(long actionId) {
         return actionRepository.findById(actionId).orElse(null);
+    }
+
+    private void setWildcardSlots(TeamRegistrationView view, CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray) {
+        for(int i = 0; i < carClass.getWildcards(); i++) {
+            if(regArray.get()[i] == null) {
+                regArray.get()[i] = view;
+                break;
+            }
+        }
+    }
+
+    private void setRegularSlots(TeamRegistrationView view, CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray) {
+        for(int i = carClass.getWildcards(); i < carClass.getMaxSlots(); i++) {
+            if (regArray.get()[i] == null) {
+                regArray.get()[i] = view;
+                break;
+            }
+        }
+    }
+
+    private void fillRegisteredSlots(TeamRegistrationView view,
+                                     CarClass carClass,
+                                     AtomicReference<TeamRegistrationView[]> regArray,
+                                     AtomicLong regCount,
+                                     AtomicReference<List<TeamRegistrationView>> waitingList) {
+        if(view.isWildcard()) {
+            setWildcardSlots(view, carClass, regArray);
+        } else if(regCount.get() < carClass.getMaxSlots()){
+            setRegularSlots(view, carClass, regArray);
+        } else {
+            waitingList.get().add(view);
+        }
+    }
+    private void fillEmptySlots(CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray, AtomicReference<List<TeamRegistrationView>> waitingList) {
+        for (int i = 0; i < carClass.getMaxSlots(); i++) {
+            if (regArray.get()[i] == null) {
+                regArray.get()[i] = TeamRegistrationView.builder()
+                        .teamName(i < carClass.getWildcards() ? "Free wildcard" : "Free slot")
+                        .workflowState(WorkflowStateInfoView.builder()
+                                .build())
+                        .car(BalancedCarView.builder()
+                                .carLogoUrl("")
+                                .carName("")
+                                .carClassId(0)
+                                .build())
+                        .build();
+            }
+            waitingList.get().add(i, regArray.get()[i]);
+        }
     }
 
     private boolean filterMyOpenTasks(WorkflowAction action, Person currentPerson) {
@@ -275,7 +288,9 @@ public class EventOrganizer {
             if(action.getSourceState().getStateKey().equalsIgnoreCase("TEAM_REGISTRATION")) {
                 registration.ifPresent(r -> infoView.setEditActionMessage(r.getLikedCarNumbers()));
             }
-            registration.ifPresent(r -> infoView.setTeamName(r.getTeamName()));
+            registration.ifPresent(r -> infoView.setTeamName(r.getTeamName()
+                    + (StringUtils.isEmpty(r.getCarQualifier()) ? "" : (" " + r.getCarQualifier())))
+            );
         }
         List<WorkflowStateInfoView> statesForPerson = infoView.getTargetStates().stream()
                 .filter(state -> state.getDutyRoles().contains(currentPerson.getRole().toString()))

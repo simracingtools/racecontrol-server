@@ -39,12 +39,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @Slf4j
 public class EventDetailController extends ControllerBase {
     public static final String EVENT_DETAIL_VIEW = "event-detail";
-    public static final String EVENT_VIEW_MODEL_KEY = "eventView";
+    public static final String EVENT_VIEW_MODEL_KEY = "event";
     public static final String INDEX_VIEW = "index";
     public static final String TEAM_REGISTRATION_WORKFLOW = "TeamRegistration";
 
@@ -76,6 +77,10 @@ public class EventDetailController extends ControllerBase {
 //                            .anyMatch(member -> member.getCustId() == currentUser().getIRacingId());
             EventInfoView infoView = EventInfoView.fromEntity(eventSeries.get());
             infoView.setAvailableSlots(eventOrganizer.getAvailableGridSlots(eventId));
+            infoView.setUserRegistrations(eventOrganizer.myRegistrations(infoView.getEventId(), currentUser()).stream()
+                    .filter(IndexController.distinctByKey(TeamRegistration::getTeamName))
+                    .map(TeamRegistrationView::fromEntity)
+                    .collect(Collectors.toList()));
             model.addAttribute(EVENT_VIEW_MODEL_KEY, infoView);
 
             model.addAttribute("currentPerson", PersonView.fromEntity(currentPerson));
@@ -95,6 +100,7 @@ public class EventDetailController extends ControllerBase {
             addError("Event with id " + eventId + " not found", model);
             model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
         }
+        model.addAttribute("teamRegistrationSelectView", new TeamRegistrationSelectView());
 
         return EVENT_DETAIL_VIEW;
     }

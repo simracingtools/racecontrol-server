@@ -75,7 +75,10 @@ public class RegistrationController extends ControllerBase {
     }
 
     @GetMapping("/team-registration")
-    public String createRegistration(@RequestParam Long eventId, @RequestParam Optional<String> messages, Model model) {
+    public String createRegistration(@RequestParam Long eventId,
+                                     @RequestParam Optional<String> messages,
+                                     @RequestParam Optional<Long> teamId,
+                                     Model model) {
         messages.ifPresent(e -> decodeMessagesToModel(e, model));
 
         Person currentPerson = personRepository.findByEventIdAndIracingId(eventId, currentUser().getIRacingId()).orElse(null);
@@ -104,10 +107,17 @@ public class RegistrationController extends ControllerBase {
             model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
         }
 
+        TeamRegistration registration = null;
+        if(teamId.isPresent()) {
+            registration = registrationRepository.findById(teamId.get()).orElse(null);
+        }
         model.addAttribute("createRegistrationView" , CreateRegistrationView.builder()
-                .eventId(eventId)
-                .leagueMember(leagueMember)
-                .build());
+                        .eventId(eventId)
+                        .teamName(registration != null ? registration.getTeamName() : null)
+                        .discordChannelId(registration != null ? registration.getDiscordChannelId() : null)
+                        .otherTeamId(registration != null ? registration.getId() : 0L)
+                        .leagueMember(leagueMember)
+                        .build());
 
         return REGISTER_TEAM_VIEW;
     }
@@ -128,8 +138,10 @@ public class RegistrationController extends ControllerBase {
         registration.setCreated(OffsetDateTime.now());
         registration.setLikedCarNumbers(createRegistrationView.getLikedNumbers());
         registration.setTeamName(createRegistrationView.getTeamName());
+        registration.setCarQualifier(createRegistrationView.getCarQualifier());
         registration.setLogoUrl(createRegistrationView.getLogoUrl());
         registration.setIracingId(createRegistrationView.getIracingId());
+        registration.setDiscordChannelId(createRegistrationView.getDiscordChannelId());
         Optional<BalancedCar> car = balancedCarRepository.findById(createRegistrationView.getCarId());
         if(car.isPresent()) {
             registration.setCar(car.get());
@@ -152,7 +164,7 @@ public class RegistrationController extends ControllerBase {
             addInfo("Your application for registration was processed successfully.", model);
         }
 
-        return redirectView(INDEX_VIEW, createRegistrationView.getEventId(), messagesEncoded(model));
+        return redirectView(INDEX_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
     }
 
     private Person buildCreator(CreateRegistrationView createRegistrationView) {
@@ -188,8 +200,13 @@ public class RegistrationController extends ControllerBase {
     }
 
     private String redirectView(String viewName, long eventId, String encodedMessages) {
+        return redirectView(viewName, eventId, 0L, encodedMessages);
+    }
+
+    private String redirectView(String viewName, long eventId, long teamId, String encodedMessages) {
         return "redirect:/" + viewName
-                + (eventId != 0 ? "?eventId=" + eventId : "")
+                + (eventId != 0L ? "?eventId=" + eventId : "")
+                + (teamId != 0L ? "?teamId=" + teamId : "")
                 + (encodedMessages != null ? "&messages=" + encodedMessages : "");
     }
 }

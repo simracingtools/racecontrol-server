@@ -32,10 +32,13 @@ import lombok.Data;
 public class CreateRegistrationView {
     private long eventId;
     private String teamName;
+    private String carQualifier;
     private String likedNumbers;
     private Long iracingId;
     private String logoUrl;
     private boolean driver;
     private boolean leagueMember;
     private long carId;
+    private Long discordChannelId;
+    private long otherTeamId;
 }

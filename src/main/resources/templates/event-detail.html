@@ -26,66 +26,37 @@
     <div class="container">
         <header th:replace="index :: header"></header>
         <div th:replace="index :: messages"></div>
-        <div th:replace="index :: menu(title=${eventView.title})"></div>
+        <div th:replace="index :: menu(title=${event.title})"></div>
 
         <div class="row" style="margin: 0;">
             <div class="col" style="padding: 0;">
                 <div class="row" style="margin: 0;">
                     <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding: 0;">
-                        <picture class="float-right"><img width="95px" style="width: 95px;" th:href="${eventView.logoUrl}"/></picture>
+                        <picture class="float-right"><img width="95px" style="width: 95px;" th:href="${event.logoUrl}"/></picture>
                     </div>
                     <div class="col">
                         <p>
-                            <span th:text="${#temporals.format(eventView.startDate, 'dd.MM.yyyy')}">12.11.2022</span>
+                            <span th:text="${#temporals.format(event.startDate, 'dd.MM.yyyy')}">12.11.2022</span>
                             <span>  -  </span>
-                            <span th:text="${#temporals.format(eventView.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
+                            <span th:text="${#temporals.format(event.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
                         </p>
-                        <p style="font-size: 14px;margin-bottom: 2px;" th:text="${eventView.description}">4th running of the most iconic Winter event. Broadcasted by racespotTV.</p>
+                        <p style="font-size: 14px;margin-bottom: 2px;" th:text="${event.description}">4th running of the most iconic Winter event. Broadcasted by racespotTV.</p>
                         <span style="font-size: 12px;">iRacing League </span>
-                        <a href="#" style="font-size: 12px;" th:text="${eventView.irLeagueName}">Winter 24h of the Nürburgring</a>
+                        <a href="#" style="font-size: 12px;" th:text="${event.irLeagueName}">Winter 24h of the Nürburgring</a>
                     </div>
                     <div class="col-sm-12 col-md-4 col-lg-6 col-xl-4">
                         <div class="row">
                             <div class="col-sm-10 col-xl-12">
                                 <span>Registration open</span>
-                                <button th:if="${eventView.isRegistrationOpen()}" class= "btn btn-primary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;" th:data-target="${'#register-modal-' + eventView.eventId}" data-toggle="modal">Register</button>
-                                <button th:if="${!eventView.isRegistrationOpen()}" class= "btn btn-secondary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;">Register</button>
-                                <div th:id="${'register-modal-' + eventView.eventId}" class="modal fade" role="dialog" tabindex="-1">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h4 class="modal-title" th:text="${'Register for ' + eventView.title}">Register for</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
-                                                    <p>
-                                                        We appreciate your interest to participate in our event!
-                                                    </p>
-                                                    <p class="text-left">
-                                                                <span>
-                                                                    To be able to register successfully please keep your <strong>iRacing team ID</strong>
-                                                                    and <strong>iRacing team name</strong> at hand.
-                                                                </span>
-                                                        <span th:text="${eventView.irLeagueName}"></span>
-                                                    </p>
-                                                    <a class="d-block" th:href="@{/team-registration(eventId=${eventView.eventId})}">
-                                                        <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register new team</button>
-                                                    </a>
-                                                    <a class="d-block" href="#">
-                                                        <button class="btn btn-primary" type="button" style="width: 14em;margin-top: 1em;">Register as team member</button>
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <button th:if="${event.isRegistrationOpen()}" class= "btn btn-primary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;" th:data-target="${'#register-modal-' + event.eventId}" data-toggle="modal">Register</button>
+                                <button th:if="${!event.isRegistrationOpen()}" class= "btn btn-secondary float-right" type="button" style="padding: 3px;padding-right: 6px;padding-left: 6px;margin-bottom: 3px;font-size: 10px;">Register</button>
+                                <div th:replace="action-modals.html :: register-modal(${event}, ${teamRegistrationSelectView})"></div>
                             </div>
                         </div>
                         <div class="row" style="font-size: 14px;">
                             <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>from</span></div>
                             <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
-                                <span th:text="${#temporals.format(eventView.registrationOpens, 'dd.MM.yyyy HH:mm ') + eventView.registrationOpensTZ}">12.04.</span>
+                                <span th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.</span>
                             </div>
                             <div class="col-4 col-sm-4 col-lg-5 col-xl-5">
                                 <span>100 d 12 H 44 m 13 s</span>
@@ -94,7 +65,7 @@
                         <div class="row" style="font-size: 14px;">
                             <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>until</span></div>
                             <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
-                                <span th:text="${#temporals.format(eventView.registrationCloses, 'dd.MM.yyyy HH:mm ') + eventView.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
+                                <span th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
                             </div>
                             <div class="col-4 col-sm-4 col-lg-5 col-xl-5"><span>100 d 12 H 44 m 13 s</span></div>
                         </div>
@@ -164,8 +135,8 @@
                                     <div th:if="${currentPerson.name.isEmpty()}" class="text-center" style="margin-top: 5em;">
                                         <p>You currently have no team registered, and you are not a member of an existing team.</p>
                                         <p>When either one of this becomes true you'll find your todo's here.</p>
-                                        <button th:if="${eventView.isRegistrationOpen()}" class= "btn btn-primary" type="button" style="margin-top: 1em;" th:data-target="${'#register-modal-' + eventView.eventId}" data-toggle="modal">Register</button>
-                                        <button th:if="${!eventView.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
+                                        <button th:if="${event.isRegistrationOpen()}" class= "btn btn-primary" type="button" style="margin-top: 1em;" th:data-target="${'#register-modal-' + event.eventId}" data-toggle="modal">Register</button>
+                                        <button th:if="${!event.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
                                     </div>
                                 </div>
                                 <div id="tab-6" class="tab-pane" role="tabpanel">
@@ -202,7 +173,7 @@
                                             <tbody style="padding: 3px;">
                                                 <tr th:style="${'padding: 3px; ' + (regStat.index < carClass.getMaxSlots() ? registration.getColorStyleString() : 'background-color: #d5d5d5')}" th:each="registration, regStat : ${carClass.registrations}">
                                                     <td class="text-right" style="padding: 3px; font-size: 14px;" th:text="${registration.assignedCarNumber}">34</td>
-                                                    <td style="padding: 3px;font-size: 14px;" th:text="${registration.teamName}">Sikania Endurance Motosport TCR</td>
+                                                    <td style="padding: 3px;font-size: 14px;" th:text="${registration.getFullTeamName()}">Sikania Endurance Motosport TCR</td>
                                                     <td style="padding: 3px;font-size: 14px;">
                                                         <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="20px" style="font-size: 12px;" />
                                                     </td>
@@ -296,7 +267,7 @@
                             <div class="form-group">
                                 <label>Event logo file</label>
                                 <input class="form-control-file" type="file" name="file"/>
-                                <input class="form-control" type="hidden" name="eventId" th:value="${eventView.getEventId()}"/>
+                                <input class="form-control" type="hidden" name="eventId" th:value="${event.getEventId()}"/>
                             </div>
                         </div>
                         <div class="modal-footer">

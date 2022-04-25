@@ -60,6 +60,7 @@ public class EventInfoView {
     private List<CarClassView> carClassPreset = new ArrayList<>();
     private List<PersonView> organizingStaff = new ArrayList<>();
     private List<AvailableSlotsView> availableSlots = new ArrayList<>();
+    private List<TeamRegistrationView> userRegistrations = new ArrayList<>();
 
     public boolean isRegistrationOpen() {
         return LocalDateTime.now().isAfter(registrationOpens) && LocalDateTime.now().isBefore(registrationCloses);

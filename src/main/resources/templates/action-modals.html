@@ -39,6 +39,59 @@
 </head>
 
 <body>
+    <div th:fragment="register-modal(eventInfoView, teamRegistrationSelectView)">
+        <div th:id="${'register-modal-' + eventInfoView.eventId}" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" th:text="${'Register for ' + eventInfoView.title}">Register for</h4>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div th:if="${user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                            <p>Before you may register for this event you have to login !</p>
+                            <a href="/index.html">
+                                <button class="btn btn-primary" type="button">Login</button>
+                            </a>
+                        </div>
+                        <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                            <p>
+                                We appreciate your interest to participate in our event!
+                            </p>
+                            <p class="text-left">
+                                            <span>
+                                                To be able to register successfully please keep your <strong>iRacing team ID</strong>
+                                                and <strong>iRacing team name</strong> at hand.
+                                            </span>
+                                <!--                                            <span th:text="${event.irLeagueName}"></span>-->
+                            </p>
+                            <form method="post" th:action="@{/register-car-for-team}" th:object="${teamRegistrationSelectView}">
+                                <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
+                                <input type="hidden" th:field="*{teamId}">
+                                <button class="btn btn-primary form-control" type="submit" style="">Register new team</button>
+                            </form>
+                            <div th:if="${!event.userRegistrations.isEmpty()}">
+                                <form method="post" th:action="@{/register-car-for-team}" th:object="${teamRegistrationSelectView}">
+                                    <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
+                                    <button class="btn btn-primary form-control" type="submit" style="margin-top: 1em;">Register car for existing team</button>
+                                    <select class="form-control" th:field="*{teamId}" style="">
+                                        <option th:each="registration : ${eventInfoView.userRegistrations}" th:value="${registration.id}" th:text="${registration.teamName}"></option>
+                                    </select>
+                                </form>
+                            </div>
+                            <form method="post" th:action="@{/register-member-for-team}" th:object="${teamRegistrationSelectView}">
+                                <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
+                                <input type="hidden" th:field="*{teamId}">
+                                <button class="btn btn-primary form-control" type="button" style="margin-top: 1em;">Register as team member</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div th:fragment="TeamRegistration-TEAM_REGISTRATION-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">

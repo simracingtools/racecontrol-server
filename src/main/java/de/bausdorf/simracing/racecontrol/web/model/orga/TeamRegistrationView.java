@@ -26,6 +26,7 @@ import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.thymeleaf.util.StringUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -38,6 +39,7 @@ public class TeamRegistrationView {
 
     private long eventId;
     private String teamName;
+    private String carQualifier;
     private String likedCarNumbers;
     private String assignedCarNumber;
     private Long iracingId;
@@ -56,11 +58,16 @@ public class TeamRegistrationView {
         return "";
     }
 
+    public String getFullTeamName() {
+        return teamName + (StringUtils.isEmpty(carQualifier) ? "" : (" " + carQualifier));
+    }
+
     public static TeamRegistrationView fromEntity(TeamRegistration registration) {
         return TeamRegistrationView.builder()
                 .id(registration.getId())
                 .eventId(registration.getEventId())
                 .teamName(registration.getTeamName())
+                .carQualifier(registration.getCarQualifier())
                 .likedCarNumbers(registration.getLikedCarNumbers())
                 .assignedCarNumber(registration.getAssignedCarNumber())
                 .iracingId(registration.getIracingId())

@@ -65,9 +65,23 @@
                                                         <input type="hidden" th:field="*{eventId}">
                                                         <input type="hidden" th:field="*{leagueMember}">
                                                         <input type="hidden" th:field="*{logoUrl}">
+                                                        <input type="hidden" th:field="*{discordChannelId}">
+                                                        <input type="hidden" th:field="*{otherTeamId}">
                                                         <label>Team name (as used in iRacing)</label>
-                                                        <input class="form-control" type="text" required="" th:field="*{teamName}"/>
+                                                        <i class="far fa-question-circle text-info" data-toggle="tooltip" title="If you plan to register more than one car, use a base name only." style="margin-left: 5px;"></i>
+                                                        <input class="form-control" type="text" required="" th:field="*{teamName}" th:readonly="*{teamName != null}"/>
                                                     </div>
+                                                </div>
+                                                <div class="col-xl-3">
+                                                    <div class="form-group">
+                                                        <label>Car qualifier</label>
+                                                        <i class="far fa-question-circle text-info" data-toggle="tooltip" title="Use Red, Green or something else that will identify the car within your team." style="margin-left: 5px;"></i>
+                                                        <input class="form-control" type="text" th:field="*{carQualifier}"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
                                                     <div class="form-group">
                                                         <label>Liked car numbers (only numbers, no leading zeros, separated by comma)</label>
                                                         <input class="form-control" type="text" th:field="*{likedNumbers}"/>

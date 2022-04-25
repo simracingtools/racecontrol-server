@@ -41,9 +41,11 @@ public class TeamRegistration implements WorkflowItem {
 
 	private long eventId;
 	private String teamName;
+	private String carQualifier;
 	private String likedCarNumbers;
 	private String assignedCarNumber;
 	private Long iracingId;
+	private Long discordChannelId;
 	private String logoUrl;
 	@ManyToOne
 	private Person createdBy;
@@ -55,10 +57,6 @@ public class TeamRegistration implements WorkflowItem {
 	@ManyToOne
 	WorkflowState workflowState;
 	@ManyToMany
-//	@JoinTable(
-//			name = "team_members",
-//			joinColumns = @JoinColumn(name = "member_id"),
-//			inverseJoinColumns = @JoinColumn(name = "team_id"))
 	private List<Person> teamMembers = new ArrayList<>();
 
 	@Transient
