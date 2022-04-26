@@ -23,10 +23,7 @@ package de.bausdorf.simracing.racecontrol.web.action;
  */
 
 import de.bausdorf.simracing.racecontrol.discord.JdaClient;
-import de.bausdorf.simracing.racecontrol.orga.model.CarClass;
-import de.bausdorf.simracing.racecontrol.orga.model.CarClassRepository;
-import de.bausdorf.simracing.racecontrol.orga.model.Person;
-import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
+import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
 import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowActionEditView;
 import net.dv8tion.jda.api.Permission;
@@ -64,16 +61,17 @@ public class PrepareDisordAction extends WorkflowAction {
     public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
         de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
         if(currentAction != null) {
-//            TeamRegistration registration = updateCurrentAction(editView, currentAction, actor);
-            TeamRegistration registration = getEventOrganizer().getTeamRegistration(currentAction.getWorkflowItemId());
-            prepareDiscord(registration, actor, editView.getMessage());
-//            getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
+            TeamRegistration registration = updateCurrentAction(editView, currentAction, actor);
+//            TeamRegistration registration = getEventOrganizer().getTeamRegistration(currentAction.getWorkflowItemId());
+            prepareDiscord(registration, editView.getMessage());
+            getEventOrganizer().saveRegistration(registration);
+            getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
         } else {
             throw new ActionException("Current action not found");
         }
     }
 
-    private void prepareDiscord(TeamRegistration registration, Person actor, String actionMessage) {
+    private void prepareDiscord(TeamRegistration registration, String actionMessage) {
         Guild guild = jdaClient.getGuildById(registration.getEventId());
         String discordName = !StringUtils.isEmpty(actionMessage) ? actionMessage.trim() : registration.getTeamName();
 
@@ -89,22 +87,31 @@ public class PrepareDisordAction extends WorkflowAction {
                         .addMemberPermissionOverride(role.getIdLong(), allowedForMember, null)
                         .addMemberPermissionOverride(jdaClient.getApi().getSelfUser().getIdLong(), allowedForBot, null)
                         .addRolePermissionOverride(role.getIdLong(), allowedForMember, null)
-                        .addRolePermissionOverride(jdaClient.getRoleRaceControl().getIdLong(), allowedForMember, null)
-                        .addRolePermissionOverride(jdaClient.getRoleOrganization().getIdLong(), allowedForMember, null)
-                        .addRolePermissionOverride(jdaClient.getRoleEveryone().getIdLong(), null, allowedForMember)
-                        .setPosition(jdaClient.getTeamSpacerCategory(registration.getEventId()).getPosition());
+                        .addRolePermissionOverride(jdaClient.getRoleByName(guild, "RaceControl").getIdLong(), allowedForMember, null)
+                        .addRolePermissionOverride(jdaClient.getRoleByName(guild, "Organization").getIdLong(), allowedForMember, null)
+                        .addRolePermissionOverride(guild.getPublicRole().getIdLong(), null, allowedForMember)
+                        .setPosition(getTeamCategoryInsertPosition(registration.getEventId(), discordName));
                 category = action.complete();
             }
-            if(category.getChannels().stream().noneMatch(channel -> channel.getName().equals("text"))) {
+
+            Optional<Long> textChannelId = category.getChannels().stream()
+                    .filter(channel -> channel.getName().equals("text"))
+                    .map(GuildChannel::getIdLong)
+                    .findFirst();
+            if(textChannelId.isEmpty()) {
                 TextChannel textChannel = category.createTextChannel("text").complete();
+                registration.setDiscordChannelId(textChannel.getIdLong());
                 Role mentionedRole = role;
                 getPresetPosts(registration.getEventId()).forEach(m -> {
                     String text = m.getContentDisplay();
-                    textChannel.sendMessage(text)
+                    textChannel.sendMessage(mentionedRole.getAsMention() + " " + text)
                             .mention(mentionedRole)
                             .queue();
                 });
+            } else {
+                registration.setDiscordChannelId(textChannelId.get());
             }
+
             String voiceChannelName = "#" + registration.getAssignedCarNumber() + " voice";
             if(category.getChannels().stream().noneMatch(channel -> channel.getName().equals(voiceChannelName))) {
                 category.createVoiceChannel(voiceChannelName)
@@ -112,7 +119,7 @@ public class PrepareDisordAction extends WorkflowAction {
                         .complete();
             }
 
-            Member discordMember = jdaClient.getMember(registration.getEventId(), actor.getName()).orElse(null);
+            Member discordMember = jdaClient.getMember(registration.getEventId(), registration.getCreatedBy().getName()).orElse(null);
             if(discordMember != null) {
                 Optional<CarClass> carClass = carClassRepository.findById(registration.getCar().getCarClassId());
                 carClass.ifPresent(cc -> {
@@ -130,6 +137,21 @@ public class PrepareDisordAction extends WorkflowAction {
                 guild.addRoleToMember(discordMember, role).complete();
             }
         }
+    }
+
+    private int getTeamCategoryInsertPosition(long eventId, String categoryName) {
+        EventSeries event = getEventOrganizer().getEventSeries(eventId);
+        int insertPosition = 0;
+        if(event != null) {
+            List<Category> teamCategories = jdaClient.getTeamCategories(event.getDiscordGuildId(), event.getDiscordSpacerCategoryId());
+            for(Category category : teamCategories) {
+                insertPosition = category.getPosition();
+                if(category.getName().compareTo(categoryName) > 0) {
+                    break;
+                }
+            }
+        }
+        return insertPosition;
     }
 
     private List<Message> getPresetPosts(long eventId) {

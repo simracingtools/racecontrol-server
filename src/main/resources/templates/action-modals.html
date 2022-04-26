@@ -95,35 +95,33 @@
     <div th:fragment="TeamRegistration-TEAM_REGISTRATION-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
+                <div class="modal-content" th:fragment="action-modal-content">
+                    <div class="modal-header" th:fragment="action-modal-header">
                         <h4 class="modal-title">Team Registration</h4>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
                     <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
-                        <div class="modal-body">
-                            <div th:fragment="action-modal-common(action, editAction)">
-                                <h4 th:text="${action.message}">FBP RED</h4>
-                                <input type="hidden" th:field="*{id}">
-                                <input type="hidden" th:field="*{eventId}">
-                                <input type="hidden" th:field="*{workflowItemId}">
-                                <div class="form-group text-left">
-                                    <label style="font-size: 14px;">Proceed to</label>
-                                    <select class="form-control" required="" th:field="*{targetStateKey}" th:oninput="'changeFormGroupDisplay(' + ${action.id} + ');'">
-                                        <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
-                                    </select>
-                                </div>
-                                <div class="form-group text-left">
-                                    <label style="font-size: 14px;">Due date</label>
-                                    <input class="form-control" type="date" th:field="*{dueDate}">
-                                </div>
+                        <div class="modal-body" th:fragment="action-modal-content">
+                            <h5 th:text="${action.teamName}">FBP RED</h5>
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{eventId}">
+                            <input type="hidden" th:field="*{workflowItemId}">
+                            <div class="form-group text-left">
+                                <label style="font-size: 14px;">Proceed to</label>
+                                <select class="form-control" required="" th:field="*{targetStateKey}" th:oninput="'changeFormGroupDisplay(' + ${action.id} + ');'">
+                                    <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
+                                </select>
+                            </div>
+                            <div class="form-group text-left">
+                                <label style="font-size: 14px;">Due date</label>
+                                <input class="form-control" type="date" th:field="*{dueDate}">
                             </div>
                             <div class="form-group text-left">
                                 <label th:for="*{message}" style="font-size: 14px;">Action message</label>
                                 <input class="form-control" type="text" th:field="*{message}">
                             </div>
                         </div>
-                        <div class="modal-footer">
+                        <div class="modal-footer" th:fragment="action-modal-footer">
                             <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
                             <button class="btn btn-primary" type="submit">Save</button>
                         </div>
@@ -136,25 +134,7 @@
     <div th:fragment="TeamRegistration-ASSIGNED_CAR_NO-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Team Registration</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
-                        <div class="modal-body">
-                            <div th:replace="action-modals.html :: action-modal-common(${action}, ${editAction})"></div>
-                            <div class="form-group text-left">
-                                <label th:for="*{message}" style="font-size: 14px;">Action message</label>
-                                <input class="form-control" type="text" th:field="*{message}">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </div>
-                    </form>
-                </div>
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
             </div>
         </div>
     </div>
@@ -162,25 +142,7 @@
     <div th:fragment="TeamRegistration-DISCORD_PREPARED-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Team Registration</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
-                        <div class="modal-body">
-                            <div th:replace="action-modals.html :: action-modal-common(${action}, ${editAction})"></div>
-                            <div class="form-group text-left">
-                                <label th:for="*{message}" style="font-size: 14px;">Action message</label>
-                                <input class="form-control" type="text" th:field="*{message}">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </div>
-                    </form>
-                </div>
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
             </div>
         </div>
     </div>
@@ -188,25 +150,7 @@
     <div th:fragment="TeamRegistration-PAYMENT_PROVIDED-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Team Registration</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
-                        <div class="modal-body">
-                            <div th:replace="action-modals.html :: action-modal-common(${action}, ${editAction})"></div>
-                            <div class="form-group text-left">
-                                <label th:for="*{message}" style="font-size: 14px;">Action Message</label>
-                                <input class="form-control" type="text" th:field="*{message}">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </div>
-                    </form>
-                </div>
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
             </div>
         </div>
     </div>
@@ -214,25 +158,7 @@
     <div th:fragment="TeamRegistration-PAYMENT_RECEIPT-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Team Registration</h4>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
-                        <div class="modal-body">
-                            <div th:replace="action-modals.html :: action-modal-common(${action}, ${editAction})"></div>
-                            <div class="form-group text-left">
-                                <label th:for="*{message}" style="font-size: 14px;">Action Message</label>
-                                <input class="form-control" type="text" th:field="*{message}">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </div>
-                    </form>
-                </div>
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
             </div>
         </div>
     </div>

@@ -57,12 +57,6 @@ public class JdaClient extends ListenerAdapter {
 
     @Getter
     private JDA api;
-    @Getter
-    private Role roleRaceControl;
-    @Getter
-    private Role roleOrganization;
-    @Getter
-    private Role roleEveryone;
 
     public JdaClient(@Autowired RacecontrolServerProperties config,
                      @Autowired EventSeriesRepository eventSeriesRepository) {
@@ -147,6 +141,11 @@ public class JdaClient extends ListenerAdapter {
             }
         }
         return List.of();
+    }
+
+    public Role getRoleByName(Guild guild, String roleName) {
+        List<Role> roles = guild.getRolesByName(roleName, true);
+        return roles.stream().findFirst().orElse(null);
     }
 
     @Override

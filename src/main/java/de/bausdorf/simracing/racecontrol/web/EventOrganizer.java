@@ -50,17 +50,20 @@ public class EventOrganizer {
     private final WorkflowActionRepository actionRepository;
     private final WorkflowStateRepository stateRepository;
     private final PersonRepository personRepository;
+    private final EventSeriesRepository seriesRepository;
     private final IRacingClient dataClient;
     public EventOrganizer(@Autowired CarClassRepository carClassRepository,
                           @Autowired TeamRegistrationRepository registrationRepository,
                           @Autowired WorkflowActionRepository actionRepository,
                           @Autowired WorkflowStateRepository stateRepository,
                           @Autowired PersonRepository personRepository,
+                          @Autowired EventSeriesRepository seriesRepository,
                           @Autowired IRacingClient dataClient) {
         this.carClassRepository = carClassRepository;
         this.registrationRepository = registrationRepository;
         this.stateRepository = stateRepository;
         this.personRepository = personRepository;
+        this.seriesRepository = seriesRepository;
         this.dataClient = dataClient;
         this.actionRepository = actionRepository;
     }
@@ -197,6 +200,36 @@ public class EventOrganizer {
         return actionRepository.findById(actionId).orElse(null);
     }
 
+    public WorkflowAction updateCurrentAction(@NonNull WorkflowAction currentAction, @NonNull Person actor, @NonNull WorkflowActionEditView editAction) {
+        currentAction.setDoneAt(OffsetDateTime.now());
+        currentAction.setDoneBy(actor);
+        currentAction.setMessage(editAction.getMessage());
+        WorkflowState targetState = stateRepository.findWorkflowStateByWorkflowNameAndStateKey(
+                currentAction.getWorkflowName(), editAction.getTargetStateKey()).orElse(null);
+        if(targetState == null) {
+            throw new IllegalStateException("Target state " + editAction.getTargetStateKey() + " not found.");
+        }
+        currentAction.setTargetState(targetState);
+        return actionRepository.save(currentAction);
+    }
+
+    public WorkflowAction createFollowUpAction(WorkflowAction currentAction, Person actor, LocalDateTime dueDate) {
+        WorkflowAction followUp = WorkflowAction.builder()
+                .eventId(currentAction.getEventId())
+                .workflowName(currentAction.getTargetState().getWorkflowName())
+                .workflowItemId(currentAction.getWorkflowItemId())
+                .created(OffsetDateTime.now())
+                .createdBy(actor)
+                .sourceState(currentAction.getTargetState())
+                .dueDate(dueDate != null ? OffsetDateTime.of(dueDate, ZoneOffset.UTC) : null)
+                .build();
+        return actionRepository.save(followUp);
+    }
+
+    public EventSeries getEventSeries(long eventId) {
+        return seriesRepository.findById(eventId).orElse(null);
+    }
+
     private void setWildcardSlots(TeamRegistrationView view, CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray) {
         for(int i = 0; i < carClass.getWildcards(); i++) {
             if(regArray.get()[i] == null) {
@@ -288,8 +321,13 @@ public class EventOrganizer {
             if(action.getSourceState().getStateKey().equalsIgnoreCase("TEAM_REGISTRATION")) {
                 registration.ifPresent(r -> infoView.setEditActionMessage(r.getLikedCarNumbers()));
             }
-            registration.ifPresent(r -> infoView.setTeamName(r.getTeamName()
-                    + (StringUtils.isEmpty(r.getCarQualifier()) ? "" : (" " + r.getCarQualifier())))
+            registration.ifPresent(r -> {
+                        String carQualifier = StringUtils.isEmpty(r.getCarQualifier()) ? "" : (" " + r.getCarQualifier());
+                        infoView.setTeamName(
+                                StringUtils.isEmpty(r.getAssignedCarNumber()) ? "" : "#" + r.getAssignedCarNumber() + " "
+                                        + r.getTeamName()
+                                        + carQualifier);
+                    }
             );
         }
         List<WorkflowStateInfoView> statesForPerson = infoView.getTargetStates().stream()
@@ -297,31 +335,5 @@ public class EventOrganizer {
                 .collect(Collectors.toList());
         infoView.setTargetStates(statesForPerson);
         return infoView;
-    }
-
-    public WorkflowAction updateCurrentAction(@NonNull WorkflowAction currentAction, @NonNull Person actor, @NonNull WorkflowActionEditView editAction) {
-        currentAction.setDoneAt(OffsetDateTime.now());
-        currentAction.setDoneBy(actor);
-        currentAction.setMessage(editAction.getMessage());
-        WorkflowState targetState = stateRepository.findWorkflowStateByWorkflowNameAndStateKey(
-                currentAction.getWorkflowName(), editAction.getTargetStateKey()).orElse(null);
-        if(targetState == null) {
-            throw new IllegalStateException("Target state " + editAction.getTargetStateKey() + " not found.");
-        }
-        currentAction.setTargetState(targetState);
-        return actionRepository.save(currentAction);
-    }
-
-    public WorkflowAction createFollowUpAction(WorkflowAction currentAction, Person actor, LocalDateTime dueDate) {
-        WorkflowAction followUp = WorkflowAction.builder()
-                .eventId(currentAction.getEventId())
-                .workflowName(currentAction.getTargetState().getWorkflowName())
-                .workflowItemId(currentAction.getWorkflowItemId())
-                .created(OffsetDateTime.now())
-                .createdBy(actor)
-                .sourceState(currentAction.getTargetState())
-                .dueDate(dueDate != null ? OffsetDateTime.of(dueDate, ZoneOffset.UTC) : null)
-                .build();
-        return actionRepository.save(followUp);
     }
 }
