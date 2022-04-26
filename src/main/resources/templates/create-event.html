@@ -336,31 +336,54 @@
         <div class="modal fade" role="dialog" tabindex="-1" id="discord-modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <form method="post" th:action="@{/delete-from-discord}" th:object="${discordCleanupView}">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Manage Discord</h4>
-                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">×</span>
-                            </button>
-                        </div>
+                    <div class="modal-header">
+                        <h4 class="modal-title">Manage Discord</h4>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
                         <div class="modal-body">
-                            <input type="hidden" th:field="*{eventId}">
-                            <input type="hidden" th:field="*{serverId}">
-                            <div class="form-group">
-                                <label>Team categories</label>
-                                <select class="form-control" multiple style="height: 30em;" th:field="*{selectedItems}">
-                                    <optgroup th:each="category : *{categories}" th:class="${category.inEvent ? 'text-success' : 'text-danger'}" th:label="${category.name}">
-                                        <option th:each="channel: ${category.children}" th:class="${category.inEvent ? 'text-success' : 'text-danger'}" th:value="${channel.getId() + ':' + channel.categoryId}" th:text="${channel.getName()}">This is item 1</option>
-                                    </optgroup>
-                                </select>
-                                <button class="btn btn-primary" type="button" onclick="selectNotMachingChannels();">Select all not matching</button>
+                            <div>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-toggle="tab" href="#tab-channels">Team channels</a></li>
+                                    <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-roles">Roles</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="tab-channels" class="tab-pane active" role="tabpanel">
+                                        <form method="post" th:action="@{/delete-from-discord}" th:object="${discordCleanupView}">
+                                            <div class="form-group">
+                                                <input type="hidden" th:field="*{eventId}">
+                                                <input type="hidden" th:field="*{serverId}">
+                                                <label>Team categories</label>
+                                                <select class="form-control" multiple style="height: 30em;" th:field="*{selectedItems}">
+                                                    <optgroup th:each="category : *{categories}" th:class="${category.inEvent ? 'text-success' : 'text-danger'}" th:label="${category.name}">
+                                                        <option th:each="channel: ${category.children}" th:class="${channel.inEvent ? 'text-success' : 'text-danger'}" th:value="${channel.getId() + ':' + channel.categoryId}" th:text="${channel.getName()}">This is item 1</option>
+                                                    </optgroup>
+                                                </select>
+                                                <button class="btn btn-primary" type="button" onclick="selectNotMachingItems();">Select all not matching</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div id="tab-roles" class="tab-pane" role="tabpanel">
+                                        <form method="post" th:action="@{/delete-from-discord}" th:object="${discordCleanupView}">
+                                            <div class="form-group">
+                                                <input type="hidden" th:field="*{eventId}">
+                                                <input type="hidden" th:field="*{serverId}">
+                                                <label>Team categories</label>
+                                                <select class="form-control" multiple style="height: 30em;" th:field="*{selectedItems}">
+                                                    <option th:each="role: *{roles}" th:class="${role.inEvent ? 'text-success' : 'text-danger'}" th:value="${role.getId()}" th:text="${role.getName()}">This is item 1</option>
+                                                </select>
+                                                <button class="btn btn-primary" type="button" onclick="selectNotMachingItems();">Select all not matching</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Delete selected</button>
+                            <button class="btn btn-primary" type="button" onclick="submitDiscordCleanupForm();">Delete selected</button>
                         </div>
-                    </form>
                 </div>
             </div>
         </div>

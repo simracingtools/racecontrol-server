@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.GenericEvent;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildAvailableEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
@@ -41,11 +40,9 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
-import javax.swing.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -73,13 +70,13 @@ public class JdaClient extends ListenerAdapter {
         }
     }
 
-    public Guild getGuildById(long eventId) {
+    public Guild getGuildByEventId(long eventId) {
         Optional<EventSeries> eventSeries = eventSeriesRepository.findById(eventId);
         return eventSeries.map(series -> api.getGuildById(series.getDiscordGuildId())).orElse(null);
     }
 
     public Optional<Member> getMember(long eventId, String iRacingName) {
-        Guild connectedGuild = getGuildById(eventId);
+        Guild connectedGuild = getGuildByEventId(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getMembers().stream()
                     .filter(member -> member.getEffectiveName().contains(iRacingName))
@@ -89,7 +86,7 @@ public class JdaClient extends ListenerAdapter {
     }
 
     public Optional<Category> getCategory(long eventId, String categoryName) {
-        Guild connectedGuild = getGuildById(eventId);
+        Guild connectedGuild = getGuildByEventId(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getCategories().stream()
                     .filter(cat -> cat.getName().equalsIgnoreCase(categoryName))
@@ -99,7 +96,7 @@ public class JdaClient extends ListenerAdapter {
     }
 
     public Optional<Role> getRole(long eventId, String roleName) {
-        Guild connectedGuild = getGuildById(eventId);
+        Guild connectedGuild = getGuildByEventId(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getRoles().stream()
                     .filter(role -> role.getName().equalsIgnoreCase(roleName))

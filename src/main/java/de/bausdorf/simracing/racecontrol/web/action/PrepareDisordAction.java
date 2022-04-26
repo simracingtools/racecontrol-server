@@ -72,7 +72,7 @@ public class PrepareDisordAction extends WorkflowAction {
     }
 
     private void prepareDiscord(TeamRegistration registration, String actionMessage) {
-        Guild guild = jdaClient.getGuildById(registration.getEventId());
+        Guild guild = jdaClient.getGuildByEventId(registration.getEventId());
         String discordName = !StringUtils.isEmpty(actionMessage) ? actionMessage.trim() : registration.getTeamName();
 
         if(guild != null) {

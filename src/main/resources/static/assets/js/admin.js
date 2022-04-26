@@ -104,13 +104,17 @@ function changeFormGroupDisplay(actionId) {
   });
 }
 
-function selectNotMachingChannels() {
+function selectNotMachingItems() {
   $("#discord-modal #selectedItems option").each(function() {
     const optionStyle = $(this).prop("class");
     if( optionStyle === "text-danger") {
       $(this).prop("selected", true);
     }
   });
+}
+
+function submitDiscordCleanupForm() {
+  $("#discord-modal .tab-content > .active form").submit();
 }
 
 function editWorkflowState(workflowIndex, entryIndex) {

@@ -27,18 +27,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public enum OrgaRoleType {
-	SUPPORT(false, 1),
-	PARTICIPANT(false, 2),
-	STAFF(true, 3),
-	STEWARD(true, 4),
-	RACE_DIRECTOR(true, 5);
+	SUPPORT(false, 1, null),
+	PARTICIPANT(false, 2, null),
+	STAFF(true, 3, "Organization"),
+	STEWARD(true, 4, "RaceControl"),
+	RACE_DIRECTOR(true, 5, "RaceControl");
 
 	private final boolean racecontrol;
 	private final int code;
+	private final String discordRoleName;
 
-	OrgaRoleType(boolean racecontrol, int code) {
+	OrgaRoleType(boolean racecontrol, int code, String discordRoleName) {
 		this.racecontrol = racecontrol;
 		this.code = code;
+		this.discordRoleName = discordRoleName;
 	}
 
 	public boolean isRacecontrol() {
@@ -51,6 +53,10 @@ public enum OrgaRoleType {
 
 	public int code() {
 		return code;
+	}
+
+	public String discordRoleName() {
+		return discordRoleName;
 	}
 
 	public static List<OrgaRoleType> racecontrolValues() {

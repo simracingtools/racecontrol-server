@@ -46,7 +46,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -232,14 +231,12 @@ public class EventAdminController extends ControllerBase {
                     break;
                 }
                 String[] idParts = id.split(":");
-                GuildChannel channel = guild.getChannelById(GuildChannel.class, idParts[0]);
-                if(channel != null) {
-                    try {
-                        deleteOnDiscord(channel, guild, idParts[1]);
-                    } catch(IllegalStateException | InsufficientPermissionException e) {
-                        log.error(e.getMessage());
-                        addError("Cannot delete category/channel " + channel.getName() + ": " + e.getMessage(), model);
-                    }
+                if(idParts.length == 2) {
+                    // id has format [itemId]:[categoryId] -> item is a channel
+                    deleteChannel(guild, idParts, model);
+                } else if(idParts.length == 1) {
+                    // id plain number -> item is a role
+                    deleteRole(guild, idParts[0], model);
                 }
             }
         }
@@ -287,6 +284,30 @@ public class EventAdminController extends ControllerBase {
         Category category = guild.getCategoryById(categoryId);
         if(category != null && category.getChannels().isEmpty()) {
             category.delete().complete();
+        }
+    }
+
+    private void deleteChannel(Guild guild, String[] idParts, Model model) {
+        GuildChannel channel = guild.getChannelById(GuildChannel.class, idParts[0]);
+        if (channel != null) {
+            try {
+                deleteOnDiscord(channel, guild, idParts[1]);
+            } catch (IllegalStateException | InsufficientPermissionException e) {
+                log.error(e.getMessage());
+                addError("Cannot delete category/channel " + channel.getName() + ": " + e.getMessage(), model);
+            }
+        }
+    }
+
+    private void deleteRole(Guild guild, String roleId, Model model) {
+        Role role = guild.getRoleById(roleId);
+        if (role != null) {
+            try {
+                role.delete().complete();
+            } catch (IllegalStateException | InsufficientPermissionException e) {
+                log.error(e.getMessage());
+                addError("Cannot delete role " + roleId + ": " + e.getMessage(), model);
+            }
         }
     }
 
@@ -344,7 +365,7 @@ public class EventAdminController extends ControllerBase {
                                                     .name(channel.getName())
                                                     .type(channel.getType() == ChannelType.TEXT ? DiscordItemView.DiscordItemType.TEXT_CHANNEL : DiscordItemView.DiscordItemType.VOICE_CHANNEL)
                                                     .children(List.of())
-                                                    .inEvent(channelInEvent(registrations, category))
+                                                    .inEvent(channelInEvent(registrations, category, channel))
                                                     .categoryId(category.getIdLong())
                                                     .build())
                                             .collect(Collectors.toList())
@@ -355,20 +376,43 @@ public class EventAdminController extends ControllerBase {
                         })
                         .collect(Collectors.toList())
                 )
+                .roles(jdaClient.getApi().getGuildById(event.getDiscordGuildId()).getRoles().stream()
+                        .map(role -> DiscordItemView.builder()
+                                    .id(role.getIdLong())
+                                    .type(DiscordItemView.DiscordItemType.ROLE)
+                                    .name(role.getName())
+                                    .inEvent(roleInEvent(event.getId(), registrations, role))
+                                    .build())
+                        .collect(Collectors.toList())
+                )
                 .selectedItems(new ArrayList<>())
                 .eventId(event.getId())
                 .serverId(event.getDiscordGuildId())
                 .build();
     }
 
-    private boolean channelInEvent(List<TeamRegistration> allRegistrations, Category category) {
+    private boolean channelInEvent(List<TeamRegistration> allRegistrations, Category category, GuildChannel channel) {
         return allRegistrations.stream()
                 .filter(r -> r.getTeamName().equalsIgnoreCase(category.getName()))
-                .anyMatch(r ->
-                    category.getChannels().stream()
-                            .anyMatch(c -> (c.getType() == ChannelType.VOICE && c.getName().startsWith("#" + r.getAssignedCarNumber()))
-                                            || (c.getType() == ChannelType.TEXT && c.getName().equals("text"))
-                                    )
-                );
+                .anyMatch(r -> {
+                    String voiceChannelName = "#" + r.getAssignedCarNumber() + " voice";
+                    if (channel.getType() == ChannelType.VOICE && channel.getName().equals(voiceChannelName)) {
+                        return true;
+                    }
+                    return channel.getType() == ChannelType.TEXT && channel.getName().equals("text");
+                });
+    }
+
+    private boolean roleInEvent(long eventId, List<TeamRegistration> allRegistrations, Role role) {
+        List<String> carClassNames = carClassRepository.findAllByEventId(eventId).stream()
+                .map(CarClass::getName)
+                .collect(Collectors.toList());
+        return OrgaRoleType.racecontrolValues().stream().anyMatch(t -> t.discordRoleName().equalsIgnoreCase(role.getName()))
+                || allRegistrations.stream().anyMatch(r -> r.getTeamName().equalsIgnoreCase(role.getName()))
+                || role.isPublicRole()
+                || jdaClient.getGuildByEventId(eventId).getMember(jdaClient.getApi().getSelfUser()).getRoles().contains(role)
+                || role.getName().equalsIgnoreCase("Admin")
+                || role.getName().equalsIgnoreCase("WaitingList")
+                || carClassNames.contains(role.getName());
     }
 }
