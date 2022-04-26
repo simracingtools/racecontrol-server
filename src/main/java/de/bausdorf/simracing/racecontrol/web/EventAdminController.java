@@ -352,6 +352,8 @@ public class EventAdminController extends ControllerBase {
 
     private DiscordCleanupView getDiscordTeamCategories(EventSeries event) {
         List<TeamRegistration> registrations = registrationRepository.findAllByEventId(event.getId());
+        Guild guild = jdaClient.getApi().getGuildById(event.getDiscordGuildId());
+        List<Role> guildRoles = guild != null ? guild.getRoles() : new ArrayList<>();
         return DiscordCleanupView.builder()
                 .categories(jdaClient.getTeamCategories(event.getDiscordGuildId(), event.getDiscordSpacerCategoryId()).stream()
                         .map(category -> {
@@ -376,12 +378,12 @@ public class EventAdminController extends ControllerBase {
                         })
                         .collect(Collectors.toList())
                 )
-                .roles(jdaClient.getApi().getGuildById(event.getDiscordGuildId()).getRoles().stream()
+                .roles(guildRoles.stream()
                         .map(role -> DiscordItemView.builder()
                                     .id(role.getIdLong())
                                     .type(DiscordItemView.DiscordItemType.ROLE)
                                     .name(role.getName())
-                                    .inEvent(roleInEvent(event.getId(), registrations, role))
+                                    .inEvent(roleInEvent(event, registrations, role))
                                     .build())
                         .collect(Collectors.toList())
                 )
@@ -403,14 +405,17 @@ public class EventAdminController extends ControllerBase {
                 });
     }
 
-    private boolean roleInEvent(long eventId, List<TeamRegistration> allRegistrations, Role role) {
-        List<String> carClassNames = carClassRepository.findAllByEventId(eventId).stream()
+    private boolean roleInEvent(EventSeries event, List<TeamRegistration> allRegistrations, Role role) {
+        List<String> carClassNames = carClassRepository.findAllByEventId(event.getId()).stream()
                 .map(CarClass::getName)
                 .collect(Collectors.toList());
+        Guild guild = jdaClient.getApi().getGuildById(event.getDiscordGuildId());
+        Member botMember = guild != null ? guild.getMember(jdaClient.getApi().getSelfUser()) : null;
+        List<Role> guildRoles = botMember != null ? botMember.getRoles() : new ArrayList<>();
         return OrgaRoleType.racecontrolValues().stream().anyMatch(t -> t.discordRoleName().equalsIgnoreCase(role.getName()))
                 || allRegistrations.stream().anyMatch(r -> r.getTeamName().equalsIgnoreCase(role.getName()))
                 || role.isPublicRole()
-                || jdaClient.getGuildByEventId(eventId).getMember(jdaClient.getApi().getSelfUser()).getRoles().contains(role)
+                || guildRoles.contains(role)
                 || role.getName().equalsIgnoreCase("Admin")
                 || role.getName().equalsIgnoreCase("WaitingList")
                 || carClassNames.contains(role.getName());
