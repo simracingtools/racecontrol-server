@@ -172,6 +172,35 @@ function checkIRacingMemberId() {
   });
 }
 
+function showLocalTime() {
+  const regCloses = moment($("#regClosesTime").text(), "DD.MM.YYYY hh:mm ZZ");
+  const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
+
+  $("#regClosesLocal").text(regCloses.local().format("L LT"))
+  $("#regOpensLocal").text(regOpens.local().format("L LT"))
+}
+
+function registrationOpenCountdown() {
+  const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
+  if(moment().isBefore(regOpens)) {
+    timeLeft = moment.duration(regOpens.diff(moment()));
+    $("#regOpensCountdown").text(timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
+  } else {
+    $("#regOpensCountdown").text("");
+  }
+}
+
+function registrationClosedCountdown() {
+  const regCloses = moment($("#regClosesTime").text(), "DD.MM.YYYY hh:mm ZZ");
+  const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
+  if(moment().isAfter(regOpens) && moment().isBefore(regCloses)) {
+    var timeLeft = moment.duration(regCloses.diff(moment()));
+    $("#regClosesCountdown").text(timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
+  } else {
+    $("#regClosesCountdown").text("");
+  }
+}
+
 function selectTimezoneFromUtcOffset(timezone) {
   if (!timezone) {
     var utcOffsetHours = moment().utcOffset() / 60;

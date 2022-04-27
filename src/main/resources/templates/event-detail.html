@@ -58,18 +58,22 @@
                         <div class="row" style="font-size: 14px;">
                             <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>from</span></div>
                             <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
-                                <span th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.</span>
+                                <span id="regOpensTime" style="display: none;" th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.</span>
+                                <span id="regOpensLocal"></span>
                             </div>
                             <div class="col-4 col-sm-4 col-lg-5 col-xl-5">
-                                <span>100 d 12 H 44 m 13 s</span>
+                                <span id="regOpensCountdown"></span>
                             </div>
                         </div>
                         <div class="row" style="font-size: 14px;">
                             <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>until</span></div>
                             <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
-                                <span th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
+                                <span id="regClosesTime" style="display: none;" th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
+                                <span id="regClosesLocal"></span>
                             </div>
-                            <div class="col-4 col-sm-4 col-lg-5 col-xl-5"><span>100 d 12 H 44 m 13 s</span></div>
+                            <div class="col-4 col-sm-4 col-lg-5 col-xl-5">
+                                <span id="regClosesCountdown"></span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -83,54 +87,54 @@
                             </ul>
                             <div class="tab-content">
                                 <div id="tab-tasks" class="tab-pane active" role="tabpanel">
-                                    <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive">
+                                    <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive" style="overflow: auto; max-height: 40em;">
                                         <table class="table" style="font-size: 14px;">
                                             <thead>
-                                            <tr>
-                                                <th style="padding: 3px;">State</th>
-                                                <th style="padding: 3px;">created</th>
-                                                <th style="padding: 3px;">last change</th>
-                                                <th style="padding: 3px;">Possible Actions</th>
-                                                <th style="padding: 3px;"></th>
-                                            </tr>
+                                                <tr>
+                                                    <th style="padding: 3px;">State</th>
+                                                    <th style="padding: 3px;">created</th>
+                                                    <th style="padding: 3px;">last change</th>
+                                                    <th style="padding: 3px;">Possible Actions</th>
+                                                    <th style="padding: 3px;"></th>
+                                                </tr>
                                             </thead>
                                             <tbody>
-                                            <tr th:each="action : ${actions}" th:id="'action-tr-' + ${action.id}">
-                                                <td th:style="'padding: 3px; ' + ${action.sourceState.getColorStyleString()}">
-                                                    <input type="hidden" th:value="${action.id}" id="id">
-                                                    <input type="hidden" th:value="${action.editActionMessage}" id="editActionMessage">
-                                                    <input type="hidden" th:value="${action.workflowItemId}" id="workflowItemId">
-                                                    <span th:text="${action.sourceState.description}">Team Registration</span>
-                                                    <div>
-                                                        <span th:text="${action.teamName}">PCF Racing Red</span>
-                                                    </div>
-                                                </td>
-                                                <td style="padding: 3px;">
-                                                    <span th:text="${#temporals.format(action.created, 'dd.MM.yyyy HH:mm')}">14.04.2022 16:59</span>
-                                                    <div>
-                                                        <span th:text="${' by ' + action.createdBy.name}">by John Doe</span>
-                                                    </div>
-                                                </td>
-                                                <td style="padding: 3px;">
-                                                    <span th:text="${action.targetState != null ? #temporals.format(action.doneAt, 'dd.MM.yyyy HH:mm') : ''}">14.04.2022 17:18</span>
-                                                    <div>
-                                                        <span th:text="${action.targetState != null ? ('by ' + action.doneBy.name) : ''}">by Robert Bausdorf</span>
-                                                    </div>
-                                                </td>
-                                                <td style="padding: 3px;">
-                                                    <div th:if="${action.targetState == null}" class="d-block" th:each="state: ${action.targetStates}">
-                                                        <span th:style="${state.getColorStyleString()}" th:text="${state.description}">Assign car no</span>
-                                                    </div>
-                                                    <span class="d-block" th:if="${action.targetState != null}" th:text="${action.targetState.description}" th:style="${action.targetState.getColorStyleString()}">Assign car no</span>
-                                                    <span class="d-block" th:if="${action.targetState != null}" th:text="${action.message}"></span>
-                                                </td>
-                                                <td class="text-center" style="padding: 3px;" th:if="${!action.targetStates.isEmpty()}">
-                                                    <button th:if="${!action.sourceState.inActive && action.targetState == null}" class="btn btn-primary" type="button" th:onclick="'editWorkflowAction(' + ${action.id} + ');'" style="padding-top: 3px;padding-bottom: 3px;padding-right: 10px;padding-left: 12px;">
-                                                        <i class="fas fa-edit"></i>
-                                                    </button>
-                                                    <div th:if="${!action.sourceState.inActive && action.targetState == null}" th:replace="action-modals.html :: ${action.workflowName +  '-' + action.sourceState.stateKey + '-modal'}(${action}, '/team-registration-action', ${editAction})"></div>
-                                                </td>
-                                            </tr>
+                                                <tr th:each="action : ${actions}" th:id="'action-tr-' + ${action.id}">
+                                                    <td th:style="'padding: 3px; ' + ${action.sourceState.getColorStyleString()}">
+                                                        <input type="hidden" th:value="${action.id}" id="id">
+                                                        <input type="hidden" th:value="${action.editActionMessage}" id="editActionMessage">
+                                                        <input type="hidden" th:value="${action.workflowItemId}" id="workflowItemId">
+                                                        <span th:text="${action.sourceState.description}">Team Registration</span>
+                                                        <div>
+                                                            <span th:text="${action.teamName}">PCF Racing Red</span>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 3px;">
+                                                        <span th:text="${#temporals.format(action.created, 'dd.MM.yyyy HH:mm')}">14.04.2022 16:59</span>
+                                                        <div>
+                                                            <span th:text="${' by ' + action.createdBy.name}">by John Doe</span>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 3px;">
+                                                        <span th:text="${action.targetState != null ? #temporals.format(action.doneAt, 'dd.MM.yyyy HH:mm') : ''}">14.04.2022 17:18</span>
+                                                        <div>
+                                                            <span th:text="${action.targetState != null ? ('by ' + action.doneBy.name) : ''}">by Robert Bausdorf</span>
+                                                        </div>
+                                                    </td>
+                                                    <td style="padding: 3px;">
+                                                        <div th:if="${action.targetState == null}" class="d-block" th:each="state: ${action.targetStates}">
+                                                            <span th:style="${state.getColorStyleString()}" th:text="${state.description}">Assign car no</span>
+                                                        </div>
+                                                        <span class="d-block" th:if="${action.targetState != null}" th:text="${action.targetState.description}" th:style="${action.targetState.getColorStyleString()}">Assign car no</span>
+                                                        <span class="d-block" th:if="${action.targetState != null}" th:text="${action.message}"></span>
+                                                    </td>
+                                                    <td class="text-center" style="padding: 3px;" th:if="${!action.targetStates.isEmpty()}">
+                                                        <button th:if="${!action.sourceState.inActive && action.targetState == null}" class="btn btn-primary" type="button" th:onclick="'editWorkflowAction(' + ${action.id} + ');'" style="padding-top: 3px;padding-bottom: 3px;padding-right: 10px;padding-left: 12px;">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <div th:if="${!action.sourceState.inActive && action.targetState == null}" th:replace="action-modals.html :: ${action.workflowName +  '-' + action.sourceState.stateKey + '-modal'}(${action}, '/team-registration-action', ${editAction})"></div>
+                                                    </td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -288,6 +292,21 @@
     <script src="assets/bootstrap/js/bootstrap.min.js"></script>
     <script src="assets/js/bs-init.js"></script>
     <script src="assets/js/admin.js"></script>
+    <script src="/webjars/momentjs/moment.js"></script>
+    <script src="/webjars/momentjs/locale/de.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var userLang = navigator.language || navigator.userLanguage;
+            moment.locale(userLang.split('-')[0]);
+
+            showLocalTime();
+            setInterval(function() {
+                registrationOpenCountdown();
+                registrationClosedCountdown();
+            }, 1000);
+        });
+    </script>
 </body>
 
 </html>
