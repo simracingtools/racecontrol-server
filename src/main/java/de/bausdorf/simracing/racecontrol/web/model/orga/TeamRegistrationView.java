@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +48,7 @@ public class TeamRegistrationView {
     private PersonView createdBy;
     OffsetDateTime created;
     BalancedCarView car;
+    private CarClassView carClass;
     private boolean wildcard;
     WorkflowStateInfoView workflowState;
     private List<PersonView> teamMembers;
@@ -60,6 +62,33 @@ public class TeamRegistrationView {
 
     public String getFullTeamName() {
         return teamName + (StringUtils.isEmpty(carQualifier) ? "" : (" " + carQualifier));
+    }
+
+    public String getFullTeamNameWithNumber() {
+        if(StringUtils.isEmpty(assignedCarNumber)) {
+            return getFullTeamName();
+        }
+        return "#" + assignedCarNumber + " " + getFullTeamName();
+    }
+
+    public long getDriverCount() {
+        return teamMembers.stream()
+                .filter(member -> OrgaRoleType.valueOf(member.getRole()) == OrgaRoleType.DRIVER)
+                .count();
+    }
+
+    public long getDriversNotInLeagueCount() {
+        return teamMembers.stream()
+                .filter(member -> OrgaRoleType.valueOf(member.getRole()) == OrgaRoleType.DRIVER)
+                .filter(member -> !member.getLeagueMember())
+                .count();
+    }
+
+    public long getDriversNotRegisteredCount() {
+        return teamMembers.stream()
+                .filter(member -> OrgaRoleType.valueOf(member.getRole()) == OrgaRoleType.DRIVER)
+                .filter(member -> !member.getRegistered())
+                .count();
     }
 
     public static TeamRegistrationView fromEntity(TeamRegistration registration) {

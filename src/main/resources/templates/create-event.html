@@ -227,6 +227,7 @@
                                             <input type="hidden" th:id="'staff' + ${personStat.index} + '_role'" th:value="${person.role}"/>
                                             <input type="hidden" th:id="'staff' + ${personStat.index} + '_registered'" th:value="${person.registered}"/>
                                             <input type="hidden" th:id="'staff' + ${personStat.index} + '_leagueMember'" th:value="${person.leagueMember}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingChecked'" th:value="${person.iracingChecked}"/>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -273,44 +274,45 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" role="dialog" tabindex="-1" id="staff-modal">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                    </div>
-                    <form method="post" th:object="${editStaffView}" th:action="@{/event-save-person}">
-                        <input type="hidden" th:field="*{id}">
-                        <input type="hidden" th:field="*{eventId}"/>
-                        <input type="hidden" th:field="*{registered}">
-                        <input type="hidden" th:field="*{leagueMember}">
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label style="width: 6em;">iRacing ID</label>
-                                <input type="number" style="width: 5em;" placeholder="000000" required="" th:field="*{iracingId}"/>
-                                <button id="check-ir-id" class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing" onclick="checkIRacingMemberId();">
-                                    <i class="far fa-question-circle"></i>
-                                </button>
-                            </div>
-                            <div class="form-group">
-                                <label style="width: 6em;">Name</label>
-                                <input type="text" style="width: 20em;" required="" th:field="*{name}">
-                            </div>
-                            <div class="form-group">
-                                <label style="width: 6em;">Role</label>
-                                <select th:field="*{role}">
-                                    <option th:each="role: ${staffRoles}" th:value="${role.toString()}" th:text="${role.toString()}">RACE DIRECTOR</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Save</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+        <div th:replace="action-modals.html :: staff-modal('Add organizing person', '/event-save-person', ${editStaffView})"></div>
+<!--        <div th:fragment="staff-modal(title, postUrl, editStaffView)" class="modal fade" role="dialog" tabindex="-1" id="staff-modal">-->
+<!--            <div class="modal-dialog" role="document">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-header">-->
+<!--                        <h4 class="modal-title">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>-->
+<!--                    </div>-->
+<!--                    <form method="post" th:object="${editStaffView}" th:action="@{/event-save-person}">-->
+<!--                        <input type="hidden" th:field="*{id}">-->
+<!--                        <input type="hidden" th:field="*{eventId}"/>-->
+<!--                        <input type="hidden" th:field="*{registered}">-->
+<!--                        <input type="hidden" th:field="*{leagueMember}">-->
+<!--                        <div class="modal-body">-->
+<!--                            <div class="form-group">-->
+<!--                                <label style="width: 6em;">iRacing ID</label>-->
+<!--                                <input type="number" style="width: 5em;" placeholder="000000" required="" th:field="*{iracingId}"/>-->
+<!--                                <button id="check-ir-id" class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check member in iRacing" onclick="checkIRacingMemberId();">-->
+<!--                                    <i class="far fa-question-circle"></i>-->
+<!--                                </button>-->
+<!--                            </div>-->
+<!--                            <div class="form-group">-->
+<!--                                <label style="width: 6em;">Name</label>-->
+<!--                                <input type="text" style="width: 20em;" required="" th:field="*{name}">-->
+<!--                            </div>-->
+<!--                            <div class="form-group">-->
+<!--                                <label style="width: 6em;">Role</label>-->
+<!--                                <select th:field="*{role}">-->
+<!--                                    <option th:each="role: ${staffRoles}" th:value="${role.toString()}" th:text="${role.toString()}">RACE DIRECTOR</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="modal-footer">-->
+<!--                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>-->
+<!--                            <button class="btn btn-primary" type="submit">Save</button>-->
+<!--                        </div>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
         <div class="modal fade" role="dialog" tabindex="-1" id="logo-upload-modal" >
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

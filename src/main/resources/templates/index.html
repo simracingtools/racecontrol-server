@@ -96,7 +96,7 @@
                             </div>
                             <span class="navbar-text actions">
                                 <a th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/logout">Logout</a>
-                                <a th:if="${user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/index.html">Login</a>
+                                <a th:if="${user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/login-redirect">Login</a>
                             </span>
                         </div>
                     </div>

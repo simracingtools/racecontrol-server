@@ -178,7 +178,7 @@ public class RegistrationController extends ControllerBase {
             creator.setLeagueMember(createRegistrationView.isLeagueMember());
             creator.setRegistered(true);
             if(createRegistrationView.isDriver()) {
-                creator.setRole(OrgaRoleType.PARTICIPANT);
+                creator.setRole(OrgaRoleType.DRIVER);
             } else {
                 creator.setRole(OrgaRoleType.SUPPORT);
             }

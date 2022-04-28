@@ -45,6 +45,7 @@ public class Person {
 	private OrgaRoleType role;
 	private boolean leagueMember;
 	private boolean registered;
+	private boolean iracingChecked;
 
 	@Override
 	public boolean equals(Object o) {

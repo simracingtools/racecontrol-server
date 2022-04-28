@@ -31,6 +31,7 @@
         <div class="row" style="margin: 0;">
             <div class="col" style="padding: 0;">
                 <div class="row" style="margin: 0;">
+                    <input type="hidden" id="irLeagueID" th:value="${event.irLeagueID}">
                     <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding: 0;">
                         <picture class="float-right">
                             <img width="100px" th:src="${event.logoUrl}"/>
@@ -81,12 +82,21 @@
                     <div class="col">
                         <div style="font-size: 14px;">
                             <ul class="nav nav-tabs" role="tablist">
-                                <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-toggle="tab" href="#tab-tasks">Tasks</a></li>
-                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-6">BOP</a></li>
-                                <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-7">Documents</a></li>
+                                <li id="nav-tasks" class="nav-item" role="presentation">
+                                    <a th:class="'nav-link' + ${(navigation == 'tasks' || navigation.isEmpty()) ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-tasks">Tasks</a>
+                                </li>
+                                <li id="nav-bop" th:if="${user.racedirection}" class="nav-item" role="presentation">
+                                    <a th:class="'nav-link' + ${navigation == 'bop' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-bop">BOP</a>
+                                </li>
+                                <li id="nav-docs" th:if="${user.racedirection}" class="nav-item" role="presentation">
+                                    <a th:class="'nav-link' + ${navigation == 'docs' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-docs">Documents</a>
+                                </li>
+                                <li id="nav-teams" th:if="${!user.racedirection}" class="nav-item" role="presentation">
+                                    <a th:class="'nav-link' + ${navigation == 'teams' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-teams">My teams</a>
+                                </li>
                             </ul>
                             <div class="tab-content">
-                                <div id="tab-tasks" class="tab-pane active" role="tabpanel">
+                                <div id="tab-tasks" th:class="'tab-pane' + ${(navigation == 'tasks' || navigation.isEmpty()) ? ' active' : ''}" role="tabpanel">
                                     <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive" style="overflow: auto; max-height: 40em;">
                                         <table class="table" style="font-size: 14px;">
                                             <thead>
@@ -145,11 +155,138 @@
                                         <button th:if="${!event.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
                                     </div>
                                 </div>
-                                <div id="tab-6" class="tab-pane" role="tabpanel">
+                                <div th:if="${user.racedirection}" id="tab-bop" th:class="'tab-pane' + ${navigation == 'bop' ? ' active' : ''}" role="tabpanel">
                                     <p>Content for tab 6.</p>
                                 </div>
-                                <div id="tab-7" class="tab-pane" role="tabpanel">
+                                <div th:if="${user.racedirection}" id="tab-docs" th:class="'tab-pane' + ${navigation == 'docs' ? ' active' : ''}" role="tabpanel">
                                     <p>Content for tab 7.</p>
+                                </div>
+                                <div th:if="${!user.racedirection}" id="tab-teams" th:class="'tab-pane' + ${navigation == 'teams' ? ' active' : ''}" role="tabpanel">
+                                    <div th:each="team: ${event.userRegistrations}" th:if="${!team.workflowState.inActive}" th:id="'team-row-' + ${team.id}" class="row" style="border-radius: 5px;border: 2px solid rgb(70,149,225); margin-bottom: 2px;">
+                                        <div class="col">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h4 th:text="${team.getFullTeamNameWithNumber() + ' (' + team.carClass.name + ')'}">#89 C3 Racing Green</h4>
+                                                    <h5 th:text="${team.car.carName}">team car name</h5>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div style="margin-top: 1em;">
+                                                        <h6>Registered at</h6>
+                                                        <div class="d-block">
+                                                            <span th:text="${#temporals.format(team.created, 'dd.MM.yyyy HH:mm')}">unknown</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col">
+                                                    <div style="margin-top: 1em;">
+                                                        <h6>Team owner</h6>
+                                                        <div class="d-block">
+                                                            <span th:text="${team.createdBy.name}">Unknown</span>
+                                                            <button class="btn btn-primary float-right" type="button" style="padding: 0 3px;">
+                                                                <i class="fas fa-edit" data-toggle="tooltip" title="Transfer team ownership"></i>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col">
+<!--                                                    <div style="margin-top: 1em;">-->
+<!--                                                        <h6>Car</h6>-->
+<!--                                                        <div class="d-block">-->
+<!--                                                            <span th:text="${team.car.carName}">Unknown</span>-->
+<!--                                                        </div>-->
+<!--                                                    </div>-->
+                                                    <div style="margin-top: 1em;">
+                                                        <h6>Current Status</h6>
+                                                        <div class="d-block">
+                                                            <span th:text="${team.workflowState.description}" th:style="${team.getColorStyleString()}">Payment received, registration confirmed</span>
+                                                        </div>
+                                                    </div>
+                                                    <div style="margin-top: 2em;">
+                                                        <form method="post" th:object="${editAction}" th:action="@{/team-registration-action}">
+                                                            <input type="hidden" th:field="*{id}">
+                                                            <input type="hidden" th:field="*{eventId}">
+                                                            <input type="hidden" name="workflowItemId" th:value="${team.id}">
+                                                            <div th:id="'teamActionSelect-' + ${team.id}" class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <span class="input-group-text">Action</span>
+                                                                </div>
+                                                                <select th:field="*{targetStateKey}" th:oninput="'changeTeamActionSelectDisplay(' + ${team.id} + ');'">
+                                                                    <option value="" style="background-color: #FFFFFF; color: #000000;">Select Action</option>
+                                                                    <option th:each="state: ${team.workflowState.followUps}" th:if="${state.dutyRoles.contains(currentPerson.role)}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}"></option>
+                                                                </select>
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-primary" type="submit">
+                                                                        <i class="far fa-caret-square-right"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <label>Team Members</label>
+                                            <button class="btn btn-primary float-right" type="button" th:onclick="'addTeamMember(' + ${team.id} + ');'">
+                                                <i class="fas fa-plus" data-toggle="tooltip" title="Add person"></i>
+                                            </button>
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <caption style="padding: 4px; font-size: 14px;" th:if="${team.getDriverCount() < event.minTeamDrivers}" class="font-weight-bold table-warning" th:text="'A minimum of ' + ${event.minTeamDrivers} + ' drivers is required'"></caption>
+                                                    <caption style="padding: 4px; font-size: 14px;" th:if="${team.getDriverCount() > event.maxTeamDrivers}" class="font-weight-bold table-warning" th:text="'A maximum of ' + ${event.maxTeamDrivers} + ' drivers is allowed'"></caption>
+                                                    <caption style="padding: 4px; font-size: 14px;" th:if="${team.getDriversNotInLeagueCount() > 0}" class="font-weight-bold table-warning" th:text="${team.getDriversNotInLeagueCount()} + ' drivers are not league members'"></caption>
+                                                    <caption style="padding: 4px; font-size: 14px;" th:if="${team.getDriversNotRegisteredCount() > 0}" class="font-weight-bold table-info" th:text="${team.getDriversNotRegisteredCount()} + ' drivers are not registered here'"></caption>
+                                                    <thead>
+                                                    <tr>
+                                                        <th style="width: 7em;padding: 3px;">Name</th>
+                                                        <th style="padding: 3px;"></th>
+                                                        <th style="padding: 3px;">Role</th>
+                                                        <th style="width: 3em;padding: 3px;"></th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody style="font-size: 12px; padding: 2px;">
+                                                    <tr th:each="person, personStat: ${team.teamMembers}">
+                                                        <td style="cursor: pointer;" th:text="${person.name}" th:onclick="'editTeamMember(' + ${personStat.index} + ', ' + ${team.id} + ');'">Robert Bausdorf</td>
+                                                        <td th:if="${person.registered && person.leagueMember}" class="text-center table-success">
+                                                            <i class="far fa-check-circle text-success" title="League member and registered here" data-toggle="tooltip"></i>
+                                                        </td>
+                                                        <td th:if="${!person.registered && person.leagueMember}" class="text-center table-warning">
+                                                            <i class="far fa-check-circle text-info" title="League member but not registered here" data-toggle="tooltip"></i>
+                                                        </td>
+                                                        <td th:if="${person.registered && !person.leagueMember}" class="text-center table-info">
+                                                            <i class="far fa-check-circle text-warning" title="No league member but registered here" data-toggle="tooltip"></i>
+                                                        </td>
+                                                        <td th:if="${!person.registered && !person.leagueMember && person.iracingChecked}" class="text-center table-info">
+                                                            <i class="far fa-question-circle text-danger" data-toggle="tootltip" title="Checked iRacing Id but no league member and not registered here"></i>
+                                                        </td>
+                                                        <td th:if="${!person.registered && !person.leagueMember && !person.iracingChecked}" class="text-center table-danger">
+                                                            <i class="far fa-question-circle text-danger" data-toggle="tootltip" title="Unchecked iRacing Id"></i>
+                                                        </td>
+                                                        <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
+                                                        <td style="padding: 2px;">
+                                                            <button class="btn btn-danger" type="button" th:onclick="'confirmMemberRemove(' + ${person.id} + ', ' + ${team.id} + ');'">
+                                                                <i class="far fa-trash-alt"></i>
+                                                            </button>
+                                                            <div th:replace="index.html::deleteModal('staff-remove-confirm-' + ${person.id} + ${team.id}, 'Do you really want to remove ' + ${person.name} + ' from team ' + ${team.getFullTeamName()} + ' ?', @{/team-remove-member(personId=${person.id}, registrationId=${team.id})})"></div>
+                                                        </td>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_id'" th:value="${person.id}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingId'" th:value="${person.iracingId}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_eventId'" th:value="${person.eventId}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_name'" th:value="${person.name}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_role'" th:value="${person.role}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_registered'" th:value="${person.registered}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_leagueMember'" th:value="${person.leagueMember}"/>
+                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingChecked'" th:value="${person.iracingChecked}"/>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -262,6 +399,7 @@
             </div>
         </div>
 
+        <div th:replace="action-modals.html :: staff-modal('Add team member', '/team-save-member', ${editStaffView})"></div>
         <div class="modal fade" role="dialog" tabindex="-1" id="team-upload-modal" >
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -294,6 +432,7 @@
     <script src="assets/js/admin.js"></script>
     <script src="/webjars/momentjs/moment.js"></script>
     <script src="/webjars/momentjs/locale/de.js"></script>
+    <script src="/webjars/jquery-ui/jquery-ui.js"></script>
 
     <script>
         $(document).ready(function () {
@@ -305,6 +444,27 @@
                 registrationOpenCountdown();
                 registrationClosedCountdown();
             }, 1000);
+
+            $("#staff-modal #name").autocomplete({
+                minLength : 2,
+                appendTo: "#staff-modal",
+                source : function(request, response) {
+                    $.ajax({
+                        url : "/rest/staff-search",
+                        dataType : "json",
+                        data : {
+                            q : request.term,
+                            league : $("#irLeagueID").val()
+                        },
+                        success : function(data) {
+                            response(data);
+                        }
+                    });
+                },
+                select: function(event, ui) {
+                    personSelected(ui.item);
+                }
+            });
         });
     </script>
 </body>

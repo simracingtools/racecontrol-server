@@ -24,24 +24,29 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import de.bausdorf.simracing.racecontrol.live.model.Session;
 import de.bausdorf.simracing.racecontrol.live.model.SessionRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.Person;
 import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
 import de.bausdorf.simracing.racecontrol.web.model.orga.EventInfoView;
 import de.bausdorf.simracing.racecontrol.web.model.live.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.live.SessionSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -65,6 +70,7 @@ public class IndexController extends ControllerBase {
     public static final String INDEX_VIEW = "index";
     public static final String USER_ID_PARAM = "userId=";
     public static final String SESSION_ID_PARAM = "sessionId=";
+    public static final String EVENT_ID_PARAM = "?eventId=";
 
     private final SessionRepository sessionRepository;
     private final EventSeriesRepository eventRepository;
@@ -84,6 +90,7 @@ public class IndexController extends ControllerBase {
                         @RequestParam Optional<String> messages, Model model) {
         messages.ifPresent(m -> decodeMessagesToModel(m, model));
         error.ifPresent(s -> addError(s, model));
+
         List<SessionOptionView> sessionOptions = new ArrayList<>();
         SessionSelectView selectView = SessionSelectView.builder()
                 .userId(userId.orElse(currentUser().getOauthId()))
@@ -115,9 +122,30 @@ public class IndexController extends ControllerBase {
         return INDEX_VIEW;
     }
 
+    @GetMapping("/login-redirect")
+    @Secured(value={"ROLE_USER"})
+    public String determineLocationAfterLogin(Model model) {
+        RcUser currentUser = currentUser();
+        if(currentUser.getTimezone() == null) {
+            return super.redirectView("profile");
+        }
+        List<EventSeries> events = eventOrganizer.myActiveEvents(currentUser);
+        EventSeries closestEvent = eventOrganizer.closestEventByNow(currentUser, events);
+        if(closestEvent != null) {
+            Person person = eventOrganizer.getPersonInEvent(closestEvent.getId(), currentUser.getIRacingId());
+            if(person != null) {
+                return redirectView("event-detail")
+                        + EVENT_ID_PARAM + closestEvent.getId()
+                        + "&activeTab=" + (person.getRole().isParticipant() ? "teams" : "tasks");
+            }
+        }
+        return redirectView(INDEX_VIEW);
+    }
+
     @PostMapping("/register-car-for-team")
     public String forwardTeamRegistration(@ModelAttribute TeamRegistrationSelectView teamRegistrationSelect) {
-        return "redirect:/team-registration?eventId=" + teamRegistrationSelect.getEventId()
+        return super.redirectView("team-registration")
+                + EVENT_ID_PARAM + teamRegistrationSelect.getEventId()
                 + "&teamId=" + teamRegistrationSelect.getTeamId();
     }
     @GetMapping("/logout")
@@ -139,6 +167,12 @@ public class IndexController extends ControllerBase {
         return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(selectView.getSelectedSessionId(), StandardCharsets.UTF_8);
     }
 
+    protected String redirectView(String viewName, long eventId, String encodedMessages) {
+        return super.redirectView(viewName)
+                + (eventId != 0 ? EVENT_ID_PARAM + eventId : "")
+                + (StringUtils.isEmpty(activeNav) ? "" : "&activeTab=" + activeNav)
+                + (encodedMessages != null ? "&messages=" + encodedMessages : "");
+    }
     public static <T> Predicate<T> distinctByKey(
             Function<? super T, ?> keyExtractor) {
 

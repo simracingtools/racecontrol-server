@@ -66,26 +66,30 @@ public class CarClassView {
         return carClass;
     }
 
+    public static CarClassView fromEntity(@NonNull CarClass carClass) {
+        return CarClassView.builder()
+                .id(carClass.getId())
+                .eventId(carClass.getEventId())
+                .name(carClass.getName())
+                .cars(carClass.getCars().stream()
+                        .map(c-> CarView.builder()
+                                .carClassId(c.getCarClassId())
+                                .carId(c.getId())
+                                .name(c.getCarName())
+                                .build())
+                        .collect(Collectors.toList())
+                )
+                .carIds(carClass.getCars().stream()
+                        .map(BalancedCar::getCarId)
+                        .collect(Collectors.toList()))
+                .slots(carClass.getMaxSlots())
+                .wildcards(carClass.getWildcards())
+                .build();
+    }
+
     public static List<CarClassView> fromEntityList(@NonNull List<CarClass> carClasses) {
         return carClasses.stream()
-                .map(e -> CarClassView.builder()
-                        .id(e.getId())
-                        .eventId(e.getEventId())
-                        .name(e.getName())
-                        .cars(e.getCars().stream()
-                                .map(c-> CarView.builder()
-                                        .carClassId(c.getCarClassId())
-                                        .carId(c.getId())
-                                        .name(c.getCarName())
-                                        .build())
-                                .collect(Collectors.toList())
-                        )
-                        .carIds(e.getCars().stream()
-                                .map(BalancedCar::getCarId)
-                                .collect(Collectors.toList()))
-                        .slots(e.getMaxSlots())
-                        .wildcards(e.getWildcards())
-                        .build())
+                .map(CarClassView::fromEntity)
                 .collect(Collectors.toList());
     }
 }

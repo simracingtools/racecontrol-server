@@ -22,6 +22,8 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Optional;
@@ -39,6 +41,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import de.bausdorf.simracing.racecontrol.web.model.UserProfileView;
+import org.thymeleaf.util.StringUtils;
 
 @Slf4j
 public class ControllerBase {
@@ -54,8 +57,13 @@ public class ControllerBase {
 	ObjectMapper mapper = new ObjectMapper();
 
 	@ModelAttribute("navigation")
-	String activeNav() {
-		return activeNav;
+	String activeNavigationOrTab() {
+		return activeNav == null ? "" : activeNav;
+	}
+
+	public void setActiveNav(String nav, Model model) {
+		activeNav = nav;
+		model.addAttribute("navigation", activeNav);
 	}
 
 	@ModelAttribute("user")
@@ -80,10 +88,14 @@ public class ControllerBase {
 				.oauthId("")
 				.eventFilter(RcAuthenticationProvider.defaultEventFilter())
 				.userType(RcUserType.NEW)
-				.created(ZonedDateTime.now())
+				.created(LocalDateTime.now())
+				.timezone(ZoneId.systemDefault())
 				.build());
 	}
 
+	protected String redirectView(String viewName) {
+		return "redirect:/" + viewName;
+	}
 	protected String messagesEncoded(Model model) {
 		try {
 			Messages messages = ((Messages)model.getAttribute(MESSAGES));

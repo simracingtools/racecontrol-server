@@ -195,7 +195,7 @@ public class EventAdminController extends ControllerBase {
         return redirectView(Long.parseLong(eventId), messagesEncoded(model));
     }
 
-    @PostMapping("event-save-person")
+    @PostMapping("/event-save-person")
     @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     @Transactional
     public String saveStaffPerson(@ModelAttribute PersonView personView) {

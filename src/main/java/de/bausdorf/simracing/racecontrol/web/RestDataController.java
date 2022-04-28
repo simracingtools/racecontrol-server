@@ -32,7 +32,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.StringUtils;
 
@@ -83,7 +82,7 @@ public class RestDataController {
                 .build());
         memberInfo.ifPresent(
                 member -> {
-                    String memberName = memberNameWithoutMiddleInitial(member.getName());
+                    String memberName = EventOrganizer.memberNameWithoutMiddleInitial(member.getName());
                     item.set(PersonSearchItem.builder()
                             .leagueMember(false)
                             .registered(false)
@@ -126,7 +125,7 @@ public class RestDataController {
             Arrays.stream(leagueInfo.getRoster())
                     .filter(member -> member.getDisplayName().contains(StringUtils.isEmpty(query) ? "" : query))
                     .forEach(member -> {
-                        String memberNameWithoutMiddleInitial = memberNameWithoutMiddleInitial(member.getDisplayName());
+                        String memberNameWithoutMiddleInitial = EventOrganizer.memberNameWithoutMiddleInitial(member.getDisplayName());
                         PersonSearchItem item = PersonSearchItem.builder()
                                 .label(memberNameWithoutMiddleInitial)
                                 .value(memberNameWithoutMiddleInitial)
@@ -139,10 +138,5 @@ public class RestDataController {
 
         }
         return new ArrayList<>(matches.values());
-    }
-
-    private String memberNameWithoutMiddleInitial(@NonNull String iRacingName) {
-        String[] nameParts = iRacingName.split(" ");
-        return nameParts[0] + " " + nameParts[nameParts.length - 1];
     }
 }

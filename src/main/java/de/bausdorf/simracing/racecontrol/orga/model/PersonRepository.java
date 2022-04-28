@@ -30,4 +30,5 @@ import java.util.Optional;
 public interface PersonRepository extends CrudRepository<Person, Long> {
     List<Person> findAllByEventId(long eventId);
     Optional<Person> findByEventIdAndIracingId(long eventId, long iRacingId);
+    List<Person> findAllByIracingId(long iracingId);
 }

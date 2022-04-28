@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 public enum OrgaRoleType {
 	SUPPORT(false, 1, null),
-	PARTICIPANT(false, 2, null),
+	DRIVER(false, 2, null),
 	STAFF(true, 3, "Organization"),
 	STEWARD(true, 4, "RaceControl"),
 	RACE_DIRECTOR(true, 5, "RaceControl");
@@ -70,7 +70,7 @@ public enum OrgaRoleType {
 	public static OrgaRoleType ofCode(int enumCode) {
 		switch (enumCode) {
 			case 1: return SUPPORT;
-			case 2: return PARTICIPANT;
+			case 2: return DRIVER;
 			case 3: return STAFF;
 			case 4: return STEWARD;
 			case 5: return RACE_DIRECTOR;

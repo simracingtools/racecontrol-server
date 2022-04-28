@@ -23,19 +23,25 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
+import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -167,12 +173,72 @@ public class EventOrganizer {
                 .noneMatch(r -> !r.getWorkflowState().isInActive() && carNo.equalsIgnoreCase(r.getAssignedCarNumber()));
     }
 
+    public boolean checkLeagueMembership(long iracingId, long irLeagueID) {
+        LeagueInfoDto leagueInfo = dataClient.getLeagueInfo(irLeagueID);
+        return Arrays.stream(leagueInfo.getRoster()).anyMatch(member -> member.getCustId() == iracingId);
+    }
+
+    public String getIRacingMemberName(long iracingId) {
+        MemberInfo memberInfo = dataClient.getMemberInfo(iracingId).orElse(null);
+        return memberInfo != null ? memberNameWithoutMiddleInitial(memberInfo.getName()) :  null;
+    }
+
+    public List<TeamRegistration> checkUniqueTeamDriver(@Nullable Person person) {
+        if(person == null) {
+            return new ArrayList<>();
+        }
+        return registrationRepository.findAllByEventId(person.getEventId()).stream()
+                .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == person.getIracingId()))
+                .collect(Collectors.toList());
+    }
+
     public List<TeamRegistration> myRegistrations(long eventId, @NonNull RcUser currentUser) {
         Person currentPerson = personRepository.findByEventIdAndIracingId(eventId, currentUser.getIRacingId()).orElse(null);
         if(currentPerson != null) {
             return myRegistrations(currentPerson);
         }
         return List.of();
+    }
+
+    public List<TeamRegistration> myRegistrations(@NonNull RcUser currentUser) {
+        List<Person> currentPersons = personRepository.findAllByIracingId(currentUser.getIRacingId());
+        List<TeamRegistration> registrations = new ArrayList<>();
+        currentPersons.forEach(p -> registrations.addAll(myRegistrations(p.getEventId(), currentUser)));
+        return registrations;
+    }
+
+    public List<EventSeries> myActiveEvents(@NonNull RcUser currentUser) {
+        return personRepository.findAllByIracingId(currentUser.getIRacingId()).stream()
+                .map(p -> getEventSeries(p.getEventId()))
+                .collect(Collectors.toList());
+    }
+
+    public Person getPersonInEvent(long eventId, long iracingId) {
+        return personRepository.findByEventIdAndIracingId(eventId, iracingId).orElse(null);
+    }
+
+    public EventSeries closestEventByNow(@NonNull RcUser currentUser, List<EventSeries> events) {
+        OffsetDateTime userLocalTime = getUserLocalTime(currentUser);
+        AtomicReference<EventSeries> closestEvent = closeToRegistration(events, userLocalTime);
+        if(closestEvent.get() == null) {
+            events.forEach(event -> {
+                if(event.getStartDate().isAfter(userLocalTime.toLocalDate())) {
+                    if(closestEvent.get() == null) {
+                        closestEvent.set(event);
+                    } else {
+                        if(ChronoUnit.MINUTES.between(closestEvent.get().getStartDate(), userLocalTime) >
+                                ChronoUnit.MINUTES.between(event.getStartDate(), userLocalTime)) {
+                            closestEvent.set(event);
+                        }
+                    }
+                }
+            });
+        }
+        return closestEvent.get();
+    }
+
+    public OffsetDateTime getUserLocalTime(@NonNull RcUser currentUser) {
+        return OffsetDateTime.now().withOffsetSameInstant(currentUser.getTimezone().getRules().getOffset(Instant.now()));
     }
 
     public List<TeamRegistration> myRegistrations(Person person) {
@@ -194,6 +260,16 @@ public class EventOrganizer {
 
     public TeamRegistration saveRegistration(TeamRegistration registration) {
         return registrationRepository.save(registration);
+    }
+
+    public CarClassView getCarClassView(long carClassId) {
+        CarClass carClass = carClassRepository.findById(carClassId).orElse(null);
+        if(carClass != null) {
+            return CarClassView.fromEntity(carClass);
+        }
+        return CarClassView.builder()
+                .name("Unknown")
+                .build();
     }
 
     public WorkflowAction getWorkflowAction(long actionId) {
@@ -228,6 +304,28 @@ public class EventOrganizer {
 
     public EventSeries getEventSeries(long eventId) {
         return seriesRepository.findById(eventId).orElse(null);
+    }
+
+    public static String memberNameWithoutMiddleInitial(@NonNull String iRacingName) {
+        String[] nameParts = iRacingName.split(" ");
+        return nameParts[0] + " " + nameParts[nameParts.length - 1];
+    }
+
+    private AtomicReference<EventSeries> closeToRegistration(List<EventSeries> events, OffsetDateTime userLocalTime) {
+        AtomicReference<EventSeries> closestEvent = new AtomicReference<>();
+        events.forEach(event -> {
+            if(event.getRegistrationCloses().isAfter(userLocalTime)) {
+                if(closestEvent.get() == null) {
+                    closestEvent.set(event);
+                } else {
+                    if(ChronoUnit.MINUTES.between(closestEvent.get().getRegistrationCloses(), userLocalTime) >
+                            ChronoUnit.MINUTES.between(event.getRegistrationCloses(), userLocalTime)) {
+                        closestEvent.set(event);
+                    }
+                }
+            }
+        });
+        return closestEvent;
     }
 
     private void setWildcardSlots(TeamRegistrationView view, CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray) {
