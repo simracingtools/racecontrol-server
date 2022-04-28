@@ -44,6 +44,10 @@ function confirmStaffRemove(index) {
   $("#staff-remove-confirm-" + index).modal('show');
 }
 
+function confirmMemberRemove(index, team) {
+  $("#staff-remove-confirm-" + index + team).modal('show');
+}
+
 function confirmStateRemove(id) {
   $("#state-remove-confirm-" + id).modal('show');
 }
@@ -53,6 +57,7 @@ function personSelected(data) {
   $("#staff-modal #name").val(data.value);
   $("#staff-modal #leagueMember").val(data.leagueMember);
   $("#staff-modal #registered").val(data.registered);
+  $("#staff-modal #iRacingChecked").val('true');
   $("#staff-modal #check-ir-id").prop("disabled",true);
 }
 
@@ -82,7 +87,26 @@ function editStaffPerson(personIndex) {
   $("#staff-modal #name").val($("#staff" + personIndex + "_name").val());
   $("#staff-modal #role").val($("#staff" + personIndex + "_role").val());
   $("#staff-modal #registered").val($("#staff" + personIndex + "_registered").val());
-  $("#staff-modal #leagueMember").val($("#staff" + personIndex + "leagueMember").val());
+  $("#staff-modal #leagueMember").val($("#staff" + personIndex + "_leagueMember").val());
+  $("#staff-modal #iracingChecked").val($("#staff" + personIndex + "_iracingChecked").val());
+  $("#staff-modal #save-text").show();
+  $("#staff-modal #save-spinner").hide();
+  $("#staff-modal").modal('show');
+}
+
+function submitStaffModal() {
+  $("#staff-modal #save-text").hide();
+  $("#staff-modal #save-spinner").show();
+  $("#staff-modal #staff-modal-form").submit();
+}
+
+function editTeamMember(personIndex, teamId) {
+  $("#staff-modal #teamId").val(teamId);
+  editStaffPerson(personIndex);
+}
+
+function addTeamMember(teamId) {
+  $("#staff-modal #teamId").val(teamId);
   $("#staff-modal").modal('show');
 }
 
@@ -100,6 +124,15 @@ function changeFormGroupDisplay(actionId) {
   $("#TeamRegistration-modal-" + actionId + " #targetStateKey > option").each(function() {
     if(this.value === stateKey) {
       $("#TeamRegistration-modal-" + actionId + " #targetStateKey").prop("style", $(this).attr("style"));
+    }
+  });
+}
+
+function changeTeamActionSelectDisplay(actionId) {
+  const stateKey = $("#teamActionSelect-" + actionId + " #targetStateKey").val();
+  $("#teamActionSelect-" + actionId + " #targetStateKey > option").each(function() {
+    if(this.value === stateKey) {
+      $("#teamActionSelect-" + actionId + " #targetStateKey").prop("style", $(this).attr("style"));
     }
   });
 }
@@ -159,15 +192,25 @@ function checkIRacingLeagueId() {
 
 function checkIRacingMemberId() {
   $("#staff-modal #name").val("");
+  $("#staff-modal #check-icon").hide();
+  $("#staff-modal #check-spinner").show();
   $.ajax({
     type: "GET",
     dataType: "json",
     url: "/rest/memberInfo/" + $("#staff-modal #iracingId").val(),
     success: function (data) {
+      if(data.value === "") {
+        $("#staff-modal #iRacingChecked").val('false');
+      } else {
+        $("#staff-modal #iRacingChecked").val('true');
+      }
       $("#staff-modal #name").val(data.value);
       $("#staff-modal #iracingId").val(data.iracingId);
       $("#staff-modal #leagueMember").val(data.leagueMember);
       $("#staff-modal #registered").val(data.registered);
+
+      $("#staff-modal #check-icon").show();
+      $("#staff-modal #check-spinner").hide();
     }
   });
 }
@@ -201,18 +244,24 @@ function registrationClosedCountdown() {
   }
 }
 
+function setTimezoneId() {
+  let data = "UTC";
+  $("#tz-select > option").each(function() {
+    if (this.selected === true) {
+      data = $(this).attr("data-zone");
+    }
+  });
+
+  $("#timezone").val(data);
+}
+
 function selectTimezoneFromUtcOffset(timezone) {
   if (!timezone) {
-    var utcOffsetHours = moment().utcOffset() / 60;
-    var tz = 'GMT';
-    if (utcOffsetHours >= 0) {
-      tz = tz + '+' + utcOffsetHours;
-    } else {
-      tz = tz + utcOffsetHours;
-    }
-    $("#timezone > option").each(function() {
+    const tz = moment().format("ZZ");
+    $("#tz-select > option").each(function() {
       if (this.value === tz) {
         this.selected = true;
+        $("#timezone").val($(this).attr("data-zone"));
       }
     });
   }

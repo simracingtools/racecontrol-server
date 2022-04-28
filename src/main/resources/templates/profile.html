@@ -57,36 +57,12 @@
 <!--                        <input type="text" disabled="" readonly="" th:field="*{iRacingName}">-->
 <!--                    </div>-->
                     <div class="form-group">
-                        <label class="d-block">Prefered timezone</label>
-                        <select style="height: 30px;" th:field="*{timezone}">
-                            <option value="GMT-12" th:selected="*{timezone} == 'GMT-12'">GMT-12</option>
-                            <option value="GMT-11" th:selected="*{timezone} == 'GMT-11'">GMT-11</option>
-                            <option value="GMT-10" th:selected="*{timezone} == 'GMT-10'">GMT-10</option>
-                            <option value="GMT-9" th:selected="*{timezone} == 'GMT-9'">GMT-9</option>
-                            <option value="GMT-8" th:selected="*{timezone} == 'GMT-8'">GMT-8</option>
-                            <option value="GMT-7" th:selected="*{timezone} == 'GMT-7'">GMT-7</option>
-                            <option value="GMT-6" th:selected="*{timezone} == 'GMT-6'">GMT-6</option>
-                            <option value="GMT-5" th:selected="*{timezone} == 'GMT-5'">GMT-5</option>
-                            <option value="GMT-4" th:selected="*{timezone} == 'GMT-4'">GMT-4</option>
-                            <option value="GMT-3" th:selected="*{timezone} == 'GMT-3'">GMT-3</option>
-                            <option value="GMT-2" th:selected="*{timezone} == 'GMT-2'">GMT-2</option>
-                            <option value="GMT-1" th:selected="*{timezone} == 'GMT-1'">GMT-1</option>
-                            <option value="GMT" th:selected="*{timezone} == 'GMT'">GMT</option>
-                            <option value="UTC" th:selected="*{timezone} == 'UTC'">UTC</option>
-                            <option value="GMT+1" th:selected="*{timezone} == 'GMT+1'">GMT+1</option>
-                            <option value="GMT+2" th:selected="*{timezone} == 'GMT+2'">GMT+2</option>
-                            <option value="GMT+3" th:selected="*{timezone} == 'GMT+3'">GMT+3</option>
-                            <option value="GMT+4" th:selected="*{timezone} == 'GMT+4'">GMT+4</option>
-                            <option value="GMT+5" th:selected="*{timezone} == 'GMT+5'">GMT+5</option>
-                            <option value="GMT+6" th:selected="*{timezone} == 'GMT+6'">GMT+6</option>
-                            <option value="GMT+7" th:selected="*{timezone} == 'GMT+7'">GMT+7</option>
-                            <option value="GMT+8" th:selected="*{timezone} == 'GMT+8'">GMT+8</option>
-                            <option value="GMT+9" th:selected="*{timezone} == 'GMT+9'">GMT+9</option>
-                            <option value="GMT+10" th:selected="*{timezone} == 'GMT+10'">GMT+10</option>
-                            <option value="GMT+11" th:selected="*{timezone} == 'GMT+11'">GMT+11</option>
-                            <option value="GMT+12" th:selected="*{timezone} == 'GMT+12'">GMT+12</option>
-                            <option value="GMT+13" th:selected="*{timezone} == 'GMT+13'">GMT+13</option>
-                            <option value="GMT+14" th:selected="*{timezone} == 'GMT+14'">GMT+14</option>
+                        <label th:if="${!user.timezone.isEmpty()}" class="d-block">Prefered timezone</label>
+                        <label th:if="${user.timezone.isEmpty()}" class="d-block text-danger">Prefered timezone</label>
+                        <input type="hidden" th:field="*{timezone}">
+                        <select id="tz-select" style="height: 30px;" onchange="setTimezoneId();">
+                            <option value="Z">No match to browser location</option>
+                            <option th:each="zone : ${timezones}" th:value="${zone.getUtcOffsetString()}" th:text="${zone.getFullName()}" th:attr="data-zone=${zone.id}" th:selected="${zone.id.equals(profileView.timezone)}">Timezone</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -94,7 +70,8 @@
                         <input type="text" disabled="" readonly="" th:field="*{userType}">
                     </div>
                     <div class="form-group text-right">
-                        <button class="btn btn-primary text-right" type="submit">Save</button>
+                        <button th:if="${!user.timezone.isEmpty()}" class="btn btn-primary text-right" type="submit">Save</button>
+                        <button th:if="${user.timezone.isEmpty()}" class="btn btn-danger text-right" type="submit">Save</button>
                     </div>
                 </div>
                 <div class="col-md-1 col-lg-1"></div>

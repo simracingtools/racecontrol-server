@@ -22,10 +22,14 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import de.bausdorf.simracing.racecontrol.web.model.TimezoneView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -112,6 +116,9 @@ public class UserAdminController extends ControllerBase {
 				addWarning("iRacing ID " + user.getIRacingId() + " is unknown in iRacing", model);
 			}
 		}
+		if(user.getTimezone() == null) {
+			addWarning("Timezone was chosen from your browsers location. You can change it to your preferred timezone and click 'Save'!", model);
+		}
 		model.addAttribute("profileView", new UserProfileView(user));
 		return PROFILE_VIEW;
 	}
@@ -144,7 +151,7 @@ public class UserAdminController extends ControllerBase {
 		RcUser userToSave = profileView.apply(currentUser);
 		userRepository.save(userToSave);
 		String messagesEncoded = messagesEncoded(model);
-		return "redirect:/profile" + (messagesEncoded != null ? "?messages=" + messagesEncoded : "");
+		return super.redirectView(PROFILE_VIEW) + (messagesEncoded != null ? "?messages=" + messagesEncoded : "");
 	}
 
 	@GetMapping("/deletesiteuser")
@@ -186,5 +193,14 @@ public class UserAdminController extends ControllerBase {
 			userRepository.save(existingUser.get());
 		}
 		return existingUser.orElse(null);
+	}
+
+	@ModelAttribute("timezones")
+	List<TimezoneView> availableZoneIds() {
+		return ZoneId.getAvailableZoneIds().stream()
+				.filter(s -> s.chars().noneMatch(Character::isLowerCase))
+				.map(s -> TimezoneView.fromZoneId(ZoneId.of(s)))
+				.sorted(Comparator.comparing(TimezoneView::getUtcOffset))
+				.collect(Collectors.toList());
 	}
 }

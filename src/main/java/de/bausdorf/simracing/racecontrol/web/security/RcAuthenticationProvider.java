@@ -38,6 +38,7 @@ import org.springframework.stereotype.Component;
 import org.keycloak.representations.AccessToken;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -86,11 +87,11 @@ public class RcAuthenticationProvider implements org.springframework.security.au
                     .imageUrl(userDetails.getPicture())
                     .name(usernameFromIRacingName(identifiedMember.map(MemberInfo::getName).orElse(null)))
                     .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : newUserType)
-                    .created(ZonedDateTime.now())
+                    .created(LocalDateTime.now())
                     .subscriptionType(SubscriptionType.NONE)
                     .eventFilter(defaultEventFilter())
-                    .lastSubscription(ZonedDateTime.now())
-                    .lastAccess(ZonedDateTime.now())
+                    .lastSubscription(LocalDateTime.now())
+                    .lastAccess(LocalDateTime.now())
                     .locked(false)
                     .expired(false)
                     .enabled(true)
@@ -98,10 +99,11 @@ public class RcAuthenticationProvider implements org.springframework.security.au
                     .build())
             );
         } else {
+            user.get().setLastAccess(LocalDateTime.now());
             if(user.get().getEventFilter().isEmpty()) {
                 user.get().setEventFilter(defaultEventFilter());
-                userRepository.save(user.get());
             }
+            userRepository.save(user.get());
         }
 
         return generateAuthenticationToken(authentication, user);
