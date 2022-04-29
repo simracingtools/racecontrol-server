@@ -49,6 +49,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -139,16 +140,21 @@ public class EventAdminController extends ControllerBase {
         if(carClassView.getId() != 0) {
             CarClass carClass = carClassRepository.findById(carClassView.getId()).orElse(null);
             if(carClass != null) {
-                balancedCarRepository.deleteAllByCarClassId(carClass.getId());
-                carClassRepository.save(updateCarData(carClassView.toEntity(carClass)));
+                if(carsReferencedInEvent(carClass)) {
+                    addWarning("Cars of " + carClass.getName() + " class are referenced in event, cars will not be changed", model);
+                    carClassRepository.save(carClassView.toEntity(carClass, false));
+                } else {
+                    balancedCarRepository.deleteAllByCarClassId(carClass.getId());
+                    carClassRepository.save(updateCarDataIRacingReferences(carClassView.toEntity(carClass, true)));
+                }
             } else {
                 addError("Car class with id " + carClassView.getId() + " not found", model);
             }
         } else {
             Optional<EventSeries> eventSeriesOptional = eventRepository.findById(carClassView.getEventId());
             eventSeriesOptional.ifPresentOrElse(eventSeries -> {
-                        CarClass carClass = carClassView.toEntity(null);
-                        CarClass finalCarClass = updateCarData(carClassRepository.save(carClass));
+                        CarClass carClass = carClassView.toEntity(null, true);
+                        CarClass finalCarClass = updateCarDataIRacingReferences(carClassRepository.save(carClass));
                         eventSeries.getCarClassPreset().add(finalCarClass);
                         eventRepository.save(eventSeries);
                     },
@@ -266,7 +272,19 @@ public class EventAdminController extends ControllerBase {
                 + (messagesEncoded != null ? "&messages=" + messagesEncoded : "");
     }
 
-    private CarClass updateCarData(CarClass carClass) {
+    private boolean carsReferencedInEvent(CarClass carClass) {
+        AtomicBoolean referenceExists = new AtomicBoolean(false);
+        for(BalancedCar car : carClass.getCars()) {
+            List<TeamRegistration> referencingTeams = registrationRepository.findAllByEventIdAndCar(carClass.getEventId(), car);
+            if(!referencingTeams.isEmpty()) {
+                referenceExists.set(true);
+                break;
+            }
+        }
+        return referenceExists.get();
+    }
+
+    private CarClass updateCarDataIRacingReferences(CarClass carClass) {
         carClass.getCars().forEach(bc -> {
             Optional<CarInfoDto> carInfo = Arrays.stream(iRacingClient.getDataCache().getCars())
                     .filter(c -> c.getCarId().equals(bc.getCarId()))

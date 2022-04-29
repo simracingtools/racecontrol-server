@@ -42,7 +42,7 @@ public class EditCarClassView {
     private long slots;
     private long wildcards;
 
-    public CarClass toEntity(CarClass carClass) {
+    public CarClass toEntity(CarClass carClass, boolean updateCars) {
         if (carClass == null) {
             carClass = new CarClass();
         }
@@ -51,16 +51,18 @@ public class EditCarClassView {
         carClass.setMaxSlots(Math.toIntExact(slots == 0 ? carClass.getMaxSlots() : slots));
         carClass.setWildcards(Math.toIntExact(wildcards == 0 ? carClass.getWildcards() : wildcards));
         carClass.setName(name == null ? carClass.getName() : name);
-        if(carClass.getCars() != null) {
-            carClass.getCars().clear();
+        if(updateCars) {
+            if (carClass.getCars() != null) {
+                carClass.getCars().clear();
+            }
+            carClass.setCars(carIds == null ? carClass.getCars() : carIds.stream()
+                    .map(carId -> {
+                        BalancedCar bc = new BalancedCar();
+                        bc.setCarId(carId);
+                        return bc;
+                    })
+                    .collect(Collectors.toList()));
         }
-        carClass.setCars(carIds == null ? carClass.getCars() : carIds.stream()
-                .map(carId -> {
-                    BalancedCar bc = new BalancedCar();
-                    bc.setCarId(carId);
-                    return bc;
-                })
-                .collect(Collectors.toList()));
         return carClass;
     }
 }

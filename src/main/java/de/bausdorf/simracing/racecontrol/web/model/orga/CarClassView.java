@@ -44,28 +44,6 @@ public class CarClassView {
     private long slots;
     private long wildcards;
 
-    public CarClass toEntity(CarClass carClass) {
-        if (carClass == null) {
-            carClass = new CarClass();
-        }
-        carClass.setId(id == 0 ? carClass.getId() : id);
-        carClass.setEventId(eventId == 0 ? carClass.getEventId() : eventId);
-        carClass.setMaxSlots(Math.toIntExact(slots == 0 ? carClass.getMaxSlots() : slots));
-        carClass.setWildcards(Math.toIntExact(wildcards == 0 ? carClass.getWildcards() : wildcards));
-        carClass.setName(name == null ? carClass.getName() : name);
-        carClass.getCars().clear();
-        carClass.setCars(cars == null ? carClass.getCars() : cars.stream()
-                .map(c -> {
-                    BalancedCar bc = new BalancedCar();
-                    bc.setCarClassId(id);
-                    bc.setCarId(c.getCarId());
-                    bc.setCarName(c.getName());
-                    return bc;
-                })
-                .collect(Collectors.toList()));
-        return carClass;
-    }
-
     public static CarClassView fromEntity(@NonNull CarClass carClass) {
         return CarClassView.builder()
                 .id(carClass.getId())
