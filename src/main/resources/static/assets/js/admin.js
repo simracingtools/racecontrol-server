@@ -102,12 +102,32 @@ function submitStaffModal() {
 
 function editTeamMember(personIndex, teamId) {
   $("#staff-modal #teamId").val(teamId);
-  editStaffPerson(personIndex);
+  editStaffPerson(teamId + '_' + personIndex);
 }
 
 function addTeamMember(teamId) {
   $("#staff-modal #teamId").val(teamId);
+  $("#staff-modal #iracingId").val("");
+  $("#staff-modal #name").val("");
+  $("#staff-modal #role").val("");
+  $("#staff-modal #registered").val("false");
+  $("#staff-modal #leagueMember").val("false");
+  $("#staff-modal #iracingChecked").val("false");
+  $("#staff-modal #save-text").show();
+  $("#staff-modal #save-spinner").hide();
   $("#staff-modal").modal('show');
+}
+
+function editRegisteredCar(teamId) {
+  $("#car-modal-" + teamId + " #teamId").val(teamId);
+  $("#car-modal-" + teamId + " #carId").val($("#carId-" + teamId).val());
+  const checked = $("#wildcard-" + teamId).val();
+  if(checked === "true") {
+    $("#car-modal-" + teamId + " #useWildcard1").prop("checked", true);
+  } else {
+    $("#car-modal-" + teamId + " #useWildcard1").prop("checked", false);
+  }
+  $("#car-modal-" + teamId).modal('show');
 }
 
 function editWorkflowAction(actionId) {

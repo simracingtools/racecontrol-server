@@ -122,18 +122,7 @@ public class PrepareDisordAction extends WorkflowAction {
             Member discordMember = jdaClient.getMember(registration.getEventId(), registration.getCreatedBy().getName()).orElse(null);
             if(discordMember != null) {
                 Optional<CarClass> carClass = carClassRepository.findById(registration.getCar().getCarClassId());
-                carClass.ifPresent(cc -> {
-                        Optional<Role> carClassRole = guild.getRoles().stream()
-                                .filter(r -> r.getName().equalsIgnoreCase(cc.getName()))
-                                .findFirst();
-
-                        carClassRole.ifPresentOrElse(
-                                r -> guild.addRoleToMember(discordMember, r).complete(),
-                                () -> {
-                                    Role classRole = guild.createRole().setName(cc.getName()).complete();
-                                    guild.addRoleToMember(discordMember, classRole).complete();
-                                });
-                });
+                carClass.ifPresent(cc -> jdaClient.addRoleToMember(registration.getEventId(), discordMember, cc.getName()));
                 guild.addRoleToMember(discordMember, role).complete();
             }
         }

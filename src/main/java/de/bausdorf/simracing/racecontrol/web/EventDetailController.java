@@ -22,12 +22,16 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.discord.JdaClient;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.action.WorkflowAction;
 import de.bausdorf.simracing.racecontrol.web.action.ActionException;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import lombok.extern.slf4j.Slf4j;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -55,19 +59,27 @@ public class EventDetailController extends ControllerBase {
     public static final String EVENT_VIEW_MODEL_KEY = "event";
     public static final String INDEX_VIEW = "index";
     public static final String TEAM_REGISTRATION_WORKFLOW = "TeamRegistration";
+    public static final String TEAMS_TAB = "teams";
+    public static final String TASKS_TAB = "tasks";
 
     private final EventSeriesRepository eventRepository;
     private final PersonRepository personRepository;
+    private final BalancedCarRepository carRepository;
     private final EventOrganizer eventOrganizer;
+    private final JdaClient jdaClient;
     private final ApplicationContext appContext;
 
     public EventDetailController(@Autowired EventSeriesRepository eventRepository,
                                  @Autowired PersonRepository personRepository,
+                                 @Autowired BalancedCarRepository carRepository,
                                  @Autowired EventOrganizer eventOrganizer,
+                                 @Autowired JdaClient jdaClient,
                                  @Autowired ApplicationContext appContext) {
         this.eventRepository = eventRepository;
         this.personRepository = personRepository;
+        this.carRepository = carRepository;
         this.eventOrganizer = eventOrganizer;
+        this.jdaClient = jdaClient;
         this.appContext = appContext;
     }
 
@@ -76,10 +88,12 @@ public class EventDetailController extends ControllerBase {
                               @RequestParam Optional<String> messages,
                               @RequestParam Optional<String> activeTab,
                               Model model) {
-        messages.ifPresent(e -> decodeMessagesToModel(e, model));
-        activeTab.ifPresentOrElse(s -> setActiveNav(s, model), () -> setActiveNav("", model));
-
         Person currentPerson = currentPerson(eventId);
+        messages.ifPresent(e -> decodeMessagesToModel(e, model));
+        activeTab.ifPresentOrElse(
+                s -> setActiveNav(s, model),
+                () -> setActiveNav(currentPerson.getRole().isParticipant() ? TEAMS_TAB : TASKS_TAB, model)
+        );
 
         Optional<EventSeries> eventSeries = eventRepository.findById(eventId);
         if(eventSeries.isPresent()) {
@@ -120,12 +134,14 @@ public class EventDetailController extends ControllerBase {
                     .build());
         }
         model.addAttribute("teamRegistrationSelectView", new TeamRegistrationSelectView());
-
+        model.addAttribute("registeredCarEditView", RegisteredCarEditView.builder()
+                .eventId(eventId)
+                .build());
         return EVENT_DETAIL_VIEW;
     }
 
     @PostMapping("/team-registration-action")
-    @Secured({"ROLE_REGISTERED_USER"})
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER"})
     public String performWorkflowAction(@ModelAttribute WorkflowActionEditView editAction, Model model) {
         if(editAction.getTargetStateKey() == null) {
             addError("No target action selected.", model);
@@ -146,7 +162,7 @@ public class EventDetailController extends ControllerBase {
     }
 
     @PostMapping("/team-save-member")
-    @Secured({"ROLE_REGISTERED_USER"})
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER"})
     @Transactional
     public String saveStaffPerson(@ModelAttribute PersonView personView, Model model) {
         EventSeries event = eventRepository.findById(personView.getEventId()).orElse(null);
@@ -159,26 +175,30 @@ public class EventDetailController extends ControllerBase {
         boolean isLeagueMember = eventOrganizer.checkLeagueMembership(personView.getIracingId(), event.getIRLeagueID());
         boolean isRegistered = userRepository.findByiRacingId(personView.getIracingId()).isPresent();
         Person staff = personRepository.findByEventIdAndIracingId(personView.getEventId(), personView.getIracingId()).orElse(null);
-        if(denyDriverRole(staff, registration, OrgaRoleType.valueOf(personView.getRole()))) {
-            addError(staff.getName() + " is assigned as driver in another team !", model);
+        if(staff != null && staff.getRole().isRacecontrol()) {
+            addError(staff.getName() + " is member of race control staff and can't be added to a team!", model);
         } else {
-            checkMemberOnIRacingService(personView, model);
+            if (eventOrganizer.denyDriverRole(staff, registration, OrgaRoleType.valueOf(personView.getRole()))) {
+                addError((staff != null ? staff.getName() : "Person") + " is assigned as driver in another team !", model);
+            } else {
+                checkMemberOnIRacingService(personView, model);
 
-            if(Boolean.TRUE.equals(personView.getIracingChecked())) {
-                staff = personView.toEntity(staff);
-                staff.setLeagueMember(isLeagueMember);
-                staff.setRegistered(isRegistered);
-                staff = personRepository.save(staff);
+                if (Boolean.TRUE.equals(personView.getIracingChecked())) {
+                    staff = personView.toEntity(staff);
+                    staff.setLeagueMember(isLeagueMember);
+                    staff.setRegistered(isRegistered);
+                    staff = personRepository.save(staff);
 
-                addPersonToTeam(registration, staff, personView.getTeamId(), model);
+                    addPersonToTeam(registration, staff, personView.getTeamId(), model);
+                }
             }
         }
-        activeNav = "teams";
+        activeNav = TEAMS_TAB;
         return redirectView(EVENT_DETAIL_VIEW, personView.getEventId(), messagesEncoded(model));
     }
 
     @GetMapping("/team-remove-member")
-    @Secured({"ROLE_REGISTERED_USER"})
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER"})
     @Transactional
     public String removeStaffPerson(@RequestParam long personId, @RequestParam long registrationId, Model model) {
         TeamRegistration registration = eventOrganizer.getTeamRegistration(registrationId);
@@ -187,27 +207,35 @@ public class EventDetailController extends ControllerBase {
             person.ifPresentOrElse(
                     p -> {
                         if(registration.getTeamMembers().stream().anyMatch(m -> m.getIracingId() == p.getIracingId())) {
-                            int i = 0;
-                            for(Person member : registration.getTeamMembers()) {
-                                if(p.getIracingId() == member.getIracingId()) {
-                                    break;
-                                }
-                                i++;
-                            }
-                            registration.getTeamMembers().remove(i);
-                            eventOrganizer.saveRegistration(registration);
+                            removePersonFromTeam(registration, p);
                         } else {
                             addWarning(p.getName() + " is not a member of " + registration.getTeamName() + " " + registration.getCarQualifier(), model);
                         }
                     },
                     () -> addError("No person found for id " + personId, model)
             );
-            activeNav="teams";
+            activeNav= TEAMS_TAB;
             return redirectView(EVENT_DETAIL_VIEW, registration.getEventId(), messagesEncoded(model));
         } else {
             addError("No team registration found for id " + registrationId, model);
         }
         return redirectView(INDEX_VIEW, 0L, messagesEncoded(model));
+    }
+
+    @PostMapping("/edit-registered-car")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF"})
+    public String editRegisteredCar(@ModelAttribute RegisteredCarEditView registeredCarEditView, Model model) {
+        TeamRegistration registration = eventOrganizer.getTeamRegistration(registeredCarEditView.getTeamId());
+        if(registration != null) {
+            registration.setWildcard(registeredCarEditView.isUseWildcard());
+            carRepository.findById(registeredCarEditView.getCarId()).ifPresent(car -> {
+                registration.setCar(car);
+                eventOrganizer.saveRegistration(registration);
+            });
+        } else {
+            addError("No registration found for id " + registeredCarEditView.getTeamId(), model);
+        }
+        return redirectView(EVENT_DETAIL_VIEW, registeredCarEditView.getEventId(), messagesEncoded(model));
     }
 
     @ModelAttribute(name="staffRoles")
@@ -225,10 +253,41 @@ public class EventDetailController extends ControllerBase {
             if (registration.getTeamMembers().stream().noneMatch(p -> p.getIracingId() == toFind.get().getIracingId())) {
                 registration.getTeamMembers().add(staff);
                 eventOrganizer.saveRegistration(registration);
+                Optional<Member> discordMember = jdaClient.getMember(staff.getEventId(), staff.getName());
+                discordMember.ifPresent(member -> {
+                    CarClassView carClass = eventOrganizer.getCarClassView(registration.getCar().getCarClassId());
+                    if(carClass != null) {
+                        jdaClient.addRoleToMember(registration.getEventId(), member, carClass.getName());
+                    }
+                    jdaClient.addRoleToMember(registration.getEventId(), member, registration.getTeamName());
+                });
             }
         } else {
             addError("No team registration found for id " + teamId, model);
         }
+    }
+
+    private void removePersonFromTeam(TeamRegistration registration, Person toRemove) {
+        int i = 0;
+        for(Person member : registration.getTeamMembers()) {
+            if(toRemove.getIracingId() == member.getIracingId()) {
+                break;
+            }
+            i++;
+        }
+        registration.getTeamMembers().remove(i);
+        eventOrganizer.saveRegistration(registration);
+        Optional<Member> discordMember = jdaClient.getMember(toRemove.getEventId(), toRemove.getName());
+        discordMember.ifPresent(member -> {
+            jdaClient.removeRoleFromMember(toRemove.getEventId(), member, registration.getTeamName());
+            List<Long> carClassIds = eventOrganizer.myRegistrations(toRemove).stream()
+                    .map(r -> r.getCar().getCarClassId())
+                    .collect(Collectors.toList());
+            if(!carClassIds.contains(registration.getCar().getCarClassId())) {
+                CarClassView ccView = eventOrganizer.getCarClassView(registration.getCar().getCarClassId());
+                jdaClient.removeRoleFromMember(toRemove.getEventId(), member, ccView.getName());
+            }
+        });
     }
 
     private void checkMemberOnIRacingService(PersonView personView, Model model) {
@@ -242,23 +301,6 @@ public class EventDetailController extends ControllerBase {
                 personView.setIracingChecked(true);
             }
         }
-    }
-
-    private boolean denyDriverRole(Person supporter, TeamRegistration team, OrgaRoleType targetRole) {
-        if(supporter == null || team == null) {
-            return false;
-        }
-        boolean deny = false;
-        List<TeamRegistration> memberDrivingIn = eventOrganizer.checkUniqueTeamDriver(supporter);
-        if(memberDrivingIn.size() == 1) {
-            if(memberDrivingIn.get(0).getId() != team.getId()) {
-                deny = true;
-            }
-        } else if(memberDrivingIn.size() > 1
-            && (targetRole == OrgaRoleType.DRIVER || supporter.getRole() == OrgaRoleType.DRIVER)) {
-                deny = true;
-        }
-        return deny;
     }
 
     private String redirectView(String viewName, long eventId, String encodedMessages) {

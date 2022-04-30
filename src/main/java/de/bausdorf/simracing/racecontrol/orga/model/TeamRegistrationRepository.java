@@ -30,4 +30,5 @@ public interface TeamRegistrationRepository extends CrudRepository<TeamRegistrat
     List<TeamRegistration> findAllByEventId(long eventId);
     List<TeamRegistration> findAllByEventIdAndTeamMembersContaining(long eventId, Person member);
     List<TeamRegistration> findAllByEventIdAndCar(long eventId, BalancedCar car);
+    List<TeamRegistration> findAllByEventIdAndTeamName(long eventId, String teamName);
 }

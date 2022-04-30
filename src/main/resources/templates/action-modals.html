@@ -208,6 +208,49 @@
             </div>
         </div>
     </div>
+
+    <div th:fragment="car-modal(title, postUrl, registeredCarEditView)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'car-modal-' + ${registration.id}">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{${postUrl}}" th:object="${registeredCarEditView}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <input type="hidden" th:field="*{teamId}">
+                        <div class="modal-header">
+                            <h4 class="modal-title" th:text="${title}">SP9: #34 C3 Racing Red</h4>
+                            <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="28px" style="font-size: 12px; margin-left: 15px;" />
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Car</label>
+                                <select class="form-control" required="" th:field="*{carId}" th:disabled="${!user.racecontrol}">
+                                    <option th:each="car : ${registration.getCarsOfClass}" th:value="${car.carId}" th:text="${car.name}">Car name</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <div class="form-control" th:style="${registration.workflowState.getColorStyleString()}"><span th:text="${registration.workflowState.description}"></span></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" th:disabled="${!user.racecontrol}" th:field="*{useWildcard}"/>
+                                    <label class="form-check-label" for="useWildcard">Use wildcard</label>
+                                </div>
+                            </div>
+                            <p>Drivers:
+                                <span class="d-block" style="margin-top: 4px;" th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}" th:text="${driver.name}">Text</span>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button th:if="${user.racecontrol}" class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

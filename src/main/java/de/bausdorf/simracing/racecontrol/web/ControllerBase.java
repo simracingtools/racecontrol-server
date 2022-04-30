@@ -37,6 +37,7 @@ import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
@@ -119,6 +120,12 @@ public class ControllerBase {
 		} catch (JsonProcessingException e) {
 			log.error(e.getMessage(), e);
 		}
+	}
+
+	@ExceptionHandler
+	public String handleException(Exception e) {
+		log.error(e.getMessage(), e);
+		return "error";
 	}
 
 	@ModelAttribute(MESSAGES)

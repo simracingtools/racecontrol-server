@@ -139,7 +139,7 @@
                                                         <span class="d-block" th:if="${action.targetState != null}" th:text="${action.message}"></span>
                                                     </td>
                                                     <td class="text-center" style="padding: 3px;" th:if="${!action.targetStates.isEmpty()}">
-                                                        <button th:if="${!action.sourceState.inActive && action.targetState == null}" class="btn btn-primary" type="button" th:onclick="'editWorkflowAction(' + ${action.id} + ');'" style="padding-top: 3px;padding-bottom: 3px;padding-right: 10px;padding-left: 12px;">
+                                                        <button th:if="${!action.sourceState.inActive && action.targetState == null}" th:disabled="${!action.executableByUser && !user.getRacecontrol()}" class="btn btn-primary" type="button" th:onclick="'editWorkflowAction(' + ${action.id} + ');'" style="padding-top: 3px;padding-bottom: 3px;padding-right: 10px;padding-left: 12px;" data-toggle="tooltip" th:title="${!action.executableByUser ? 'Only team owner is allowed to take action' : ''}">
                                                             <i class="fas fa-edit"></i>
                                                         </button>
                                                         <div th:if="${!action.sourceState.inActive && action.targetState == null}" th:replace="action-modals.html :: ${action.workflowName +  '-' + action.sourceState.stateKey + '-modal'}(${action}, '/team-registration-action', ${editAction})"></div>
@@ -184,8 +184,8 @@
                                                         <h6>Team owner</h6>
                                                         <div class="d-block">
                                                             <span th:text="${team.createdBy.name}">Unknown</span>
-                                                            <button class="btn btn-primary float-right" type="button" style="padding: 0 3px;">
-                                                                <i class="fas fa-edit" data-toggle="tooltip" title="Transfer team ownership"></i>
+                                                            <button class="btn btn-primary float-right" type="button" style="padding: 0 3px;" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
+                                                                <i class="fas fa-edit" data-toggle="tooltip" th:title="${user.getIRacingId != team.createdBy.iracingId ? 'Only team owner is allowed to take action' : 'Transfer team ownership'}"></i>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -216,10 +216,10 @@
                                                                 </div>
                                                                 <select th:field="*{targetStateKey}" th:oninput="'changeTeamActionSelectDisplay(' + ${team.id} + ');'">
                                                                     <option value="" style="background-color: #FFFFFF; color: #000000;">Select Action</option>
-                                                                    <option th:each="state: ${team.workflowState.followUps}" th:if="${state.dutyRoles.contains(currentPerson.role)}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}"></option>
+                                                                    <option th:each="state: ${team.workflowState.followUps}" th:if="${state.dutyRoles.contains(currentPerson.role)}" th:value="${state.stateKey}" th:text="'Proceed to ' + ${state.description}" th:style="${state.getColorStyleString()}"></option>
                                                                 </select>
                                                                 <div class="input-group-append">
-                                                                    <button class="btn btn-primary" type="submit">
+                                                                    <button class="btn btn-primary" type="submit" th:disabled="${user.getIRacingId != team.createdBy.iracingId}" data-toggle="tooltip" th:title="${user.getIRacingId != team.createdBy.iracingId ? 'Only team owner is allowed to take action' : ''}">
                                                                         <i class="far fa-caret-square-right"></i>
                                                                     </button>
                                                                 </div>
@@ -273,14 +273,14 @@
                                                             </button>
                                                             <div th:replace="index.html::deleteModal('staff-remove-confirm-' + ${person.id} + ${team.id}, 'Do you really want to remove ' + ${person.name} + ' from team ' + ${team.getFullTeamName()} + ' ?', @{/team-remove-member(personId=${person.id}, registrationId=${team.id})})"></div>
                                                         </td>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_id'" th:value="${person.id}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingId'" th:value="${person.iracingId}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_eventId'" th:value="${person.eventId}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_name'" th:value="${person.name}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_role'" th:value="${person.role}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_registered'" th:value="${person.registered}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_leagueMember'" th:value="${person.leagueMember}"/>
-                                                        <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingChecked'" th:value="${person.iracingChecked}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_id'" th:value="${person.id}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_iracingId'" th:value="${person.iracingId}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_eventId'" th:value="${person.eventId}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_name'" th:value="${person.name}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_role'" th:value="${person.role}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_registered'" th:value="${person.registered}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_leagueMember'" th:value="${person.leagueMember}"/>
+                                                        <input type="hidden" th:id="'staff' + ${team.id} + '_' + ${personStat.index} + '_iracingChecked'" th:value="${person.iracingChecked}"/>
                                                     </tr>
                                                     </tbody>
                                                 </table>
@@ -314,11 +314,14 @@
                                                 </tr>
                                             </thead>
                                             <tbody style="padding: 3px;">
-                                                <tr th:style="${'padding: 3px; ' + (regStat.index < carClass.getMaxSlots() ? registration.getColorStyleString() : 'background-color: #d5d5d5')}" th:each="registration, regStat : ${carClass.registrations}">
-                                                    <td class="text-right" style="padding: 3px; font-size: 14px;" th:text="${registration.assignedCarNumber}">34</td>
-                                                    <td style="padding: 3px;font-size: 14px;" th:text="${registration.getFullTeamName()}">Sikania Endurance Motosport TCR</td>
+                                                <tr th:style="${'padding: 3px; ' + (regStat.index < carClass.maxSlots ? registration.getColorStyleString() : 'background-color: #d5d5d5')}" th:each="registration, regStat : ${carClass.registrations}">
+                                                    <td class="text-right" style="padding: 3px; font-size: 14px;" th:text="${regStat.index < carClass.getMaxSlots() ? registration.assignedCarNumber : 'W ' + (regStat.index - carClass.maxSlots + 1)}">34</td>
+                                                    <td style="padding: 3px;font-size: 14px; cursor: pointer;" th:text="${registration.getFullTeamName()}" th:onclick="'editRegisteredCar(' + ${registration.id} + ');'">Sikania Endurance Motosport TCR</td>
                                                     <td style="padding: 3px;font-size: 14px;">
                                                         <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="20px" style="font-size: 12px;" />
+                                                        <input type="hidden" th:id="'carId-' + ${registration.id}" th:value="${registration.car.id}">
+                                                        <input type="hidden" th:id="'wildcard-' + ${registration.id}" th:value="${registration.wildcard}">
+                                                        <div th:replace="action-modals.html :: car-modal(${carClass.name + ': ' + registration.getFullTeamNameWithNumber()}, '/edit-registered-car', ${registeredCarEditView})"></div>
                                                     </td>
                                                     <td style="padding: 3px;font-size: 14px;" th:text="${registration.car.carName}">Audi RS3 LMS</td>
                                                 </tr>

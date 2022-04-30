@@ -32,8 +32,12 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildAvailableEvent;
+import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -43,8 +47,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
@@ -54,6 +61,8 @@ public class JdaClient extends ListenerAdapter {
 
     @Getter
     private JDA api;
+
+    private Map<Long, Guild> guildCache = new HashMap<>();
 
     public JdaClient(@Autowired RacecontrolServerProperties config,
                      @Autowired EventSeriesRepository eventSeriesRepository) {
@@ -71,8 +80,34 @@ public class JdaClient extends ListenerAdapter {
     }
 
     public Guild getGuildByEventId(long eventId) {
-        Optional<EventSeries> eventSeries = eventSeriesRepository.findById(eventId);
-        return eventSeries.map(series -> api.getGuildById(series.getDiscordGuildId())).orElse(null);
+        AtomicReference<Guild> guild = new AtomicReference<>(guildCache.get(eventId));
+        if(guild.get() == null) {
+            Optional<EventSeries> eventSeries = eventSeriesRepository.findById(eventId);
+            eventSeries.ifPresent(series -> guild.set(api.getGuildById(series.getDiscordGuildId())));
+        }
+        return guild.get();
+    }
+
+    public void addRoleToMember(long eventId, Member member, String roleName) {
+        Guild guild = getGuildByEventId(eventId);
+        Optional<Role> role = guild.getRoles().stream()
+                .filter(r -> r.getName().equalsIgnoreCase(roleName))
+                .findFirst();
+
+        role.ifPresentOrElse(
+                r -> guild.addRoleToMember(member, r).complete(),
+                () -> {
+                    Role classRole = guild.createRole().setName(roleName).complete();
+                    guild.addRoleToMember(member, classRole).complete();
+                });
+    }
+
+    public void removeRoleFromMember(long eventId, Member member, String roleName) {
+        Guild guild = getGuildByEventId(eventId);
+        Optional<Role> roleOptional = member.getRoles().stream()
+                .filter(r -> r.getName().equalsIgnoreCase(roleName))
+                .findFirst();
+        roleOptional.ifPresent(role -> guild.removeRoleFromMember(member, role).complete());
     }
 
     public Optional<Member> getMember(long eventId, String iRacingName) {
@@ -143,6 +178,21 @@ public class JdaClient extends ListenerAdapter {
     public Role getRoleByName(Guild guild, String roleName) {
         List<Role> roles = guild.getRolesByName(roleName, true);
         return roles.stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        log.info("Slash command: {}", event.getInteraction().getName());
+    }
+
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        log.info("Gild join: {}", event.getMember().getNickname());
+    }
+
+    @Override
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+        log.info("{} changed nickname from {} to {}", event.getMember().getId(), event.getOldNickname(), event.getNewNickname());
     }
 
     @Override

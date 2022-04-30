@@ -26,6 +26,7 @@ import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
@@ -100,6 +101,7 @@ public class EventOrganizer {
                         }
                         CarAssetDto assets = getCarAsset(r.getCar().getCarId());
                         TeamRegistrationView view = TeamRegistrationView.fromEntity(r);
+                        view.setCarClass(CarClassView.fromEntity(carClass));
                         if(assets != null) {
                             view.getCar().setCarLogoUrl(ASSET_BASE_URL + assets.getLogo());
                         }
@@ -188,8 +190,31 @@ public class EventOrganizer {
             return new ArrayList<>();
         }
         return registrationRepository.findAllByEventId(person.getEventId()).stream()
+                .filter(r -> !r.getWorkflowState().isInActive())
                 .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == person.getIracingId()))
                 .collect(Collectors.toList());
+    }
+
+    public boolean isQualifierUnique(long eventId, String teamName, String qualifier) {
+        List<TeamRegistration> registrations = registrationRepository.findAllByEventIdAndTeamName(eventId, teamName);
+        return registrations.stream().noneMatch(r -> r.getCarQualifier().equalsIgnoreCase(qualifier));
+    }
+
+    public boolean denyDriverRole(Person supporter, TeamRegistration team, OrgaRoleType targetRole) {
+        if(supporter == null || team == null) {
+            return false;
+        }
+        boolean deny = false;
+        List<TeamRegistration> memberDrivingIn = checkUniqueTeamDriver(supporter);
+        if(memberDrivingIn.size() == 1) {
+            if(memberDrivingIn.get(0).getId() != team.getId()) {
+                deny = true;
+            }
+        } else if(memberDrivingIn.size() > 1
+                && (targetRole == OrgaRoleType.DRIVER || supporter.getRole() == OrgaRoleType.DRIVER)) {
+            deny = true;
+        }
+        return deny;
     }
 
     public List<TeamRegistration> myRegistrations(long eventId, @NonNull RcUser currentUser) {
@@ -198,13 +223,6 @@ public class EventOrganizer {
             return myRegistrations(currentPerson);
         }
         return List.of();
-    }
-
-    public List<TeamRegistration> myRegistrations(@NonNull RcUser currentUser) {
-        List<Person> currentPersons = personRepository.findAllByIracingId(currentUser.getIRacingId());
-        List<TeamRegistration> registrations = new ArrayList<>();
-        currentPersons.forEach(p -> registrations.addAll(myRegistrations(p.getEventId(), currentUser)));
-        return registrations;
     }
 
     public List<EventSeries> myActiveEvents(@NonNull RcUser currentUser) {
@@ -353,7 +371,7 @@ public class EventOrganizer {
                                      AtomicReference<List<TeamRegistrationView>> waitingList) {
         if(view.isWildcard()) {
             setWildcardSlots(view, carClass, regArray);
-        } else if(regCount.get() < carClass.getMaxSlots()){
+        } else if(regCount.get() < carClass.getMaxSlots() - carClass.getWildcards()){
             setRegularSlots(view, carClass, regArray);
         } else {
             waitingList.get().add(view);
@@ -366,6 +384,7 @@ public class EventOrganizer {
                         .teamName(i < carClass.getWildcards() ? "Free wildcard" : "Free slot")
                         .workflowState(WorkflowStateInfoView.builder()
                                 .build())
+                        .carClass(CarClassView.fromEntity(carClass))
                         .car(BalancedCarView.builder()
                                 .carLogoUrl("")
                                 .carName("")
@@ -422,9 +441,10 @@ public class EventOrganizer {
             registration.ifPresent(r -> {
                         String carQualifier = StringUtils.isEmpty(r.getCarQualifier()) ? "" : (" " + r.getCarQualifier());
                         infoView.setTeamName(
-                                StringUtils.isEmpty(r.getAssignedCarNumber()) ? "" : "#" + r.getAssignedCarNumber() + " "
-                                        + r.getTeamName()
-                                        + carQualifier);
+                                StringUtils.isEmpty(r.getAssignedCarNumber())
+                                        ? r.getTeamName()+ carQualifier
+                                        : "#" + r.getAssignedCarNumber() + " " + r.getTeamName() + carQualifier);
+                        infoView.setExecutableByUser(registration.get().getCreatedBy().getId() == currentPerson.getId());
                     }
             );
         }

@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Controller
 @Slf4j
@@ -52,14 +53,12 @@ public class RegistrationController extends ControllerBase {
     private final PersonRepository personRepository;
     private final WorkflowStateRepository workflowStateRepository;
     private final WorkflowActionRepository workflowActionRepository;
-    private final TeamRegistrationRepository registrationRepository;
     private final LeagueDataCache leagueDataCache;
     private final EventOrganizer eventOrganizer;
 
     public RegistrationController(@Autowired EventSeriesRepository eventRepository,
                                   @Autowired BalancedCarRepository balancedCarRepository,
                                   @Autowired PersonRepository personRepository,
-                                  @Autowired TeamRegistrationRepository registrationRepository,
                                   @Autowired WorkflowStateRepository workflowStateRepository,
                                   @Autowired WorkflowActionRepository workflowActionRepository,
                                   @Autowired LeagueDataCache leagueDataCache,
@@ -67,7 +66,6 @@ public class RegistrationController extends ControllerBase {
         this.eventRepository = eventRepository;
         this.balancedCarRepository = balancedCarRepository;
         this.personRepository = personRepository;
-        this.registrationRepository = registrationRepository;
         this.workflowStateRepository = workflowStateRepository;
         this.workflowActionRepository = workflowActionRepository;
         this.leagueDataCache = leagueDataCache;
@@ -109,7 +107,7 @@ public class RegistrationController extends ControllerBase {
 
         TeamRegistration registration = null;
         if(teamId.isPresent()) {
-            registration = registrationRepository.findById(teamId.get()).orElse(null);
+            registration = eventOrganizer.getTeamRegistration(teamId.get());
         }
         model.addAttribute("createRegistrationView" , CreateRegistrationView.builder()
                         .eventId(eventId)
@@ -127,10 +125,19 @@ public class RegistrationController extends ControllerBase {
     public String checkAndSaveRegistration(@ModelAttribute CreateRegistrationView createRegistrationView, Model model) {
         Person creator = buildCreator(createRegistrationView);
 
-        List<TeamRegistration> myRegistrations = registrationRepository.findAllByEventIdAndTeamMembersContaining(
-                createRegistrationView.getEventId(), creator);
-        if(!myRegistrations.isEmpty()) {
-            myRegistrations.forEach(r -> addWarning("You are already member of team " + r.getTeamName(), model));
+        List<TeamRegistration> myRegistrations = eventOrganizer.myRegistrations(creator);
+        AtomicReference<String> error = new AtomicReference<>(null);
+        myRegistrations.stream()
+                .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == creator.getIracingId() && p.getRole() == OrgaRoleType.DRIVER))
+                .forEach(r -> error.set("You are already a driver in team " + r.getTeamName() + " " + r.getCarQualifier()));
+        if(error.get() != null) {
+            addError(error.get(), model);
+            return redirectView(REGISTER_TEAM_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
+        }
+
+        if(!eventOrganizer.isQualifierUnique(createRegistrationView.getEventId(), createRegistrationView.getTeamName(), createRegistrationView.getCarQualifier())) {
+            addError("Qualifier " + createRegistrationView.getCarQualifier() + " is already used on another team of the same name", model);
+            return redirectView(REGISTER_TEAM_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
         }
 
         TeamRegistration registration = new TeamRegistration();
@@ -147,6 +154,7 @@ public class RegistrationController extends ControllerBase {
             registration.setCar(car.get());
         } else {
             addError("Car ID " + createRegistrationView.getCarId() + " does not exist.", model);
+            return redirectView(REGISTER_TEAM_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
         }
 
         registration.setCreatedBy(creator);
@@ -159,12 +167,12 @@ public class RegistrationController extends ControllerBase {
             registration.setWorkflowState(initialWorkflowState);
             registration.getTeamMembers().add(creator);
 
-            registration = registrationRepository.save(registration);
+            registration = eventOrganizer.saveRegistration(registration);
             createWorkFlowAction(registration);
             addInfo("Your application for registration was processed successfully.", model);
         }
 
-        return redirectView(INDEX_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
+        return redirectView(INDEX_VIEW, createRegistrationView.getEventId(), 0L, messagesEncoded(model));
     }
 
     private Person buildCreator(CreateRegistrationView createRegistrationView) {
@@ -206,7 +214,7 @@ public class RegistrationController extends ControllerBase {
     private String redirectView(String viewName, long eventId, long teamId, String encodedMessages) {
         return "redirect:/" + viewName
                 + (eventId != 0L ? "?eventId=" + eventId : "")
-                + (teamId != 0L ? "?teamId=" + teamId : "")
+                + (teamId != 0L ? "&teamId=" + teamId : "")
                 + (encodedMessages != null ? "&messages=" + encodedMessages : "");
     }
 }

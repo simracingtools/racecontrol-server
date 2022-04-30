@@ -51,6 +51,7 @@ public class WorkflowActionInfoView {
     private OffsetDateTime doneAt;
     private String editActionMessage;
     private String message;
+    private boolean executableByUser;
 
     public static WorkflowActionInfoView fromEntity(WorkflowAction action) {
         return WorkflowActionInfoView.builder()

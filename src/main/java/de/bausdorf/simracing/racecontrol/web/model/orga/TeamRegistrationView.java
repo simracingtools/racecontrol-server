@@ -27,6 +27,7 @@ import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.util.StringUtils;
 
 import java.time.OffsetDateTime;
@@ -35,6 +36,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
+@Slf4j
 public class TeamRegistrationView {
     private long id;
 
@@ -89,6 +91,14 @@ public class TeamRegistrationView {
                 .filter(member -> OrgaRoleType.valueOf(member.getRole()) == OrgaRoleType.DRIVER)
                 .filter(member -> !member.getRegistered())
                 .count();
+    }
+
+    public List<CarView> getCarsOfClass() {
+        if(carClass == null) {
+            log.error("Null car class on registration id {} {}", id, teamName);
+            return List.of();
+        }
+        return carClass.getCars();
     }
 
     public static TeamRegistrationView fromEntity(TeamRegistration registration) {
