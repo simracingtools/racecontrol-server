@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
+import de.bausdorf.simracing.irdataapi.model.MemberInfoDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.live.api.EventType;
@@ -67,7 +68,7 @@ public class RcAuthenticationProvider implements org.springframework.security.au
         Optional<RcUser> user = userRepository.findById(userId);
         if(user.isEmpty()) {
 
-            Optional<MemberInfo> identifiedMember = iRacingClient.getMemberInfo(iRacingId);
+            Optional<MemberInfoDto> identifiedMember = iRacingClient.getFullMemberInfo(iRacingId);
             RcUserType newUserType = RcUserType.REGISTERED_USER;
             if(identifiedMember.isEmpty()) {
                 log.warn("No iRacing user with id {} found", iRacingId);
@@ -82,21 +83,22 @@ public class RcAuthenticationProvider implements org.springframework.security.au
             }
 
             user = Optional.of(userRepository.save(RcUser.builder()
-                    .email(userDetails.getEmail())
-                    .oauthId(userId)
-                    .imageUrl(userDetails.getPicture())
-                    .name(usernameFromIRacingName(identifiedMember.map(MemberInfo::getName).orElse(null)))
-                    .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : newUserType)
-                    .created(LocalDateTime.now())
-                    .subscriptionType(SubscriptionType.NONE)
-                    .eventFilter(defaultEventFilter())
-                    .lastSubscription(LocalDateTime.now())
-                    .lastAccess(LocalDateTime.now())
-                    .locked(false)
-                    .expired(false)
-                    .enabled(true)
-                    .iRacingId(identifiedMember.map(MemberInfo::getCustid).orElse(0))
-                    .build())
+                            .email(userDetails.getEmail())
+                            .oauthId(userId)
+                            .imageUrl(userDetails.getPicture())
+                            .name(usernameFromIRacingName(identifiedMember.map(MemberInfoDto::getDisplayName).orElse(null)))
+                            .irClubName(identifiedMember.map(MemberInfoDto::getClubName).orElse(null))
+                            .userType(userRepository.count() == 0 ? RcUserType.SYSADMIN : newUserType)
+                            .created(LocalDateTime.now())
+                            .subscriptionType(SubscriptionType.NONE)
+                            .eventFilter(defaultEventFilter())
+                            .lastSubscription(LocalDateTime.now())
+                            .lastAccess(LocalDateTime.now())
+                            .locked(false)
+                            .expired(false)
+                            .enabled(true)
+                            .iRacingId(identifiedMember.map(MemberInfoDto::getCustId).orElse(0L))
+                            .build())
             );
         } else {
             user.get().setLastAccess(LocalDateTime.now());

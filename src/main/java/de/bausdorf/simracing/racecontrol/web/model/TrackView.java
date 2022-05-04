@@ -22,16 +22,12 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.model.Track;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -42,34 +38,4 @@ public class TrackView {
 
     private String name;
     private List<TrackConfigurationView> configViewList;
-
-    public void updateEntity(Track entity) {
-        entity.setPkgId(pkgId);
-        entity.setName(name);
-    }
-
-    public static TrackView buildFromEntity(@Nullable Track entity) {
-        if(entity == null) {
-            return buildEmpty();
-        }
-        TrackView trackView = TrackView.builder()
-                .pkgId(entity.getPkgId())
-                .name(entity.getName())
-                .build();
-
-        trackView.setConfigViewList(entity.getConfigurations().stream()
-                .map(s -> TrackConfigurationView.buildFromEntity(s, trackView))
-                .collect(Collectors.toList()));
-
-        return trackView;
-
-    }
-
-    public static TrackView buildEmpty() {
-        return TrackView.builder()
-                .name("")
-                .pkgId(0L)
-                .configViewList(new ArrayList<>())
-                .build();
-    }
 }

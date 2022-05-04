@@ -24,7 +24,6 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Optional;
 
@@ -35,6 +34,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -94,10 +96,7 @@ public class ControllerBase {
 				.build());
 	}
 
-	protected String redirectView(String viewName) {
-		return "redirect:/" + viewName;
-	}
-	protected String messagesEncoded(Model model) {
+	protected String messagesEncoded(@NonNull Model model) {
 		try {
 			Messages messages = ((Messages)model.getAttribute(MESSAGES));
 			if(messages == null || messages.isEmpty()) {
@@ -114,8 +113,7 @@ public class ControllerBase {
 	protected void decodeMessagesToModel(String messagesEncoded, Model model) {
 		try {
 			String messagesDecoded = new String(Base64.getDecoder().decode(messagesEncoded));
-			Messages messages = null;
-			messages = mapper.readValue(messagesDecoded, Messages.class);
+			Messages messages = mapper.readValue(messagesDecoded, Messages.class);
 			model.addAttribute(MESSAGES, messages);
 		} catch (JsonProcessingException e) {
 			log.error(e.getMessage(), e);
@@ -125,12 +123,22 @@ public class ControllerBase {
 	@ExceptionHandler
 	public String handleException(Exception e) {
 		log.error(e.getMessage(), e);
+		if(e instanceof AccessDeniedException) {
+			return redirectBuilder("/index")
+					.withParameter("error", "Access denied")
+					.build(null);
+		}
 		return "error";
 	}
 
 	@ModelAttribute(MESSAGES)
 	Messages messages() {
 		return new Messages();
+	}
+
+
+	protected RedirectBuilder redirectBuilder(String viewName) {
+		return new RedirectBuilder(viewName);
 	}
 
 	protected void prepareMessageModel(Optional<String> error, Optional<String> warn, Optional<String> info, Model model) {
@@ -167,5 +175,37 @@ public class ControllerBase {
 				.type(Message.INFO)
 				.text(info)
 				.build(), model);
+	}
+
+	public class RedirectBuilder {
+		private String redirectUri = "";
+		private int parameterCount = 0;
+
+		public RedirectBuilder(String viewName) {
+			redirectUri += (viewName.startsWith("/") ? "redirect:" : "redirect:/") + viewName;
+		}
+
+		public RedirectBuilder withParameter(String name, String value) {
+			if(!StringUtils.isEmpty(value)) {
+				redirectUri += (parameterCount == 0 ? "?" : "&") + name + "=" + value;
+				parameterCount++;
+			}
+			return this;
+		}
+
+		public RedirectBuilder withParameter(String name, long value) {
+			return withParameter(name, value == 0L ? null : Long.toString(value));
+		}
+
+		public String build(@Nullable Model model) {
+			if(model == null) {
+				return redirectUri;
+			}
+			String encodedMessages = messagesEncoded(model);
+			if(encodedMessages != null) {
+				redirectUri += (parameterCount == 0 ? "?" : "&") + MESSAGES + "=" + encodedMessages;
+			}
+			return redirectUri;
+		}
 	}
 }

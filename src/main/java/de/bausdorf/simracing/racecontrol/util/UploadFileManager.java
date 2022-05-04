@@ -40,6 +40,7 @@ import java.util.UUID;
 @Slf4j
 public class UploadFileManager {
     public static final String EVENT_SUBDIR = "/event-";
+    public static final String USER_SUBDIR = "/user-";
     private final RacecontrolServerProperties config;
 
     public UploadFileManager(@Autowired RacecontrolServerProperties config) {
@@ -50,7 +51,14 @@ public class UploadFileManager {
         Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
                 + EVENT_SUBDIR + eventId + '/' + type.getDestination());
         saveFile(fileDestinationDir, multipartFile, multipartFile.getOriginalFilename());
-        return getFileUri(eventId, type, multipartFile.getOriginalFilename());
+        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + multipartFile.getOriginalFilename();
+    }
+
+    public String uploadUserFile(@NonNull MultipartFile multipartFile, @NonNull String userId, @NonNull FileTypeEnum type) throws IOException {
+        Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
+                + USER_SUBDIR + userId + '/' + type.getDestination());
+        saveFile(fileDestinationDir, multipartFile, multipartFile.getOriginalFilename());
+        return config.getUploadBaseUri() + USER_SUBDIR + userId + '/' + type.getDestination() + multipartFile.getOriginalFilename();
     }
 
     public String uploadTeamLogo(@NonNull MultipartFile multipartFile, @NonNull String eventId, @NonNull String teamIRacingId, @NonNull FileTypeEnum type) throws IOException {
@@ -58,7 +66,7 @@ public class UploadFileManager {
                 + EVENT_SUBDIR + eventId + '/' + type.getDestination());
         String fileExtension = Objects.requireNonNull(multipartFile.getOriginalFilename()).split("\\.")[1];
         saveFile(fileDestinationDir, multipartFile, "teamlogo-" + teamIRacingId + "." + fileExtension);
-        return getFileUri(eventId, type, multipartFile.getOriginalFilename());
+        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + multipartFile.getOriginalFilename();
     }
 
     private void saveFile(Path fileDestinationDir, MultipartFile multipartFile, String destinationFileName) throws IOException {
@@ -78,9 +86,4 @@ public class UploadFileManager {
             throw new IOException(fileDestinationDir + " exists as regular file");
         }
     }
-
-    private String getFileUri(String eventId, FileTypeEnum fileType, String fileName) {
-        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + fileType.getDestination() + fileName;
-    }
-
 }

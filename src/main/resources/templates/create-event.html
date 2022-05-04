@@ -240,6 +240,7 @@
                 <div class="col"><button class="btn btn-primary float-right" type="submit">Save</button></div>
             </div>
         </form>
+        <div th:replace="action-modals.html :: upload-modal('logo-upload-modal', 'Upload event logo', ${eventView.eventId}, '/event-logo-upload')"></div>
         <div class="modal fade" role="dialog" tabindex="-1" id="carclass-modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -275,28 +276,6 @@
             </div>
         </div>
         <div th:replace="action-modals.html :: staff-modal('Add organizing person', '/event-save-person', ${editStaffView})"></div>
-        <div class="modal fade" role="dialog" tabindex="-1" id="logo-upload-modal" >
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <form id="upload-logo-form" method="post" th:action="@{/event-logo-upload}" enctype="multipart/form-data">
-                        <div class="modal-header">
-                            <h4 class="modal-title">Upload event logo</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Event logo file</label>
-                                <input class="form-control-file" type="file" name="file"/>
-                                <input class="form-control" type="hidden" name="eventId" th:value="${eventView.getEventId()}"/>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                            <button class="btn btn-primary" type="submit">Upload</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
         <div class="modal fade" role="dialog" tabindex="-1" id="discord-modal">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">

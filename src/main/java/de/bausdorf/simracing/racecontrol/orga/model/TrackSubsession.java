@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model.orga;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
@@ -22,18 +22,27 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  * #L%
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import de.bausdorf.simracing.racecontrol.orga.api.SessionType;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class RegisteredCarEditView {
-    private long eventId;
-    private long teamId;
-    private long carId;
-    private boolean useWildcard;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.time.Duration;
+
+@Getter
+@Setter
+@RequiredArgsConstructor
+@Entity
+public class TrackSubsession {
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private long trackSessionId;
+    private Long irSubsessionId;
+    private SessionType sessionType;
+    private Duration duration;
 }

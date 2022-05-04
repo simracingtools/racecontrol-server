@@ -4,7 +4,7 @@ package de.bausdorf.simracing.racecontrol.orga.api;
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 - 2021 bausdorf engineering
+ * Copyright (C) 2020 - 2022 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,8 +22,10 @@ package de.bausdorf.simracing.racecontrol.orga.api;
  * #L%
  */
 
-public enum TrackEventType {
-	PRACTICE,
-	QUALIFYING,
-	RACE
+public enum SessionType {
+    OPEN_PRACTICE,
+    LONE_QUALIFY,
+    OPEN_QUALIFY,
+    WARMUP,
+    RACE
 }

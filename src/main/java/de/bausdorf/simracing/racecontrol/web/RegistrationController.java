@@ -47,6 +47,8 @@ public class RegistrationController extends ControllerBase {
     public static final String EVENT_VIEW_MODEL_KEY = "eventView";
     public static final String INDEX_VIEW = "index";
     public static final String REGISTRATION_WORKFLOW = "TeamRegistration";
+    public static final String TEAM_ID_PARAM = "teamId";
+    public static final String EVENT_ID_PARAM = "eventId";
 
     private final EventSeriesRepository eventRepository;
     private final BalancedCarRepository balancedCarRepository;
@@ -82,7 +84,9 @@ public class RegistrationController extends ControllerBase {
         Person currentPerson = personRepository.findByEventIdAndIracingId(eventId, currentUser().getIRacingId()).orElse(null);
         if (currentPerson != null && currentPerson.getRole().isRacecontrol()) {
             addError("Organizing staff is not allowed to register teams!", model);
-            return redirectView(INDEX_VIEW, eventId, messagesEncoded(model));
+            return redirectBuilder(INDEX_VIEW)
+                    .withParameter(EVENT_ID_PARAM, eventId)
+                    .build(model);
         }
 
         boolean leagueMember = false;
@@ -91,7 +95,9 @@ public class RegistrationController extends ControllerBase {
             if(OffsetDateTime.now().isBefore(eventSeries.get().getRegistrationOpens())
                     || OffsetDateTime.now().isAfter(eventSeries.get().getRegistrationCloses())) {
                 addWarning("Registration for " + eventSeries.get().getTitle() + " is currently closed.", model);
-                return redirectView(INDEX_VIEW, eventId, messagesEncoded(model));
+                return redirectBuilder(INDEX_VIEW)
+                        .withParameter(EVENT_ID_PARAM, eventId)
+                        .build(model);
             }
 
             leagueMember = Arrays.stream(leagueDataCache.getLeagueInfo(eventSeries.get().getIRLeagueID()).getRoster())
@@ -132,12 +138,18 @@ public class RegistrationController extends ControllerBase {
                 .forEach(r -> error.set("You are already a driver in team " + r.getTeamName() + " " + r.getCarQualifier()));
         if(error.get() != null) {
             addError(error.get(), model);
-            return redirectView(REGISTER_TEAM_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
+            return redirectBuilder(REGISTER_TEAM_VIEW)
+                    .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
+                    .withParameter(TEAM_ID_PARAM, createRegistrationView.getOtherTeamId())
+                    .build(model);
         }
 
         if(!eventOrganizer.isQualifierUnique(createRegistrationView.getEventId(), createRegistrationView.getTeamName(), createRegistrationView.getCarQualifier())) {
             addError("Qualifier " + createRegistrationView.getCarQualifier() + " is already used on another team of the same name", model);
-            return redirectView(REGISTER_TEAM_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
+            return redirectBuilder(REGISTER_TEAM_VIEW)
+                    .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
+                    .withParameter(TEAM_ID_PARAM, createRegistrationView.getOtherTeamId())
+                    .build(model);
         }
 
         TeamRegistration registration = new TeamRegistration();
@@ -154,7 +166,10 @@ public class RegistrationController extends ControllerBase {
             registration.setCar(car.get());
         } else {
             addError("Car ID " + createRegistrationView.getCarId() + " does not exist.", model);
-            return redirectView(REGISTER_TEAM_VIEW, createRegistrationView.getEventId(), createRegistrationView.getOtherTeamId(), messagesEncoded(model));
+            return redirectBuilder(REGISTER_TEAM_VIEW)
+                    .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
+                    .withParameter(TEAM_ID_PARAM, createRegistrationView.getOtherTeamId())
+                    .build(model);
         }
 
         registration.setCreatedBy(creator);
@@ -172,7 +187,9 @@ public class RegistrationController extends ControllerBase {
             addInfo("Your application for registration was processed successfully.", model);
         }
 
-        return redirectView(INDEX_VIEW, createRegistrationView.getEventId(), 0L, messagesEncoded(model));
+        return redirectBuilder(INDEX_VIEW)
+                .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
+                .build(model);
     }
 
     private Person buildCreator(CreateRegistrationView createRegistrationView) {
@@ -205,16 +222,5 @@ public class RegistrationController extends ControllerBase {
                 .sourceState(registration.getWorkflowState())
                 .build()
         );
-    }
-
-    private String redirectView(String viewName, long eventId, String encodedMessages) {
-        return redirectView(viewName, eventId, 0L, encodedMessages);
-    }
-
-    private String redirectView(String viewName, long eventId, long teamId, String encodedMessages) {
-        return "redirect:/" + viewName
-                + (eventId != 0L ? "?eventId=" + eventId : "")
-                + (teamId != 0L ? "&teamId=" + teamId : "")
-                + (encodedMessages != null ? "&messages=" + encodedMessages : "");
     }
 }

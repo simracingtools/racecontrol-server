@@ -46,7 +46,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -68,9 +67,9 @@ import java.util.stream.Collectors;
 @Slf4j
 public class IndexController extends ControllerBase {
     public static final String INDEX_VIEW = "index";
-    public static final String USER_ID_PARAM = "userId=";
-    public static final String SESSION_ID_PARAM = "sessionId=";
-    public static final String EVENT_ID_PARAM = "?eventId=";
+    public static final String USER_ID_PARAM = "userId";
+    public static final String SESSION_ID_PARAM = "sessionId";
+    public static final String EVENT_ID_PARAM = "eventId";
 
     private final SessionRepository sessionRepository;
     private final EventSeriesRepository eventRepository;
@@ -127,26 +126,28 @@ public class IndexController extends ControllerBase {
     public String determineLocationAfterLogin(Model model) {
         RcUser currentUser = currentUser();
         if(currentUser.getTimezone() == null) {
-            return super.redirectView("profile");
+            return redirectBuilder("profile").build(model);
         }
         List<EventSeries> events = eventOrganizer.myActiveEvents(currentUser);
         EventSeries closestEvent = eventOrganizer.closestEventByNow(currentUser, events);
         if(closestEvent != null) {
             Person person = eventOrganizer.getPersonInEvent(closestEvent.getId(), currentUser.getIRacingId());
             if(person != null) {
-                return redirectView("event-detail")
-                        + EVENT_ID_PARAM + closestEvent.getId()
-                        + "&activeTab=" + (person.getRole().isParticipant() ? "teams" : "tasks");
+                return redirectBuilder("event-detail")
+                        .withParameter(EVENT_ID_PARAM, Long.toString(closestEvent.getId()))
+                        .withParameter("activeTab", (person.getRole().isParticipant() ? "teams" : "tasks"))
+                        .build(model);
             }
         }
-        return redirectView(INDEX_VIEW);
+        return redirectBuilder(INDEX_VIEW).build(model);
     }
 
     @PostMapping("/register-car-for-team")
-    public String forwardTeamRegistration(@ModelAttribute TeamRegistrationSelectView teamRegistrationSelect) {
-        return super.redirectView("team-registration")
-                + EVENT_ID_PARAM + teamRegistrationSelect.getEventId()
-                + "&teamId=" + teamRegistrationSelect.getTeamId();
+    public String forwardTeamRegistration(@ModelAttribute TeamRegistrationSelectView teamRegistrationSelect, Model model) {
+        return redirectBuilder("team-registration")
+                .withParameter(EVENT_ID_PARAM, teamRegistrationSelect.getEventId())
+                .withParameter("teamId", teamRegistrationSelect.getTeamId())
+                .build(model);
     }
     @GetMapping("/logout")
     public String logout(HttpServletRequest servletRequest) throws ServletException {
@@ -160,19 +161,12 @@ public class IndexController extends ControllerBase {
 
     @PostMapping({"/session"})
     public String session(SessionSelectView selectView) {
-        String redirectUri = "redirect:session?";
-        if(!selectView.getUserId().isEmpty()) {
-            redirectUri += USER_ID_PARAM + selectView.getUserId() + "&";
-        }
-        return redirectUri + SESSION_ID_PARAM + URLEncoder.encode(selectView.getSelectedSessionId(), StandardCharsets.UTF_8);
+        return redirectBuilder("session")
+                .withParameter(USER_ID_PARAM, selectView.getUserId())
+                .withParameter(SESSION_ID_PARAM, URLEncoder.encode(selectView.getSelectedSessionId(), StandardCharsets.UTF_8))
+                .build(null);
     }
 
-    protected String redirectView(String viewName, long eventId, String encodedMessages) {
-        return super.redirectView(viewName)
-                + (eventId != 0 ? EVENT_ID_PARAM + eventId : "")
-                + (StringUtils.isEmpty(activeNav) ? "" : "&activeTab=" + activeNav)
-                + (encodedMessages != null ? "&messages=" + encodedMessages : "");
-    }
     public static <T> Predicate<T> distinctByKey(
             Function<? super T, ?> keyExtractor) {
 

@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import java.io.IOException;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,6 +30,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
+import de.bausdorf.simracing.racecontrol.util.LocaleTools;
+import de.bausdorf.simracing.racecontrol.util.LocaleView;
+import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.TimezoneView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -47,6 +52,7 @@ import de.bausdorf.simracing.racecontrol.web.model.UserSearchView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Slf4j
@@ -58,9 +64,12 @@ public class UserAdminController extends ControllerBase {
 	public static final String ADMIN_VIEW = "useradmin";
 
 	private final IRacingClient iRacingClient;
+	private final UploadFileManager uploadFileManager;
 
-	public UserAdminController(@Autowired IRacingClient iRacingClient) {
+	public UserAdminController(@Autowired IRacingClient iRacingClient,
+							   @Autowired UploadFileManager uploadFileManager) {
 		this.iRacingClient = iRacingClient;
+		this.uploadFileManager = uploadFileManager;
 	}
 
 	@GetMapping("/useradmin")
@@ -150,8 +159,7 @@ public class UserAdminController extends ControllerBase {
 		}
 		RcUser userToSave = profileView.apply(currentUser);
 		userRepository.save(userToSave);
-		String messagesEncoded = messagesEncoded(model);
-		return super.redirectView(PROFILE_VIEW) + (messagesEncoded != null ? "?messages=" + messagesEncoded : "");
+		return redirectBuilder(PROFILE_VIEW).build(model);
 	}
 
 	@GetMapping("/deletesiteuser")
@@ -166,6 +174,20 @@ public class UserAdminController extends ControllerBase {
 			}
 		}
 		return searchUsers(searchView, model);
+	}
+
+	@PostMapping("/profile-image-upload")
+	public String uploadProfileImage(@RequestParam("file") MultipartFile multipartFile, Model model) {
+		RcUser user = currentUser();
+		try {
+			String logoUrl = uploadFileManager.uploadUserFile(multipartFile, Long.toString(user.getIRacingId()), FileTypeEnum.LOGO);
+			user.setImageUrl(logoUrl);
+			userRepository.save(user);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+			addError(e.getMessage(), model);
+		}
+		return redirectBuilder(PROFILE_VIEW).build(model);
 	}
 
 	@ModelAttribute("userTypes")
@@ -202,5 +224,10 @@ public class UserAdminController extends ControllerBase {
 				.map(s -> TimezoneView.fromZoneId(ZoneId.of(s)))
 				.sorted(Comparator.comparing(TimezoneView::getUtcOffset))
 				.collect(Collectors.toList());
+	}
+
+	@ModelAttribute("countries")
+	List<LocaleView> availableCountries() {
+		return LocaleTools.getLocaleViews();
 	}
 }

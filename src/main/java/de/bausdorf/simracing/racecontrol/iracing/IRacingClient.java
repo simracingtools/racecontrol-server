@@ -35,8 +35,10 @@ import de.bausdorf.simracing.irdataapi.client.impl.IrDataClientImpl;
 import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
+import de.bausdorf.simracing.irdataapi.model.MemberInfoDto;
 import de.bausdorf.simracing.irdataapi.model.MembersInfoDto;
 import de.bausdorf.simracing.irdataapi.tools.StockDataCache;
+import de.bausdorf.simracing.racecontrol.web.model.TrackConfigurationView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -56,6 +58,7 @@ public class IRacingClient {
 		this.serverProperties = serverProperties;
 		this.dataClient = new IrDataClientImpl();
 		this.dataCache = new StockDataCache(serverProperties.getCacheDirectory());
+		TrackConfigurationView.setTrackInfos(dataCache.getTracks());
 	}
 
 	public StockDataCache getDataCache() {
@@ -84,6 +87,11 @@ public class IRacingClient {
 			log.error(e.getMessage(), e);
 		}
 		return Collections.emptyList();
+	}
+
+	public Optional<MemberInfoDto> getFullMemberInfo(long iracingId) {
+		authenticate();
+		return Arrays.stream(dataClient.getMembersInfo(List.of(iracingId)).getMembers()).findFirst();
 	}
 
 	public LeagueInfoDto getLeagueInfo(long leagueId) {

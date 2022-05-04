@@ -29,9 +29,7 @@ import de.bausdorf.simracing.racecontrol.web.action.WorkflowAction;
 import de.bausdorf.simracing.racecontrol.web.action.ActionException;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -48,7 +46,6 @@ import org.thymeleaf.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -158,7 +155,7 @@ public class EventDetailController extends ControllerBase {
                 addError(e.getMessage(), model);
             }
         }
-        return redirectView(EVENT_DETAIL_VIEW, editAction.getEventId(), messagesEncoded(model));
+        return redirectView(EVENT_DETAIL_VIEW, editAction.getEventId(), model);
     }
 
     @PostMapping("/team-save-member")
@@ -168,7 +165,7 @@ public class EventDetailController extends ControllerBase {
         EventSeries event = eventRepository.findById(personView.getEventId()).orElse(null);
         if(event == null) {
             addError("No event found for id " + personView.getEventId(), model);
-            return redirectView(INDEX_VIEW, 0L, messagesEncoded(model));
+            return redirectView(INDEX_VIEW, 0L, model);
         }
 
         TeamRegistration registration = eventOrganizer.getTeamRegistration(personView.getTeamId());
@@ -194,7 +191,7 @@ public class EventDetailController extends ControllerBase {
             }
         }
         activeNav = TEAMS_TAB;
-        return redirectView(EVENT_DETAIL_VIEW, personView.getEventId(), messagesEncoded(model));
+        return redirectView(EVENT_DETAIL_VIEW, personView.getEventId(), model);
     }
 
     @GetMapping("/team-remove-member")
@@ -215,11 +212,11 @@ public class EventDetailController extends ControllerBase {
                     () -> addError("No person found for id " + personId, model)
             );
             activeNav= TEAMS_TAB;
-            return redirectView(EVENT_DETAIL_VIEW, registration.getEventId(), messagesEncoded(model));
+            return redirectView(EVENT_DETAIL_VIEW, registration.getEventId(), model);
         } else {
             addError("No team registration found for id " + registrationId, model);
         }
-        return redirectView(INDEX_VIEW, 0L, messagesEncoded(model));
+        return redirectView(INDEX_VIEW, 0L, model);
     }
 
     @PostMapping("/edit-registered-car")
@@ -235,7 +232,7 @@ public class EventDetailController extends ControllerBase {
         } else {
             addError("No registration found for id " + registeredCarEditView.getTeamId(), model);
         }
-        return redirectView(EVENT_DETAIL_VIEW, registeredCarEditView.getEventId(), messagesEncoded(model));
+        return redirectView(EVENT_DETAIL_VIEW, registeredCarEditView.getEventId(), model);
     }
 
     @ModelAttribute(name="staffRoles")
@@ -303,10 +300,10 @@ public class EventDetailController extends ControllerBase {
         }
     }
 
-    private String redirectView(String viewName, long eventId, String encodedMessages) {
-        return "redirect:/" + viewName
-                + (eventId != 0 ? "?eventId=" + eventId : "")
-                + (StringUtils.isEmpty(activeNav) ? "" : "&activeTab=" + activeNav)
-                + (encodedMessages != null ? "&messages=" + encodedMessages : "");
+    private String redirectView(String viewName, long eventId, Model model) {
+        return redirectBuilder(viewName)
+                .withParameter("eventId", eventId)
+                .withParameter("activeTab", activeNav)
+                .build(model);
     }
 }

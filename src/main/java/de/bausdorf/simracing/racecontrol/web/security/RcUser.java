@@ -59,6 +59,8 @@ public class RcUser implements UserDetails {
 	private RcUserType userType;
 	@Convert(converter = ZoneIdConverter.class)
 	private ZoneId timezone;
+	private String localeTag;
+	private String irClubName;
 	private LocalDateTime created;
 	private LocalDateTime lastAccess;
 	private LocalDateTime lastSubscription;

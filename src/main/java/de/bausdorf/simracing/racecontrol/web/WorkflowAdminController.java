@@ -45,8 +45,8 @@ import java.util.stream.Collectors;
 @Controller
 public class WorkflowAdminController extends ControllerBase {
     private static final String WORKFLOW_ADMIN_VIEW = "taskadmin";
-    public static final String REDIRECT_TO_WORKFLOW_ADMIN = "redirect:/workflow-admin";
-    public static final String WORKFLOW_REDIRECT_PARAM = "?workflow=";
+    public static final String REDIRECT_TO_WORKFLOW_ADMIN = "workflow-admin";
+    public static final String WORKFLOW_REDIRECT_PARAM = "workflow";
 
     private final WorkflowStateRepository stateRepository;
 
@@ -92,9 +92,8 @@ public class WorkflowAdminController extends ControllerBase {
     @PostMapping("/add-workflow")
     @Secured({"ROLE_SYSADMIN"})
     @Transactional
-    public String addWorkflow(@ModelAttribute AddWorkflowView addWorkflowView) {
+    public String addWorkflow(@ModelAttribute AddWorkflowView addWorkflowView, Model model) {
         List<WorkflowState> existingStates = stateRepository.findDistinctByWorkflowName(addWorkflowView.getWorkflowName());
-        String error = null;
         if(existingStates.isEmpty()) {
             WorkflowState newWorkflowState = new WorkflowState();
             newWorkflowState.setWorkflowName(addWorkflowView.getWorkflowName());
@@ -104,27 +103,30 @@ public class WorkflowAdminController extends ControllerBase {
             newWorkflowState.setTextColor("#000000");
             stateRepository.save(newWorkflowState);
         } else {
-            error = "A workflow named " + addWorkflowView.getWorkflowName() + " already exists";
+            addError("A workflow named " + addWorkflowView.getWorkflowName() + " already exists", model);
         }
 
-        return REDIRECT_TO_WORKFLOW_ADMIN + WORKFLOW_REDIRECT_PARAM + addWorkflowView.getWorkflowName()
-                + (error != null ? "&error=" + error : "");
+        return redirectBuilder(REDIRECT_TO_WORKFLOW_ADMIN)
+                .withParameter(WORKFLOW_REDIRECT_PARAM, addWorkflowView.getWorkflowName())
+                .build(model);
     }
 
     @PostMapping("/save-workflow-state")
     @Secured({"ROLE_SYSADMIN"})
     @Transactional
-    public String saveWorkflowState(@ModelAttribute WorkflowStateEditView editWorkflowStateView) {
+    public String saveWorkflowState(@ModelAttribute WorkflowStateEditView editWorkflowStateView, Model model) {
         Optional<WorkflowState> existingState = stateRepository.findById(editWorkflowStateView.getId());
         WorkflowState toSave = editWorkflowStateView.toEntity(existingState.orElse(null), stateRepository);
         stateRepository.save(toSave);
 
-        return REDIRECT_TO_WORKFLOW_ADMIN + WORKFLOW_REDIRECT_PARAM + editWorkflowStateView.getWorkflowName();
+        return redirectBuilder(REDIRECT_TO_WORKFLOW_ADMIN)
+                .withParameter(WORKFLOW_REDIRECT_PARAM, editWorkflowStateView.getWorkflowName())
+                .build(model);
     }
 
     @GetMapping("/delete-workflow-state")
     @Secured({"ROLE_SYSADMIN"})
-    String deleteWorkflowState(@RequestParam String workflowStateId) {
+    String deleteWorkflowState(@RequestParam String workflowStateId, Model model) {
         Optional<WorkflowState> workflowState = stateRepository.findById(Long.parseLong(workflowStateId));
         AtomicReference<String> workflowName = new AtomicReference<>(null);
         workflowState.ifPresent(state -> {
@@ -132,7 +134,9 @@ public class WorkflowAdminController extends ControllerBase {
             stateRepository.delete(state);
         });
 
-        return REDIRECT_TO_WORKFLOW_ADMIN + (workflowName.get() != null ? WORKFLOW_REDIRECT_PARAM + workflowName.get() : "");
+        return redirectBuilder(REDIRECT_TO_WORKFLOW_ADMIN)
+                .withParameter(WORKFLOW_REDIRECT_PARAM, workflowName.get())
+                .build(model);
     }
 
     @ModelAttribute("allOrgaRoles")

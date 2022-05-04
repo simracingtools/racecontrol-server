@@ -76,7 +76,7 @@ public class EventSeries {
 	@OneToMany(mappedBy = "eventId")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ToString.Exclude
-	private List<TrackEvent> trackEvents;
+	private List<TrackSession> trackSessions;
 
 	@Override
 	public boolean equals(Object o) {

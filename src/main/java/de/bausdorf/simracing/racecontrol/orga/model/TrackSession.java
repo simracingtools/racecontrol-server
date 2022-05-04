@@ -22,14 +22,16 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.api.TrackEventType;
+import de.bausdorf.simracing.racecontrol.orga.api.SkyConditionType;
+import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -37,25 +39,43 @@ import java.util.List;
 @ToString
 @RequiredArgsConstructor
 @Entity
-public class TrackEvent {
+public class TrackSession {
 	@Id
 	@GeneratedValue
 	private long id;
 
 	private long eventId;
 	private String title;
-	private ZonedDateTime dateTime;
-	private TrackEventType type;
-	@OneToMany(mappedBy = "id")
+	@Convert(converter = OffsetDateTimeConverter.class)
+	private OffsetDateTime dateTime;
+	private long trackConfigId;
+	private Long irSessionId;
+
+	private LocalDateTime simulatedTimeOfDay;
+	private long trackUsagePercent;
+	private boolean trackStateCarryOver;
+
+	private boolean generatedWeather;
+	private Long temperature;
+	private Long humidity;
+	private Long windSpeed;
+	private WindDirectionType windDirection;
+
+	private boolean generatedSky;
+	private SkyConditionType sky;
+	private Long skyVarInitial;
+	private Long skyVarContinued;
+
+	@OneToMany(mappedBy = "trackSessionId")
 	@LazyCollection(LazyCollectionOption.FALSE)
 	@ToString.Exclude
-	private List<CarClass> carClasses;
+	private List<TrackSubsession> sessionParts;
 
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-		TrackEvent that = (TrackEvent) o;
+		TrackSession that = (TrackSession) o;
 		return id != that.id;
 	}
 

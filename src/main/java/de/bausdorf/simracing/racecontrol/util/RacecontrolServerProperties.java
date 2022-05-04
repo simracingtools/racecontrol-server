@@ -51,6 +51,7 @@ public class RacecontrolServerProperties {
     private String keycloakRealm;
     private String fileUploadBasePath;
     private String uploadBaseUri;
+    private String flagImageResourcePath;
     private long leagueInfoCacheMaxAgeMinutes;
     private String discordBotToken;
 

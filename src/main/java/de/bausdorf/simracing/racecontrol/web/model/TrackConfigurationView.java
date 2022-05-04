@@ -22,55 +22,50 @@ package de.bausdorf.simracing.racecontrol.web.model;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.model.Track;
-import de.bausdorf.simracing.racecontrol.orga.model.TrackConfiguration;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.lang.Nullable;
+import de.bausdorf.simracing.irdataapi.model.TrackInfoDto;
+import lombok.*;
+
+import java.util.Arrays;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class TrackConfigurationView {
+    @Setter
+    private static TrackInfoDto[] trackInfos;
+
     private long trackId;
 
     private TrackView track;
     private String configName;
 
-    public Long getTrackPkgId() {
-        return track != null ? track.getPkgId() : 0L;
-    }
-
-    public static TrackConfigurationView buildFromEntity(@Nullable TrackConfiguration entity) {
-        if(entity == null) {
+    public static TrackConfigurationView fromId(long trackConfigId) {
+        if(trackConfigId == 0L) {
             return buildEmpty();
         }
-        return TrackConfigurationView.builder()
-                .trackId(entity.getTrackId())
-                .configName(entity.getConfigName())
-                .track(TrackView.buildFromEntity(entity.getTrack()))
-                .build();
-    }
-
-    public static TrackConfigurationView buildFromEntity(@Nullable TrackConfiguration entity, TrackView trackView) {
-        if(entity == null) {
-            return buildEmpty();
+        TrackInfoDto track = Arrays.stream(trackInfos).filter(t -> t.getTrackId() == trackConfigId).findFirst().orElse(null);
+        if(track != null) {
+            return TrackConfigurationView.builder()
+                    .trackId(trackConfigId)
+                    .configName(track.getConfigName())
+                    .track(TrackView.builder()
+                            .name(track.getTrackName())
+                            .pkgId(track.getPackageId())
+                            .build())
+                    .build();
         }
-        return TrackConfigurationView.builder()
-                .trackId(entity.getTrackId())
-                .configName(entity.getConfigName())
-                .track(trackView)
-                .build();
+        return buildEmpty();
     }
 
     public static TrackConfigurationView buildEmpty() {
         return TrackConfigurationView.builder()
                 .trackId(0L)
                 .configName("")
-                .track(null)
+                .track(TrackView.builder()
+                        .name("")
+                        .pkgId(0L)
+                        .build())
                 .build();
     }
 }

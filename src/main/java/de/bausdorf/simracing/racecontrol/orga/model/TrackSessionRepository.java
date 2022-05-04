@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model.orga;
+package de.bausdorf.simracing.racecontrol.orga.model;
 
 /*-
  * #%L
@@ -22,18 +22,10 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  * #L%
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.repository.CrudRepository;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class RegisteredCarEditView {
-    private long eventId;
-    private long teamId;
-    private long carId;
-    private boolean useWildcard;
+import java.util.List;
+
+public interface TrackSessionRepository extends CrudRepository<TrackSession, Long> {
+    List<TrackSession> findAllByEventId(long eventId);
 }

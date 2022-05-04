@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
+import de.bausdorf.simracing.irdataapi.model.TrackInfoDto;
 import de.bausdorf.simracing.irdataapi.tools.CarCategoryType;
 import de.bausdorf.simracing.irdataapi.tools.StockDataTools;
 import de.bausdorf.simracing.racecontrol.discord.JdaClient;
@@ -31,6 +32,9 @@ import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
 import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
+import de.bausdorf.simracing.racecontrol.web.model.TimezoneView;
+import de.bausdorf.simracing.racecontrol.web.model.TrackConfigurationView;
+import de.bausdorf.simracing.racecontrol.web.model.TrackView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -46,8 +50,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.StringUtils;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -57,13 +65,20 @@ import java.util.stream.Collectors;
 @Slf4j
 public class EventAdminController extends ControllerBase {
     private static final String CREATE_EVENT_VIEW = "create-event";
+    private static final String CREATE_SESSION_VIEW = "create-session";
     private static final String EVENT_VIEW_MODEL_KEY = "eventView";
+    public static final String SESSION_ID_PARAM = "sessionId";
+    public static final String SUBSESSION_EDIT_VIEW_KEY = "subsessionEditView";
+    public static final String EVENT_ID_PARAM = "eventId";
+    public static final String SESSION_EDIT_VIEW_KEY = "sessionEditView";
 
     private final EventSeriesRepository eventRepository;
     private final CarClassRepository carClassRepository;
     private final BalancedCarRepository balancedCarRepository;
     private final PersonRepository personRepository;
     private final TeamRegistrationRepository registrationRepository;
+    private final TrackSessionRepository sessionRepository;
+    private final TrackSubsessionRepository subsessionRepository;
     private final IRacingClient iRacingClient;
     private final UploadFileManager uploadFileManager;
     private final JdaClient jdaClient;
@@ -73,6 +88,8 @@ public class EventAdminController extends ControllerBase {
                                 @Autowired BalancedCarRepository balancedCarRepository,
                                 @Autowired PersonRepository personRepository,
                                 @Autowired TeamRegistrationRepository registrationRepository,
+                                @Autowired TrackSessionRepository sessionRepository,
+                                @Autowired TrackSubsessionRepository subsessionRepository,
                                 @Autowired UploadFileManager uploadFileManager,
                                 @Autowired IRacingClient iRacingClient,
                                 @Autowired JdaClient jdaClient) {
@@ -81,6 +98,8 @@ public class EventAdminController extends ControllerBase {
         this.balancedCarRepository = balancedCarRepository;
         this.personRepository = personRepository;
         this.registrationRepository = registrationRepository;
+        this.sessionRepository = sessionRepository;
+        this.subsessionRepository = subsessionRepository;
         this.uploadFileManager = uploadFileManager;
         this.iRacingClient = iRacingClient;
         this.jdaClient = jdaClient;
@@ -128,9 +147,9 @@ public class EventAdminController extends ControllerBase {
         }
         if(eventSeriesToSave != null && checkDiscord(eventSeriesToSave, model)) {
             eventSeriesToSave = eventRepository.save(eventView.toEntity(eventSeriesToSave));
-            return redirectView(eventSeriesToSave.getId(), messagesEncoded(model));
+            return redirectView(eventSeriesToSave.getId(), model);
         }
-        return redirectView(0L, messagesEncoded(model));
+        return redirectView(0L, model);
     }
 
     @PostMapping("/event-save-carclass")
@@ -160,7 +179,7 @@ public class EventAdminController extends ControllerBase {
                     },
                     () -> addError("No event series with id " + carClassView.getEventId() + " found.", model));
         }
-        return redirectView(carClassView.getEventId(), messagesEncoded(model));
+        return redirectView(carClassView.getEventId(), model);
     }
 
     @GetMapping("/remove-car-class")
@@ -176,14 +195,14 @@ public class EventAdminController extends ControllerBase {
                 },
                 () -> addError("No car class found for id " + classId, model)
         );
-        return redirectView(eventId.get(), messagesEncoded(model));
+        return redirectView(eventId.get(), model);
     }
 
     @PostMapping("/event-logo-upload")
     @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     @Transactional
     public String eventLogoUpload(@RequestParam("file") MultipartFile multipartFile,
-                                  @RequestParam("eventId") String eventId, Model model) {
+                                  @RequestParam(EVENT_ID_PARAM) String eventId, Model model) {
         Optional<EventSeries> series = eventRepository.findById(Long.parseLong(eventId));
         series.ifPresentOrElse(
                 event -> {
@@ -198,7 +217,7 @@ public class EventAdminController extends ControllerBase {
                 },
                 () -> addError("Event series not found for id " + eventId, model)
         );
-        return redirectView(Long.parseLong(eventId), messagesEncoded(model));
+        return redirectView(Long.parseLong(eventId), model);
     }
 
     @PostMapping("/event-save-person")
@@ -224,10 +243,11 @@ public class EventAdminController extends ControllerBase {
                 },
                 () -> addError("No person found for id " + personId, model)
         );
-        return redirectView(eventId.get(), messagesEncoded(model));
+        return redirectView(eventId.get(), model);
     }
 
     @PostMapping("/delete-from-discord")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
     public String cleanupDiscord(@ModelAttribute DiscordCleanupView discordCleanupView, Model model) {
         Guild guild = jdaClient.getApi().getGuildById(discordCleanupView.getServerId());
         if(guild != null) {
@@ -246,11 +266,128 @@ public class EventAdminController extends ControllerBase {
                 }
             }
         }
-        return redirectView(discordCleanupView.getEventId(), messagesEncoded(model));
+        return redirectView(discordCleanupView.getEventId(), model);
+    }
+
+    @GetMapping("/create-session")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
+    public String editSession(@RequestParam long eventId, @RequestParam Optional<Long> sessionId, @RequestParam Optional<String> messages, Model model) {
+        messages.ifPresent(e -> decodeMessagesToModel(e, model));
+
+        EventSeries series = eventRepository.findById(eventId).orElse(null);
+        if(series == null) {
+            addError("Event not found for id " + eventId, model);
+            return redirectBuilder("index").build(model);
+        }
+        sessionId.ifPresentOrElse(sid -> sessionRepository.findById(sid).ifPresentOrElse(
+                        session -> {
+                            CreateSessionView sessionView = CreateSessionView.fromEntity(session);
+                            model.addAttribute(SESSION_EDIT_VIEW_KEY, sessionView);
+                            model.addAttribute(SUBSESSION_EDIT_VIEW_KEY, TrackSubsessionView.builder()
+                                            .eventId(eventId)
+                                            .trackSessionId(session.getId())
+                                            .build());
+                        },
+                        () -> {
+                            CreateSessionView sessionView = CreateSessionView.builder()
+                                    .eventId(eventId)
+                                    .datetime(LocalDateTime.of(series.getStartDate(), LocalTime.NOON))
+                                    .simulatedTimeOfDay(LocalDateTime.of(series.getStartDate(), LocalTime.NOON))
+                                    .sessionParts(new ArrayList<>())
+                                    .build();
+                            model.addAttribute(SESSION_EDIT_VIEW_KEY, sessionView);
+                            model.addAttribute(SUBSESSION_EDIT_VIEW_KEY, TrackSubsessionView.builder()
+                                            .eventId(eventId)
+                                            .build());
+
+                        }
+                ),
+                () -> {
+                    CreateSessionView sessionView = CreateSessionView.builder()
+                            .eventId(eventId)
+                            .datetime(LocalDateTime.of(series.getStartDate(), LocalTime.NOON))
+                            .zoneOffset(series.getRegistrationCloses().getOffset().getId())
+                            .simulatedTimeOfDay(LocalDateTime.of(series.getStartDate(), LocalTime.NOON))
+                            .sessionParts(new ArrayList<>())
+                            .build();
+                    model.addAttribute(SESSION_EDIT_VIEW_KEY, sessionView);
+                    model.addAttribute(SUBSESSION_EDIT_VIEW_KEY, TrackSubsessionView.builder()
+                                    .eventId(eventId)
+                                    .build());
+                });
+
+        return CREATE_SESSION_VIEW;
+    }
+
+    @PostMapping("/save-session")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
+    public String saveSession(@ModelAttribute CreateSessionView sessionEditView, Model model) {
+        TrackSession trackSession = sessionEditView.toEntity(sessionRepository.findById(sessionEditView.getId()).orElse(null));
+        trackSession = sessionRepository.save(trackSession);
+
+        return redirectBuilder(CREATE_SESSION_VIEW)
+                .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
+                .withParameter(SESSION_ID_PARAM, trackSession.getId())
+                .build(model);
+    }
+
+    @PostMapping("/save-subsession")
+    public String saveSubsession(@ModelAttribute TrackSubsessionView subsessionEditView, Model model) {
+        TrackSubsession trackSubsession = subsessionEditView.toEntity(subsessionRepository.findById(subsessionEditView.getId()).orElse(null));
+        trackSubsession = subsessionRepository.save(trackSubsession);
+
+        return redirectBuilder(CREATE_SESSION_VIEW)
+                .withParameter(EVENT_ID_PARAM, subsessionEditView.getEventId())
+                .withParameter(SESSION_ID_PARAM, trackSubsession.getTrackSessionId())
+                .build(model);
+    }
+
+    @GetMapping("/remove-subsession")
+    public String removeSubsession(@RequestParam long subSessionId, Model model) {
+        TrackSubsession subsession = subsessionRepository.findById(subSessionId).orElse(null);
+        if(subsession != null) {
+            TrackSession trackSession = sessionRepository.findById(subsession.getTrackSessionId()).orElse(null);
+            if(trackSession != null) {
+                subsessionRepository.deleteById(subsession.getId());
+                return redirectBuilder(CREATE_SESSION_VIEW)
+                        .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
+                        .withParameter(SESSION_ID_PARAM, trackSession.getId())
+                        .build(model);
+            } else {
+                addError("No track session for id " + subsession.getTrackSessionId(), model);
+            }
+        } else {
+            addError("No subsession for id " + subSessionId, model);
+        }
+        return redirectBuilder("index").build(model);
+    }
+
+    @ModelAttribute("allTracks")
+    public List<TrackView> getAllTracks() {
+        Map<String, TrackView> trackConfigMap = new TreeMap<>();
+        Arrays.stream(iRacingClient.getDataCache().getTracks())
+                .filter(track -> Arrays.stream(track.getTrackTypes()).anyMatch(type -> "road".equalsIgnoreCase(type.getTrackType())))
+                .sorted(Comparator.comparing(TrackInfoDto::getTrackName))
+                .forEach(trackConfig -> {
+                    TrackView trackView = trackConfigMap.computeIfAbsent(trackConfig.getTrackName(),
+                            k -> TrackView.builder()
+                                    .name(trackConfig.getTrackName())
+                                    .pkgId(trackConfig.getPackageId())
+                                    .configViewList(new ArrayList<>())
+                                    .build());
+
+                    trackView.getConfigViewList().add(TrackConfigurationView.builder()
+                                    .trackId(trackConfig.getTrackId())
+                                    .configName(StringUtils.isEmpty(trackConfig.getConfigName()) ? trackConfig.getTrackName() : trackConfig.getConfigName())
+                                    .track(trackView)
+                                    .build());
+                });
+
+        return trackConfigMap.values().stream().sorted(Comparator.comparing(TrackView::getName)).collect(Collectors.toList());
     }
 
     @ModelAttribute(name="allCars")
-    public List<CarView> allCars() {
+    public List<CarView> getAllCars() {
         return StockDataTools.carsByCategory(iRacingClient.getDataCache().getCars(), CarCategoryType.ROAD, false).stream()
                 .filter(car -> Arrays.stream(car.getCarTypes()).anyMatch(type -> type.getCarType().equalsIgnoreCase("road")))
                 .map(car -> CarView.builder()
@@ -261,15 +398,24 @@ public class EventAdminController extends ControllerBase {
                 .collect(Collectors.toList());
     }
 
+    @ModelAttribute("timezones")
+    List<TimezoneView> availableZoneIds() {
+        return ZoneId.getAvailableZoneIds().stream()
+                .filter(s -> s.chars().noneMatch(Character::isLowerCase))
+                .map(s -> TimezoneView.fromZoneId(ZoneId.of(s)))
+                .sorted(Comparator.comparing(TimezoneView::getUtcOffset))
+                .collect(Collectors.toList());
+    }
+
     @ModelAttribute(name="staffRoles")
     public List<OrgaRoleType> staffRoles() {
         return OrgaRoleType.racecontrolValues();
     }
 
-    private String redirectView(long eventId, String messagesEncoded) {
-        return "redirect:/" + EventAdminController.CREATE_EVENT_VIEW
-                + (eventId != 0 ? "?eventId=" + eventId : "")
-                + (messagesEncoded != null ? "&messages=" + messagesEncoded : "");
+    private String redirectView(long eventId, Model model) {
+        return redirectBuilder(EventAdminController.CREATE_EVENT_VIEW)
+                .withParameter(EVENT_ID_PARAM, eventId)
+                .build(model);
     }
 
     private boolean carsReferencedInEvent(CarClass carClass) {

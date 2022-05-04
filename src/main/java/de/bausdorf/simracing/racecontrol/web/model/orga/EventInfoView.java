@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  */
 
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
+import de.bausdorf.simracing.racecontrol.web.model.TrackView;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -61,6 +62,7 @@ public class EventInfoView {
     private List<PersonView> organizingStaff = new ArrayList<>();
     private List<AvailableSlotsView> availableSlots = new ArrayList<>();
     private List<TeamRegistrationView> userRegistrations = new ArrayList<>();
+    private List<SessionInfoView> trackSessions = new ArrayList<>();
 
     public boolean isRegistrationOpen() {
         return LocalDateTime.now().isAfter(registrationOpens) && LocalDateTime.now().isBefore(registrationCloses);
@@ -86,6 +88,7 @@ public class EventInfoView {
                 .minTeamDrivers(eventSeries.getMinTeamDrivers())
                 .carClassPreset(CarClassView.fromEntityList(eventSeries.getCarClassPreset()))
                 .organizingStaff(PersonView.fromEntityList(eventSeries.getStaff()))
+                .trackSessions(SessionInfoView.fromEntityList(eventSeries.getTrackSessions()))
                 .build();
     }
 

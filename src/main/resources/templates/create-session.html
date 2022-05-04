@@ -1,0 +1,231 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 - 2022 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>racecontrol</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Notable">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik+Mono+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Timmana">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div class="container" style="max-width: 1600px;">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu(title='Create/Edit event session')"></div>
+
+        <form method="post" th:action="@{/save-session}" th:object="${sessionEditView}">
+            <div class="row">
+                <div class="col-xl-3">
+                    <input type="hidden" th:field="*{eventId}">
+                    <input type="hidden" th:field="*{id}">
+                    <h5>Location and time</h5>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Session title" required="" minlength="3" maxlength="155" th:field="*{title}">
+                    </div>
+                    <div class="form-group">
+                        <label class="d-block" style="width: 8em;">Track</label>
+                        <select class="form-control" th:field="*{trackConfigId}" required>
+                            <optgroup th:each="track : ${allTracks}" th:label="${track.name}">
+                                <option th:each="config : ${track.configViewList}" th:value="${config.trackId}" th:text="${config.configName.equals(config.track.name) ? config.configName : (config.track.name + ' - ' + config.configName)}">Track confioguration</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="d-block" style="width: 10em;">Session start</label>
+                        <input type="datetime-local" style="width: 11em;" required th:field="*{datetime}">
+                        <select th:field="*{zoneOffset}">
+                            <option th:each="zone : ${timezones}" th:value="${zone.utcOffset.id}" th:text="${zone.shortName}">UTC+12</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="d-block" style="width: 10em;">Simulated time of Day</label>
+                        <input type="datetime-local" style="width: 11em;" th:field="*{simulatedTimeOfDay}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="d-block" style="width: 10em;">iRacing session ID</label>
+                        <input type="number" th:field="*{irSessionId}">
+                    </div>
+                </div>
+                <div class="col">
+                    <h5 class="d-inline">Subsessions</h5>
+                    <button class="btn btn-primary float-right" type="button" data-target="#subsession-modal" data-toggle="modal" th:disabled="${sessionEditView.id == 0}">
+                        <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" title="Add car class"></i>
+                    </button>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="padding-right: 2px;padding-left: 2px;">Type</th>
+                                    <th>Duration</th>
+                                    <th style="padding-right: 2px;padding-left: 2px;">Subsession id</th>
+                                    <th style="width: 3em;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="subsession : ${sessionEditView.sessionParts}">
+                                    <td th:id="'subSessionType-' + ${subsession.id}" th:text="${subsession.sessionType}" th:onclick="'editSubsession(' + ${subsession.id} + ');'">OPEN_PRACTICE</td>
+                                    <td th:text="${subsession.durationString}">00:00</td>
+                                    <td th:id="'irSubsessionId-' + ${subsession.id}" th:text="${subsession.irSubsessionId}">12345637</td>
+                                    <td style="padding: 2px;">
+                                        <input type="hidden" th:id="'subsessionId-' + ${subsession.id}" th:value="${subsession.id}">
+                                        <input type="hidden" th:id="'durationHours-' + ${subsession.id}" th:value="${subsession.hours}">
+                                        <input type="hidden" th:id="'durationMinutes-' + ${subsession.id}" th:value="${subsession.minutes}">
+                                        <button class="btn btn-danger" type="button" th:data-target="${'#subsession-remove-modal-' + subsession.id}" data-toggle="modal">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
+                                    </td>
+                                    <div th:replace="index.html :: deleteModal(${'subsession-remove-modal-' + subsession.id}, ${'Do you really want to remove ' + subsession.sessionType + ' from session ' + sessionEditView.title + ' ?'}, ${'/remove-subsession?subSessionId=' + subsession.id})"></div>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group">
+                        <label>Overall duration (calculated)</label>
+                        <input type="text" style="margin-left: 1em;" th:value="${sessionEditView.getOverallDuration()}" readonly>
+                    </div>
+                </div>
+                <div class="col-xl-2">
+                    <h5>Weather</h5>
+                    <div class="form-check form-control">
+                        <input class="form-check-input" type="checkbox" id="formCheck-2" th:field="*{generatedWeather}">
+                        <label class="form-check-label" for="formCheck-2">Dynamic weather</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Temperature (°C)</label>
+                        <input type="number" class="form-control" th:field="*{temperature}">
+                    </div>
+                    <div class="form-group">
+                        <label>Humidity (%)</label>
+                        <input type="number" class="form-control" th:field="*{humidity}">
+                    </div>
+                    <div class="form-group">
+                        <label>Wind speed (kph)</label>
+                        <input type="number" class="form-control" th:field="*{windSpeed}">
+                    </div>
+                    <div class="form-group">
+                        <label>Wind direction</label>
+                        <select class="form-control" th:field="*{windDirection}">
+                            <option value="N">N</option>
+                            <option value="NE">NE</option>
+                            <option value="E">E</option>
+                            <option value="SE">SE</option>
+                            <option value="S">S</option>
+                            <option value="SW">SW</option>
+                            <option value="W">W</option>
+                            <option value="NW">NW</option>
+                        </select></div>
+                </div>
+                <div class="col-xl-2">
+                    <div class="form-group">
+                        <h5>Sky &amp; Track usage</h5>
+                        <div class="form-check form-control">
+                            <input class="form-check-input" type="checkbox" id="formCheck-1" th:field="*{generatedSky}">
+                            <label class="form-check-label" for="formCheck-1">Dynamic Sky</label>
+                        </div>
+                        <label>Variability initial (%)</label>
+                        <input type="number" class="form-control" th:field="*{skyVarInitial}">
+                    </div>
+                    <div class="form-group">
+                        <label>Variability then (%)</label>
+                        <input type="number" class="form-control" th:field="*{skyVarContinued}">
+                    </div>
+                    <div class="form-group">
+                        <label>Track usage (%)</label>
+                        <input type="number" class="form-control" th:field="*{trackUsagePercent}">
+                    </div>
+                    <div class="form-check form-control">
+                        <input class="form-check-input" type="checkbox" id="formCheck-3" th:field="*{trackStateCarryOver}">
+                        <label class="form-check-label" for="formCheck-3">Leave marbles on track</label>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <a th:href="@{/event-detail(eventId=${sessionEditView.eventId})}">
+                        <button class="btn btn-primary float-left" type="button">Back to event</button>
+                    </a>
+                    <button class="btn btn-primary float-right" type="submit">Save</button>
+                </div>
+            </div>
+        </form>
+
+        <div id="subsession-modal" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/save-subsession}" th:object="${subsessionEditView}">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{trackSessionId}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Edit subsession</h4>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label style="width: 9em;">Session type</label>
+                                <select th:field="*{sessionType}">
+                                    <option value="OPEN_PRACTICE">Open Practice</option>
+                                    <option value="OPEN_QUALIFY">Open Qualify</option>
+                                    <option value="LONE_QUALIFY">Lone Qualify</option>
+                                    <option value="WARMUP">Warmup</option>
+                                    <option value="RACE">Race</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 9em;">Duration (hh:mm)</label>
+                                <input type="number" style="width: 3em;" placeholder="00" min="0" max="25" required th:field="*{hours}"/>
+                                <span>:</span>
+                                <input type="number" style="width: 3em;" placeholder="00" min="0" max="59" required th:field="*{minutes}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 9em;">iRacing session id</label>
+                                <input type="number" th:field="*{irSubsessionId}"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+</body>
+
+</html>

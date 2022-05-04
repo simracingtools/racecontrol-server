@@ -197,6 +197,15 @@ function editWorkflowState(workflowIndex, entryIndex) {
   $("#workflow-modal").modal('show');
 }
 
+function editSubsession(subsessionId) {
+  $("#subsession-modal #id").val($("#subsessionId-" + subsessionId).val());
+  $("#subsession-modal #sessionType").val($("#subSessionType-" + subsessionId).text());
+  $("#subsession-modal #irSubsessionId").val($("#irSubsessionId-" + subsessionId).text());
+  $("#subsession-modal #hours").val($("#durationHours-" + subsessionId).val());
+  $("#subsession-modal #minutes").val($("#durationMinutes-" + subsessionId).val());
+  $("#subsession-modal").modal('show');
+}
+
 function checkIRacingLeagueId() {
   $("#irLeagueName").val("");
   $.ajax({
@@ -236,11 +245,12 @@ function checkIRacingMemberId() {
 }
 
 function showLocalTime() {
-  const regCloses = moment($("#regClosesTime").text(), "DD.MM.YYYY hh:mm ZZ");
-  const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
-
-  $("#regClosesLocal").text(regCloses.local().format("L LT"))
-  $("#regOpensLocal").text(regOpens.local().format("L LT"))
+  $('.offset-time').each(function() {
+    const dateTime = moment($(this).text(), "DD.MM.YYYY hh:mm ZZ");
+    $(this).siblings().each(function() {
+      $(this).text(dateTime.local().format("L LT"))
+    })
+  })
 }
 
 function registrationOpenCountdown() {
@@ -275,14 +285,26 @@ function setTimezoneId() {
   $("#timezone").val(data);
 }
 
+function setFromBrowser(timezone, locale) {
+  selectTimezoneFromUtcOffset(timezone);
+  selectUserCountry(locale);
+}
+
 function selectTimezoneFromUtcOffset(timezone) {
   if (!timezone) {
     const tz = moment().format("ZZ");
-    $("#tz-select > option").each(function() {
+    $("#tz-select > option").each(function () {
       if (this.value === tz) {
         this.selected = true;
         $("#timezone").val($(this).attr("data-zone"));
       }
     });
   }
+}
+
+function selectUserCountry(locale) {
+    if(!locale) {
+      const userLang = navigator.language || navigator.userLanguage;
+      $("#localeTag").val(userLang.split('-')[0]);
+    }
 }

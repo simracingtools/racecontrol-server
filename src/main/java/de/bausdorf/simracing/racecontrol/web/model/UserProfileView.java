@@ -45,11 +45,13 @@ public class UserProfileView {
 	private String email;
 	private String imageUrl;
 	private long iRacingId;
+	private String irClubName;
 	private String clientMessageAccessToken;
 	private String userType;
 	private SubscriptionType subscriptionType;
 	private String subscriptionExpiration;
 	private String timezone;
+	private String localeTag;
 	private String created;
 	private List<String> eventFilter;
 	private Boolean enabled;
@@ -67,6 +69,7 @@ public class UserProfileView {
 		this.email = user.getEmail();
 		this.imageUrl = user.getImageUrl();
 		this.iRacingId = user.getIRacingId();
+		this.irClubName = user.getIrClubName();
 		this.userType = user.getUserType().name();
 		this.clientMessageAccessToken = user.getClientMessageAccessToken();
 		this.enabled = user.isEnabled();
@@ -74,6 +77,7 @@ public class UserProfileView {
 		this.expired = user.isExpired();
 		this.username = user.getUsername();
 		this.timezone = user.getTimezone() != null ? TimeTools.toShortZoneId(user.getTimezone()) : "";
+		this.localeTag = user.getLocaleTag() != null ? user.getLocaleTag() : "";
 		this.subscriptionType = user.getSubscriptionType();
 		this.created = user.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")); //2020-10-28T20:02
 		this.eventFilter = user.getEventFilter() != null ? user.getEventFilter().stream()
@@ -93,8 +97,10 @@ public class UserProfileView {
 		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
 		merge.setName(name != null ? name : merge.getName());
 		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
+		merge.setIrClubName(irClubName != null ? irClubName : merge.getIrClubName());
 		merge.setUserType(userType != null ? RcUserType.valueOf(userType) : merge.getUserType());
 		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
+		merge.setLocaleTag(localeTag != null ? localeTag : merge.getLocaleTag());
 		return merge;
 	}
 }

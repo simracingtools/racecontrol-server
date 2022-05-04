@@ -59,7 +59,7 @@
                         <div class="row" style="font-size: 14px;">
                             <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>from</span></div>
                             <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
-                                <span id="regOpensTime" style="display: none;" th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.</span>
+                                <span id="regOpensTime" class="offset-time" style="display: none;" th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.</span>
                                 <span id="regOpensLocal"></span>
                             </div>
                             <div class="col-4 col-sm-4 col-lg-5 col-xl-5">
@@ -69,7 +69,7 @@
                         <div class="row" style="font-size: 14px;">
                             <div class="col-1 col-sm-1 col-md-2 col-lg-2 col-xl-2"><span>until</span></div>
                             <div class="col-6 col-sm-5 col-md-10 col-lg-5 col-xl-5">
-                                <span id="regClosesTime" style="display: none;" th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
+                                <span id="regClosesTime" class="offset-time" style="display: none;" th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
                                 <span id="regClosesLocal"></span>
                             </div>
                             <div class="col-4 col-sm-4 col-lg-5 col-xl-5">
@@ -333,67 +333,60 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="margin: 0;">
+                <div class="row" style="margin-left: 0; margin-right: 0; margin-top: 1em;">
                     <div class="col">
-                        <h6 class="d-inline" style="font-size: 16px;">Event sessions</h6><button class="btn btn-primary" type="button" style="height: 25px;padding-top: 0;padding-bottom: 0;margin-top: 2px;margin-bottom: 2px;padding-right: 6px;padding-left: 6px;margin-left: 10px;"><i class="fas fa-plus"></i></button>
+                        <h5 class="d-inline">Event sessions</h5>
+                        <a th:if="${user.racedirection}" th:href="@{/create-session(eventId=${event.eventId})}">
+                            <button class="btn btn-primary" type="button" style="height: 25px;padding-top: 0;padding-bottom: 0;margin-top: 2px;margin-bottom: 2px;padding-right: 6px;padding-left: 6px;margin-left: 10px;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </a>
                         <div class="table-responsive" style="font-size: 14px;">
-                            <table class="table">
+                            <table class="table" id="session-table">
                                 <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Date</th>
-                                    <th>Mode</th>
-                                    <th>Duration</th>
-                                    <th>Track</th>
-                                    <th>Track Conditions</th>
-                                    <th></th>
-                                </tr>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Date</th>
+                                        <th>Mode</th>
+                                        <th>Duration</th>
+                                        <th>Track</th>
+                                        <th>Track Conditions</th>
+                                        <th></th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
-                                    <td>Sunrise Practice</td>
-                                    <td>12.11.2022 20:00 CET</td>
-                                    <td><span>Open Practice</span></td>
-                                    <td>02:00</td>
-                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
-                                    <td><span class="d-block">30.11.2022 07:30</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
-                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>Sunset Practice</td>
-                                    <td>21.11.2022 19:00 CET</td>
-                                    <td><span>Open Practice</span></td>
-                                    <td>02:00</td>
-                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
-                                    <td><span class="d-block">30.11.2022 16:15</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
-                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>Preparation Race</td>
-                                    <td>12.12.2022 15:00 CET</td>
-                                    <td>
-                                        <div><span>Open Practice</span><span class="float-right">00:10</span></div>
-                                        <div><span>Lone Qualify</span><span class="float-right"> 2 laps / 00:30</span></div>
-                                        <div><span>Race</span><span class="float-right"> 06:00</span></div>
-                                    </td>
-                                    <td>06:40</td>
-                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
-                                    <td><span class="d-block">30.11.2022 15:00</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
-                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
-                                </tr>
-                                <tr>
-                                    <td>Main Race</td>
-                                    <td>17.12.2022 15:00 CET</td>
-                                    <td>
-                                        <div><span>Open Practice</span><span class="float-right">00:40</span></div>
-                                        <div><span>Lone Qualify</span><span class="float-right"> 2 laps / 00:20</span></div>
-                                        <div><span>Race</span><span class="float-right"> 24:00</span></div>
-                                    </td>
-                                    <td>25:00</td>
-                                    <td><span class="d-block">Nürburgring Combined</span><span class="d-block">Gesamtstrecke 24h</span></td>
-                                    <td><span class="d-block">30.11.2022 15:00</span><span class="d-block">Dynamic Weather, Track usage 5%</span></td>
-                                    <td class="float-right"><button class="btn btn-danger" type="button"><i class="far fa-trash-alt"></i></button></td>
-                                </tr>
+                                    <tr th:each="sessionView : ${event.trackSessions}">
+                                        <td>
+                                            <a th:if="${user.racedirection}" th:href="@{/create-session(eventId=${event.eventId}, sessionId=${sessionView.id})}">
+                                                <span th:text="${sessionView.title}"></span>
+                                            </a>
+                                            <span th:if="${!user.racedirection}" th:text="${sessionView.title}"></span>
+                                        </td>
+                                        <td>
+                                            <span class="offset-time" style="display: none;" th:text="${#temporals.format(sessionView.datetime, 'dd.MM.yyyy HH:mm Z')}"></span>
+                                            <span></span>
+                                        </td>
+                                        <td>
+                                            <div th:each="subsession : ${sessionView.sessionParts}">
+                                                <span th:text="${subsession.sessionType}">Open Practice</span>
+                                                <span class="float-right" th:text="${subsession.durationString}">00:40</span>
+                                            </div>
+                                        </td>
+                                        <td th:text="${sessionView.getOverallDuration()}">02:00</td>
+                                        <td>
+                                            <span class="d-block" th:text="${sessionView.trackConfigView.track.name}">Nürburgring Combined</span>
+                                            <span class="d-block" th:text="${sessionView.trackConfigView.configName}">Gesamtstrecke 24h</span>
+                                        </td>
+                                        <td>
+                                            <span class="d-block" th:text="${#temporals.format(sessionView.simulatedTimeOfDay, 'dd.MM.yyyy HH:mm')}">30.11.2022 07:30</span>
+                                            <span class="d-block" th:text="${sessionView.getTrackConditionInfo()}">Dynamic Weather, Track usage 5%</span>
+                                        </td>
+                                        <td class="float-right">
+                                            <button class="btn btn-danger" type="button">
+                                                <i class="far fa-trash-alt"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

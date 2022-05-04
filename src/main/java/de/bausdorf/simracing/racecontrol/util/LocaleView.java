@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.web.model.orga;
+package de.bausdorf.simracing.racecontrol.util;
 
 /*-
  * #%L
@@ -25,15 +25,14 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class RegisteredCarEditView {
-    private long eventId;
-    private long teamId;
-    private long carId;
-    private boolean useWildcard;
+public class LocaleView {
+    private String localeTag;
+    private String countryName;
+    private String languageName;
+    private String flagUrl;
+    private String localeCode;
 }
