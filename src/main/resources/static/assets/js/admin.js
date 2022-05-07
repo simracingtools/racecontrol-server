@@ -202,6 +202,22 @@ function selectNotMachingItems() {
 
 function hideCompletedTasks() {
   const doFilter = $('#filterCompletedCheck').is(":checked");
+  localStorage.setItem('filterCompletedTasks', doFilter);
+  filterCompletedTasks(doFilter);
+}
+
+function initFilterCompletedCheck() {
+  const doFilter = localStorage.getItem('filterCompletedTasks');
+  if(doFilter === 'true') {
+    $('#filterCompletedCheck').attr('checked', true);
+    filterCompletedTasks(true);
+  } else {
+    $('#filterCompletedCheck').attr('checked', false);
+    filterCompletedTasks(false);
+  }
+}
+
+function filterCompletedTasks(doFilter) {
   if(doFilter) {
     $('#task-table .task-completed').each(function () {
           $(this).hide();

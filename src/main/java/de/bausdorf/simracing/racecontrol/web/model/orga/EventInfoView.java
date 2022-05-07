@@ -68,6 +68,10 @@ public class EventInfoView {
         return LocalDateTime.now().isAfter(registrationOpens) && LocalDateTime.now().isBefore(registrationCloses);
     }
 
+    public boolean isRegistrationClosed() {
+        return LocalDateTime.now().isAfter(registrationCloses);
+    }
+
     public static EventInfoView fromEntity(EventSeries eventSeries) {
         return EventInfoView.builder()
                 .eventId(eventSeries.getId())
