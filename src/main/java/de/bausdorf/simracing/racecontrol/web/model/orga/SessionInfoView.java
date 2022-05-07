@@ -30,6 +30,7 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.*;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,8 +42,8 @@ public class SessionInfoView {
 
     private long eventId;
     private String title;
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
-    private LocalDateTime datetime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm ZZ")
+    private OffsetDateTime datetime;
     private String zoneOffset;
 
     private TrackConfigurationView trackConfigView;
@@ -92,7 +93,7 @@ public class SessionInfoView {
                 .id(session.getId())
                 .eventId(session.getEventId())
                 .title(session.getTitle())
-                .datetime(session.getDateTime().toLocalDateTime())
+                .datetime(session.getDateTime())
                 .zoneOffset(session.getDateTime().getOffset().getId())
                 .irSessionId(session.getIrSessionId())
                 .simulatedTimeOfDay(session.getSimulatedTimeOfDay())
@@ -113,6 +114,9 @@ public class SessionInfoView {
     }
 
     public static List<SessionInfoView> fromEntityList(List<TrackSession> trackSessions) {
-        return trackSessions.stream().map(SessionInfoView::fromEntity).collect(Collectors.toList());
+        return trackSessions.stream()
+                .sorted(Comparator.comparing(TrackSession::getDateTime))
+                .map(SessionInfoView::fromEntity)
+                .collect(Collectors.toList());
     }
 }

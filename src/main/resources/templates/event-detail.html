@@ -23,7 +23,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="index :: head"></head>
 <body>
-    <div class="container">
+    <div class="container" style="max-width: 1600px;">
         <header th:replace="index :: header"></header>
         <div th:replace="index :: messages"></div>
         <div th:replace="index :: menu(title=${event.title})"></div>
@@ -342,7 +342,7 @@
                             </button>
                         </a>
                         <div class="table-responsive" style="font-size: 14px;">
-                            <table class="table" id="session-table">
+                            <table class="table table-sm" id="session-table">
                                 <thead>
                                     <tr>
                                         <th>Title</th>
@@ -367,10 +367,12 @@
                                             <span></span>
                                         </td>
                                         <td>
-                                            <div th:each="subsession : ${sessionView.sessionParts}">
-                                                <span th:text="${subsession.sessionType}">Open Practice</span>
-                                                <span class="float-right" th:text="${subsession.durationString}">00:40</span>
-                                            </div>
+                                            <table class="table-sm">
+                                                <tr th:each="subsession : ${sessionView.sessionParts}">
+                                                    <td th:text="${subsession.sessionType}" style="border: 0; padding: 1px;">Open Practice</td>
+                                                    <td class="float-right" th:text="${subsession.durationString}" style="border: 0; padding: 1px;">00:40</td>
+                                                </tr>
+                                            </table>
                                         </td>
                                         <td th:text="${sessionView.getOverallDuration()}">02:00</td>
                                         <td>
