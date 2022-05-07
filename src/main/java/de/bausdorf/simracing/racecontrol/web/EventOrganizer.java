@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -81,7 +82,7 @@ public class EventOrganizer {
         List<TeamRegistration> eventRegistrations = registrationRepository.findAllByEventId(eventId);
         List<CarClass> eventClasses = carClassRepository.findAllByEventIdOrderByClassOrderAsc(eventId);
         eventClasses.forEach(carClass -> {
-            AtomicLong availableSlotsCount = new AtomicLong(carClass.getMaxSlots());
+            AtomicInteger availableSlotsCount = new AtomicInteger(carClass.getMaxSlots() - carClass.getWildcards());
             AtomicLong wildcards = new AtomicLong(carClass.getWildcards());
             AtomicLong onWaitingList = new AtomicLong(0L);
             AtomicReference<TeamRegistrationView[]> regArray = new AtomicReference<>(new TeamRegistrationView[carClass.getMaxSlots()]);
@@ -92,13 +93,12 @@ public class EventOrganizer {
                     .filter(r -> (r.getCar().getCarClassId() == carClass.getId()
                             && !r.getWorkflowState().isInActive()))
                     .forEach(r -> {
-                        if (availableSlotsCount.get() > 0) {
-                            availableSlotsCount.decrementAndGet();
-                        } else {
-                            onWaitingList.incrementAndGet();
-                        }
                         if (r.isWildcard() && wildcards.get() > 0) {
                             wildcards.decrementAndGet();
+                        } else if (availableSlotsCount.get() > 0) {
+                            availableSlotsCount.decrementAndGet();
+                        } else  {
+                            onWaitingList.incrementAndGet();
                         }
                         CarAssetDto assets = getCarAsset(r.getCar().getCarId());
                         TeamRegistrationView view = TeamRegistrationView.fromEntity(r);
@@ -128,7 +128,7 @@ public class EventOrganizer {
         List<CarClass> eventClasses = carClassRepository.findAllByEventId(eventId);
         List<TeamRegistration> eventRegistrations = registrationRepository.findAllByEventId(eventId);
         eventClasses.forEach(carClass -> {
-            AtomicLong availableSlotsCount = new AtomicLong(carClass.getMaxSlots());
+            AtomicInteger availableSlotsCount = new AtomicInteger(carClass.getMaxSlots() - carClass.getWildcards());
             AtomicLong wildcards = new AtomicLong(carClass.getWildcards());
             AtomicLong onWaitingList = new AtomicLong(0L);
 
@@ -136,13 +136,12 @@ public class EventOrganizer {
                     .filter(r -> (r.getCar().getCarClassId() == carClass.getId()
                             && !r.getWorkflowState().isInActive()))
                     .forEach(r -> {
-                        if (availableSlotsCount.get() > 0) {
-                            availableSlotsCount.decrementAndGet();
-                        } else {
-                            onWaitingList.incrementAndGet();
-                        }
                         if (r.isWildcard() && wildcards.get() > 0) {
                             wildcards.decrementAndGet();
+                        } else if (availableSlotsCount.get() > 0) {
+                            availableSlotsCount.decrementAndGet();
+                        } else  {
+                            onWaitingList.incrementAndGet();
                         }
                     });
 
