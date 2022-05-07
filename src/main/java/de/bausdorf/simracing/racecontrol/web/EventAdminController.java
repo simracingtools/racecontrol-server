@@ -123,11 +123,12 @@ public class EventAdminController extends ControllerBase {
             model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
         }
         model.addAttribute("editCarClassView", EditCarClassView.builder()
-                .eventId(eventId.orElse(0L))
-                .build());
+                        .eventId(eventId.orElse(0L))
+                        .classOrder(99)
+                        .build());
         model.addAttribute("editStaffView", PersonView.builder()
-                .eventId(eventId.orElse(0L))
-                .build());
+                        .eventId(eventId.orElse(0L))
+                        .build());
 
         return CREATE_EVENT_VIEW;
     }

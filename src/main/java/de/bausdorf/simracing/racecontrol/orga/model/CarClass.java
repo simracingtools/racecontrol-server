@@ -42,6 +42,7 @@ public class CarClass {
 	private String name;
 	private int maxSlots;
 	private int wildcards;
+	private int classOrder;
 	@OneToMany(mappedBy = "carClassId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private List<BalancedCar> cars;
 

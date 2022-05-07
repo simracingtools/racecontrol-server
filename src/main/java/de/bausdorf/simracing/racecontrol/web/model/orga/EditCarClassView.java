@@ -41,6 +41,7 @@ public class EditCarClassView {
     private List<Long> carIds;
     private long slots;
     private long wildcards;
+    private long classOrder;
 
     public CarClass toEntity(CarClass carClass, boolean updateCars) {
         if (carClass == null) {
@@ -51,6 +52,7 @@ public class EditCarClassView {
         carClass.setMaxSlots(Math.toIntExact(slots == 0 ? carClass.getMaxSlots() : slots));
         carClass.setWildcards(Math.toIntExact(wildcards == 0 ? carClass.getWildcards() : wildcards));
         carClass.setName(name == null ? carClass.getName() : name);
+        carClass.setClassOrder(Math.toIntExact(classOrder == 99 ? carClass.getClassOrder() : classOrder));
         if(updateCars) {
             if (carClass.getCars() != null) {
                 carClass.getCars().clear();

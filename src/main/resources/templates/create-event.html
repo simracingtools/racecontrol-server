@@ -184,6 +184,7 @@
                                             <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_slots'" th:value="${carClass.slots}">
                                             <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_wildcards'" th:value="${carClass.wildcards}">
                                             <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_carIds'" th:value="${carClass.carIds}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_order'" th:value="${carClass.classOrder}">
                                         </tr>
                                     </tbody>
                                 </table>
@@ -254,6 +255,10 @@
                             <div class="form-group">
                                 <label style="width: 8em;">Car class name</label>
                                 <input type="text" th:field="*{name}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Car class order</label>
+                                <input type="text" th:field="*{classOrder}">
                             </div>
                             <div class="form-group">
                                 <label style="width: 8em;">Slots/Wildcards</label>

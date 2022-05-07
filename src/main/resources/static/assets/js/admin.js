@@ -74,6 +74,7 @@ function editCarClass(ccIndex) {
   $("#carclass-modal #name").val($("#carClass" + ccIndex + "_name").val());
   $("#carclass-modal #slots").val($("#carClass" + ccIndex + "_slots").val());
   $("#carclass-modal #wildcards").val($("#carClass" + ccIndex + "_wildcards").val());
+  $("#carclass-modal #classOrder").val($("#carClass" + ccIndex + "_order").val());
   const options = $("#carClass" + ccIndex + "_carIds").val();
   const array = $.parseJSON(options);
   $("#carclass-modal #carIds").val(array);

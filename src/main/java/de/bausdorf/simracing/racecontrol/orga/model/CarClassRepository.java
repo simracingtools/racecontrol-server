@@ -28,5 +28,6 @@ import java.util.List;
 
 public interface CarClassRepository extends CrudRepository<CarClass, Long> {
     List<CarClass> findAllByEventId(long eventId);
+    List<CarClass> findAllByEventIdOrderByClassOrderAsc(long eventId);
     List<CarClass> findAllByEventIdOrderByName(long eventId);
 }

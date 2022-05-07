@@ -78,7 +78,7 @@ public class EventOrganizer {
     public List<CarClassRegistrationsView> getTeamRegistrationsCarClassList(long eventId) {
         List<CarClassRegistrationsView> resultList = new ArrayList<>();
         List<TeamRegistration> eventRegistrations = registrationRepository.findAllByEventId(eventId);
-        List<CarClass> eventClasses = carClassRepository.findAllByEventId(eventId);
+        List<CarClass> eventClasses = carClassRepository.findAllByEventIdOrderByClassOrderAsc(eventId);
         eventClasses.forEach(carClass -> {
             AtomicLong availableSlotsCount = new AtomicLong(carClass.getMaxSlots());
             AtomicLong wildcards = new AtomicLong(carClass.getWildcards());

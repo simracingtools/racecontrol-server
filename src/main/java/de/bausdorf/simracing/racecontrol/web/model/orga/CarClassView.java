@@ -27,6 +27,7 @@ import de.bausdorf.simracing.racecontrol.orga.model.CarClass;
 import lombok.*;
 import org.springframework.lang.NonNull;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class CarClassView {
     private List<Long> carIds;
     private long slots;
     private long wildcards;
+    private long classOrder;
 
     public static CarClassView fromEntity(@NonNull CarClass carClass) {
         return CarClassView.builder()
@@ -62,11 +64,13 @@ public class CarClassView {
                         .collect(Collectors.toList()))
                 .slots(carClass.getMaxSlots())
                 .wildcards(carClass.getWildcards())
+                .classOrder(carClass.getClassOrder())
                 .build();
     }
 
     public static List<CarClassView> fromEntityList(@NonNull List<CarClass> carClasses) {
         return carClasses.stream()
+                .sorted(Comparator.comparing(CarClass::getClassOrder))
                 .map(CarClassView::fromEntity)
                 .collect(Collectors.toList());
     }
