@@ -296,13 +296,13 @@
                         <div style="font-size: 12px;">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item" role="presentation" th:each="carClass, carClassStat : ${teamRegistrations}">
-                                    <a th:class="${'nav-link' + (carClassStat.index == 0 ? ' active' : '')}" role="tab" data-toggle="tab" th:href="${'#tab-' + carClass.name}" style="padding: 2px;font-size: 14px;">
+                                    <a th:class="${'nav-link' + (activeCarClass.equalsIgnoreCase(carClass.name) ? ' active' : '')}" role="tab" data-toggle="tab" th:href="${'#tab-' + carClass.name}" style="padding: 2px;font-size: 14px;">
                                         <span th:text="${carClass.name}">SP9</span><span th:text="${' (' + carClass.availableSlots + '/' + carClass.maxSlots} + ')'"></span>
                                     </a>
                                 </li>
                             </ul>
                             <div class="tab-content">
-                                <div th:each="carClass,carClassStat : ${teamRegistrations}" th:id="${'tab-' + carClass.name}" th:class="${'tab-pane' + (carClassStat.index == 0 ? ' active' : '')}" role="tabpanel">
+                                <div th:each="carClass,carClassStat : ${teamRegistrations}" th:id="${'tab-' + carClass.name}" th:class="${'tab-pane' + (activeCarClass.equalsIgnoreCase(carClass.name) ? ' active' : '')}" role="tabpanel">
                                     <div class="table-responsive" style="font-size: 14px;">
                                         <table class="table">
                                             <thead>

@@ -84,6 +84,7 @@ public class EventDetailController extends ControllerBase {
     public String eventDetail(@RequestParam Long eventId,
                               @RequestParam Optional<String> messages,
                               @RequestParam Optional<String> activeTab,
+                              @RequestParam Optional<String> activeCarClass,
                               Model model) {
         Person currentPerson = currentPerson(eventId);
         messages.ifPresent(e -> decodeMessagesToModel(e, model));
@@ -91,6 +92,9 @@ public class EventDetailController extends ControllerBase {
                 s -> setActiveNav(s, model),
                 () -> setActiveNav(currentPerson.getRole().isParticipant() ? TEAMS_TAB : TASKS_TAB, model)
         );
+        activeCarClass.ifPresentOrElse(
+                s -> model.addAttribute("activeCarClass", s),
+                () -> model.addAttribute("activeCarClass", ""));
 
         Optional<EventSeries> eventSeries = eventRepository.findById(eventId);
         if(eventSeries.isPresent()) {
@@ -105,6 +109,7 @@ public class EventDetailController extends ControllerBase {
                     })
                     .collect(Collectors.toList()));
             model.addAttribute(EVENT_VIEW_MODEL_KEY, infoView);
+            setActiveCarClass(infoView, model);
 
             model.addAttribute("currentPerson", PersonView.fromEntity(currentPerson));
             model.addAttribute("teamRegistrations", eventOrganizer.getTeamRegistrationsCarClassList(eventId));
@@ -238,6 +243,16 @@ public class EventDetailController extends ControllerBase {
     @ModelAttribute(name="staffRoles")
     public List<OrgaRoleType> staffRoles() {
         return OrgaRoleType.participantValues();
+    }
+
+    private void setActiveCarClass(EventInfoView eventInfoView, Model model) {
+        if(!eventInfoView.getUserRegistrations().isEmpty()) {
+            model.addAttribute("activeCarClass", eventInfoView.getUserRegistrations().get(0).getCarClass().getName());
+        } else if(!eventInfoView.getCarClassPreset().isEmpty()){
+            model.addAttribute("activeCarClass", eventInfoView.getCarClassPreset().get(0).getName());
+        } else {
+            model.addAttribute("activeCarClass", "");
+        }
     }
 
     private Person currentPerson(long eventId) {
