@@ -113,7 +113,7 @@ public class TeamRegistrationView {
                 .logoUrl(registration.getLogoUrl())
                 .createdBy(PersonView.fromEntity(registration.getCreatedBy()))
                 .created(registration.getCreated())
-                .car(BalancedCarView.fromEntity(registration.getCar()))
+                .car(BalancedCarView.fromEntity(registration.getEventId(), registration.getCar()))
                 .wildcard(registration.isWildcard())
                 .teamMembers(PersonView.fromEntityList(registration.getTeamMembers()))
                 .workflowState(WorkflowStateInfoView.fromEntity(registration.getWorkflowState()))

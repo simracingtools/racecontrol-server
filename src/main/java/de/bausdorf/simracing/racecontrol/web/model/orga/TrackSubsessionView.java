@@ -24,14 +24,12 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 import de.bausdorf.simracing.racecontrol.orga.api.SessionType;
 import de.bausdorf.simracing.racecontrol.orga.model.TrackSubsession;
-import de.bausdorf.simracing.racecontrol.util.TimeTools;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,6 +43,7 @@ public class TrackSubsessionView {
     private long eventId;
     private Long irSubsessionId;
     private String sessionType;
+    private String sessionTypeName;
     private Duration duration;
     private String durationString;
     private long minutes;
@@ -69,6 +68,7 @@ public class TrackSubsessionView {
                 .trackSessionId(entity.getTrackSessionId())
                 .irSubsessionId(entity.getIrSubsessionId())
                 .sessionType(entity.getSessionType().toString())
+                .sessionTypeName(entity.getSessionType().getDisplayName())
                 .durationString(String.format("%02d:%02d", entity.getDuration().toHours(), entity.getDuration().toMinutesPart()))
                 .duration(entity.getDuration())
                 .hours(entity.getDuration().toHours())

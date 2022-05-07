@@ -85,7 +85,7 @@
                                 <li id="nav-tasks" class="nav-item" role="presentation">
                                     <a th:class="'nav-link' + ${(navigation == 'tasks' || navigation.isEmpty()) ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-tasks">Tasks</a>
                                 </li>
-                                <li id="nav-bop" th:if="${user.racedirection}" class="nav-item" role="presentation">
+                                <li id="nav-bop" class="nav-item" role="presentation">
                                     <a th:class="'nav-link' + ${navigation == 'bop' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-bop">BOP</a>
                                 </li>
                                 <li id="nav-docs" th:if="${user.racedirection}" class="nav-item" role="presentation">
@@ -98,6 +98,14 @@
                             <div class="tab-content">
                                 <div id="tab-tasks" th:class="'tab-pane' + ${(navigation == 'tasks' || navigation.isEmpty()) ? ' active' : ''}" role="tabpanel">
                                     <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive" style="overflow: auto; max-height: 40em;">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-check">
+                                                    <input id="filterCompletedCheck" class="form-check-input" type="checkbox" onchange="hideCompletedTasks();"/>
+                                                    <label class="form-check-label" for="filterCompletedCheck">Only active</label>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <table class="table" style="font-size: 14px;">
                                             <thead>
                                                 <tr>
@@ -108,8 +116,8 @@
                                                     <th style="padding: 3px;"></th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr th:each="action : ${actions}" th:id="'action-tr-' + ${action.id}">
+                                            <tbody id="task-table">
+                                                <tr th:each="action : ${actions}" th:id="'action-tr-' + ${action.id}" th:class="${action.targetState != null ? 'task-completed' : ''}">
                                                     <td th:style="'padding: 3px; ' + ${action.sourceState.getColorStyleString()}">
                                                         <input type="hidden" th:value="${action.id}" id="id">
                                                         <input type="hidden" th:value="${action.editActionMessage}" id="editActionMessage">
@@ -155,8 +163,100 @@
                                         <button th:if="${!event.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
                                     </div>
                                 </div>
-                                <div th:if="${user.racedirection}" id="tab-bop" th:class="'tab-pane' + ${navigation == 'bop' ? ' active' : ''}" role="tabpanel">
-                                    <p>Content for tab 6.</p>
+                                <div id="tab-bop" th:class="'tab-pane' + ${navigation == 'bop' ? ' active' : ''}" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table id="bop-table" class="table">
+                                            <thead>
+                                            <tr>
+                                                <th style="font-size: 14px;">Car</th>
+                                                <th class="text-center" style="width: 9em; font-size: 14px;">Effective fuel</th>
+                                                <th class="text-center" style="width: 9em; font-size: 14px;">Fuel %</th>
+                                                <th class="text-center" style="width: 9em; font-size: 14px;">Effective Weight (kg)</th>
+                                                <th class="text-center" style="width: 9em; font-size: 14px;">Weight penalty (kg)</th>
+                                                <th class="text-center" style="width: 9em; font-size: 14px;">Effective power (hp)</th>
+                                                <th class="text-center" style="width: 9em; font-size: 14px;">Engine power adj (%)</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="bopView, bopViewStats : ${bopViews}">
+                                                <td th:if="${user.racedirection}" style="font-size: 14px; cursor: pointer;" th:id="'carName-' + ${bopView.carView.id}" th:text="${bopView.carView.carName}" th:onclick="'editBop(' + ${bopView.carView.id} + ', ' + ${bopView.carView.carId} + ', ' + ${bopView.carView.carClassId} + ');'">Porsche 911 GT3 Cup (992)</td>
+                                                <td th:if="${!user.racedirection}" style="font-size: 14px;" th:id="'carName-' + ${bopView.carView.id}" th:text="${bopView.carView.carName}">Porsche 911 GT3 Cup (992)</td>
+                                                <td class="text-center" style="width: 9em; font-size: 14px;" th:id="'maxFuel-' + ${bopView.carView.id}" th:text="${bopView.getBopFuel()}">100</td>
+                                                <td class="text-center" style="width: 9em; font-size: 14px;" th:id="'fuelPercent-' + ${bopView.carView.id}" th:text="${bopView.carView.fuelPercent}">100</td>
+                                                <td class="text-center" style="width: 9em; font-size: 14px;" th:text="${bopView.getBopWeight()}">100</td>
+                                                <td class="text-center" style="width: 9em; font-size: 14px;" th:id="'weightPenalty-' + ${bopView.carView.id}" th:text="${bopView.carView.weightPenalty}">0</td>
+                                                <td class="text-center" style="width: 9em; font-size: 14px;" th:text="${bopView.getBopPower()}">100</td>
+                                                <td class="text-center" style="width: 9em;">
+                                                    <span style="font-size: 14px;" th:id="'enginePowerPercent-' + ${bopView.carView.id}" th:text="${bopView.carView.enginePowerPercent}">0</span>
+                                                    <div th:id="'bop-modal-' + ${bopView.carView.id}" class="modal fade" role="dialog" tabindex="-1">
+                                                        <div class="modal-dialog" role="document" style="max-width: 600px;">
+                                                            <div class="modal-content">
+                                                                <form method="post" th:action="@{/save-bop}" th:object="${bopEditView}">
+                                                                    <div class="modal-header">
+                                                                        <h4 class="modal-title">BOP Adjustment</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                                                                    </div>
+                                                                    <div class="modal-body">
+                                                                        <div class="row">
+                                                                            <div class="col">
+                                                                                <h5 th:text="${bopView.carView.carName}">BMW M4 GT3</h5>
+                                                                            </div>
+                                                                        </div>                                                                        <div class="row">
+                                                                            <div class="col">
+                                                                                <input type="hidden" th:field="*{id}">
+                                                                                <input type="hidden" th:field="*{carName}">
+                                                                                <input type="hidden" th:field="*{carId}">
+                                                                                <input type="hidden" th:field="*{carClassId}">
+                                                                                <input type="hidden" th:field="*{eventId}">
+                                                                                <h5 th:text="*{carName}">BMW M4 GT3</h5>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row">
+                                                                            <div class="col">
+                                                                                <div class="form-group">
+                                                                                    <label style="width: 5em;">max Fuel</label>
+                                                                                    <input th:field="*{maxFuel}" type="number" min="0.0" step="1" style="width: 4em;"/>
+                                                                                    <span id="effectiveFuel" style="margin-left: 1em;" th:text="${'(' + bopView.getBopFuel() + ')'}">(99.6)</span>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <label style="width: 5em;">Weight</label>
+                                                                                    <input id="weight" th:value="${bopView.weight}" type="number" min="0.0" step="1" placeholder="2000" style="width: 4em;" readonly/>
+                                                                                    <span id="effectiveWeight" style="margin-left: 1em;" th:text="${'(' + bopView.getBopWeight() + ')'}">(99.6)</span>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <label style="width: 5em;">HP</label>
+                                                                                    <input id="horsePower" th:value="${bopView.horsePower}" type="number" min="0.0" step="1" placeholder="2000" style="width: 4em;" readonly/>
+                                                                                    <span id="effectivePower" style="margin-left: 1em;" th:text="${'(' + bopView.getBopPower() + ')'}">(99.6)</span>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col">
+                                                                                <div class="form-group">
+                                                                                    <label style="width: 5em;">Fuel %</label>
+                                                                                    <input th:field="*{fuelPercent}" type="number" min="0.0" max="100.0" step="0.1" placeholder="100.0" style="width: 4em;" th:onchange="'calcEffectiveFuel(' + ${bopView.carView.id} + ');'"/>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <label style="width: 5em;">Penalty</label>
+                                                                                    <input th:field="*{weightPenalty}" type="number" min="0.0" max="100.0" step="0.1" placeholder="100.0" style="width: 4em;" th:onchange="'calcWeight(' + ${bopView.carView.id} + ');'"/>
+                                                                                </div>
+                                                                                <div class="form-group">
+                                                                                    <label style="width: 5em;">HP adj %</label>
+                                                                                    <input th:field="*{enginePowerPercent}" type="number" th:min="${bopView.minPowerAdjustPct}" th:max="${bopView.maxPowerAdjustPct}" step="0.1" style="width: 4em;" th:onchange="'calcPower(' + ${bopView.carView.id} + ');'"/>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="modal-footer">
+                                                                        <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                                                                        <button class="btn btn-primary" type="submit">Save</button>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div th:if="${user.racedirection}" id="tab-docs" th:class="'tab-pane' + ${navigation == 'docs' ? ' active' : ''}" role="tabpanel">
                                     <p>Content for tab 7.</p>
@@ -369,7 +469,7 @@
                                         <td>
                                             <table class="table-sm">
                                                 <tr th:each="subsession : ${sessionView.sessionParts}">
-                                                    <td th:text="${subsession.sessionType}" style="border: 0; padding: 1px;">Open Practice</td>
+                                                    <td th:text="${subsession.sessionTypeName}" style="border: 0; padding: 1px;">Open Practice</td>
                                                     <td class="float-right" th:text="${subsession.durationString}" style="border: 0; padding: 1px;">00:40</td>
                                                 </tr>
                                             </table>

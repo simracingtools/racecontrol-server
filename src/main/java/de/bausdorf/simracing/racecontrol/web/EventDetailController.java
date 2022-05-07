@@ -58,6 +58,8 @@ public class EventDetailController extends ControllerBase {
     public static final String TEAM_REGISTRATION_WORKFLOW = "TeamRegistration";
     public static final String TEAMS_TAB = "teams";
     public static final String TASKS_TAB = "tasks";
+    public static final String BOP_TAB = "bop";
+    public static final String ACTIVE_CAR_CLASS_KEY = "activeCarClass";
 
     private final EventSeriesRepository eventRepository;
     private final PersonRepository personRepository;
@@ -93,8 +95,8 @@ public class EventDetailController extends ControllerBase {
                 () -> setActiveNav(currentPerson.getRole().isParticipant() ? TEAMS_TAB : TASKS_TAB, model)
         );
         activeCarClass.ifPresentOrElse(
-                s -> model.addAttribute("activeCarClass", s),
-                () -> model.addAttribute("activeCarClass", ""));
+                s -> model.addAttribute(ACTIVE_CAR_CLASS_KEY, s),
+                () -> model.addAttribute(ACTIVE_CAR_CLASS_KEY, ""));
 
         Optional<EventSeries> eventSeries = eventRepository.findById(eventId);
         if(eventSeries.isPresent()) {
@@ -113,6 +115,8 @@ public class EventDetailController extends ControllerBase {
 
             model.addAttribute("currentPerson", PersonView.fromEntity(currentPerson));
             model.addAttribute("teamRegistrations", eventOrganizer.getTeamRegistrationsCarClassList(eventId));
+            model.addAttribute("bopViews", eventOrganizer.getBopViews(eventId));
+            model.addAttribute("bopEditView", BalancedCarView.builder().eventId(eventId).build());
             model.addAttribute("carsInClasses", CarClassView.fromEntityList(eventSeries.get().getCarClassPreset()));
             model.addAttribute("editAction", WorkflowActionEditView.builder()
                             .eventId(eventId)
@@ -240,6 +244,17 @@ public class EventDetailController extends ControllerBase {
         return redirectView(EVENT_DETAIL_VIEW, registeredCarEditView.getEventId(), model);
     }
 
+    @PostMapping("/save-bop")
+    public String saveBop(@ModelAttribute BalancedCarView bopEditView, Model model) {
+        Optional<BalancedCar> optionalCar = carRepository.findById(bopEditView.getId());
+        activeNav = BOP_TAB;
+        optionalCar.ifPresent(car -> {
+            BalancedCar carToSave = bopEditView.toEntity(car);
+            carRepository.save(carToSave);
+        });
+        return redirectView(EVENT_DETAIL_VIEW, bopEditView.getEventId(), model);
+    }
+
     @ModelAttribute(name="staffRoles")
     public List<OrgaRoleType> staffRoles() {
         return OrgaRoleType.participantValues();
@@ -247,11 +262,11 @@ public class EventDetailController extends ControllerBase {
 
     private void setActiveCarClass(EventInfoView eventInfoView, Model model) {
         if(!eventInfoView.getUserRegistrations().isEmpty()) {
-            model.addAttribute("activeCarClass", eventInfoView.getUserRegistrations().get(0).getCarClass().getName());
+            model.addAttribute(ACTIVE_CAR_CLASS_KEY, eventInfoView.getUserRegistrations().get(0).getCarClass().getName());
         } else if(!eventInfoView.getCarClassPreset().isEmpty()){
-            model.addAttribute("activeCarClass", eventInfoView.getCarClassPreset().get(0).getName());
+            model.addAttribute(ACTIVE_CAR_CLASS_KEY, eventInfoView.getCarClassPreset().get(0).getName());
         } else {
-            model.addAttribute("activeCarClass", "");
+            model.addAttribute(ACTIVE_CAR_CLASS_KEY, "");
         }
     }
 

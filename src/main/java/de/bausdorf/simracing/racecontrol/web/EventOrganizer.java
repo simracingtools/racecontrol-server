@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
+import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
@@ -168,6 +169,22 @@ public class EventOrganizer {
                 .map(action -> mapWorkflowAction(workflowName, action, currentPerson))
                 .collect(Collectors.toList()));
         return resultList;
+    }
+
+    public List<BalancedCarBopView> getBopViews(long eventId) {
+        List<BalancedCar> carsInEvent = new ArrayList<>();
+        carClassRepository.findAllByEventIdOrderByClassOrderAsc(eventId)
+                .forEach(carClass -> carsInEvent.addAll(carClass.getCars()));
+
+        return carsInEvent.stream()
+                .map(car -> {
+                    Optional<CarInfoDto> irCar = Arrays.stream(dataClient.getDataCache().getCars())
+                            .filter(c -> (c.getCarId() == car.getCarId()))
+                            .findFirst();
+
+                    return BalancedCarBopView.fromEntityAndCar(eventId, car, irCar);
+                })
+                .collect(Collectors.toList());
     }
 
     public boolean checkUniqueCarNumber(long eventId, @NonNull String carNo) {

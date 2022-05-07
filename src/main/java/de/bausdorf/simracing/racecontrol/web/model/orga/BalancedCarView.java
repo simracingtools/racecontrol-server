@@ -26,13 +26,15 @@ import de.bausdorf.simracing.racecontrol.orga.model.BalancedCar;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class BalancedCarView {
     private long id;
-
+    private long eventId;
     private long carId;
     private long carClassId;
     private String carName;
@@ -42,18 +44,34 @@ public class BalancedCarView {
     private double weightPenalty;
     private double enginePowerPercent;
 
-    private double getBopFuel() {
-        return (maxFuel / 100.0) * fuelPercent;
+    public String getBopFuel() {
+        return String.format("%.2f", (maxFuel * fuelPercent) / 100);
     }
 
-    public static BalancedCarView fromEntity(BalancedCar car) {
+    public BalancedCar toEntity(BalancedCar car) {
+        if(car == null) {
+            car = new BalancedCar();
+        }
+        car.setId(id == 0L ? car.getId() : id);
+        car.setCarId(carId == 0L ? car.getCarId() : carId);
+        car.setCarClassId(carClassId == 0L ? car.getCarClassId() : carClassId);
+        car.setCarName(carName == null ? car.getCarName() : carName);
+        car.setMaxFuel(maxFuel);
+        car.setFuelPercent(fuelPercent);
+        car.setWeightPenalty(weightPenalty);
+        car.setEnginePowerPercent(enginePowerPercent);
+        return car;
+    }
+
+    public static BalancedCarView fromEntity(long eventId, BalancedCar car) {
         return BalancedCarView.builder()
                 .id(car.getId())
+                .eventId(eventId)
                 .carId(car.getCarId())
                 .carClassId(car.getCarClassId())
                 .carName(car.getCarName())
                 .maxFuel(car.getMaxFuel())
-                .fuelPercent(car.getFuelPercent())
+                .fuelPercent(car.getFuelPercent() == 0.0 ? 100.0 : car.getFuelPercent())
                 .weightPenalty(car.getWeightPenalty())
                 .enginePowerPercent(car.getEnginePowerPercent())
                 .build();

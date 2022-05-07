@@ -22,10 +22,19 @@ package de.bausdorf.simracing.racecontrol.orga.api;
  * #L%
  */
 
+import lombok.Getter;
+
 public enum SessionType {
-    OPEN_PRACTICE,
-    LONE_QUALIFY,
-    OPEN_QUALIFY,
-    WARMUP,
-    RACE
+    OPEN_PRACTICE("Open practice"),
+    LONE_QUALIFY("Lone Qualify"),
+    OPEN_QUALIFY("Open Qualify"),
+    WARMUP("Warmup"),
+    RACE("Race");
+
+    @Getter
+    private final String displayName;
+
+    SessionType(String displayName) {
+        this.displayName = displayName;
+    }
 }
