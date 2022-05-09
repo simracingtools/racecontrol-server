@@ -30,9 +30,9 @@
 
         <div class="row">
             <div class="col">
-                <div class="row">
+                <div class="row transparent">
                     <div class="col">
-                        <div class="row">
+                        <div class="row transparent">
                             <div class="col-3 col-sm-2 col-md-2 col-lg-1 col-xl-1" style="padding: 0;">
                                 <picture class="float-right"><img width="95px" style="width: 95px;" th:src="${eventView.logoUrl}"/></picture>
                             </div>
@@ -54,12 +54,12 @@
                         <div class="row">
                             <div class="col">
                                 <form method="post" th:action="@{/save-registration}" th:object="${createRegistrationView}">
-                                    <div class="row">
+                                    <div class="row transparent">
                                         <div class="col-sm-2 col-md-2 col-lg-1 col-xl-1 text-center">
                                             <div class="d-block"></div>
                                         </div>
                                         <div class="col-sm-10 col-md-10 col-lg-7 col-xl-7">
-                                            <div class="row">
+                                            <div class="row transparent">
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <input type="hidden" th:field="*{eventId}">
@@ -80,7 +80,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row transparent">
                                                 <div class="col">
                                                     <div class="form-group">
                                                         <label>Liked car numbers (only numbers, no leading zeros, separated by comma)</label>
@@ -88,7 +88,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
+                                            <div class="row transparent">
                                                 <div class="col-xl-4">
                                                     <div class="form-group">
                                                         <label>Team iRacing ID</label><i class="far fa-question-circle text-info" data-toggle="tooltip" title="Organizing staff will check the ID and decline all registrations on invalid team ID&#39;s." style="margin-left: 5px;"></i>
@@ -132,7 +132,7 @@
                                             </ul>
                                         </div>
                                     </div>
-                                    <div class="row">
+                                    <div class="row transparent">
                                         <div class="col text-center"><button class="btn btn-primary" type="submit">Register Team</button></div>
                                     </div>
                                 </form>

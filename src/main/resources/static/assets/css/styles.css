@@ -23,15 +23,60 @@
     z-index: 100;
 }
 
+body {
+    background: url('/assets/img/race_control.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .container {
     max-width: 1600px;
 }
 
 .row {
-    margin-left: 1em;
-    margin-right: 1em;
+    margin-left: 0;
+    margin-right: 0;
+    background: rgba(255,255,255,0.8);
+}
+
+.transparent {
+    background: rgba(255,255,255,0.0);
+}
+
+.navigation-clean-button {
+    background: rgba(255,255,255,0.0);
 }
 
 .offset-time {
     display: none;
+}
+
+.profile-image {
+    padding: 15px 0 0;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-color: rgba(255,255,255,0.0);
+    height: 75px;
+    width: 75px;
+    border-width: 0;
+    border-style: none;
+    text-shadow: 1px -1px rgb(3,3,3);
+}
+a.profile-image:hover {
+    background-color: rgba(255,255,255,0.0);
+}
+a.profile-image:visited {
+    background-color: rgba(255,255,255,0.0);
+}
+a.profile-image:active {
+    background-color: rgba(255,255,255,0.0);
+}
+
+.heading-header {
+    font-family: 'Faster One', serif;
+    text-shadow: 2px 2px 9px rgb(255,255,255);
+    color: var(--dark);
+    font-size: 40px;
+    background: rgba(255,255,255,0.45);
+    padding: 5px;
 }

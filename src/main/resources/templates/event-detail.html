@@ -293,12 +293,6 @@
                                             </div>
                                             <div class="row">
                                                 <div class="col">
-<!--                                                    <div style="margin-top: 1em;">-->
-<!--                                                        <h6>Car</h6>-->
-<!--                                                        <div class="d-block">-->
-<!--                                                            <span th:text="${team.car.carName}">Unknown</span>-->
-<!--                                                        </div>-->
-<!--                                                    </div>-->
                                                     <div style="margin-top: 1em;">
                                                         <h6>Current Status</h6>
                                                         <div class="d-block">
@@ -331,7 +325,7 @@
                                         </div>
                                         <div class="col">
                                             <label>Team Members</label>
-                                            <button class="btn btn-primary float-right" type="button" th:onclick="'addTeamMember(' + ${team.id} + ');'">
+                                            <button class="btn btn-primary float-right" type="button" th:onclick="'addTeamMember(' + ${team.id} + ');'" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
                                                 <i class="fas fa-plus" data-toggle="tooltip" title="Add person"></i>
                                             </button>
                                             <div class="table-responsive">
@@ -368,7 +362,7 @@
                                                         </td>
                                                         <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
                                                         <td style="padding: 2px;">
-                                                            <button class="btn btn-danger" type="button" th:onclick="'confirmMemberRemove(' + ${person.id} + ', ' + ${team.id} + ');'">
+                                                            <button class="btn btn-danger" type="button" th:onclick="'confirmMemberRemove(' + ${person.id} + ', ' + ${team.id} + ');'" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
                                                                 <i class="far fa-trash-alt"></i>
                                                             </button>
                                                             <div th:replace="index.html::deleteModal('staff-remove-confirm-' + ${person.id} + ${team.id}, 'Do you really want to remove ' + ${person.name} + ' from team ' + ${team.getFullTeamName()} + ' ?', @{/team-remove-member(personId=${person.id}, registrationId=${team.id})})"></div>
@@ -484,7 +478,7 @@
                                             <span class="d-block" th:text="${sessionView.getTrackConditionInfo()}">Dynamic Weather, Track usage 5%</span>
                                         </td>
                                         <td class="float-right">
-                                            <button class="btn btn-danger" type="button">
+                                            <button th:if="${user.racedirection}" class="btn btn-danger" type="button">
                                                 <i class="far fa-trash-alt"></i>
                                             </button>
                                         </td>

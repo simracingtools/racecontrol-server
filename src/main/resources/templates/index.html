@@ -28,9 +28,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Race Control Center</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Faster+One&amp;display=swap">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Notable">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
     <link rel="stylesheet" href="assets/css/buttonnav.css">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="stylesheet" href="/webjars/jquery-ui/jquery-ui.css">
@@ -38,17 +41,18 @@
 
 <body>
     <div class="container">
-        <div class="row" style="background: linear-gradient(rgb(247,178,227) 7%, rgb(8,118,248) 100%);" th:fragment="header">
+        <div class="row" style="background: url('/assets/img/checkered-flag-banner.png') repeat, rgba(64,63,63,0);background-size: cover, auto;" th:fragment="header">
             <div class="col-2 col-sm-2 col-md-2 col-lg-1" style="padding: 0;height: 75px;">
-                <a class="btn btn-primary text-center" role="button" style="background: url('assets/img/be-logoV2.png') no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0;border-style: none;" th:href="@{/index(userId=${user.id})}"></a>
+                <a class="btn btn-primary text-center" role="button" style="background: url('assets/img/be-logo.png') no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0;border-style: none;" th:href="@{/index(userId=${user.id})}"></a>
             </div>
             <div class="col-8 col-sm-8 col-md-8 col-lg-10 text-nowrap align-self-center">
                 <header>
-                    <h1 style="font-family: Notable, sans-serif;text-shadow: 2px 2px 9px rgb(255,255,255);color: rgba(4,2,10,0.57);font-size: 29px;">iRacing Race Control</h1>
+                    <h1 class="d-inline heading-header">iRacing Race Control</h1>
                 </header>
             </div>
             <div class="col-2 col-sm-2 col-md-2 col-lg-1 text-right" style="padding: 0;height: 75px;">
-                <a class="btn btn-primary text-center" role="button" th:style="'background: url(' + ${user.imageUrl != null ? user.imageUrl : 'assets/img/default_profile.png'} + '); no-repeat;background-size: cover;padding: 0;height: 75px;width: 75px;border-width: 0px;border-style: none;'" href="/profile"></a>
+                <a th:if="${!user.isKnown()}" class="btn btn-primary text-center profile-image" role="button" style="background-image: url('assets/img/tesseract-200.gif');" href="#"></a>
+                <a th:if="${user.isKnown()}" class="btn btn-primary text-center profile-image" role="button" th:style="'background-image: url(' + ${user.imageUrl != null ? user.imageUrl : 'assets/img/default_profile.png'} + ');'" href="/profile" th:text="${user.getInitials()}"></a>
             </div>
         </div>
         <div class="row" th:fragment="messages">
@@ -78,22 +82,25 @@
                 <!-- Start: Navigation with Button -->
                 <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
                     <div class="container">
+                        <h4 class="navbar-brand" th:text="${title}">Overview</h4>
+                        <button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1">
+                            <span class="sr-only">Toggle navigation</span><span class="navbar-toggler-icon"></span>
+                        </button>
                         <div class="collapse navbar-collapse" id="navcol-1">
-                            <ul class="nav navbar-nav mr-auto">
+                            <ul class="navbar-nav ml-auto">
                                 <li class="nav-item">
-                                    <h4 th:text="${title}">Overview</h4>
+                                    <div class="dropdown">
+                                        <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" th:href="@{/useradmin}">Users</a>
+                                            <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>
+                                            <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>
+                                            <a class="dropdown-item" th:href="@{/workflow-admin}">Workflows</a>
+                                            <a class="dropdown-item" th:href="@{/create-event}">Create event</a>
+                                        </div>
+                                    </div>
                                 </li>
                             </ul>
-                            <div class="dropdown">
-                                <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" th:href="@{/useradmin}">Users</a>
-                                    <a class="dropdown-item" th:href="@{/sessionadmin}">Sessions</a>
-                                    <a class="dropdown-item" th:href="@{/penalties}">Penalties</a>
-                                    <a class="dropdown-item" th:href="@{/workflow-admin}">Workflows</a>
-                                    <a class="dropdown-item" th:href="@{/create-event}">Create event</a>
-                                </div>
-                            </div>
                             <span class="navbar-text actions">
                                 <a th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/logout">Logout</a>
                                 <a th:if="${user.name.equalsIgnoreCase('Unknown')}" class="btn btn-light action-button" role="button" href="/login-redirect">Login</a>
@@ -156,38 +163,38 @@
                 <span>Discord</span><a th:href="${event.discordInvite}" target="_blank" style="padding-left: 1em;" th:text="${event.discordInvite}">Link</a>
             </div>
             <div class="col-md-5 col-lg-4 col-xl-4">
-                <div class="row">
+                <div class="row transparent">
                     <div class="col-lg-12">
                         <h4>Registration open</h4>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row transparent">
                     <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"><span>from</span></div>
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10">
                         <span id="regOpensTime" class="offset-time" th:text="${#temporals.format(event.registrationOpens, 'dd.MM.yyyy HH:mm ') + event.registrationOpensTZ}">12.04.2022 13:00 CEST</span>
                         <span id="regOpensLocal"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row transparent">
                     <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2"><span>until</span></div>
                     <div class="col-10 col-sm-10 col-md-10 col-lg-10">
                         <span id="regClosesTime" class="offset-time" th:text="${#temporals.format(event.registrationCloses, 'dd.MM.yyyy HH:mm ') + event.registrationClosesTZ}">22.09.2022 00:00 CEST</span>
                         <span id="regClosesLocal"></span>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row transparent">
                     <div class="col text-center">
                         <button th:if="${event.isRegistrationOpen()}" class= "btn btn-primary" type="button" style="margin-top: 1em;" th:data-target="${'#register-modal-' + event.eventId}" data-toggle="modal">Register</button>
                         <button th:if="${!event.isRegistrationOpen()}" class= "btn btn-secondary" type="button" style="margin-top: 1em;">Register</button>
                         <div th:style="'display: ' + ${!event.isRegistrationClosed() && !event.isRegistrationOpen() ? 'block' : 'none'}" style="margin-top: 1em;">
                             <span>Registration opens in </span><span id="regOpensCountdown">Text</span>
-                            <div th:replace="action-modals.html :: register-modal(${event}, ${teamRegistrationSelectView})"></div>
                         </div>
                     </div>
+                    <div th:replace="action-modals.html :: register-modal(${event}, ${teamRegistrationSelectView})"></div>
                 </div>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                <div class="table-responsive text-center" style="font-size: 12px;" th:fragment="tableAvailableSlots(event)">
+                <div class="table-responsive text-center" th:fragment="tableAvailableSlots(event)">
                     <table class="table text-center">
                         <caption>Available registration slots.</caption>
                         <thead>
