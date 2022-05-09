@@ -275,6 +275,7 @@
             <exclude>**/*.sql</exclude>
             <exclude>**/*.jpg</exclude>
             <exclude>**/*.png</exclude>
+            <exclude>**/fonts/*</exclude>
           </excludes>
         </configuration>
       </plugin>
