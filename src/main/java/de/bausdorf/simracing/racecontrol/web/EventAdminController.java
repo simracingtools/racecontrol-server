@@ -71,6 +71,7 @@ public class EventAdminController extends ControllerBase {
     public static final String SUBSESSION_EDIT_VIEW_KEY = "subsessionEditView";
     public static final String EVENT_ID_PARAM = "eventId";
     public static final String SESSION_EDIT_VIEW_KEY = "sessionEditView";
+    public static final String DISCORD_CLEANUP_VIEW_KEY = "discordCleanupView";
 
     private final EventSeriesRepository eventRepository;
     private final CarClassRepository carClassRepository;
@@ -114,13 +115,15 @@ public class EventAdminController extends ControllerBase {
             Optional<EventSeries> eventSeries = eventRepository.findById(eventId.get());
             if(eventSeries.isPresent()) {
                 model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.fromEntity(eventSeries.get()));
-                model.addAttribute("discordCleanupView", getDiscordTeamCategories(eventSeries.get()));
+                model.addAttribute(DISCORD_CLEANUP_VIEW_KEY, getDiscordTeamCategories(eventSeries.get()));
             } else {
                 addWarning("Event with id " + eventId.get() + " not found", model);
                 model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
+                model.addAttribute(DISCORD_CLEANUP_VIEW_KEY, DiscordCleanupView.buildEmpty());
             }
         } else {
             model.addAttribute(EVENT_VIEW_MODEL_KEY, CreateEventView.createEmpty());
+            model.addAttribute(DISCORD_CLEANUP_VIEW_KEY, DiscordCleanupView.buildEmpty());
         }
         model.addAttribute("editCarClassView", EditCarClassView.builder()
                         .eventId(eventId.orElse(0L))

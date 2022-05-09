@@ -27,6 +27,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -39,4 +40,15 @@ public class DiscordCleanupView {
     private List<DiscordItemView> categories;
     private List<String> selectedItems;
     private List<DiscordItemView> roles;
+
+    public static DiscordCleanupView buildEmpty() {
+        return DiscordCleanupView.builder()
+                .eventId(0L)
+                .serverId(0L)
+                .categories(new ArrayList<>())
+                .selectedItems(new ArrayList<>())
+                .roles(new ArrayList<>())
+                .build();
+    }
+
 }
