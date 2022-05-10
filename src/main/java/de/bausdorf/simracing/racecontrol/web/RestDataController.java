@@ -146,6 +146,27 @@ public class RestDataController {
         return new ArrayList<>(matches.values());
     }
 
+    @GetMapping("/team-search/{teamId}")
+    public List<PersonSearchItem> getTeamMembers(@PathVariable long teamId,
+                                                 @RequestParam(value = "q", required = false) String query,
+                                                 @RequestParam(value = "league", required = false) long leagueId) {
+        LeagueInfoDto leagueInfo = leagueDataCache.getLeagueInfo(leagueId);
+        return dataClient.getTeamMembers(teamId).stream()
+                .filter(member -> member.getDisplayName().contains(StringUtils.isEmpty(query) ? "" : query))
+                .map(member -> {
+                    String memberNameWithoutMiddleInitial = EventOrganizer.memberNameWithoutMiddleInitial(member.getDisplayName());
+                    return PersonSearchItem.builder()
+                            .iracingId(member.getCustId().toString())
+                            .label(memberNameWithoutMiddleInitial)
+                            .value(memberNameWithoutMiddleInitial)
+                            .registered(userRepository.findByiRacingId(member.getCustId()).isPresent())
+                            .leagueMember(Arrays.stream(leagueInfo.getRoster())
+                                    .anyMatch(m -> m.getDisplayName().equalsIgnoreCase(member.getDisplayName())))
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
     @Data
     @Builder
     public static class PersonSearchItem {

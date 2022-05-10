@@ -325,7 +325,7 @@
                                         </div>
                                         <div class="col">
                                             <label>Team Members</label>
-                                            <button class="btn btn-primary float-right" type="button" th:onclick="'addTeamMember(' + ${team.id} + ');'" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
+                                            <button class="btn btn-primary float-right" type="button" th:onclick="'addTeamMember(' + ${team.id} + ', ' + ${team.iracingId} + ');'" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
                                                 <i class="fas fa-plus" data-toggle="tooltip" title="Add person"></i>
                                             </button>
                                             <div class="table-responsive">
@@ -542,8 +542,9 @@
                 minLength : 2,
                 appendTo: "#staff-modal",
                 source : function(request, response) {
+                    $('#search-spinner').show();
                     $.ajax({
-                        url : "/rest/staff-search",
+                        url : "/rest/team-search/" + $('#staff-modal-form #teamIrId').val(),
                         dataType : "json",
                         data : {
                             q : request.term,
@@ -553,6 +554,9 @@
                             response(data);
                         }
                     });
+                },
+                response: function(event, ui) {
+                    $('#search-spinner').hide();
                 },
                 select: function(event, ui) {
                     personSelected(ui.item);

@@ -139,8 +139,9 @@ function editTeamMember(personIndex, teamId) {
   editStaffPerson(teamId + '_' + personIndex);
 }
 
-function addTeamMember(teamId) {
+function addTeamMember(teamId, irTeamId) {
   $("#staff-modal #teamId").val(teamId);
+  $('#staff-modal #teamIrId').val(irTeamId);
   $("#staff-modal #iracingId").val("");
   $("#staff-modal #name").val("");
   $("#staff-modal #role").val("");
@@ -310,23 +311,34 @@ function checkIRacingMemberId() {
 }
 
 function checkIracingTeamId() {
-  $("#registration-form #check-icon").hide();
-  $("#registration-form #check-spinner").show();
+  $('#registration-form #check-icon').toggle();
+  $('#registration-form #check-spinner').toggle();
   const teamId = $('#registration-form #iracingId').val();
   $.ajax({
     type: 'GET',
     dataType: 'json',
     url: '/rest/teamInfo/' + teamId,
+    async: true,
     success: function (data) {
       if(data.teamId === 0) {
         $('#registration-form #teamName').val("");
       } else {
-        $('#registration-form #teamName').val(data.teamName);
+        const lastWhitespace = data.teamName.lastIndexOf(' ');
+        if(lastWhitespace === -1) {
+          $('#registration-form #teamName').val(data.teamName);
+        } else {
+          const baseName = data.teamName.substring(0, lastWhitespace);
+          $('#registration-form #teamName').val(baseName);
+          const qualifier = data.teamName.substring(lastWhitespace + 1);
+          $('#registration-form #carQualifier').val(qualifier);
+        }
       }
+    },
+    complete: function () {
+      $('#registration-form #check-icon').toggle();
+      $('#registration-form #check-spinner').toggle();
     }
   });
-  $("#registration-form #check-icon").show();
-  $("#registration-form #check-spinner").hide();
 }
 
 function showLocalTime() {

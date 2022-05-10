@@ -22,10 +22,12 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -156,7 +158,8 @@ public class RegistrationController extends ControllerBase {
                     .build(model);
         }
 
-        String teamError = checkTeamIdAndName(createRegistrationView.getIracingId(), createRegistrationView.getTeamName(), createRegistrationView.getCarQualifier());
+        String teamError = checkTeamIdAndName(createRegistrationView.getIracingId(),
+                createRegistrationView.getTeamName(), createRegistrationView.getCarQualifier(), currentUser());
         if(teamError != null) {
             addError(teamError, model);
             return redirectBuilder(REGISTER_TEAM_VIEW)
@@ -225,14 +228,26 @@ public class RegistrationController extends ControllerBase {
         return creator;
     }
 
-    private String checkTeamIdAndName(long irTeamId, @NonNull String teamName, @Nullable String carQualifier) {
-        String iracingTeamName = eventOrganizer.getTeamName(irTeamId);
-        if(iracingTeamName == null) {
+    private String checkTeamIdAndName(long irTeamId, @NonNull String teamName, @Nullable String carQualifier, RcUser currentUser) {
+        List<TeamMemberDto> members = eventOrganizer.getTeamMembers(irTeamId);
+        if(members.isEmpty()) {
             return "Team id " + irTeamId + " not found on iRacing service.";
         }
+
+        String irTeamName = members.get(0).getTeamName();
         String fullTeamName = teamName + (carQualifier != null ? " " + carQualifier : "");
-        if(!iracingTeamName.equalsIgnoreCase(fullTeamName)) {
-            return "Team name " + fullTeamName + " does not match iRacing team name " + iracingTeamName;
+        if(!irTeamName.equalsIgnoreCase(fullTeamName)) {
+            return "Team name " + fullTeamName + " does not match iRacing team name " + irTeamName;
+        }
+
+        String[] nameParts = currentUser.getName().split(" ");
+        Optional<TeamMemberDto> member = members.stream()
+                .filter(m -> Arrays.stream(nameParts)
+                            .allMatch(s -> m.getDisplayName().toLowerCase().contains(s.toLowerCase()))
+                )
+                .findAny();
+        if(member.isEmpty()) {
+            return "You are not a member of " + irTeamName + " in iRacing service";
         }
         return null;
     }
