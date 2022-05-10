@@ -1,0 +1,96 @@
+[data-theme="dark"] {
+    background-color: #111 !important;
+    color: #eee;
+}
+
+[data-theme="dark"] .modal-content {
+    background-color: #111 !important;
+}
+
+[data-theme="dark"] .row {
+    background-color: rgba(3, 3, 3, 0.7) !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .transparent {
+    background: rgba(255,255,255,0.0) !important;
+}
+
+[data-theme="dark"] .navigation-clean-button .navbar-brand {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .navigation-clean-button.navbar-light .navbar-nav .nav-link {
+    background-color: transparent;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .navigation-clean-button.navbar-light .navbar-nav .nav-link:hover {
+    background-color: transparent;
+    color: #fff !important;
+}
+
+[data-theme="dark"] .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+    background-color: #333 !important;
+    color: #fff !important;
+}
+
+[data-theme="dark"] caption {
+    color: #dddddd !important;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: #333 !important;
+}
+
+[data-theme="dark"] .bg-white {
+    background-color: #000 !important;
+}
+
+[data-theme="dark"] .bg-black {
+    background-color: #eee !important;
+}
+
+[data-theme="dark"] .table {
+    color: #fff !important;
+}
+
+[data-theme="dark"] .text-warning {
+    color: #ffe8a1 !important;
+}
+
+[data-theme="dark"] .text-success {
+    color: #8fd19e !important;
+}
+
+[data-theme="dark"] .text-danger {
+    color: #f1b0b7 !important;
+}
+
+[data-theme="dark"] .text-info {
+    color: #4cdfe8 !important;
+}
+
+[data-theme="dark"] .table-warning {
+    background-color: #96855f !important;
+}
+
+[data-theme="dark"] .table-success {
+    background-color: #375d40 !important;
+}
+
+[data-theme="dark"] .table-danger {
+    background-color: #bf6670 !important;
+}
+
+[data-theme="dark"] .table-info {
+    background-color: #3c7882 !important;
+}
+
+[data-theme="dark"] .table-primary {
+    background-color: #0056b3 !important;
+}
+
+[data-theme="dark"] .table-secondary, .table-secondary>td, .table-secondary>th {
+    background-color: #818182 !important;
+}

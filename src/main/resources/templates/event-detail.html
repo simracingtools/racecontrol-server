@@ -100,10 +100,11 @@
                                     <div th:if="${!currentPerson.name.isEmpty()}" class="table-responsive" style="overflow: auto; max-height: 40em;">
                                         <div class="row">
                                             <div class="col">
-                                                <div class="form-check">
+                                                <label class="switch">
                                                     <input id="filterCompletedCheck" class="form-check-input" type="checkbox" onchange="hideCompletedTasks();"/>
-                                                    <label class="form-check-label" for="filterCompletedCheck">Only active</label>
-                                                </div>
+                                                    <span class="slider round"></span>
+                                                </label>
+                                                <label class="form-check-label" for="filterCompletedCheck" style="vertical-align: text-bottom;">Only active</label>
                                             </div>
                                         </div>
                                         <table class="table" style="font-size: 14px;">
@@ -345,19 +346,19 @@
                                                     <tbody style="font-size: 12px; padding: 2px;">
                                                     <tr th:each="person, personStat: ${team.teamMembers}">
                                                         <td style="cursor: pointer;" th:text="${person.name}" th:onclick="'editTeamMember(' + ${personStat.index} + ', ' + ${team.id} + ');'">Robert Bausdorf</td>
-                                                        <td th:if="${person.registered && person.leagueMember}" class="text-center table-success">
+                                                        <td th:if="${person.registered && person.leagueMember}" class="text-center table-success table-icon">
                                                             <i class="far fa-check-circle text-success" title="League member and registered here" data-toggle="tooltip"></i>
                                                         </td>
-                                                        <td th:if="${!person.registered && person.leagueMember}" class="text-center table-warning">
+                                                        <td th:if="${!person.registered && person.leagueMember}" class="text-center table-warning table-icon">
                                                             <i class="far fa-check-circle text-info" title="League member but not registered here" data-toggle="tooltip"></i>
                                                         </td>
-                                                        <td th:if="${person.registered && !person.leagueMember}" class="text-center table-info">
+                                                        <td th:if="${person.registered && !person.leagueMember}" class="text-center table-info" table-icon>
                                                             <i class="far fa-check-circle text-warning" title="No league member but registered here" data-toggle="tooltip"></i>
                                                         </td>
-                                                        <td th:if="${!person.registered && !person.leagueMember && person.iracingChecked}" class="text-center table-info">
+                                                        <td th:if="${!person.registered && !person.leagueMember && person.iracingChecked}" class="text-center table-info table-icon">
                                                             <i class="far fa-question-circle text-danger" data-toggle="tootltip" title="Checked iRacing Id but no league member and not registered here"></i>
                                                         </td>
-                                                        <td th:if="${!person.registered && !person.leagueMember && !person.iracingChecked}" class="text-center table-danger">
+                                                        <td th:if="${!person.registered && !person.leagueMember && !person.iracingChecked}" class="text-center table-danger table-icon">
                                                             <i class="far fa-question-circle text-danger" data-toggle="tootltip" title="Unchecked iRacing Id"></i>
                                                         </td>
                                                         <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
@@ -461,7 +462,7 @@
                                             <span></span>
                                         </td>
                                         <td>
-                                            <table class="table-sm">
+                                            <table class="table table-sm">
                                                 <tr th:each="subsession : ${sessionView.sessionParts}">
                                                     <td th:text="${subsession.sessionTypeName}" style="border: 0; padding: 1px;">Open Practice</td>
                                                     <td class="float-right" th:text="${subsession.durationString}" style="border: 0; padding: 1px;">00:40</td>

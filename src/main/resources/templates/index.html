@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
     <link rel="stylesheet" href="assets/css/buttonnav.css">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/dark-mode.css">
     <link rel="stylesheet" href="/webjars/jquery-ui/jquery-ui.css">
 </head>
 
@@ -80,7 +81,7 @@
         <div class="row" th:fragment="menu" th:with="title=${title} ?: 'Overview'">
             <div class="col">
                 <!-- Start: Navigation with Button -->
-                <nav class="navbar navbar-light navbar-expand-md navigation-clean-button">
+                <nav class="navbar navbar-light navbar-expand-md navigation-clean-button" style="padding: 0;">
                     <div class="container">
                         <h4 class="navbar-brand" th:text="${title}">Overview</h4>
                         <button class="navbar-toggler" data-toggle="collapse" data-target="#navcol-1">
@@ -88,6 +89,15 @@
                         </button>
                         <div class="collapse navbar-collapse" id="navcol-1">
                             <ul class="navbar-nav ml-auto">
+                                <li class="nav-item">
+                                    <div class="nav-link">
+                                        <label class="switch">
+                                            <input id="darkSwitch" class="form-check-input" type="checkbox"/>
+                                            <span class="slider round"></span>
+                                        </label>
+                                        <label class="form-check-label" for="darkSwitch" style="vertical-align: text-bottom;">Dark mode</label>
+                                    </div>
+                                </li>
                                 <li class="nav-item">
                                     <div class="dropdown">
                                         <a class="dropdown-toggle nav-link" data-toggle="dropdown" aria-expanded="false" href="#">Manage</a>
@@ -194,7 +204,7 @@
                 </div>
             </div>
             <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
-                <div class="table-responsive text-center" th:fragment="tableAvailableSlots(event)">
+                <div class="table-responsive text-center" style="margin-top: 5px;" th:fragment="tableAvailableSlots(event)">
                     <table class="table text-center">
                         <caption>Available registration slots.</caption>
                         <thead>
@@ -247,6 +257,7 @@
         <div class="row align-items-end" style="font-size: 10px; padding-top: 1em;" th:fragment="footer">
             <div class="col"><span>(C) 2020 bausdorf engineering&nbsp;</span></div>
             <div class="col text-right"><span th:text="${serverVersion}">race control server version&nbsp;</span></div>
+            <script src="assets/js/dark-mode-switch.js"></script>
         </div>
     </div>
     <!-- End: 2 Rows 1+3 Columns -->
