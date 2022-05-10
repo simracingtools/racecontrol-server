@@ -25,6 +25,7 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
 import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
+import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
@@ -201,6 +202,18 @@ public class EventOrganizer {
         return memberInfo != null ? memberNameWithoutMiddleInitial(memberInfo.getName()) :  null;
     }
 
+    public List<TeamMemberDto> getTeamMembers(long iracingTeamId) {
+        return dataClient.getTeamMembers(iracingTeamId);
+    }
+
+    public String getTeamName(long iracingTeamId) {
+        List<TeamMemberDto> members = getTeamMembers(iracingTeamId);
+        if(members.isEmpty()) {
+            return null;
+        }
+        return members.get(0).getTeamName();
+    }
+
     public List<TeamRegistration> checkUniqueTeamDriver(@Nullable Person person) {
         if(person == null) {
             return new ArrayList<>();
@@ -308,6 +321,10 @@ public class EventOrganizer {
 
     public WorkflowAction getWorkflowAction(long actionId) {
         return actionRepository.findById(actionId).orElse(null);
+    }
+
+    public List<WorkflowAction> getActiveWorkflowActionForItem(long registrationId) {
+        return actionRepository.findAllByWorkflowItemIdAndDoneAt(registrationId, null);
     }
 
     public WorkflowAction updateCurrentAction(@NonNull WorkflowAction currentAction, @NonNull Person actor, @NonNull WorkflowActionEditView editAction) {

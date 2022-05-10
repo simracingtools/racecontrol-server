@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Component("REVOKED")
 public class RevokeRegistrationAction extends WorkflowAction {
@@ -40,7 +41,17 @@ public class RevokeRegistrationAction extends WorkflowAction {
     @Override
     @Transactional
     public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
-        de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
+        de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction;
+        if(editView.getId() != null) {
+            currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
+        } else {
+            List<de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction> actions = getEventOrganizer().getActiveWorkflowActionForItem(editView.getWorkflowItemId());
+            if(actions.size() > 1) {
+                throw new ActionException("More than one target action found");
+            } else {
+                currentAction = actions.get(0);
+            }
+        }
         if(currentAction != null) {
             getEventOrganizer().saveRegistration(updateCurrentAction(editView, currentAction, actor));
         } else {
