@@ -130,7 +130,7 @@ public class PrepareDisordAction extends WorkflowAction {
 
     private int getTeamCategoryInsertPosition(long eventId, String categoryName) {
         EventSeries event = getEventOrganizer().getEventSeries(eventId);
-        int insertPosition = 0;
+        int insertPosition = jdaClient.getTeamSpacerCategory(eventId).getPosition() + 1;
         if(event != null) {
             List<Category> teamCategories = jdaClient.getTeamCategories(event.getDiscordGuildId(), event.getDiscordSpacerCategoryId());
             for(Category category : teamCategories) {
