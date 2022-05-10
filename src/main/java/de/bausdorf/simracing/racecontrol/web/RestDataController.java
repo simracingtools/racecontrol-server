@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
+import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
@@ -95,14 +96,19 @@ public class RestDataController {
         return item.get();
     }
 
-    @Data
-    @Builder
-    public static class PersonSearchItem {
-        private String label;
-        private String value;
-        private String iracingId;
-        private boolean registered;
-        private boolean leagueMember;
+    @GetMapping("/teamInfo/{teamId}")
+    public TeamInfo checkTeamName(@PathVariable Long teamId) {
+        List<TeamMemberDto> members = dataClient.getTeamMembers(teamId);
+        if(members.isEmpty()) {
+            return TeamInfo.builder()
+                    .teamName("")
+                    .teamId(0L)
+                    .build();
+        }
+        return TeamInfo.builder()
+                .teamName(members.get(0).getTeamName())
+                .teamId(members.get(0).getTeamId())
+                .build();
     }
 
     @GetMapping("staff-search")
@@ -138,5 +144,22 @@ public class RestDataController {
 
         }
         return new ArrayList<>(matches.values());
+    }
+
+    @Data
+    @Builder
+    public static class PersonSearchItem {
+        private String label;
+        private String value;
+        private String iracingId;
+        private boolean registered;
+        private boolean leagueMember;
+    }
+
+    @Data
+    @Builder
+    public static class TeamInfo {
+        private String teamName;
+        private long teamId;
     }
 }

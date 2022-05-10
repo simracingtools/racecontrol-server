@@ -23,10 +23,10 @@
     <testcontainers.version>1.16.3</testcontainers.version>
     <socksjs-client.version>1.5.1</socksjs-client.version>
     <stomp-websocket.version>2.3.4</stomp-websocket.version>
-    <momentjs.version>2.29.1</momentjs.version>
+    <momentjs.version>2.29.3</momentjs.version>
     <madiadb-client.version>2.7.3</madiadb-client.version>
     <keycloak.version>17.0.1</keycloak.version>
-    <ir-data-api.version>1.0.0</ir-data-api.version>
+    <ir-data-api.version>1.1.0</ir-data-api.version>
     <jquery-ui.version>1.13.1</jquery-ui.version>
     <jda.version>5.0.0-alpha.10</jda.version>
   </properties>

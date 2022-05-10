@@ -28,6 +28,8 @@ import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -133,9 +135,11 @@ public class RegistrationController extends ControllerBase {
 
         List<TeamRegistration> myRegistrations = eventOrganizer.myRegistrations(creator);
         AtomicReference<String> error = new AtomicReference<>(null);
-        myRegistrations.stream()
-                .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == creator.getIracingId() && p.getRole() == OrgaRoleType.DRIVER))
-                .forEach(r -> error.set("You are already a driver in team " + r.getTeamName() + " " + r.getCarQualifier()));
+        if(createRegistrationView.isDriver()) {
+            myRegistrations.stream()
+                    .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == creator.getIracingId() && p.getRole() == OrgaRoleType.DRIVER))
+                    .forEach(r -> error.set("You are already a driver in team " + r.getTeamName() + " " + (r.getCarQualifier() != null ? r.getCarQualifier() : "")));
+        }
         if(error.get() != null) {
             addError(error.get(), model);
             return redirectBuilder(REGISTER_TEAM_VIEW)
@@ -146,6 +150,15 @@ public class RegistrationController extends ControllerBase {
 
         if(!eventOrganizer.isQualifierUnique(createRegistrationView.getEventId(), createRegistrationView.getTeamName(), createRegistrationView.getCarQualifier())) {
             addError("Qualifier " + createRegistrationView.getCarQualifier() + " is already used on another team of the same name", model);
+            return redirectBuilder(REGISTER_TEAM_VIEW)
+                    .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
+                    .withParameter(TEAM_ID_PARAM, createRegistrationView.getOtherTeamId())
+                    .build(model);
+        }
+
+        String teamError = checkTeamIdAndName(createRegistrationView.getIracingId(), createRegistrationView.getTeamName(), createRegistrationView.getCarQualifier());
+        if(teamError != null) {
+            addError(teamError, model);
             return redirectBuilder(REGISTER_TEAM_VIEW)
                     .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
                     .withParameter(TEAM_ID_PARAM, createRegistrationView.getOtherTeamId())
@@ -180,7 +193,7 @@ public class RegistrationController extends ControllerBase {
             addError("No initial state for workflow " + REGISTRATION_WORKFLOW + " found", model);
         } else {
             registration.setWorkflowState(initialWorkflowState);
-            registration.getTeamMembers().add(creator);
+//            registration.getTeamMembers().add(creator);
 
             registration = eventOrganizer.saveRegistration(registration);
             createWorkFlowAction(registration);
@@ -210,6 +223,18 @@ public class RegistrationController extends ControllerBase {
             creator = personRepository.save(creator);
         }
         return creator;
+    }
+
+    private String checkTeamIdAndName(long irTeamId, @NonNull String teamName, @Nullable String carQualifier) {
+        String iracingTeamName = eventOrganizer.getTeamName(irTeamId);
+        if(iracingTeamName == null) {
+            return "Team id " + irTeamId + " not found on iRacing service.";
+        }
+        String fullTeamName = teamName + (carQualifier != null ? " " + carQualifier : "");
+        if(!iracingTeamName.equalsIgnoreCase(fullTeamName)) {
+            return "Team name " + fullTeamName + " does not match iRacing team name " + iracingTeamName;
+        }
+        return null;
     }
 
     private void createWorkFlowAction(TeamRegistration registration) {

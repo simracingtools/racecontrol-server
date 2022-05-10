@@ -24,10 +24,12 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 
 import org.springframework.data.repository.CrudRepository;
 
+import java.time.OffsetDateTime;
 import java.util.Collection;
 import java.util.List;
 
 public interface WorkflowActionRepository extends CrudRepository<WorkflowAction, Long> {
     List<WorkflowAction> findAllByEventIdAndWorkflowNameOrderByCreatedDesc(long eventId, String workflowName);
     List<WorkflowAction> findAllByEventIdAndTargetStateIn(long eventId, Collection<WorkflowState> targetState);
+    List<WorkflowAction> findAllByWorkflowItemIdAndDoneAt(long itemId, OffsetDateTime doneAt);
 }

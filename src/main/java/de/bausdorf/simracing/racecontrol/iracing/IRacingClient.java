@@ -37,6 +37,7 @@ import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
 import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
 import de.bausdorf.simracing.irdataapi.model.MemberInfoDto;
 import de.bausdorf.simracing.irdataapi.model.MembersInfoDto;
+import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
 import de.bausdorf.simracing.irdataapi.tools.StockDataCache;
 import de.bausdorf.simracing.racecontrol.web.model.TrackConfigurationView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +105,19 @@ public class IRacingClient {
 			log.error(e.getMessage(), e);
 		}
 		return null;
+	}
+
+	public List<TeamMemberDto> getTeamMembers(long teamId) {
+		try {
+			authenticate();
+			TeamMemberDto[] teamMembers = dataClient.getTeamMembers(teamId);
+			return Arrays.asList(teamMembers);
+		} catch(HttpClientErrorException clientError) {
+			log.warn("iRacing http error {}: {}",clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return List.of();
 	}
 
 	private void authenticate() {

@@ -309,6 +309,26 @@ function checkIRacingMemberId() {
   });
 }
 
+function checkIracingTeamId() {
+  $("#registration-form #check-icon").hide();
+  $("#registration-form #check-spinner").show();
+  const teamId = $('#registration-form #iracingId').val();
+  $.ajax({
+    type: 'GET',
+    dataType: 'json',
+    url: '/rest/teamInfo/' + teamId,
+    success: function (data) {
+      if(data.teamId === 0) {
+        $('#registration-form #teamName').val("");
+      } else {
+        $('#registration-form #teamName').val(data.teamName);
+      }
+    }
+  });
+  $("#registration-form #check-icon").show();
+  $("#registration-form #check-spinner").hide();
+}
+
 function showLocalTime() {
   $('.offset-time').each(function() {
     const dateTime = moment($(this).text(), "DD.MM.YYYY hh:mm ZZ");
