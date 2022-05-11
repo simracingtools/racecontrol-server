@@ -8,7 +8,7 @@ Event organization is supported by
 * Team and driver self registration process
 * Consistency check of a drivers iRacing id and name utilizing the iRacing Data API
 * Automatic creation of Discord roles/channels for registered teams
-* Optional check for iRacing league membership
+* Optional check for iRacing league and/or team membership
 * Support for limited grid slots/wildcards/waiting-list in multiple classes
 * Direct utilization of car/track information from iRacing
 
