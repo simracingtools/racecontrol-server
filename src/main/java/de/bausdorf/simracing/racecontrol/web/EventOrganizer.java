@@ -123,7 +123,7 @@ public class EventOrganizer {
 
     public List<AvailableSlotsView> getAvailableGridSlots(long eventId) {
         List<AvailableSlotsView> carClassMap = new ArrayList<>();
-        List<CarClass> eventClasses = carClassRepository.findAllByEventId(eventId);
+        List<CarClass> eventClasses = carClassRepository.findAllByEventIdOrderByClassOrderAsc(eventId);
         List<TeamRegistration> eventRegistrations = registrationRepository.findAllByEventId(eventId);
         eventClasses.forEach(carClass -> {
             AtomicInteger availableSlotsCount = new AtomicInteger(carClass.getMaxSlots() - carClass.getWildcards());
