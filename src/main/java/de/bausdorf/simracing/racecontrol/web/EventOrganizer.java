@@ -43,10 +43,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -197,6 +194,10 @@ public class EventOrganizer {
         return Arrays.stream(leagueInfo.getRoster()).anyMatch(member -> member.getCustId() == iracingId);
     }
 
+    public boolean checkTeamMembership(long iracingId, long iracingTeamid) {
+        return getTeamMembers(iracingTeamid).stream().anyMatch(m -> m.getCustId() == iracingId);
+    }
+
     public String getIRacingMemberName(long iracingId) {
         MemberInfo memberInfo = dataClient.getMemberInfo(iracingId).orElse(null);
         return memberInfo != null ? memberNameWithoutMiddleInitial(memberInfo.getName()) :  null;
@@ -257,6 +258,16 @@ public class EventOrganizer {
     public List<EventSeries> myActiveEvents(@NonNull RcUser currentUser) {
         return personRepository.findAllByIracingId(currentUser.getIRacingId()).stream()
                 .map(p -> getEventSeries(p.getEventId()))
+                .collect(Collectors.toList());
+    }
+
+    public List<EventSeries> getActiveEventsForGuildId(long guildId) {
+        return seriesRepository.findAllByDiscordGuildIdAndActive(guildId, true);
+    }
+
+    public List<TeamRegistration> getActiveTeamRegistrations(long eventId) {
+        return registrationRepository.findAllByEventId(eventId).stream()
+                .filter(team -> !team.getWorkflowState().isInActive())
                 .collect(Collectors.toList());
     }
 

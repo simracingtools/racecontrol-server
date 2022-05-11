@@ -326,6 +326,10 @@
                                         </div>
                                         <div class="col">
                                             <label>Team Members</label>
+                                            <button class="btn btn-primary" type="button" style="margin-left: 1em;" th:onclick="'checkTeamMemberStatus(' + ${team.id} + ');'">
+                                                <i th:id="'check-team-icon-' + ${team.id}" class="far fa-question-circle" data-toggle="tooltip" title="Re-Check status of all team members"></i>
+                                                <span th:id="'check-team-spinner-' + ${team.id}" style="display: none;" class="spinner-border spinner-border-sm" role="status"></span>
+                                            </button>
                                             <button class="btn btn-primary float-right" type="button" th:onclick="'addTeamMember(' + ${team.id} + ', ' + ${team.iracingId} + ');'" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
                                                 <i class="fas fa-plus" data-toggle="tooltip" title="Add person"></i>
                                             </button>
@@ -346,22 +350,22 @@
                                                     <tbody style="font-size: 12px; padding: 2px;">
                                                     <tr th:each="person, personStat: ${team.teamMembers}">
                                                         <td style="cursor: pointer;" th:text="${person.name}" th:onclick="'editTeamMember(' + ${personStat.index} + ', ' + ${team.id} + ');'">Robert Bausdorf</td>
-                                                        <td th:if="${person.registered && person.leagueMember}" class="text-center table-success table-icon">
+                                                        <td th:if="${person.registered && person.leagueMember}" th:class="'text-center table-icon ' + ${person.iracingTeamChecked ? 'table-success' : 'table-danger'}">
                                                             <i class="far fa-check-circle text-success" title="League member and registered here" data-toggle="tooltip"></i>
                                                         </td>
-                                                        <td th:if="${!person.registered && person.leagueMember}" class="text-center table-warning table-icon">
+                                                        <td th:if="${!person.registered && person.leagueMember}" th:class="'text-center table-icon ' + ${person.iracingTeamChecked ? 'table-success' : 'table-warning'}">
                                                             <i class="far fa-check-circle text-info" title="League member but not registered here" data-toggle="tooltip"></i>
                                                         </td>
-                                                        <td th:if="${person.registered && !person.leagueMember}" class="text-center table-info" table-icon>
+                                                        <td th:if="${person.registered && !person.leagueMember}" th:class="'text-center table-icon ' + ${person.iracingTeamChecked ? 'table-success' : 'table-info'}">
                                                             <i class="far fa-check-circle text-warning" title="No league member but registered here" data-toggle="tooltip"></i>
                                                         </td>
-                                                        <td th:if="${!person.registered && !person.leagueMember && person.iracingChecked}" class="text-center table-info table-icon">
+                                                        <td th:if="${!person.registered && !person.leagueMember && person.iracingChecked}" th:class="'text-center table-icon ' + ${person.iracingTeamChecked ? 'table-success' : 'table-info'}">
                                                             <i class="far fa-question-circle text-danger" data-toggle="tootltip" title="Checked iRacing Id but no league member and not registered here"></i>
                                                         </td>
                                                         <td th:if="${!person.registered && !person.leagueMember && !person.iracingChecked}" class="text-center table-danger table-icon">
                                                             <i class="far fa-question-circle text-danger" data-toggle="tootltip" title="Unchecked iRacing Id"></i>
                                                         </td>
-                                                        <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
+                                                        <td style="font-size: 12px;" th:text="${person.role}" th:class="${person.iracingTeamChecked ? 'text-success' : 'text-danger'}" data-toggle="tooltip" th:title="${person.iracingTeamChecked ? 'Is member of iRacing team' : 'Has to be added to iRacing team'}">RACE DIRECTOR</td>
                                                         <td style="padding: 2px;">
                                                             <button class="btn btn-danger" type="button" th:onclick="'confirmMemberRemove(' + ${person.id} + ', ' + ${team.id} + ');'" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
                                                                 <i class="far fa-trash-alt"></i>

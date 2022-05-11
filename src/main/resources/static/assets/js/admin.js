@@ -28,6 +28,12 @@ function saveUser(index) {
       + '&expired=' + $("#expired-" + index).prop('checked');
 }
 
+function checkTeamMemberStatus(teamId) {
+  $('#check-team-icon-' + teamId).hide();
+  $('#check-team-spinner-' + teamId).show();
+  window.location = '/team-check-members?teamId=' + teamId;
+}
+
 function confirmUserRemove(index) {
   $("#user-remove-confirm-" + index).modal('show');
 }
@@ -131,7 +137,6 @@ function editStaffPerson(personIndex) {
 function submitStaffModal() {
   $("#staff-modal #save-text").hide();
   $("#staff-modal #save-spinner").show();
-  $("#staff-modal #staff-modal-form").submit();
 }
 
 function editTeamMember(personIndex, teamId) {

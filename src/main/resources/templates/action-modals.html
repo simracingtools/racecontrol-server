@@ -170,7 +170,7 @@
                 <div class="modal-header">
                     <h4 class="modal-title" th:text="${title}">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                 </div>
-                <form id="staff-modal-form" method="post" th:object="${editStaffView}" th:action="@{${postUrl}}">
+                <form id="staff-modal-form" method="post" th:object="${editStaffView}" th:action="@{${postUrl}}" onsubmit="submitStaffModal();">
                     <input type="hidden" th:field="*{id}">
                     <input type="hidden" th:field="*{eventId}"/>
                     <input type="hidden" th:field="*{teamId}"/>
@@ -194,14 +194,14 @@
                         </div>
                         <div class="form-group">
                             <label style="width: 6em;">Role</label>
-                            <select th:field="*{role}">
+                            <select th:field="*{role}" required>
                                 <option th:each="role: ${staffRoles}" th:value="${role.toString()}" th:text="${role.toString()}">RACE DIRECTOR</option>
                             </select>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
-                        <button class="btn btn-primary" type="button" onclick="submitStaffModal();">
+                        <button class="btn btn-primary" type="submit">
                             <span id="save-text">Save</span>
                             <span id="save-spinner" style="display: none;" class="spinner-border spinner-border-sm" role="status"></span>
                         </button>

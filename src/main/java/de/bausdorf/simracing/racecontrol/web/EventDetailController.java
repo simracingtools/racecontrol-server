@@ -184,13 +184,19 @@ public class EventDetailController extends ControllerBase {
         if(staff != null && staff.getRole().isRacecontrol()) {
             addError(staff.getName() + " is member of race control staff and can't be added to a team!", model);
         } else {
+            staff = personView.toEntity(staff);
+
+            staff.setIracingTeamChecked(eventOrganizer.checkTeamMembership(staff.getIracingId(), registration.getIracingId()));
+            if(staff.getRole() == OrgaRoleType.DRIVER && !staff.isIracingTeamChecked()) {
+                addWarning(staff.getName() + " is not a member of this team on iRacing platform!", model);
+            }
+
             if (eventOrganizer.denyDriverRole(staff, registration, OrgaRoleType.valueOf(personView.getRole()))) {
-                addError((staff != null ? staff.getName() : "Person") + " is assigned as driver in another team !", model);
+                addError(staff.getName() + " is assigned as driver in another team !", model);
             } else {
                 checkMemberOnIRacingService(personView, model);
 
                 if (Boolean.TRUE.equals(personView.getIracingChecked())) {
-                    staff = personView.toEntity(staff);
                     staff.setLeagueMember(isLeagueMember);
                     staff.setRegistered(isRegistered);
                     staff = personRepository.save(staff);
@@ -201,6 +207,21 @@ public class EventDetailController extends ControllerBase {
         }
         activeNav = TEAMS_TAB;
         return redirectView(EVENT_DETAIL_VIEW, personView.getEventId(), model);
+    }
+
+    @GetMapping("/team-check-members")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER"})
+    @Transactional
+    public String checkTeamMemberStatus(@RequestParam long teamId, Model model) {
+        TeamRegistration registration = eventOrganizer.getTeamRegistration(teamId);
+        EventSeries event = eventOrganizer.getEventSeries(registration.getEventId());
+        registration.getTeamMembers().forEach(p -> {
+            p.setLeagueMember(eventOrganizer.checkLeagueMembership(p.getIracingId(), event.getIRLeagueID()));
+            p.setIracingTeamChecked(eventOrganizer.checkTeamMembership(p.getIracingId(), registration.getIracingId()));
+            p.setRegistered(userRepository.findByiRacingId(p.getIracingId()).isPresent());
+            personRepository.save(p);
+        });
+        return redirectView(EVENT_DETAIL_VIEW, registration.getEventId(), model);
     }
 
     @GetMapping("/team-remove-member")
