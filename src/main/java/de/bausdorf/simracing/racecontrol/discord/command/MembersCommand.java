@@ -49,16 +49,13 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class MembersCommand extends AbstractCommand{
-    private final PersonRepository personRepository;
     private final EventOrganizer eventOrganizer;
 
-    public MembersCommand(@Autowired PersonRepository personRepository,
-                          @Autowired EventOrganizer eventOrganizer,
+    public MembersCommand(@Autowired EventOrganizer eventOrganizer,
                           @Autowired CommandHolder commandHolder) {
         super("members", "Retrieve team member information");
         this.eventOrganizer = eventOrganizer;
-        this.personRepository = personRepository;
-        OptionData carOrQualifier = new OptionData(OptionType.STRING, "qualifier", "Car qualifier or car number prefixed by # (#911)", false);
+        OptionData carOrQualifier = new OptionData(OptionType.STRING, "qualifier", "Car qualifier or car number", false);
         getOptions().add(carOrQualifier);
         commandHolder.addCommand(this);
     }

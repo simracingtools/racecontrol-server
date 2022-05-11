@@ -46,13 +46,11 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -118,7 +116,7 @@ public class JdaClient extends ListenerAdapter {
         Guild connectedGuild = getGuildByEventId(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getMembers().stream()
-                    .filter(member -> member.getEffectiveName().contains(iRacingName))
+                    .filter(member -> matchMemberName(member, iRacingName))
                     .findFirst();
         }
         return Optional.empty();
@@ -220,5 +218,16 @@ public class JdaClient extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleAdd(@NotNull GuildMemberRoleAddEvent event) {
         log.debug("JDA member role added: {}", event.getGuild().getName());
+    }
+
+    public static boolean matchMemberName(Member member, String fullName) {
+        String[] nameParts = fullName.trim().split(" ");
+        return Arrays.stream(nameParts).allMatch(part -> member.getEffectiveName().toLowerCase().contains(part.toLowerCase()));
+    }
+
+    @Scheduled(cron = "0 3 * * ?")
+    public void cleanGuildCache() {
+        log.info("Cleaning guild cache");
+        guildCache.clear();
     }
 }
