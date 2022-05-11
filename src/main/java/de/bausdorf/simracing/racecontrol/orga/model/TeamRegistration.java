@@ -56,7 +56,7 @@ public class TeamRegistration implements WorkflowItem {
 	private boolean wildcard;
 	@ManyToOne
 	WorkflowState workflowState;
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Person> teamMembers = new ArrayList<>();
 
 	@Transient

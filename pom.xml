@@ -28,7 +28,7 @@
     <keycloak.version>17.0.1</keycloak.version>
     <ir-data-api.version>1.1.0</ir-data-api.version>
     <jquery-ui.version>1.13.1</jquery-ui.version>
-    <jda.version>5.0.0-alpha.10</jda.version>
+    <jda.version>5.0.0-alpha.11</jda.version>
   </properties>
 
   <dependencyManagement>

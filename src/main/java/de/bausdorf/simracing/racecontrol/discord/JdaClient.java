@@ -22,6 +22,8 @@ package de.bausdorf.simracing.racecontrol.discord;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.discord.command.AbstractCommand;
+import de.bausdorf.simracing.racecontrol.discord.command.CommandHolder;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
 import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
@@ -58,15 +60,17 @@ import java.util.stream.Collectors;
 @Slf4j
 public class JdaClient extends ListenerAdapter {
     private final EventSeriesRepository eventSeriesRepository;
-
+    private final CommandHolder commandHolder;
     @Getter
     private JDA api;
 
-    private Map<Long, Guild> guildCache = new HashMap<>();
+    private final Map<Long, Guild> guildCache = new HashMap<>();
 
     public JdaClient(@Autowired RacecontrolServerProperties config,
-                     @Autowired EventSeriesRepository eventSeriesRepository) {
+                     @Autowired EventSeriesRepository eventSeriesRepository,
+                     @Autowired CommandHolder commandHolder) {
         this.eventSeriesRepository = eventSeriesRepository;
+        this.commandHolder = commandHolder;
         try {
             this.api = JDABuilder.createDefault(config.getDiscordBotToken())
                     .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_PRESENCES)
@@ -183,11 +187,13 @@ public class JdaClient extends ListenerAdapter {
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         log.info("Slash command: {}", event.getInteraction().getName());
+        Optional<AbstractCommand> command = commandHolder.getCommand(event.getInteraction().getName());
+        command.ifPresent(c -> c.onEvent(event));
     }
 
     @Override
     public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
-        log.info("Gild join: {}", event.getMember().getNickname());
+        log.info("Guild join: {}", event.getMember().getNickname());
     }
 
     @Override
@@ -203,6 +209,7 @@ public class JdaClient extends ListenerAdapter {
     @Override
     public void onGuildReady(@NotNull GuildReadyEvent event) {
         log.debug("JDA guild ready: {}({})", event.getGuild().getName(), event.getGuild().getId());
+        commandHolder.stream().forEach(command -> command.buildCommand(event.getGuild()));
     }
 
     @Override

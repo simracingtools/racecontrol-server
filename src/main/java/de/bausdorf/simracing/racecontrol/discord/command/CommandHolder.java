@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.discord.command;
 
 /*-
  * #%L
@@ -22,14 +22,24 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Stream;
 
-public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
-    List<EventSeries> findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate openBefore, boolean active);
-    List<EventSeries> findAllByRegistrationOpensBeforeAndEndDateAfterAndActiveOrderByStartDateAsc(OffsetDateTime regCloseBefore, LocalDate dateAfter, boolean active);
-    List<EventSeries> findAllByDiscordGuildIdAndActive(long guildId, boolean active);
+@Component
+public class CommandHolder {
+    private final Map<String, AbstractCommand> commandList = new HashMap<>();
+
+    public void addCommand(AbstractCommand command) {
+        commandList.put(command.getName(), command);
+    }
+
+    public Optional<AbstractCommand> getCommand(String name) {
+        return Optional.ofNullable(commandList.get(name));
+    }
+
+    public Stream<AbstractCommand> stream() {
+        return commandList.values().stream();
+    }
 }

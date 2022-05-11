@@ -45,6 +45,7 @@ public class PersonView {
     private Boolean leagueMember;
     private Boolean registered;
     private Boolean iracingChecked;
+    private Boolean iracingTeamChecked;
 
     public Person toEntity(Person person) {
         if(person == null) {
@@ -58,6 +59,7 @@ public class PersonView {
         person.setLeagueMember(leagueMember == null ? person.isLeagueMember() : leagueMember);
         person.setRegistered(registered == null ? person.isRegistered() : registered);
         person.setIracingChecked(iracingChecked == null ? person.isIracingChecked() : iracingChecked);
+        person.setIracingTeamChecked(iracingTeamChecked == null ? person.isIracingTeamChecked() : iracingTeamChecked);
         return person;
     }
 
@@ -76,6 +78,7 @@ public class PersonView {
                 .registered(person.isRegistered())
                 .leagueMember(person.isLeagueMember())
                 .iracingChecked(person.isIracingChecked())
+                .iracingTeamChecked(person.isIracingTeamChecked())
                 .build();
     }
 
