@@ -100,6 +100,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 				.and()
 				.authorizeRequests()
 				.antMatchers("/").permitAll()
+				.antMatchers("/favicon*.*").permitAll()
 				.antMatchers("/assets/**").permitAll()
 				.antMatchers("/webjars/**").permitAll()
 				.antMatchers("/app/**").permitAll()
