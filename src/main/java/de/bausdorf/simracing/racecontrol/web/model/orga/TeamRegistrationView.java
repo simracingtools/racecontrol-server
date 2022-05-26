@@ -32,6 +32,7 @@ import org.thymeleaf.util.StringUtils;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -91,6 +92,12 @@ public class TeamRegistrationView {
                 .filter(member -> OrgaRoleType.valueOf(member.getRole()) == OrgaRoleType.DRIVER)
                 .filter(member -> !member.getRegistered())
                 .count();
+    }
+
+    public List<PersonView> getPotentialTeamOwners() {
+        return teamMembers.stream()
+                .filter(p -> p.getRegistered() && p.getIracingTeamChecked())
+                .collect(Collectors.toList());
     }
 
     public List<CarView> getCarsOfClass() {

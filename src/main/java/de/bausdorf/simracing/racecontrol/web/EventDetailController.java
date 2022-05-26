@@ -143,6 +143,7 @@ public class EventDetailController extends ControllerBase {
         model.addAttribute("registeredCarEditView", RegisteredCarEditView.builder()
                 .eventId(eventId)
                 .build());
+        model.addAttribute("changeOwnerView", ChangeOwnerView.builder().eventId(eventId).build());
         return EVENT_DETAIL_VIEW;
     }
 
@@ -222,6 +223,25 @@ public class EventDetailController extends ControllerBase {
             personRepository.save(p);
         });
         return redirectView(EVENT_DETAIL_VIEW, registration.getEventId(), model);
+    }
+
+    @PostMapping("/change-team-owner")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER"})
+    @Transactional
+    public String changeTeamOwner(@ModelAttribute ChangeOwnerView changeOwnerView, Model model) {
+        TeamRegistration registration = eventOrganizer.getTeamRegistration(changeOwnerView.getTeamId());
+        Optional<Person> newOwner = personRepository.findById(changeOwnerView.getNewOwnerId());
+        if(newOwner.isEmpty()) {
+            addError("Person id " + changeOwnerView.getNewOwnerId() + " not found!", model);
+        }
+        if(registration == null) {
+            addError("Team id " + changeOwnerView.getTeamId() + " not found!", model);
+        }
+        if(newOwner.isPresent() && registration != null) {
+            registration.setCreatedBy(newOwner.get());
+            eventOrganizer.saveRegistration(registration);
+        }
+        return redirectView(EVENT_DETAIL_VIEW, changeOwnerView.getEventId(), model);
     }
 
     @GetMapping("/team-remove-member")

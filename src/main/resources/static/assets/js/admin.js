@@ -134,6 +134,11 @@ function editStaffPerson(personIndex) {
   $("#staff-modal").modal('show');
 }
 
+function changeTeamOwner(teamId) {
+  $('#change-owner-modal-' + teamId + ' #teamId').val(teamId);
+  $('#change-owner-modal-' + teamId).modal('show');
+}
+
 function submitStaffModal() {
   $("#staff-modal #save-text").hide();
   $("#staff-modal #save-spinner").show();

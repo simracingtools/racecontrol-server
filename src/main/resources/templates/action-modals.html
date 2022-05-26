@@ -278,6 +278,48 @@
             </div>
         </div>
     </div>
+
+    <div th:fragment="change-owner-model(eventId, team, postUrl)">
+        <div th:id="'change-owner-modal-' + ${team.id}" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change team owner</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${changeOwnerView}">
+                        <input type="hidden" th:field="*{teamId}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label style="width: 8em;">iRacing team ID</label>
+                                <input type="number" style="width: 5em;" placeholder="000000" required min="1" max="9999999" readonly disabled th:value="${team.iracingId}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Team name</label>
+                                <input type="text" readonly style="width: 18em;" disabled th:value="${team.getFullTeamNameWithNumber()}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Current owner</label>
+                                <input type="text" readonly style="width: 18em;" disabled th:value="${team.createdBy.name}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Change owner to</label>
+                                <div class="d-inline">
+                                    <select style="width: 18em;" th:field="*{newOwnerId}">
+                                        <option th:each="newOwner : ${team.getPotentialTeamOwners()}" th:value="${newOwner.id}" value="12" th:text="${newOwner.name}">This is item 1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Change owner</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

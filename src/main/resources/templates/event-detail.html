@@ -285,12 +285,13 @@
                                                         <h6>Team owner</h6>
                                                         <div class="d-block">
                                                             <span th:text="${team.createdBy.name}">Unknown</span>
-                                                            <button class="btn btn-primary float-right" type="button" style="padding: 0 3px;" th:disabled="${user.getIRacingId != team.createdBy.iracingId}">
+                                                            <button class="btn btn-primary float-right" type="button" style="padding: 0 3px;" th:disabled="${user.getIRacingId != team.createdBy.iracingId}" th:onclick="'changeTeamOwner(' + ${team.id} + ');'">
                                                                 <i class="fas fa-edit" data-toggle="tooltip" th:title="${user.getIRacingId != team.createdBy.iracingId ? 'Only team owner is allowed to take action' : 'Transfer team ownership'}"></i>
                                                             </button>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div th:replace="action-modals.html :: change-owner-model(${event.eventId}, ${team}, '/change-team-owner')"></div>
                                             </div>
                                             <div class="row">
                                                 <div class="col">
