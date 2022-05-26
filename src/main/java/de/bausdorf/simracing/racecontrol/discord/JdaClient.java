@@ -225,7 +225,7 @@ public class JdaClient extends ListenerAdapter {
         return Arrays.stream(nameParts).allMatch(part -> member.getEffectiveName().toLowerCase().contains(part.toLowerCase()));
     }
 
-    @Scheduled(cron = "0 3 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     public void cleanGuildCache() {
         log.info("Cleaning guild cache");
         guildCache.clear();

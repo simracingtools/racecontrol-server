@@ -66,6 +66,7 @@ public class LeagueDataCache {
         } else {
             JsonFileCache<LeagueInfoDto> cache = leagueInfoMap.get(leagueId);
             if(isCacheOutdated(cache, serverConfig.getLeagueInfoCacheMaxAgeMillis())) {
+                log.info("League cache outdated, refeshing");
                 cache.setCachedData(dataClient.getLeagueInfo(leagueId));
             }
             return cache.getCachedData();
