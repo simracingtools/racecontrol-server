@@ -125,10 +125,14 @@ public class EventDetailController extends ControllerBase {
             model.addAttribute("editStaffView", PersonView.builder()
                     .eventId(eventSeries.get().getId())
                     .build());
+            model.addAttribute("requestPaintsView", RequestPaintsView.builder()
+                    .eventId(eventId)
+                    .confirmedTeams(eventOrganizer.getConfirmedRegistrationsWithoutPaintRequest(eventId))
+                    .build());
 
             if  (currentPerson != null) {
                 model.addAttribute("actions", eventOrganizer.getActiveWorkflowActionListForRole(
-                        eventId, TEAM_REGISTRATION_WORKFLOW, currentPerson));
+                        eventId, currentPerson));
             } else {
                 model.addAttribute("actions", new ArrayList<>());
             }
@@ -137,6 +141,10 @@ public class EventDetailController extends ControllerBase {
             model.addAttribute(EVENT_VIEW_MODEL_KEY, EventInfoView.createEmpty());
             model.addAttribute("editStaffView", PersonView.builder()
                     .eventId(0L)
+                    .build());
+            model.addAttribute("requestPaintsView", RequestPaintsView.builder()
+                    .eventId(eventId)
+                    .confirmedTeams(new ArrayList<>())
                     .build());
         }
         model.addAttribute("teamRegistrationSelectView", new TeamRegistrationSelectView());
@@ -294,6 +302,13 @@ public class EventDetailController extends ControllerBase {
             carRepository.save(carToSave);
         });
         return redirectView(EVENT_DETAIL_VIEW, bopEditView.getEventId(), model);
+    }
+
+    @PostMapping("/request-paints")
+    public String requestPaints(@ModelAttribute RequestPaintsView requestPaintsView, Model model) {
+        Person current = currentPerson(requestPaintsView.getEventId());
+        requestPaintsView.getSelectedTeamIds().forEach(l -> eventOrganizer.createPaintRequestAction(requestPaintsView.getEventId(), l, current));
+        return redirectView(EVENT_DETAIL_VIEW, requestPaintsView.getEventId(), model);
     }
 
     @ModelAttribute(name="staffRoles")

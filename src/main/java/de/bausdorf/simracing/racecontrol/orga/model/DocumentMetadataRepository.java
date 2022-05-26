@@ -22,13 +22,13 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
 import org.springframework.data.repository.CrudRepository;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface WorkflowActionRepository extends CrudRepository<WorkflowAction, Long> {
-    List<WorkflowAction> findAllByEventIdOrderByCreatedDesc(long eventId);
-    List<WorkflowAction> findAllByEventIdAndWorkflowItemIdAndWorkflowName(long eventId, long workflowItemId, String workflowName);
-    List<WorkflowAction> findAllByWorkflowItemIdAndDoneAt(long itemId, OffsetDateTime doneAt);
+public interface DocumentMetadataRepository extends CrudRepository<DocumentMetadata, Long> {
+    List<DocumentMetadata> findAllByEventIdAndDocumentTypeAndRefItemId(long eventId, FileTypeEnum type, long refItemId);
+    List<DocumentMetadata> findAllByEventId(long eventId);
+    void deleteAllByEventId(long eventId);
 }

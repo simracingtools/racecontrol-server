@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.action;
 
 /*-
  * #%L
@@ -22,13 +22,15 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import org.springframework.data.repository.CrudRepository;
+import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.time.OffsetDateTime;
-import java.util.List;
+@Component("PAINT_ACCEPTED")
+public class PaintAcceptAction extends SimpleAction {
 
-public interface WorkflowActionRepository extends CrudRepository<WorkflowAction, Long> {
-    List<WorkflowAction> findAllByEventIdOrderByCreatedDesc(long eventId);
-    List<WorkflowAction> findAllByEventIdAndWorkflowItemIdAndWorkflowName(long eventId, long workflowItemId, String workflowName);
-    List<WorkflowAction> findAllByWorkflowItemIdAndDoneAt(long itemId, OffsetDateTime doneAt);
+    public PaintAcceptAction(@Autowired EventOrganizer eventOrganizer) {
+        super(eventOrganizer);
+    }
+
 }

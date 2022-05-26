@@ -102,7 +102,7 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                     </div>
                     <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
-                        <div class="modal-body" th:fragment="action-modal-content">
+                        <div class="modal-body" th:fragment="action-modal-body">
                             <h5 th:text="${action.teamName}">FBP RED</h5>
                             <input type="hidden" th:field="*{id}">
                             <input type="hidden" th:field="*{eventId}">
@@ -113,10 +113,10 @@
                                     <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
                                 </select>
                             </div>
-                            <div class="form-group text-left">
-                                <label style="font-size: 14px;">Due date</label>
-                                <input class="form-control" type="date" th:field="*{dueDate}">
-                            </div>
+<!--                            <div class="form-group text-left">-->
+<!--                                <label style="font-size: 14px;">Due date</label>-->
+<!--                                <input class="form-control" type="date" th:field="*{dueDate}">-->
+<!--                            </div>-->
                             <div class="form-group text-left">
                                 <label th:for="*{message}" style="font-size: 14px;">Action message</label>
                                 <input class="form-control" type="text" th:field="*{message}">
@@ -158,6 +158,73 @@
 
     <div th:fragment="TeamRegistration-PAYMENT_RECEIPT-modal(action, postUrl, editAction)">
         <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-REQUEST_PAINT-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" th:fragment="paint-action-modal-content">
+                    <div class="modal-header" th:fragment="paint-action-modal-header">
+                        <h4 class="modal-title">Paint collection</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}" enctype="multipart/form-data">
+                        <div class="modal-body" th:fragment="paint-action-modal-content">
+                            <h5 th:text="${action.teamName}">FBP RED</h5>
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{eventId}">
+                            <input type="hidden" th:field="*{workflowItemId}">
+                            <div class="form-group text-left">
+                                <label style="font-size: 14px;">Proceed to</label>
+                                <select class="form-control" required="" th:field="*{targetStateKey}" th:oninput="'changeFormGroupDisplay(' + ${action.id} + ');'">
+                                    <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
+                                </select>
+                            </div>
+<!--                            <div class="form-group text-left">-->
+<!--                                <label style="font-size: 14px;">Due date</label>-->
+<!--                                <input class="form-control" type="date" th:field="*{dueDate}">-->
+<!--                            </div>-->
+                            <div class="form-group text-left">
+                                <label th:for="*{paintTga}" style="font-size: 14px;">Car paint (.tga file)</label>
+                                <input class="form-control" type="file" th:field="*{paintTga}" accept=".tga">
+                            </div>
+                            <div class="form-group text-left">
+                                <label th:for="*{paintSpecMap}" style="font-size: 14px;">Spec map (.mip file)</label>
+                                <input class="form-control" type="file" th:field="*{paintSpecMap}" accept=".mip">
+                            </div>
+                        </div>
+                        <div class="modal-footer" th:fragment="action-modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-PAINT_SUBMITTED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-PAINT_ACCEPTED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-PAINT_DECLINED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
             <div class="modal-dialog" role="document">
                 <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
             </div>

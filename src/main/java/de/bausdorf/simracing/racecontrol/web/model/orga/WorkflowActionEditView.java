@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -40,4 +41,6 @@ public class WorkflowActionEditView {
     private LocalDateTime dueDate;
     private String targetStateKey;
     private String message;
+    private MultipartFile paintTga;
+    private MultipartFile paintSpecMap;
 }

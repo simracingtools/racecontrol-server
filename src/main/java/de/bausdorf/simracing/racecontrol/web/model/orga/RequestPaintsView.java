@@ -1,4 +1,4 @@
-package de.bausdorf.simracing.racecontrol.orga.model;
+package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 /*-
  * #%L
@@ -22,13 +22,17 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import org.springframework.data.repository.CrudRepository;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
-public interface WorkflowActionRepository extends CrudRepository<WorkflowAction, Long> {
-    List<WorkflowAction> findAllByEventIdOrderByCreatedDesc(long eventId);
-    List<WorkflowAction> findAllByEventIdAndWorkflowItemIdAndWorkflowName(long eventId, long workflowItemId, String workflowName);
-    List<WorkflowAction> findAllByWorkflowItemIdAndDoneAt(long itemId, OffsetDateTime doneAt);
+@Data
+@AllArgsConstructor
+@Builder
+public class RequestPaintsView {
+    private Long eventId;
+    private List<Long> selectedTeamIds;
+    private List<TeamRegistrationView> confirmedTeams;
 }

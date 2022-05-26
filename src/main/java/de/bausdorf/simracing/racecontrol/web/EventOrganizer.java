@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 @Component
 public class EventOrganizer {
     public static final String ASSET_BASE_URL = "https://images-static.iracing.com";
+    public static final String PAINT_COLLECTION = "PaintCollection";
     private final CarClassRepository carClassRepository;
     private final TeamRegistrationRepository registrationRepository;
     private final WorkflowActionRepository actionRepository;
@@ -155,15 +156,15 @@ public class EventOrganizer {
         return carClassMap;
     }
 
-    public List<WorkflowActionInfoView> getActiveWorkflowActionListForRole(long eventId, String workflowName, @NonNull Person currentPerson) {
-        List<WorkflowAction> actionList = actionRepository.findAllByEventIdAndWorkflowNameOrderByCreatedDesc(eventId, workflowName);
+    public List<WorkflowActionInfoView> getActiveWorkflowActionListForRole(long eventId, @NonNull Person currentPerson) {
+        List<WorkflowAction> actionList = actionRepository.findAllByEventIdOrderByCreatedDesc(eventId);
         List<WorkflowActionInfoView> resultList = actionList.stream()
                 .filter(a -> filterMyOpenTasks(a, currentPerson))
-                .map(action -> mapWorkflowAction(workflowName, action, currentPerson))
+                .map(action -> mapWorkflowAction(action, currentPerson))
                 .collect(Collectors.toList());
         resultList.addAll(actionList.stream()
                 .filter(a -> filterMyClosedTasks(a, currentPerson))
-                .map(action -> mapWorkflowAction(workflowName, action, currentPerson))
+                .map(action -> mapWorkflowAction(action, currentPerson))
                 .collect(Collectors.toList()));
         return resultList;
     }
@@ -269,6 +270,25 @@ public class EventOrganizer {
         return registrationRepository.findAllByEventId(eventId).stream()
                 .filter(team -> !team.getWorkflowState().isInActive())
                 .collect(Collectors.toList());
+    }
+
+    public List<TeamRegistrationView> getConfirmedRegistrationsWithoutPaintRequest(long eventId) {
+        return getActiveTeamRegistrations(eventId).stream()
+                .filter(r -> r.getWorkflowState().getStateKey().equalsIgnoreCase("PAYMENT_RECEIPT"))
+                .filter(r -> actionRepository.findAllByEventIdAndWorkflowItemIdAndWorkflowName(eventId, r.getId(), PAINT_COLLECTION).isEmpty())
+                .map(TeamRegistrationView::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public void createPaintRequestAction(long eventId, long reqistrationId, Person currentPerson) {
+        WorkflowAction action = new WorkflowAction();
+        action.setEventId(eventId);
+        action.setWorkflowName(PAINT_COLLECTION);
+        action.setCreated(OffsetDateTime.now());
+        action.setCreatedBy(currentPerson);
+        action.setSourceState(stateRepository.findByWorkflowNameAndInitialState(PAINT_COLLECTION, true).orElse(null));
+        action.setWorkflowItemId(reqistrationId);
+        actionRepository.save(action);
     }
 
     public Person getPersonInEvent(long eventId, long iracingId) {
@@ -475,23 +495,21 @@ public class EventOrganizer {
                 .filter(asset -> asset.getCarId() == carId).findFirst().orElse(null);
     }
 
-    private WorkflowActionInfoView mapWorkflowAction(String workflowName, WorkflowAction action, @NonNull Person currentPerson){
+    private WorkflowActionInfoView mapWorkflowAction(WorkflowAction action, @NonNull Person currentPerson){
         WorkflowActionInfoView infoView = WorkflowActionInfoView.fromEntity(action);
-        if(workflowName.equalsIgnoreCase("TeamRegistration")) {
-            Optional<TeamRegistration> registration = registrationRepository.findById(action.getWorkflowItemId());
-            if(action.getSourceState().getStateKey().equalsIgnoreCase("TEAM_REGISTRATION")) {
-                registration.ifPresent(r -> infoView.setEditActionMessage(r.getLikedCarNumbers()));
-            }
-            registration.ifPresent(r -> {
-                        String carQualifier = StringUtils.isEmpty(r.getCarQualifier()) ? "" : (" " + r.getCarQualifier());
-                        infoView.setTeamName(
-                                StringUtils.isEmpty(r.getAssignedCarNumber())
-                                        ? r.getTeamName()+ carQualifier
-                                        : "#" + r.getAssignedCarNumber() + " " + r.getTeamName() + carQualifier);
-                        infoView.setExecutableByUser(registration.get().getCreatedBy().getId() == currentPerson.getId());
-                    }
-            );
+        Optional<TeamRegistration> registration = registrationRepository.findById(action.getWorkflowItemId());
+        if(action.getSourceState().getStateKey().equalsIgnoreCase("TEAM_REGISTRATION")) {
+            registration.ifPresent(r -> infoView.setEditActionMessage(r.getLikedCarNumbers()));
         }
+        registration.ifPresent(r -> {
+                    String carQualifier = StringUtils.isEmpty(r.getCarQualifier()) ? "" : (" " + r.getCarQualifier());
+                    infoView.setTeamName(
+                            StringUtils.isEmpty(r.getAssignedCarNumber())
+                                    ? r.getTeamName()+ carQualifier
+                                    : "#" + r.getAssignedCarNumber() + " " + r.getTeamName() + carQualifier);
+                    infoView.setExecutableByUser(registration.get().getCreatedBy().getId() == currentPerson.getId());
+                }
+        );
         List<WorkflowStateInfoView> statesForPerson = infoView.getTargetStates().stream()
                 .filter(state -> state.getDutyRoles().contains(currentPerson.getRole().toString()))
                 .collect(Collectors.toList());

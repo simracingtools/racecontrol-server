@@ -104,8 +104,8 @@
                                                     <input id="filterCompletedCheck" class="form-check-input" type="checkbox" onchange="hideCompletedTasks();"/>
                                                     <span class="slider round"></span>
                                                 </label>
-                                                <label class="form-check-label" for="filterCompletedCheck" style="vertical-align: text-bottom;">Only active</label>
-                                            </div>
+                                                <label class="form-check-label d-inline" for="filterCompletedCheck" style="vertical-align: text-bottom;">Only active</label>
+                                                <button th:if="${user.getRacecontrol()}" class="btn btn-primary d-inline" type="button" style="padding: 1px 2px;font-size: 14px;margin-left: 1em;" data-target="#request-paint-modal" data-toggle="modal">Request Paints</button>                                            </div>
                                         </div>
                                         <table class="table" style="font-size: 14px;">
                                             <thead>
@@ -123,6 +123,7 @@
                                                         <input type="hidden" th:value="${action.id}" id="id">
                                                         <input type="hidden" th:value="${action.editActionMessage}" id="editActionMessage">
                                                         <input type="hidden" th:value="${action.workflowItemId}" id="workflowItemId">
+                                                        <input type="hidden" th:value="${action.workflowName}" id="workflowName">
                                                         <span th:text="${action.sourceState.description}">Team Registration</span>
                                                         <div>
                                                             <span th:text="${action.teamName}">PCF Racing Red</span>
@@ -498,6 +499,7 @@
         </div>
 
         <div th:replace="action-modals.html :: staff-modal('Add team member', '/team-save-member', ${editStaffView})"></div>
+
         <div class="modal fade" role="dialog" tabindex="-1" id="team-upload-modal" >
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -515,6 +517,34 @@
                         <div class="modal-footer">
                             <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
                             <button class="btn btn-primary" type="submit">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="request-paint-modal" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/request-paints}" th:object="${requestPaintsView}">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Request paint</h4>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" th:field="*{eventId}">
+                            <div class="form-group">
+                                <label>Confirmed teams</label>
+                                <select class="form-control" multiple style="height: 15em;" th:field="*{selectedTeamIds}">
+                                    <option th:each="team: ${requestPaintsView.getConfirmedTeams()}" th:value="${team.id}" th:text="${team.getFullTeamNameWithNumber()}">This is item 1</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Request paint</button>
                         </div>
                     </form>
                 </div>

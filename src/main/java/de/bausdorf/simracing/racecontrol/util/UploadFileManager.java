@@ -54,6 +54,13 @@ public class UploadFileManager {
         return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + multipartFile.getOriginalFilename();
     }
 
+    public String uploadEventFile(@NonNull MultipartFile multipartFile, @NonNull String eventId, @NonNull FileTypeEnum type, @NonNull String targetFileName) throws IOException {
+        Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
+                + EVENT_SUBDIR + eventId + '/' + type.getDestination());
+        saveFile(fileDestinationDir, multipartFile, targetFileName);
+        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + targetFileName;
+    }
+
     public String uploadUserFile(@NonNull MultipartFile multipartFile, @NonNull String userId, @NonNull FileTypeEnum type) throws IOException {
         Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
                 + USER_SUBDIR + userId + '/' + type.getDestination());
