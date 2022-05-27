@@ -81,7 +81,7 @@ public class SubmitPaintAction extends WorkflowAction {
                 throw new ActionException(e.getMessage(), e);
             }
 
-            if(editView.getPaintSpecMap().getOriginalFilename() != null && !editView.getPaintSpecMap().getOriginalFilename().isEmpty()) {
+            if(!editView.getPaintSpecMap().isEmpty()) {
                 try {
                     DocumentMetadata metadata = createDocumentData(registration, actor, editView.getPaintSpecMap(), SPEC_PREFIX,".mip");
                     String uri = fileManager.uploadEventFile(editView.getPaintSpecMap(), editView.getEventId().toString(), FileTypeEnum.PAINT,
