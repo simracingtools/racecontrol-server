@@ -66,7 +66,7 @@ public class PaintDeclineAction extends WorkflowAction {
             } catch (IOException e) {
                 throw new ActionException(e.getMessage(), e);
             }
-            getEventOrganizer().saveRegistration(updateCurrentAction(editView, currentAction, actor));
+            getEventOrganizer().updateCurrentAction(currentAction, actor, editView);
             getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
         } else {
             throw new ActionException("Current action not found");

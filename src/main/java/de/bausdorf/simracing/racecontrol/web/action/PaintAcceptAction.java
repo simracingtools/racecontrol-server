@@ -22,15 +22,27 @@ package de.bausdorf.simracing.racecontrol.web.action;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.model.Person;
 import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
+import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowActionEditView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("PAINT_ACCEPTED")
-public class PaintAcceptAction extends SimpleAction {
+public class PaintAcceptAction extends WorkflowAction {
 
     public PaintAcceptAction(@Autowired EventOrganizer eventOrganizer) {
         super(eventOrganizer);
     }
 
+    @Override
+    public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
+        de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
+        if(currentAction != null) {
+            getEventOrganizer().updateCurrentAction(currentAction, actor, editView);
+            getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
+        } else {
+            throw new ActionException("Current action not found");
+        }
+    }
 }

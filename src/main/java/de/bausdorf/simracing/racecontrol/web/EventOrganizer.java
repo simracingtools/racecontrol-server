@@ -275,7 +275,15 @@ public class EventOrganizer {
     public List<TeamRegistrationView> getConfirmedRegistrationsWithoutPaintRequest(long eventId) {
         return getActiveTeamRegistrations(eventId).stream()
                 .filter(r -> r.getWorkflowState().getStateKey().equalsIgnoreCase("PAYMENT_RECEIPT"))
-                .filter(r -> actionRepository.findAllByEventIdAndWorkflowItemIdAndWorkflowName(eventId, r.getId(), PAINT_COLLECTION).isEmpty())
+                .filter(r -> {
+                    List<WorkflowAction> actions = actionRepository.findAllByEventIdAndWorkflowItemIdAndWorkflowName(eventId, r.getId(), PAINT_COLLECTION);
+                    return actions.isEmpty() || actions.stream().anyMatch(a -> {
+                        if(a.getTargetState() != null) {
+                            return "PAINT_DECLINED".equalsIgnoreCase(a.getTargetState().getStateKey());
+                        }
+                        return false;
+                    });
+                })
                 .map(TeamRegistrationView::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -371,7 +379,7 @@ public class EventOrganizer {
         return actionRepository.save(currentAction);
     }
 
-    public WorkflowAction createFollowUpAction(WorkflowAction currentAction, Person actor, LocalDateTime dueDate) {
+    public void createFollowUpAction(WorkflowAction currentAction, Person actor, LocalDateTime dueDate) {
         WorkflowAction followUp = WorkflowAction.builder()
                 .eventId(currentAction.getEventId())
                 .workflowName(currentAction.getTargetState().getWorkflowName())
@@ -381,7 +389,7 @@ public class EventOrganizer {
                 .sourceState(currentAction.getTargetState())
                 .dueDate(dueDate != null ? OffsetDateTime.of(dueDate, ZoneOffset.UTC) : null)
                 .build();
-        return actionRepository.save(followUp);
+        actionRepository.save(followUp);
     }
 
     public EventSeries getEventSeries(long eventId) {
