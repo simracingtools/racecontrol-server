@@ -22,15 +22,54 @@ package de.bausdorf.simracing.racecontrol.web.action;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.model.DocumentMetadata;
+import de.bausdorf.simracing.racecontrol.orga.model.DocumentMetadataRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.Person;
+import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
+import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
+import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowActionEditView;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component("PAINT_DECLINED")
-public class PaintDeclineAction extends SimpleAction {
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.List;
 
-    public PaintDeclineAction(@Autowired EventOrganizer eventOrganizer) {
+@Component("PAINT_DECLINED")
+@Slf4j
+public class PaintDeclineAction extends WorkflowAction {
+
+    private final UploadFileManager fileManager;
+    private final DocumentMetadataRepository documentRepository;
+    public PaintDeclineAction(@Autowired EventOrganizer eventOrganizer,
+                              @Autowired UploadFileManager uploadFileManager,
+                              @Autowired DocumentMetadataRepository documentRepository) {
         super(eventOrganizer);
+        this.fileManager = uploadFileManager;
+        this.documentRepository = documentRepository;
     }
 
+    @Override
+    @Transactional
+    public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
+        de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
+        if(currentAction != null) {
+            List<DocumentMetadata> documents = documentRepository.deleteAllByEventIdAndDocumentTypeAndRefItemId(
+                    editView.getEventId(), FileTypeEnum.PAINT, editView.getWorkflowItemId()
+            );
+            try {
+                for(DocumentMetadata doc : documents) {
+                    fileManager.deleteEventFile(doc.getEventId(), doc.getDocumentType(), doc.getFileName());
+                }
+            } catch (IOException e) {
+                throw new ActionException(e.getMessage(), e);
+            }
+            getEventOrganizer().saveRegistration(updateCurrentAction(editView, currentAction, actor));
+            getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
+        } else {
+            throw new ActionException("Current action not found");
+        }
+    }
 }

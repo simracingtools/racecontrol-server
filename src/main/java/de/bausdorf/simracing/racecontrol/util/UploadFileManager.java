@@ -61,6 +61,16 @@ public class UploadFileManager {
         return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + targetFileName;
     }
 
+    public void deleteEventFile(@NonNull long eventId, @NonNull FileTypeEnum type, @NonNull String targetFileName) throws IOException {
+        Path fileLocation = Paths.get(config.getFileUploadBasePath()
+                + EVENT_SUBDIR + eventId + '/' + type.getDestination() + '/' + targetFileName);
+        if(fileLocation.toFile().exists()) {
+            Files.delete(fileLocation);
+            log.info("File {} deleted", fileLocation);
+        }
+        log.warn("File {} to be deleted did not exist", fileLocation);
+    }
+
     public String uploadUserFile(@NonNull MultipartFile multipartFile, @NonNull String userId, @NonNull FileTypeEnum type) throws IOException {
         Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
                 + USER_SUBDIR + userId + '/' + type.getDestination());
