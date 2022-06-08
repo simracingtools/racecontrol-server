@@ -23,7 +23,8 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
-import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
+import de.bausdorf.simracing.irdataapi.model.TeamInfoDto;
+import de.bausdorf.simracing.irdataapi.model.TeamMemberDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
@@ -108,16 +109,16 @@ public class RestDataController {
 
     @GetMapping("/teamInfo/{teamId}")
     public TeamInfo checkTeamName(@PathVariable Long teamId) {
-        List<TeamMemberDto> members = dataClient.getTeamMembers(teamId);
-        if(members.isEmpty()) {
+        Optional<TeamInfoDto> teamInfo = dataClient.getTeamMembers(teamId);
+        if(teamInfo.isEmpty()) {
             return TeamInfo.builder()
                     .teamName("")
                     .teamId(0L)
                     .build();
         }
         return TeamInfo.builder()
-                .teamName(members.get(0).getTeamName())
-                .teamId(members.get(0).getTeamId())
+                .teamName(teamInfo.get().getTeamName())
+                .teamId(teamInfo.get().getTeamId())
                 .build();
     }
 
@@ -161,7 +162,11 @@ public class RestDataController {
                                                  @RequestParam(value = "q", required = false) String query,
                                                  @RequestParam(value = "league", required = false) long leagueId) {
         LeagueInfoDto leagueInfo = leagueDataCache.getLeagueInfo(leagueId);
-        return dataClient.getTeamMembers(teamId).stream()
+        Optional<TeamInfoDto> teamInfo = dataClient.getTeamMembers(teamId);
+        if(teamInfo.isEmpty()) {
+            return List.of();
+        }
+        return Arrays.stream(teamInfo.get().getRoster())
                 .filter(member -> member.getDisplayName().contains(StringUtils.isEmpty(query) ? "" : query))
                 .map(member -> {
                     String memberNameWithoutMiddleInitial = EventOrganizer.memberNameWithoutMiddleInitial(member.getDisplayName());

@@ -25,7 +25,8 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.irdataapi.model.CarAssetDto;
 import de.bausdorf.simracing.irdataapi.model.CarInfoDto;
 import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
-import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
+import de.bausdorf.simracing.irdataapi.model.TeamInfoDto;
+import de.bausdorf.simracing.irdataapi.model.TeamMemberDto;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
@@ -205,15 +206,16 @@ public class EventOrganizer {
     }
 
     public List<TeamMemberDto> getTeamMembers(long iracingTeamId) {
-        return dataClient.getTeamMembers(iracingTeamId);
+        return dataClient.getTeamMembers(iracingTeamId)
+                .map(teamInfoDto -> Arrays.asList(teamInfoDto.getRoster())).orElseGet(List::of);
     }
 
     public String getTeamName(long iracingTeamId) {
-        List<TeamMemberDto> members = getTeamMembers(iracingTeamId);
-        if(members.isEmpty()) {
+        Optional<TeamInfoDto> team = dataClient.getTeamMembers(iracingTeamId);
+        if(team.isEmpty()) {
             return null;
         }
-        return members.get(0).getTeamName();
+        return team.get().getTeamName();
     }
 
     public List<TeamRegistration> checkUniqueTeamDriver(@Nullable Person person) {

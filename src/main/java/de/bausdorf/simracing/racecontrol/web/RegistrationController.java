@@ -22,7 +22,7 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
-import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
+import de.bausdorf.simracing.irdataapi.model.TeamMemberDto;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
@@ -229,19 +229,18 @@ public class RegistrationController extends ControllerBase {
     }
 
     private String checkTeamIdAndName(long irTeamId, @NonNull String teamName, @Nullable String carQualifier, RcUser currentUser) {
-        List<TeamMemberDto> members = eventOrganizer.getTeamMembers(irTeamId);
-        if(members.isEmpty()) {
+        String irTeamName = eventOrganizer.getTeamName(irTeamId);
+        if(irTeamName == null) {
             return "Team id " + irTeamId + " not found on iRacing service.";
         }
 
-        String irTeamName = members.get(0).getTeamName();
         String fullTeamName = teamName + (carQualifier != null ? " " + carQualifier : "");
         if(!irTeamName.equalsIgnoreCase(fullTeamName)) {
             return "Team name " + fullTeamName + " does not match iRacing team name " + irTeamName;
         }
 
         String[] nameParts = currentUser.getName().split(" ");
-        Optional<TeamMemberDto> member = members.stream()
+        Optional<TeamMemberDto> member = eventOrganizer.getTeamMembers(irTeamId).stream()
                 .filter(m -> Arrays.stream(nameParts)
                             .allMatch(s -> m.getDisplayName().toLowerCase().contains(s.toLowerCase()))
                 )

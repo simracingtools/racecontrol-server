@@ -33,11 +33,7 @@ import de.bausdorf.simracing.irdataapi.client.DataApiException;
 import de.bausdorf.simracing.irdataapi.client.IrDataClient;
 import de.bausdorf.simracing.irdataapi.client.impl.IrDataClientImpl;
 import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
-import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
-import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
-import de.bausdorf.simracing.irdataapi.model.MemberInfoDto;
-import de.bausdorf.simracing.irdataapi.model.MembersInfoDto;
-import de.bausdorf.simracing.irdataapi.model.web.TeamMemberDto;
+import de.bausdorf.simracing.irdataapi.model.*;
 import de.bausdorf.simracing.irdataapi.tools.StockDataCache;
 import de.bausdorf.simracing.racecontrol.web.model.TrackConfigurationView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,17 +109,16 @@ public class IRacingClient {
 		return null;
 	}
 
-	public List<TeamMemberDto> getTeamMembers(long teamId) {
+	public Optional<TeamInfoDto> getTeamMembers(long teamId) {
 		try {
 			authenticate();
-			TeamMemberDto[] teamMembers = dataClient.getTeamMembers(teamId);
-			return Arrays.asList(teamMembers);
+			return Optional.of(dataClient.getTeamMembers(teamId));
 		} catch(HttpClientErrorException clientError) {
 			log.warn("iRacing http error {}: {}",clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
-		return List.of();
+		return Optional.empty();
 	}
 
 	private void authenticate() {
