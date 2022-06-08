@@ -56,6 +56,16 @@ public class RestDataController {
         this.leagueDataCache = leagueDataCache;
     }
 
+    @GetMapping("/data/renew")
+    public String renewStockData() {
+        try {
+            dataClient.renewStockDataCache();
+            return "OK";
+        } catch(Exception e) {
+            return e.getMessage();
+        }
+    }
+
     @GetMapping("/leagueInfo/{leagueId}")
     public LeagueInfoView checkLeagueInfo(@PathVariable Long leagueId) {
         LeagueInfoDto infoDto = dataClient.getLeagueInfo(leagueId);

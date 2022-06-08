@@ -70,6 +70,12 @@ public class IRacingClient {
 		return dataCache;
 	}
 
+	public void renewStockDataCache() {
+		authenticate();
+		dataCache.fetchFromService(dataClient);
+		log.info("Stock data cache renewed");
+	}
+
 	public Optional<MemberInfo> getMemberInfo(Long ircacingId) {
 		return getMemberInfo(List.of(ircacingId)).stream().findFirst();
 	}
