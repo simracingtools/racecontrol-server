@@ -54,6 +54,7 @@ public class IRacingClient {
 	public IRacingClient(@Autowired ConfigProperties serverProperties) {
 		this.serverProperties = serverProperties;
 		this.dataClient = new IrDataClientImpl();
+		this.dataClient.setHashPassword(serverProperties.getHashPassword());
 		this.dataCache = new StockDataCache(serverProperties.getCacheDirectory());
 		TrackConfigurationView.setTrackInfos(dataCache.getTracks());
 	}
