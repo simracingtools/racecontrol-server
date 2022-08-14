@@ -24,7 +24,6 @@ package de.bausdorf.simracing.racecontrol.web.model;
 
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,6 +68,9 @@ public class UserProfileView {
 	}
 
 	public String getInitials() {
+		if(name == null) {
+			return "--";
+		}
 		String[] nameParts = name.split(" ");
 		StringBuilder initials = new StringBuilder();
 		for (String namePart : nameParts) {
