@@ -22,10 +22,19 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import java.io.IOException;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
+import de.bausdorf.simracing.racecontrol.util.LocaleTools;
+import de.bausdorf.simracing.racecontrol.util.LocaleView;
+import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
+import de.bausdorf.simracing.racecontrol.web.model.TimezoneView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -43,6 +52,7 @@ import de.bausdorf.simracing.racecontrol.web.model.UserSearchView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @Slf4j
@@ -54,9 +64,12 @@ public class UserAdminController extends ControllerBase {
 	public static final String ADMIN_VIEW = "useradmin";
 
 	private final IRacingClient iRacingClient;
+	private final UploadFileManager uploadFileManager;
 
-	public UserAdminController(@Autowired IRacingClient iRacingClient) {
+	public UserAdminController(@Autowired IRacingClient iRacingClient,
+							   @Autowired UploadFileManager uploadFileManager) {
 		this.iRacingClient = iRacingClient;
+		this.uploadFileManager = uploadFileManager;
 	}
 
 	@GetMapping("/useradmin")
@@ -100,11 +113,20 @@ public class UserAdminController extends ControllerBase {
 
 	@GetMapping("/profile")
 	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD", "ROLE_STAFF", "ROLE_REGISTERED_USER", "ROLE_NEW"})
-	public String getUserProfile(@RequestParam Optional<String> userId, Model model) {
+	public String getUserProfile(@RequestParam Optional<String> messages, Model model) {
+		messages.ifPresent(s -> decodeMessagesToModel(s, model));
 		this.activeNav = "userProfile";
 		RcUser user = currentUser();
 		if(user.getIRacingId() == 0) {
 			addWarning("Please provide your iRacing Id !", model);
+		} else {
+			Optional<MemberInfo> idSearch = iRacingClient.getMemberInfo(user.getIRacingId());
+			if(idSearch.isEmpty()) {
+				addWarning("iRacing ID " + user.getIRacingId() + " is unknown in iRacing", model);
+			}
+		}
+		if(user.getTimezone() == null) {
+			addWarning("Timezone was chosen from your browsers location. You can change it to your preferred timezone and click 'Save'!", model);
 		}
 		model.addAttribute("profileView", new UserProfileView(user));
 		return PROFILE_VIEW;
@@ -115,19 +137,29 @@ public class UserAdminController extends ControllerBase {
 	@Transactional
 	public String saveUserProfile(@ModelAttribute UserProfileView profileView, Model model) {
 		RcUser currentUser = currentUser();
-		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()) {
-			List<MemberInfo> idSearch = iRacingClient.searchMembers(Long.toString(profileView.getIRacingId()));
+		if(currentUser.getIRacingId() == 0 || profileView.getIRacingId() != currentUser.getIRacingId()
+				|| currentUser.getName() == null || currentUser.getName().isEmpty()) {
+			Optional<MemberInfo> idSearch = iRacingClient.getMemberInfo(profileView.getIRacingId());
 			if(idSearch.isEmpty()) {
-				log.warn("No iRacing user with id {} found", profileView.getIRacingId());
+				log.warn("{}: No iRacing user with id {} found", currentUser.getName(), profileView.getIRacingId());
+				profileView.setIRacingId(currentUser.getIRacingId());
+				addError("iRacing ID " + profileView.getIRacingId() + " not present in iRacing service.", model);
 			} else {
-				MemberInfo identifiedMember = idSearch.stream()
-						.filter(s -> s.getCustid() == profileView.getIRacingId()).findFirst().orElse(null);
-				profileView.setIRacingName(identifiedMember != null ? identifiedMember.getName() : profileView.getIRacingName());
+				Optional<RcUser> userForChangedId = userRepository.findByiRacingId(profileView.getIRacingId());
+				if(userForChangedId.isPresent() && !userForChangedId.get().getOauthId().equals(currentUser.getOauthId())) {
+					addError("A user for iRacingID " + profileView.getIRacingId() + " is already registered", model);
+					profileView.setIRacingId(currentUser.getIRacingId());
+				} else {
+					profileView.setName(idSearch.get().getName());
+					if (currentUser.getUserType() == RcUserType.NEW) {
+						profileView.setUserType(RcUserType.REGISTERED_USER.toString());
+					}
+				}
 			}
 		}
 		RcUser userToSave = profileView.apply(currentUser);
 		userRepository.save(userToSave);
-		return "redirect:/profile";
+		return redirectBuilder(PROFILE_VIEW).build(model);
 	}
 
 	@GetMapping("/deletesiteuser")
@@ -142,6 +174,20 @@ public class UserAdminController extends ControllerBase {
 			}
 		}
 		return searchUsers(searchView, model);
+	}
+
+	@PostMapping("/profile-image-upload")
+	public String uploadProfileImage(@RequestParam("file") MultipartFile multipartFile, Model model) {
+		RcUser user = currentUser();
+		try {
+			String logoUrl = uploadFileManager.uploadUserFile(multipartFile, Long.toString(user.getIRacingId()), FileTypeEnum.LOGO);
+			user.setImageUrl(logoUrl);
+			userRepository.save(user);
+		} catch (IOException e) {
+			log.error(e.getMessage(), e);
+			addError(e.getMessage(), model);
+		}
+		return redirectBuilder(PROFILE_VIEW).build(model);
 	}
 
 	@ModelAttribute("userTypes")
@@ -169,5 +215,19 @@ public class UserAdminController extends ControllerBase {
 			userRepository.save(existingUser.get());
 		}
 		return existingUser.orElse(null);
+	}
+
+	@ModelAttribute("timezones")
+	List<TimezoneView> availableZoneIds() {
+		return ZoneId.getAvailableZoneIds().stream()
+				.filter(s -> s.chars().noneMatch(Character::isLowerCase))
+				.map(s -> TimezoneView.fromZoneId(ZoneId.of(s)))
+				.sorted(Comparator.comparing(TimezoneView::getUtcOffset))
+				.collect(Collectors.toList());
+	}
+
+	@ModelAttribute("countries")
+	List<LocaleView> availableCountries() {
+		return LocaleTools.getLocaleViews();
 	}
 }

@@ -1,0 +1,1906 @@
+[
+    {
+        "carID": 24,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=24",
+        "name": "ARCA Menards Chevrolet Impala",
+        "desc": "ARCA Menards Chevrolet Impala",
+        "model": "Impala SS",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3300,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 64,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=64",
+        "name": "Aston Martin DBR9 GT1",
+        "desc": "Aston Martin DBR9 GT1",
+        "model": "GT1",
+        "make": "Aston Martin",
+        "price": 11.95,
+        "hp": 600,
+        "weight": 2579,
+        "w2pRatio": 4.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 76,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=76",
+        "name": "Audi 90 GTO",
+        "desc": "Audi 90 GTO",
+        "model": "90 GTO",
+        "make": "Audi",
+        "price": 11.95,
+        "hp": 710,
+        "weight": 2659,
+        "w2pRatio": 3.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 98,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=98",
+        "name": "Audi R18",
+        "desc": "Audi R18",
+        "model": "R18",
+        "make": "Audi",
+        "price": 11.95,
+        "hp": 503,
+        "weight": 1929,
+        "w2pRatio": 3.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 73,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=73",
+        "name": "Audi R8 LMS",
+        "desc": "Audi R8 LMS",
+        "model": "R8 GT3",
+        "make": "Audi",
+        "price": 11.95,
+        "hp": 576,
+        "weight": 2799,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 112,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=112",
+        "name": "Audi RS 3 LMS",
+        "desc": "Audi RS 3 LMS",
+        "model": "RS 3 LMS",
+        "make": "Audi",
+        "price": 11.95,
+        "hp": 350,
+        "weight": 2673,
+        "w2pRatio": 7.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 132,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=132",
+        "name": "BMW M4 GT3",
+        "desc": "BMW M4 GT3",
+        "model": "M4 GT3",
+        "make": "BMW",
+        "price": 11.95,
+        "hp": 500,
+        "weight": 3013,
+        "w2pRatio": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 122,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=122",
+        "name": "BMW M4 GT4",
+        "desc": "BMW M4 GT4",
+        "model": "M4 GT4",
+        "make": "BMW",
+        "price": 11.95,
+        "hp": 431,
+        "weight": 3153,
+        "w2pRatio": 7.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 109,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=109",
+        "name": "BMW M8 GTE",
+        "desc": "BMW M8 GTE",
+        "model": "M8 GTE",
+        "make": "BMW",
+        "price": 11.95,
+        "hp": 560,
+        "weight": 2640,
+        "w2pRatio": 4.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 41,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=41",
+        "name": "Cadillac CTS-V Racecar",
+        "desc": "Cadillac CTS-V Racecar",
+        "model": "CTS-VR",
+        "make": "Cadillac",
+        "price": 0,
+        "hp": 460,
+        "weight": 3200,
+        "w2pRatio": 6.9,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 26,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=26",
+        "name": "Chevrolet Corvette C6.R GT1",
+        "desc": "Chevrolet Corvette C6.R GT1",
+        "model": "C6R",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 500,
+        "weight": 2275,
+        "w2pRatio": 4.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 70,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=70",
+        "name": "Chevrolet Corvette C7 Daytona Prototype",
+        "desc": "Chevrolet Corvette C7 Daytona Prototype",
+        "model": "C7 DP",
+        "make": "Chevrolet",
+        "price": 2.95,
+        "hp": 600,
+        "weight": 2290,
+        "w2pRatio": 3.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 127,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=127",
+        "name": "Chevrolet Corvette C8.R GTE",
+        "desc": "Chevrolet Corvette C8.R GTE",
+        "model": "C8.R",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 550,
+        "weight": 2750,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 12,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=12",
+        "name": "Chevrolet Monte Carlo SS",
+        "desc": "Chevrolet Monte Carlo SS",
+        "model": "",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 370,
+        "weight": 3100,
+        "w2pRatio": 8.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 106,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=106",
+        "name": "Dallara F3",
+        "desc": "Dallara F3",
+        "model": "F317",
+        "make": "Dallara",
+        "price": 11.95,
+        "hp": 220,
+        "weight": 1213,
+        "w2pRatio": 5.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 129,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=129",
+        "name": "Dallara iR-01",
+        "desc": "Dallara iR-01",
+        "model": "iR-01",
+        "make": "Dallara",
+        "price": 11.95,
+        "hp": 900,
+        "weight": 1575,
+        "w2pRatio": 1.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 99,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=99",
+        "name": "Dallara IR18",
+        "desc": "Dallara IR18",
+        "model": "IR18",
+        "make": "Dallara",
+        "price": 11.95,
+        "hp": 700,
+        "weight": 1590,
+        "w2pRatio": 2.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 128,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=128",
+        "name": "Dallara P217",
+        "desc": "Dallara P217",
+        "model": "P217",
+        "make": "Dallara",
+        "price": 11.95,
+        "hp": 600,
+        "weight": 2360,
+        "w2pRatio": 3.9,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 134,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=134",
+        "name": "Dirt 358 Modified",
+        "desc": "Dirt Big Block Modified",
+        "model": "358 Modified",
+        "make": "",
+        "price": 11.95,
+        "hp": 510,
+        "weight": 2551,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 131,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=131",
+        "name": "Dirt Big Block Modified",
+        "desc": "Dirt Big Block Modified",
+        "model": "Big Block Modified",
+        "make": "",
+        "price": 11.95,
+        "hp": 757,
+        "weight": 2646,
+        "w2pRatio": 3.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 78,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=78",
+        "name": "Dirt Late Model - Limited",
+        "desc": "Dirt Late Model",
+        "model": "350",
+        "make": "Dirt Late Model",
+        "price": 11.95,
+        "hp": 400,
+        "weight": 2250,
+        "w2pRatio": 5.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 83,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=83",
+        "name": "Dirt Late Model - Pro",
+        "desc": "Dirt Late Model",
+        "model": "358",
+        "make": "Dirt Late Model",
+        "price": 11.95,
+        "hp": 700,
+        "weight": 2250,
+        "w2pRatio": 3.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 84,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=84",
+        "name": "Dirt Late Model - Super",
+        "desc": "Dirt Late Model",
+        "model": "438",
+        "make": "Dirt Late Model",
+        "price": 11.95,
+        "hp": 850,
+        "weight": 2250,
+        "w2pRatio": 2.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 82,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=82",
+        "name": "Dirt Legends Ford '34 Coupe",
+        "desc": "Legends",
+        "model": "Dirt",
+        "make": "Legends",
+        "price": 0,
+        "hp": 125,
+        "weight": 1300,
+        "w2pRatio": 10.4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 96,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=96",
+        "name": "Dirt Midget",
+        "desc": "Dirt Midget",
+        "model": "Dirt Midget",
+        "make": "Dirt Midget",
+        "price": 11.95,
+        "hp": 400,
+        "weight": 1035,
+        "w2pRatio": 2.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 80,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=80",
+        "name": "Dirt Sprint Car - 305",
+        "desc": "Dirt Sprint Car",
+        "model": "305",
+        "make": "Dirt Sprint Car",
+        "price": 11.95,
+        "hp": 458,
+        "weight": 1550,
+        "w2pRatio": 3.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 85,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=85",
+        "name": "Dirt Sprint Car - 360",
+        "desc": "Dirt Sprint Car",
+        "model": "360",
+        "make": "Dirt Sprint Car",
+        "price": 11.95,
+        "hp": 720,
+        "weight": 1500,
+        "w2pRatio": 2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 87,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=87",
+        "name": "Dirt Sprint Car - 360 Non-Winged",
+        "desc": "Dirt Sprint Car - Non-Winged",
+        "model": "360 Non-Winged",
+        "make": "Dirt Sprint Car",
+        "price": 11.95,
+        "hp": 720,
+        "weight": 1375,
+        "w2pRatio": 1.9,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 86,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=86",
+        "name": "Dirt Sprint Car - 410",
+        "desc": "Dirt Sprint Car",
+        "model": "410",
+        "make": "Dirt Sprint Car",
+        "price": 11.95,
+        "hp": 892,
+        "weight": 1400,
+        "w2pRatio": 1.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 89,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=89",
+        "name": "Dirt Sprint Car - 410 Non-Winged",
+        "desc": "Dirt Sprint Car - Non-Winged",
+        "model": "410 Non-Winged",
+        "make": "Dirt Sprint Car",
+        "price": 11.95,
+        "hp": 821,
+        "weight": 1475,
+        "w2pRatio": 1.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 79,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=79",
+        "name": "Dirt Street Stock",
+        "desc": "Dirt Street Stock",
+        "model": "",
+        "make": "",
+        "price": 0,
+        "hp": 425,
+        "weight": 3075,
+        "w2pRatio": 7.2,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 95,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=95",
+        "name": "Dirt UMP Modified",
+        "desc": "Dirt UMP Modified",
+        "model": "UMP Modified",
+        "make": "Dirt UMP Modified",
+        "price": 0,
+        "hp": 750,
+        "weight": 2400,
+        "w2pRatio": 3.2,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 94,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=94",
+        "name": "Ferrari 488 GT3",
+        "desc": "Ferrari 488 GT3",
+        "model": "488 GT3",
+        "make": "Ferrari",
+        "price": 11.95,
+        "hp": 560,
+        "weight": 2803.8,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 93,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=93",
+        "name": "Ferrari 488 GTE",
+        "desc": "Ferrari 488 GTE",
+        "model": "488 GTE",
+        "make": "Ferrari",
+        "price": 11.95,
+        "hp": 490,
+        "weight": 2778,
+        "w2pRatio": 5.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 81,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=81",
+        "name": "Ford Fiesta RS WRC",
+        "desc": "Ford Fiesta RS WRC",
+        "model": "Fiesta",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 600,
+        "weight": 3000,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 40,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=40",
+        "name": "Ford GT GT2/GT3",
+        "desc": "Ford GT GT2/GT3",
+        "model": "GT",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 500,
+        "weight": 2727,
+        "w2pRatio": 5.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 59,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=59",
+        "name": "Ford GT GT3",
+        "desc": "Ford GT GT2/GT3",
+        "model": "GT",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 475,
+        "weight": 2624,
+        "w2pRatio": 5.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 92,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=92",
+        "name": "Ford GTE",
+        "desc": "Ford GTE",
+        "model": "GT",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 530,
+        "weight": 2745,
+        "w2pRatio": 5.1,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 30,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=30",
+        "name": "Ford Mustang FR500S",
+        "desc": "Ford Mustang FR500S",
+        "model": "FR500S",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 325,
+        "weight": 3600,
+        "w2pRatio": 11,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 74,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=74",
+        "name": "Formula Renault 2.0",
+        "desc": "Formula Renault 2.0",
+        "model": "Formula 2.0",
+        "make": "Renault",
+        "price": 11.95,
+        "hp": 210,
+        "weight": 1115.5,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 105,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=105",
+        "name": "Formula Renault 3.5",
+        "desc": "Formula Renault 3.5",
+        "model": "Formula 3.5",
+        "make": "Renault",
+        "price": 11.95,
+        "hp": 530,
+        "weight": 1567,
+        "w2pRatio": 2.9,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 142,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=142",
+        "name": "Formula Vee",
+        "desc": "Formula Vee",
+        "model": "Formula Vee",
+        "make": "Formula Vee",
+        "price": 0,
+        "hp": 69,
+        "weight": 825,
+        "w2pRatio": 11.9,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 67,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=67",
+        "name": "Global Mazda MX-5 Cup",
+        "desc": "Global Mazda MX-5 Cup",
+        "model": "MX-5",
+        "make": "Mazda",
+        "price": 0,
+        "hp": 181,
+        "weight": 1967,
+        "w2pRatio": 10.8,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 39,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=39",
+        "name": "HPD ARX-01c",
+        "desc": "HPD ARX-01c",
+        "model": "ARX-01C",
+        "make": "HPD",
+        "price": 2.95,
+        "hp": 480,
+        "weight": 1819,
+        "w2pRatio": 3.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 120,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=120",
+        "name": "Indy Pro 2000 PM-18",
+        "desc": "Indy Pro 2000 PM-18",
+        "model": "PM-18",
+        "make": "Indy Pro 2000",
+        "price": 11.95,
+        "hp": 275,
+        "weight": 1100,
+        "w2pRatio": 4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 44,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=44",
+        "name": "Kia Optima",
+        "desc": "Kia Optima",
+        "model": "Optima",
+        "make": "Kia",
+        "price": 0,
+        "hp": 375,
+        "weight": 3000,
+        "w2pRatio": 8,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 133,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=133",
+        "name": "Lamborghini Huracán GT3 EVO",
+        "desc": "Lamborghini Huracán GT3 EVO",
+        "model": "Huracán GT3 EVO",
+        "make": "Lamborghini",
+        "price": 11.95,
+        "hp": 500,
+        "weight": 3013,
+        "w2pRatio": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 5,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=5",
+        "name": "Legends Ford '34 Coupe",
+        "desc": "Legends",
+        "model": "Advanced",
+        "make": "Legends",
+        "price": 0,
+        "hp": 125,
+        "weight": 1300,
+        "w2pRatio": 10.4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 11,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=11",
+        "name": "Legends Ford '34 Coupe - Rookie",
+        "desc": "Legends",
+        "model": "Rookie",
+        "make": "Legends",
+        "price": 0,
+        "hp": 125,
+        "weight": 1300,
+        "w2pRatio": 10.4,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 42,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=42",
+        "name": "Lotus 49",
+        "desc": "Lotus 49",
+        "model": "Lotus 49",
+        "make": "Lotus",
+        "price": 11.95,
+        "hp": 400,
+        "weight": 1200,
+        "w2pRatio": 3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 25,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=25",
+        "name": "Lotus 79",
+        "desc": "Lotus 79",
+        "model": "Lotus 79",
+        "make": "Lotus",
+        "price": 11.95,
+        "hp": 475,
+        "weight": 1268,
+        "w2pRatio": 2.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 113,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=113",
+        "name": "Lucas Oil Off Road Pro 2 Lite",
+        "desc": "Lucas Oil Off Road Pro 2 Lite Truck",
+        "model": "Pro 2 Lite",
+        "make": "",
+        "price": 0,
+        "hp": 400,
+        "weight": 4000,
+        "w2pRatio": 10,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 104,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=104",
+        "name": "Lucas Oil Off Road Pro 2 Truck",
+        "desc": "Lucas Oil Off Road Pro Trucks",
+        "model": "Pro 2",
+        "make": "",
+        "price": 11.95,
+        "hp": 800,
+        "weight": 4000,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 107,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=107",
+        "name": "Lucas Oil Off Road Pro 4 Truck",
+        "desc": "Lucas Oil Off Road Pro Trucks",
+        "model": "Pro 4",
+        "make": "",
+        "price": 11.95,
+        "hp": 800,
+        "weight": 4000,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 135,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=135",
+        "name": "McLaren 570S GT4",
+        "desc": "McLaren 570S GT4",
+        "model": "570S GT4",
+        "make": "McLaren",
+        "price": 11.95,
+        "hp": 461,
+        "weight": 1425,
+        "w2pRatio": 3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 43,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=43",
+        "name": "McLaren MP4-12C GT3",
+        "desc": "McLaren MP4-12C GT3",
+        "model": "MP4-12C",
+        "make": "McLaren",
+        "price": 11.95,
+        "hp": 550,
+        "weight": 2725,
+        "w2pRatio": 4.9,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 71,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=71",
+        "name": "McLaren MP4-30",
+        "desc": "McLaren MP4-30",
+        "model": "MP4-30",
+        "make": "McLaren",
+        "price": 11.95,
+        "hp": 700,
+        "weight": 1548,
+        "w2pRatio": 2.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 72,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=72",
+        "name": "Mercedes AMG GT3",
+        "desc": "Mercedes AMG GT3",
+        "model": "GT3",
+        "make": "Mercedes",
+        "price": 11.95,
+        "hp": 500,
+        "weight": 2932,
+        "w2pRatio": 5.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 31,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=31",
+        "name": "Modified - NASCAR Whelen Tour",
+        "desc": "NASCAR Whelen Tour Modified",
+        "model": "",
+        "make": "Tour",
+        "price": 11.95,
+        "hp": 612,
+        "weight": 2645,
+        "w2pRatio": 4.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 2,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=2",
+        "name": "Modified - SK",
+        "desc": "NASCAR Whelen Tour Modified",
+        "model": "",
+        "make": "",
+        "price": 11.95,
+        "hp": 370,
+        "weight": 2600,
+        "w2pRatio": 7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 124,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=124",
+        "name": "NASCAR Chevrolet Monte Carlo - 1987",
+        "desc": "NASCAR Chevrolet Monte Carlo - 1987",
+        "model": "Monte Carlo",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3700,
+        "w2pRatio": 5.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 103,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=103",
+        "name": "NASCAR Cup Series Chevrolet Camaro ZL1",
+        "desc": "NASCAR Cup Series Chevrolet Camaro ZL1",
+        "model": "Camaro ZL1",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 750,
+        "weight": 3200,
+        "w2pRatio": 4.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 110,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=110",
+        "name": "NASCAR Cup Series Ford Mustang",
+        "desc": "NASCAR Cup Series Ford Mustang",
+        "model": "Mustang",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 750,
+        "weight": 3300,
+        "w2pRatio": 4.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 139,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=139",
+        "name": "NASCAR Cup Series Next Gen Chevrolet Camaro ZL1",
+        "desc": "NASCAR Cup Series Next Gen Chevrolet Camaro ZL1",
+        "model": "Camaro ZL1",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 670,
+        "weight": 3500,
+        "w2pRatio": 5.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 140,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=140",
+        "name": "NASCAR Cup Series Next Gen Ford Mustang",
+        "desc": "NASCAR Cup Series Next Gen Ford Mustang",
+        "model": "Mustang",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 670,
+        "weight": 3500,
+        "w2pRatio": 5.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 141,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=141",
+        "name": "NASCAR Cup Series Next Gen Toyota Camry",
+        "desc": "NASCAR Cup Series Next Gen Toyota Camry",
+        "model": "Camry",
+        "make": "Toyota",
+        "price": 11.95,
+        "hp": 670,
+        "weight": 3500,
+        "w2pRatio": 5.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 56,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=56",
+        "name": "NASCAR Cup Series Toyota Camry",
+        "desc": "NASCAR Cup Series Toyota Camry",
+        "model": "Camry-Gen6",
+        "make": "Toyota",
+        "price": 11.95,
+        "hp": 750,
+        "weight": 3300,
+        "w2pRatio": 4.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 125,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=125",
+        "name": "NASCAR Ford Thunderbird - 1987",
+        "desc": "NASCAR Ford Thunderbird - 1987",
+        "model": "Thunderbird",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3700,
+        "w2pRatio": 5.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 111,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=111",
+        "name": "NASCAR Gander Outdoors Chevrolet Silverado",
+        "desc": "NASCAR Gander Outdoors Chevrolet Silverado",
+        "model": "Silverado",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 123,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=123",
+        "name": "NASCAR Gander Outdoors Ford F150",
+        "desc": "NASCAR Gander Outdoors Ford F150",
+        "model": "F150",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 62,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=62",
+        "name": "NASCAR Gander Outdoors Toyota Tundra",
+        "desc": "NASCAR Gander Outdoors Toyota Tundra",
+        "model": "Tundra",
+        "make": "Toyota",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3400,
+        "w2pRatio": 5.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 114,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=114",
+        "name": "NASCAR XFINITY Chevrolet Camaro",
+        "desc": "NASCAR XFINITY Chevrolet Camaro",
+        "model": "Camaro",
+        "make": "Chevrolet",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 115,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=115",
+        "name": "NASCAR XFINITY Ford Mustang",
+        "desc": "NASCAR XFINITY Ford Mustang",
+        "model": "Mustang",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 116,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=116",
+        "name": "NASCAR XFINITY Toyota Supra",
+        "desc": "NASCAR XFINITY Toyota Supra",
+        "model": "Supra",
+        "make": "Toyota",
+        "price": 11.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 77,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=77",
+        "name": "Nissan GTP ZX-T",
+        "desc": "Nissan GTP ZX-T",
+        "model": "GTP ZX-T",
+        "make": "Nissan",
+        "price": 11.95,
+        "hp": 795,
+        "weight": 2097,
+        "w2pRatio": 2.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 3,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=3",
+        "name": "Pontiac Solstice",
+        "desc": "Pontiac Solstice",
+        "model": "Solstice",
+        "make": "Pontiac",
+        "price": 0,
+        "hp": 177,
+        "weight": 2948,
+        "w2pRatio": 16.6,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 10,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=10",
+        "name": "Pontiac Solstice - Rookie",
+        "desc": "Pontiac Solstice",
+        "model": "Solstice",
+        "make": "Pontiac",
+        "price": 0,
+        "hp": 177,
+        "weight": 2948,
+        "w2pRatio": 16.6,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 119,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=119",
+        "name": "Porsche 718 Cayman GT4 Clubsport MR",
+        "desc": "Porsche 718 Cayman GT4 Clubsport MR",
+        "model": "718 Cayman GT4 Clubsport MR",
+        "make": "Porsche",
+        "price": 11.95,
+        "hp": 425,
+        "weight": 2910,
+        "w2pRatio": 6.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 88,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=88",
+        "name": "Porsche 911 GT3 Cup (991)",
+        "desc": "Porsche 911 GT3 Cup (991)",
+        "model": "911 GT3 Cup",
+        "make": "Porsche",
+        "price": 11.95,
+        "hp": 485,
+        "weight": 2878,
+        "w2pRatio": 5.9,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 137,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=137",
+        "name": "Porsche 911 GT3 R",
+        "desc": "Porsche 911 GT3 R",
+        "model": "911 GT3 R",
+        "make": "Porsche",
+        "price": 11.95,
+        "hp": 1,
+        "weight": 1,
+        "w2pRatio": 1,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 102,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=102",
+        "name": "Porsche 911 RSR",
+        "desc": "Porsche 911 RSR",
+        "model": "911 RSR",
+        "make": "Porsche",
+        "price": 11.95,
+        "hp": 510,
+        "weight": 2740,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 100,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=100",
+        "name": "Porsche 919",
+        "desc": "Porsche 919",
+        "model": "919",
+        "make": "Porsche",
+        "price": 11.95,
+        "hp": 900,
+        "weight": 1929,
+        "w2pRatio": 2.1,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 13,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=13",
+        "name": "Radical SR8",
+        "desc": "Radical SR8",
+        "model": "",
+        "make": "Radical",
+        "price": 0,
+        "hp": 360,
+        "weight": 1750,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 48,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=48",
+        "name": "Ruf RT 12R AWD",
+        "desc": "Ruf RT 12R",
+        "model": "AWD",
+        "make": "Ruf",
+        "price": 11.95,
+        "hp": 675,
+        "weight": 3100,
+        "w2pRatio": 4.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 52,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=52",
+        "name": "Ruf RT 12R C-Spec",
+        "desc": "Ruf RT 12R",
+        "model": "C-Spec",
+        "make": "Ruf",
+        "price": 11.95,
+        "hp": 435,
+        "weight": 2645,
+        "w2pRatio": 6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 49,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=49",
+        "name": "Ruf RT 12R RWD",
+        "desc": "Ruf RT 12R",
+        "model": "RWD",
+        "make": "Ruf",
+        "price": 11.95,
+        "hp": 675,
+        "weight": 3100,
+        "w2pRatio": 4.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 50,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=50",
+        "name": "Ruf RT 12R Track",
+        "desc": "Ruf RT 12R",
+        "model": "Track",
+        "make": "Ruf",
+        "price": 11.95,
+        "hp": 493,
+        "weight": 2645,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 23,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=23",
+        "name": "SCCA Spec Racer Ford",
+        "desc": "SCCA Spec Racer Ford",
+        "model": "",
+        "make": "SCCA Enterprises",
+        "price": 0,
+        "hp": 135,
+        "weight": 1560,
+        "w2pRatio": 11.5,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 18,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=18",
+        "name": "Silver Crown",
+        "desc": "Silver Crown",
+        "model": "",
+        "make": "",
+        "price": 11.95,
+        "hp": 819,
+        "weight": 1600,
+        "w2pRatio": 1.9,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 1,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=1",
+        "name": "Skip Barber Formula 2000",
+        "desc": "Skip Barber Formula 2000",
+        "model": "",
+        "make": "",
+        "price": 11.95,
+        "hp": 132,
+        "weight": 1250,
+        "w2pRatio": 9.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 37,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=37",
+        "name": "Sprint Car",
+        "desc": "Sprint Car",
+        "model": "",
+        "make": "",
+        "price": 11.95,
+        "hp": 820,
+        "weight": 1475,
+        "w2pRatio": 1.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 36,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=36",
+        "name": "Street Stock",
+        "desc": "Street Stock",
+        "model": "",
+        "make": "",
+        "price": 0,
+        "hp": 375,
+        "weight": 3400,
+        "w2pRatio": 9,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 101,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=101",
+        "name": "Subaru WRX STI",
+        "desc": "Subaru WRX STI",
+        "model": "WRX STI",
+        "make": "Subaru",
+        "price": 11.95,
+        "hp": 585,
+        "weight": 2860,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 54,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=54",
+        "name": "Super Late Model",
+        "desc": "Super Late Model",
+        "model": "Super Late Model",
+        "make": "",
+        "price": 11.95,
+        "hp": 550,
+        "weight": 2800,
+        "w2pRatio": 5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 118,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=118",
+        "name": "Supercars Ford Mustang GT",
+        "desc": "Supercars Ford Mustang GT",
+        "model": "Mustang GT",
+        "make": "Ford",
+        "price": 11.95,
+        "hp": 635,
+        "weight": 3076,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 117,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=117",
+        "name": "Supercars Holden ZB Commodore",
+        "desc": "Supercars Holden ZB Commodore",
+        "model": "ZB Commodore",
+        "make": "Holden",
+        "price": 11.95,
+        "hp": 635,
+        "weight": 3076,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 121,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=121",
+        "name": "USF 2000",
+        "desc": "USF 2000",
+        "model": "PM-17",
+        "make": "USF 2000",
+        "price": 11.95,
+        "hp": 175,
+        "weight": 1100,
+        "w2pRatio": 6.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 91,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=91",
+        "name": "VW Beetle",
+        "desc": "VW Beetle",
+        "model": "Beetle",
+        "make": "Volkswagen",
+        "price": 0,
+        "hp": 600,
+        "weight": 3000,
+        "w2pRatio": 5,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 138,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=138",
+        "name": "VW Beetle - Lite",
+        "desc": "VW Beetle",
+        "model": "Beetle - Lite",
+        "make": "Volkswagen",
+        "price": 0,
+        "hp": 262,
+        "weight": 1371,
+        "w2pRatio": 5.2,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 27,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=27",
+        "name": "VW Jetta TDI Cup",
+        "desc": "VW Jetta TDI Cup",
+        "model": "Jetta TDI",
+        "make": "Volkswagen",
+        "price": 0,
+        "hp": 170,
+        "weight": 3041,
+        "w2pRatio": 17.8,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 33,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=33",
+        "name": "Williams-Toyota FW31",
+        "desc": "Williams FW31",
+        "model": "FW31",
+        "make": "Williams",
+        "price": 11.95,
+        "hp": 750,
+        "weight": 1331,
+        "w2pRatio": 1.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 55,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=55",
+        "name": "[Legacy] BMW Z4 GT3",
+        "desc": "[Legacy] BMW Z4 GT3",
+        "model": "Z4 GT3",
+        "make": "BMW",
+        "price": 2.95,
+        "hp": 515,
+        "weight": 2646,
+        "w2pRatio": 5.1,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 57,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=57",
+        "name": "[Legacy] Dallara DW12",
+        "desc": "[Legacy] Dallara DW12",
+        "model": "DW12",
+        "make": "Dallara",
+        "price": 0,
+        "hp": 700,
+        "weight": 1570,
+        "w2pRatio": 2.2,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 29,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=29",
+        "name": "[Legacy] Indycar Dallara - 2009",
+        "desc": "[Legacy] Indycar Dallara - 2009",
+        "model": "IndyCar",
+        "make": "Dallara",
+        "price": 2.95,
+        "hp": 650,
+        "weight": 1600,
+        "w2pRatio": 2.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 34,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=34",
+        "name": "[Legacy] Mazda MX-5 Cup - 2010",
+        "desc": "[Legacy] Mazda MX-5 Cup & Roadster - 2010",
+        "model": "MX-5 Cup",
+        "make": "Mazda",
+        "price": 2.95,
+        "hp": 170,
+        "weight": 2600,
+        "w2pRatio": 15.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 35,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=35",
+        "name": "[Legacy] Mazda MX-5 Roadster - 2010",
+        "desc": "[Legacy] Mazda MX-5 Cup & Roadster - 2010",
+        "model": "MX-5 Roadster",
+        "make": "Mazda",
+        "price": 2.95,
+        "hp": 170,
+        "weight": 2600,
+        "w2pRatio": 15.2,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 22,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=22",
+        "name": "[Legacy] NASCAR Cup Chevrolet Impala COT - 2009",
+        "desc": "[Legacy] NASCAR Cup Chevrolet Impala COT - 2009",
+        "model": "Impala",
+        "make": "Chevrolet",
+        "price": 2.95,
+        "hp": 750,
+        "weight": 3450,
+        "w2pRatio": 4.6,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 45,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=45",
+        "name": "[Legacy] NASCAR Cup Chevrolet SS - 2013",
+        "desc": "[Legacy] NASCAR Cup Chevrolet SS - 2013",
+        "model": "SS",
+        "make": "Chevrolet",
+        "price": 2.95,
+        "hp": 875,
+        "weight": 3300,
+        "w2pRatio": 3.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 46,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=46",
+        "name": "[Legacy] NASCAR Cup Ford Fusion - 2016",
+        "desc": "[Legacy] NASCAR Cup Ford Fusion - 2016",
+        "model": "Fusion-Gen6",
+        "make": "Ford",
+        "price": 2.95,
+        "hp": 750,
+        "weight": 3300,
+        "w2pRatio": 4.4,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 38,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=38",
+        "name": "[Legacy] NASCAR Nationwide Chevrolet Impala - 2012",
+        "desc": "[Legacy] NASCAR Nationwide Chevrolet Impala - 2012",
+        "model": "",
+        "make": "Chevrolet",
+        "price": 2.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 20,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=20",
+        "name": "[Legacy] NASCAR Truck Chevrolet Silverado - 2008",
+        "desc": "[Legacy] NASCAR Truck Chevrolet Silverado - 2008",
+        "model": "Silverado",
+        "make": "Chevrolet",
+        "price": 0,
+        "hp": 625,
+        "weight": 3450,
+        "w2pRatio": 5.5,
+        "freeWithSubscription": true,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 58,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=58",
+        "name": "[Legacy] NASCAR Xfinity Chevrolet Camaro - 2014",
+        "desc": "[Legacy] NASCAR Xfinity Chevrolet Camaro - 2014",
+        "model": "Camaro",
+        "make": "Chevrolet",
+        "price": 2.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 51,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=51",
+        "name": "[Legacy] NASCAR Xfinity Ford Mustang - 2016",
+        "desc": "[Legacy] NASCAR Xfinity Ford Mustang - 2016",
+        "model": "Mustang",
+        "make": "Ford",
+        "price": 2.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 69,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=69",
+        "name": "[Legacy] NASCAR Xfinity Toyota Camry - 2015",
+        "desc": "[Legacy] NASCAR Xfinity Toyota Camry - 2015",
+        "model": "Camry",
+        "make": "Toyota",
+        "price": 2.95,
+        "hp": 650,
+        "weight": 3450,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "oval car"
+        ]
+    },
+    {
+        "carID": 4,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=4",
+        "name": "[Legacy] Pro Mazda",
+        "desc": "[Legacy] Pro Mazda",
+        "model": "",
+        "make": "",
+        "price": 2.95,
+        "hp": 248,
+        "weight": 1320,
+        "w2pRatio": 5.3,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 21,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=21",
+        "name": "[Legacy] Riley MkXX Daytona Prototype - 2008",
+        "desc": "[Legacy] Riley MkXX Daytona Prototype - 2008",
+        "model": "MkXX DP",
+        "make": "Riley",
+        "price": 2.95,
+        "hp": 500,
+        "weight": 2275,
+        "w2pRatio": 4.5,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 28,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=28",
+        "name": "[Legacy] V8 Supercar Ford Falcon - 2009",
+        "desc": "[Legacy] V8 Supercar Ford Falcon - 2009",
+        "model": "Falcon FG01 V8",
+        "make": "Ford",
+        "price": 2.95,
+        "hp": 635,
+        "weight": 2987,
+        "w2pRatio": 4.7,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 61,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=61",
+        "name": "[Legacy] V8 Supercar Ford FG Falcon - 2014",
+        "desc": "[Legacy] V8 Supercar Ford FG Falcon - 2014",
+        "model": "Falcon FG",
+        "make": "Ford",
+        "price": 2.95,
+        "hp": 635,
+        "weight": 3109,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    },
+    {
+        "carID": 60,
+        "url": "https://members.iracing.com/membersite/member/CarDetail.do?carid=60",
+        "name": "[Legacy] V8 Supercar Holden VF Commodore - 2014",
+        "desc": "[Legacy] V8 Supercar Holden VF Commodore - 2014",
+        "model": "Commodore VF",
+        "make": "Holden",
+        "price": 2.95,
+        "hp": 635,
+        "weight": 3109,
+        "w2pRatio": 4.8,
+        "freeWithSubscription": false,
+        "discountGroupNames": [
+            "road car"
+        ]
+    }
+]

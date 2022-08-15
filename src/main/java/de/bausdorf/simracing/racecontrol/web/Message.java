@@ -22,19 +22,19 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @EqualsAndHashCode
-public class Message {
-    public static final String ERROR="error";
-    public static final String WARN="warning";
-    public static final String INFO="info";
+public class Message implements Serializable {
+    public static final transient String ERROR="error";
+    public static final transient String WARN="warning";
+    public static final transient String INFO="info";
 
     String type;
     String text;

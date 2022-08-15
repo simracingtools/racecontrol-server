@@ -1,0 +1,1289 @@
+[
+    {
+        "name": "Atlanta Motor Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=53",
+        "pkgID": 36,
+        "configs": 5,
+        "categories": [
+            "Oval",
+            "Road",
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Auto Club Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=225",
+        "pkgID": 151,
+        "configs": 4,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Autodromo Internazionale Enzo e Dino Ferrari",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=266",
+        "pkgID": 197,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Autodromo Nazionale Monza",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=239",
+        "pkgID": 172,
+        "configs": 9,
+        "categories": [
+            "Road",
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Autódromo José Carlos Pace",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=212",
+        "pkgID": 134,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Barber Motorsports Park",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=46",
+        "pkgID": 33,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Bark River International Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=396",
+        "pkgID": 351,
+        "configs": 1,
+        "categories": [
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Brands Hatch Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=290",
+        "pkgID": 91,
+        "configs": 3,
+        "categories": [
+            "Dirt Road",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Bristol Motor Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=287",
+        "pkgID": 43,
+        "configs": 3,
+        "categories": [
+            "Dirt Oval",
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Canadian Tire Motorsports Park",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=144",
+        "pkgID": 90,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Cedar Lake Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=387",
+        "pkgID": 346,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Centripetal Circuit",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=143",
+        "pkgID": 79,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Charlotte Motor Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=350",
+        "pkgID": 268,
+        "configs": 9,
+        "categories": [
+            "Road",
+            "Dirt Road",
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Chicago Street Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=405",
+        "pkgID": 365,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Chicagoland Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=123",
+        "pkgID": 65,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Chili Bowl",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=331",
+        "pkgID": 275,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit de Barcelona Catalunya",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=345",
+        "pkgID": 292,
+        "configs": 5,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit de Barcelona-Catalunya",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=386",
+        "pkgID": 292,
+        "configs": 1,
+        "categories": [
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit de Spa-Francorchamps",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=165",
+        "pkgID": 103,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit des 24 Heures du Mans",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=268",
+        "pkgID": 204,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit Gilles Villeneuve",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=218",
+        "pkgID": 145,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit of the Americas",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=229",
+        "pkgID": 154,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit Park Zandvoort",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=149",
+        "pkgID": 92,
+        "configs": 5,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Circuit Zolder",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=199",
+        "pkgID": 124,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Concord Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=15",
+        "pkgID": 3,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Crandon International Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=382",
+        "pkgID": 338,
+        "configs": 2,
+        "categories": [
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Darlington Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=115",
+        "pkgID": 59,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Daytona International Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=191",
+        "pkgID": 120,
+        "configs": 5,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Detroit Grand Prix at Belle Isle",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=319",
+        "pkgID": 259,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Donington Park Racing Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=233",
+        "pkgID": 162,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Dover International Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=162",
+        "pkgID": 100,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Eldora Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=273",
+        "pkgID": 213,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Fairbury Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=344",
+        "pkgID": 289,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Five Flags Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=248",
+        "pkgID": 180,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Hockenheimring Baden-Württemberg",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=390",
+        "pkgID": 350,
+        "configs": 6,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Homestead Miami Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=20",
+        "pkgID": 5,
+        "configs": 4,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Indianapolis Motor Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=178",
+        "pkgID": 73,
+        "configs": 4,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Iowa Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=169",
+        "pkgID": 115,
+        "configs": 5,
+        "categories": [
+            "Oval",
+            "Road",
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "IRacing Superspeedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=384",
+        "pkgID": 341,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Irwindale Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=388",
+        "pkgID": 6,
+        "configs": 5,
+        "categories": [
+            "Road",
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Kansas Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=214",
+        "pkgID": 142,
+        "configs": 3,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Kentucky Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=371",
+        "pkgID": 319,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Knoxville Raceway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=305",
+        "pkgID": 251,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Kokomo Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=320",
+        "pkgID": 264,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Langley Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=201",
+        "pkgID": 125,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Lanier National Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=17",
+        "pkgID": 8,
+        "configs": 2,
+        "categories": [
+            "Oval",
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Las Vegas Motor Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=103",
+        "pkgID": 54,
+        "configs": 6,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Lernerville Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=351",
+        "pkgID": 303,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Limaland Motorsports Park",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=303",
+        "pkgID": 248,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Lime Rock Park",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=353",
+        "pkgID": 304,
+        "configs": 4,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Long Beach Street Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=179",
+        "pkgID": 116,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Lucas Oil Raceway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=232",
+        "pkgID": 159,
+        "configs": 2,
+        "categories": [
+            "Oval",
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Lånkebanen (Hell RX)",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=358",
+        "pkgID": 311,
+        "configs": 5,
+        "categories": [
+            "Dirt Road",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Martinsville Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=33",
+        "pkgID": 26,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Michigan International Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=276",
+        "pkgID": 224,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Mid-Ohio Sports Car Course",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=153",
+        "pkgID": 96,
+        "configs": 5,
+        "categories": [
+            "Road",
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Mount Panorama Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=219",
+        "pkgID": 146,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Myrtle Beach Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=286",
+        "pkgID": 240,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Nashville Fairgrounds Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=374",
+        "pkgID": 331,
+        "configs": 2,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Nashville Superspeedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=400",
+        "pkgID": 353,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "New Hampshire Motor Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=131",
+        "pkgID": 72,
+        "configs": 5,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "New Smyrna Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=190",
+        "pkgID": 119,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "North Wilkesboro Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=366",
+        "pkgID": 312,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Nürburgring Combined",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=263",
+        "pkgID": 186,
+        "configs": 4,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Nürburgring Grand-Prix-Strecke",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=257",
+        "pkgID": 185,
+        "configs": 6,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Nürburgring Nordschleife",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=249",
+        "pkgID": 184,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Okayama International Circuit",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=166",
+        "pkgID": 109,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Oran Park Raceway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=202",
+        "pkgID": 126,
+        "configs": 6,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Oulton Park Circuit",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=180",
+        "pkgID": 117,
+        "configs": 8,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Oxford Plains Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=12",
+        "pkgID": 10,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Phillip Island Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=152",
+        "pkgID": 93,
+        "configs": 1,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Phoenix Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=236",
+        "pkgID": 163,
+        "configs": 2,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Pocono Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=277",
+        "pkgID": 225,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Red Bull Ring",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=403",
+        "pkgID": 362,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Richmond Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=31",
+        "pkgID": 23,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Road America",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=18",
+        "pkgID": 11,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Road Atlanta",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=127",
+        "pkgID": 67,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Rockingham Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=203",
+        "pkgID": 129,
+        "configs": 4,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Sebring International Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=95",
+        "pkgID": 40,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Silverstone Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=341",
+        "pkgID": 282,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Snetterton Circuit",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=297",
+        "pkgID": 247,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Sonoma Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=397",
+        "pkgID": 35,
+        "configs": 6,
+        "categories": [
+            "Road",
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "South Boston Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=14",
+        "pkgID": 19,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Southern National Motorsports Park",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=256",
+        "pkgID": 194,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Stafford Motor Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=11",
+        "pkgID": 12,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Summit Point Raceway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=9",
+        "pkgID": 13,
+        "configs": 5,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Suzuka International Racing Course",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=168",
+        "pkgID": 114,
+        "configs": 5,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Talladega Superspeedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=116",
+        "pkgID": 60,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Texas Motor Speedway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=357",
+        "pkgID": 310,
+        "configs": 2,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "The Bullring",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=271",
+        "pkgID": 211,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "The Dirt Track at Charlotte",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=314",
+        "pkgID": 256,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "The Milwaukee Mile",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=94",
+        "pkgID": 41,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Thompson Speedway Motorsports Park",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=161",
+        "pkgID": 97,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Tsukuba Circuit",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=324",
+        "pkgID": 267,
+        "configs": 7,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Twin Ring Motegi",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=195",
+        "pkgID": 123,
+        "configs": 4,
+        "categories": [
+            "Road",
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "USA International Speedway",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=16",
+        "pkgID": 7,
+        "configs": 2,
+        "categories": [
+            "Oval",
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Virginia International Raceway",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=2",
+        "pkgID": 14,
+        "configs": 7,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Volusia Speedway Park",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=279",
+        "pkgID": 233,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Watkins Glen International",
+        "price": 14.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=106",
+        "pkgID": 56,
+        "configs": 4,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "WeatherTech Raceway at Laguna Seca",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=47",
+        "pkgID": 34,
+        "configs": 2,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "Weedsport Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=373",
+        "pkgID": 330,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Wild Horse Pass Motorsports Park",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=334",
+        "pkgID": 279,
+        "configs": 1,
+        "categories": [
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Wild West Motorsports Park",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=332",
+        "pkgID": 276,
+        "configs": 1,
+        "categories": [
+            "Dirt Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "Williams Grove Speedway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=274",
+        "pkgID": 214,
+        "configs": 1,
+        "categories": [
+            "Dirt Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "World Wide Technology Raceway",
+        "price": 11.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=237",
+        "pkgID": 169,
+        "configs": 2,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "[Legacy] Charlotte Motor Speedway - 2008",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=40",
+        "pkgID": 31,
+        "configs": 4,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "[Legacy] Daytona International Speedway - 2008",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=27",
+        "pkgID": 4,
+        "configs": 6,
+        "categories": [
+            "Oval",
+            "Road",
+            "Dirt Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "[Legacy] Kentucky Speedway - 2011",
+        "price": 4.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=188",
+        "pkgID": 118,
+        "configs": 2,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "[Legacy] Lime Rock Park - 2008",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=1",
+        "pkgID": 9,
+        "configs": 3,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "[Legacy] Michigan International Speedway - 2009",
+        "price": 4.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=124",
+        "pkgID": 66,
+        "configs": 1,
+        "categories": [
+            "Oval"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "[Legacy] Phoenix Raceway - 2008",
+        "price": 0,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=104",
+        "pkgID": 55,
+        "configs": 3,
+        "categories": [
+            "Oval",
+            "Road",
+            "Dirt Road"
+        ],
+        "freeWithSubscription": true
+    },
+    {
+        "name": "[Legacy] Pocono Raceway - 2009",
+        "price": 4.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=136",
+        "pkgID": 74,
+        "configs": 5,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "[Legacy] Silverstone Circuit - 2008",
+        "price": 4.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=41",
+        "pkgID": 32,
+        "configs": 5,
+        "categories": [
+            "Road"
+        ],
+        "freeWithSubscription": false
+    },
+    {
+        "name": "[Legacy] Texas Motor Speedway - 2009",
+        "price": 4.95,
+        "url": "https://members.iracing.com/membersite/member/TrackDetail.do?trkid=121",
+        "pkgID": 61,
+        "configs": 6,
+        "categories": [
+            "Oval",
+            "Road"
+        ],
+        "freeWithSubscription": false
+    }
+]

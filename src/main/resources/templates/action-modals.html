@@ -1,0 +1,392 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 - 2022 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>action templates</title>
+    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Notable">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Orbitron">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Rubik+Mono+One">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Timmana">
+    <link rel="stylesheet" href="assets/fonts/fontawesome-all.min.css">
+    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css">
+    <link rel="stylesheet" href="assets/fonts/fontawesome5-overrides.min.css">
+    <link rel="stylesheet" href="assets/css/Navigation-with-Button.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+
+<body>
+    <div th:fragment="register-modal(eventInfoView, teamRegistrationSelectView)">
+        <div th:id="${'register-modal-' + eventInfoView.eventId}" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" th:text="${'Register for ' + eventInfoView.title}">Register for</h4>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">
+                        <div th:if="${user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                            <p>Before you may register for this event you have to login !</p>
+                            <a href="/index.html">
+                                <button class="btn btn-primary" type="button">Login</button>
+                            </a>
+                        </div>
+                        <div th:if="${!user.name.equalsIgnoreCase('Unknown')}" class="text-center">
+                            <p>
+                                We appreciate your interest to participate in our event!
+                            </p>
+                            <p class="text-left">
+                                            <span>
+                                                To be able to register successfully please keep your <strong>iRacing team ID</strong>
+                                                and <strong>iRacing team name</strong> at hand.
+                                            </span>
+                                <!--                                            <span th:text="${event.irLeagueName}"></span>-->
+                            </p>
+                            <form method="post" th:action="@{/register-car-for-team}" th:object="${teamRegistrationSelectView}">
+                                <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
+                                <input type="hidden" th:field="*{teamId}">
+                                <button class="btn btn-primary form-control" type="submit" style="">Register new team</button>
+                            </form>
+                            <div th:if="${!event.userRegistrations.isEmpty()}">
+                                <form method="post" th:action="@{/register-car-for-team}" th:object="${teamRegistrationSelectView}">
+                                    <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
+                                    <button class="btn btn-primary form-control" type="submit" style="margin-top: 1em;">Register car for existing team</button>
+                                    <select class="form-control" th:field="*{teamId}" style="">
+                                        <option th:each="registration : ${eventInfoView.userRegistrations}" th:value="${registration.id}" th:text="${registration.teamName}"></option>
+                                    </select>
+                                </form>
+                            </div>
+                            <form method="post" th:action="@{/register-member-for-team}" th:object="${teamRegistrationSelectView}">
+                                <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
+                                <input type="hidden" th:field="*{teamId}">
+                                <button class="btn btn-primary form-control" type="button" style="margin-top: 1em;">Register as team member</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="TeamRegistration-TEAM_REGISTRATION-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" th:fragment="action-modal-content">
+                    <div class="modal-header" th:fragment="action-modal-header">
+                        <h4 class="modal-title">Team Registration</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}">
+                        <div class="modal-body" th:fragment="action-modal-body">
+                            <h5 th:text="${action.teamName}">FBP RED</h5>
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{eventId}">
+                            <input type="hidden" th:field="*{workflowItemId}">
+                            <div class="form-group text-left">
+                                <label style="font-size: 14px;">Proceed to</label>
+                                <select class="form-control" required="" th:field="*{targetStateKey}" th:oninput="'changeFormGroupDisplay(' + ${action.id} + ');'">
+                                    <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
+                                </select>
+                            </div>
+<!--                            <div class="form-group text-left">-->
+<!--                                <label style="font-size: 14px;">Due date</label>-->
+<!--                                <input class="form-control" type="date" th:field="*{dueDate}">-->
+<!--                            </div>-->
+                            <div class="form-group text-left">
+                                <label th:for="*{message}" style="font-size: 14px;">Action message</label>
+                                <input class="form-control" type="text" th:field="*{message}">
+                            </div>
+                        </div>
+                        <div class="modal-footer" th:fragment="action-modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="TeamRegistration-ASSIGNED_CAR_NO-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="TeamRegistration-DISCORD_PREPARED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="TeamRegistration-PAYMENT_PROVIDED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="TeamRegistration-PAYMENT_RECEIPT-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'TeamRegistration-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-REQUEST_PAINT-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" th:fragment="paint-action-modal-content">
+                    <div class="modal-header" th:fragment="paint-action-modal-header">
+                        <h4 class="modal-title">Paint collection</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${editAction}" enctype="multipart/form-data">
+                        <div class="modal-body" th:fragment="paint-action-modal-content">
+                            <h5 th:text="${action.teamName}">FBP RED</h5>
+                            <input type="hidden" th:field="*{id}">
+                            <input type="hidden" th:field="*{eventId}">
+                            <input type="hidden" th:field="*{workflowItemId}">
+                            <div class="form-group text-left">
+                                <label style="font-size: 14px;">Proceed to</label>
+                                <select class="form-control" required="" th:field="*{targetStateKey}" th:oninput="'changeFormGroupDisplay(' + ${action.id} + ');'">
+                                    <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
+                                </select>
+                            </div>
+<!--                            <div class="form-group text-left">-->
+<!--                                <label style="font-size: 14px;">Due date</label>-->
+<!--                                <input class="form-control" type="date" th:field="*{dueDate}">-->
+<!--                            </div>-->
+                            <div class="form-group text-left">
+                                <label th:for="*{paintTga}" style="font-size: 14px;">Car paint (.tga file)</label>
+                                <input class="form-control" type="file" th:field="*{paintTga}" accept=".tga">
+                            </div>
+                            <div class="form-group text-left">
+                                <label th:for="*{paintSpecMap}" style="font-size: 14px;">Spec map (.mip file)</label>
+                                <input class="form-control" type="file" th:field="*{paintSpecMap}" accept=".mip">
+                            </div>
+                        </div>
+                        <div class="modal-footer" th:fragment="action-modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-PAINT_SUBMITTED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-PAINT_ACCEPTED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="PaintCollection-PAINT_DECLINED-modal(action, postUrl, editAction)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'PaintCollection-modal-' + ${action.id}" >
+            <div class="modal-dialog" role="document">
+                <div th:replace="action-modals.html :: action-modal-content" class="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="staff-modal(title, postUrl, editStaffView)" class="modal fade" role="dialog" tabindex="-1" id="staff-modal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" th:text="${title}">Add organizing person</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <form id="staff-modal-form" method="post" th:object="${editStaffView}" th:action="@{${postUrl}}" onsubmit="submitStaffModal();">
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{eventId}"/>
+                    <input type="hidden" th:field="*{teamId}"/>
+                    <input type="hidden" th:field="*{registered}">
+                    <input type="hidden" th:field="*{leagueMember}">
+                    <input type="hidden" th:field="*{iracingChecked}">
+                    <input id="teamIrId" type="hidden">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label style="width: 6em;">iRacing ID</label>
+                            <input type="number" style="width: 5em;" placeholder="000000" required min="1" max="9999999" th:field="*{iracingId}"/>
+                            <button id="check-ir-id" class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px; width: 42px; height: 38px;" title="Check member in iRacing" onclick="checkIRacingMemberId();">
+                                <i id="check-icon" class="far fa-question-circle"></i>
+                                <span id="check-spinner" style="display: none;" class="spinner-border spinner-border-sm" role="status"></span>
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label style="width: 6em;">Name</label>
+                            <input type="text" style="width: 20em;" required th:field="*{name}" placeholder="Type to search">
+                            <span id="search-spinner" class="spinner-border spinner-border-sm" role="status" style="margin-left: 5px; display: none;"></span>
+                        </div>
+                        <div class="form-group">
+                            <label style="width: 6em;">Role</label>
+                            <select th:field="*{role}" required>
+                                <option th:each="role: ${staffRoles}" th:value="${role.toString()}" th:text="${role.toString()}">RACE DIRECTOR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                        <button class="btn btn-primary" type="submit">
+                            <span id="save-text">Save</span>
+                            <span id="save-spinner" style="display: none;" class="spinner-border spinner-border-sm" role="status"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="car-modal(title, postUrl, registeredCarEditView)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="'car-modal-' + ${registration.id}">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{${postUrl}}" th:object="${registeredCarEditView}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <input type="hidden" th:field="*{teamId}">
+                        <div class="modal-header">
+                            <h4 class="modal-title" th:text="${title}">SP9: #34 C3 Racing Red</h4>
+                            <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="28px" style="font-size: 12px; margin-left: 15px;" />
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Car</label>
+                                <select class="form-control" required="" th:field="*{carId}" th:disabled="${!user.racecontrol}">
+                                    <option th:each="car : ${registration.getCarsOfClass}" th:value="${car.carId}" th:text="${car.name}">Car name</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <div class="form-control" th:style="${registration.workflowState.getColorStyleString()}"><span th:text="${registration.workflowState.description}"></span></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" th:disabled="${!user.racecontrol}" th:field="*{useWildcard}"/>
+                                    <label class="form-check-label" for="useWildcard">Use wildcard</label>
+                                </div>
+                            </div>
+                            <p>Drivers:
+                                <span class="d-block" style="margin-top: 4px;" th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}" th:text="${driver.name}">Text</span>
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button th:if="${user.racecontrol}" class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="upload-modal(modalId, title, eventId, postUrl)">
+        <div class="modal fade" role="dialog" tabindex="-1" th:id="${modalId}" >
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form id="upload-logo-form" method="post" th:action="@{${postUrl}}" enctype="multipart/form-data">
+                        <div class="modal-header">
+                            <h4 class="modal-title" th:text="${title}">Upload event logo</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Select file</label>
+                                <input class="form-control-file" type="file" name="file"/>
+                                <input class="form-control" type="hidden" name="eventId" th:value="${eventId}"/>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Upload</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:fragment="change-owner-model(eventId, team, postUrl)">
+        <div th:id="'change-owner-modal-' + ${team.id}" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Change team owner</h4><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:action="@{${postUrl}}" th:object="${changeOwnerView}">
+                        <input type="hidden" th:field="*{teamId}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label style="width: 8em;">iRacing team ID</label>
+                                <input type="number" style="width: 5em;" placeholder="000000" required min="1" max="9999999" readonly disabled th:value="${team.iracingId}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Team name</label>
+                                <input type="text" readonly style="width: 18em;" disabled th:value="${team.getFullTeamNameWithNumber()}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Current owner</label>
+                                <input type="text" readonly style="width: 18em;" disabled th:value="${team.createdBy.name}"/>
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Change owner to</label>
+                                <div class="d-inline">
+                                    <select style="width: 18em;" th:field="*{newOwnerId}">
+                                        <option th:each="newOwner : ${team.getPotentialTeamOwners()}" th:value="${newOwner.id}" value="12" th:text="${newOwner.name}">This is item 1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Change owner</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
