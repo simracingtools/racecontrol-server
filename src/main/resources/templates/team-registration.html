@@ -111,7 +111,7 @@
                                                         <label class="d-inline" style="width: 8em;">Car and class</label>
                                                         <i class="far fa-question-circle text-info" data-toggle="tooltip" title="Car and car class changes are possible after registration only by permission of event organizers and if registration slot availability is given." style="margin-left: 5px;"></i>
                                                         <select class="form-control" style="margin-top: 8px;" required="" th:field="*{carId}">
-                                                            <optgroup th:each="carClass: ${carsInClasses}" label="SP9">
+                                                            <optgroup th:each="carClass: ${carsInClasses}" th:label="${carClass.name}">
                                                                 <option th:each="car: ${carClass.cars}" th:value="${car.carId}" th:text="${car.name}">BMW M4 GT3</option>
                                                             </optgroup>
                                                         </select>
