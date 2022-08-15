@@ -16,8 +16,8 @@ jobs:
           echo "racecontrol.discordBotToken=$DISCORD_BOT_TOKEN" >> application-local.properties
           cat application-local.properties
         env:
-          IRDATAAPI_USER: ${{secrets.IR_USERNAME}}
-          IRDATAAPI_PASSWORD: ${{secrets.IR_PASSWORD}}
+          IRDATAAPI_USER: ${{secrets.IRDATAAPI_USER}}
+          IRDATAAPI_PASSWORD: ${{secrets.IRDATAAPI_PASSWORD}}
           DISCORD_BOT_TOKEN: ${{secrets.DISCORD_BOT_TOKEN}}
       - name: Build and Run Tests
         run: mvn test --batch-mode -Dmaven.test.failure.ignore=true
