@@ -1,0 +1,375 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu(title='Create/Edit event')"></div>
+
+        <form method="post" th:action="@{/create-event}" th:object="${eventView}">
+            <input type="hidden" th:field="*{eventId}">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <label class="d-block" style="width: 6em;" th:for="*{title}">Event Name</label>
+                                <input type="text" class="form-control" th:field="*{title}" required="">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 8em;" th:for="*{discordInvite}">Discord invite</label>
+                                <input type="text" class="form-control" th:field="*{discordInvite}">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 6em;" th:for="*{description}">Description</label>
+                                <textarea class="form-control-lg form-control" style="font-size: 12px;height: 6em;" th:field="*{description}"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label>Discord guild id</label>
+                                <button class="btn btn-primary float-right" type="button" style="padding: 1px 4px;" data-target="#discord-modal" data-toggle="modal">
+                                    <i class="far fa-edit"></i>
+                                </button>
+                                <input class="form-control" type="number" th:field="*{discordGuildId}"/></div>
+                            <div class="form-group">
+                                <label>Discord preset channel id</label>
+                                <input class="form-control" type="number"  th:field="*{discordPresetChannelId}"/>
+                            </div>
+                            <div class="form-group">
+                                <label>Discord separator category id</label>
+                                <input class="form-control" type="number"  th:field="*{discordSpacerCategoryId}"/>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label>Min team drivers</label>
+                                <input class="form-control" type="number" th:field="*{minTeamDrivers}"/></div>
+                            <div class="form-group">
+                                <label>Max team drivers</label>
+                                <input class="form-control" type="number"  th:field="*{maxTeamDrivers}"/>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <div class="form-group">
+                                <label th:for="*{startDate}">Start date</label>
+                                <input class="form-control" type="date" th:field="*{startDate}"/>
+                            </div>
+                            <div class="form-group">
+                                <label th:for="*{endDate}">End date</label>
+                                <input class="form-control" type="date" th:field="*{endDate}"/>
+                            </div>
+                            <div class="form-group"><label>Event state</label>
+                                <div class="form-check form-control">
+                                    <input id="formCheck-1" class="form-check-input" type="checkbox" th:field="*{active}"/>
+                                    <label class="form-check-label" for="formCheck-1" th:for="*{active}">Active</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-2">
+                            <button class="btn btn-primary float-right" type="button" data-target="#logo-upload-modal" data-toggle="modal">
+                                <i class="far fa-edit"></i>
+                            </button>
+                            <picture class="float-right">
+                                <img th:if="*{logoUrl != null}" width="100px" th:src="*{logoUrl}"/>
+                                <img th:if="*{logoUrl == null}" width="100px" src="assets/img/default_logo.jpg"/>
+                            </picture>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;" th:for="*{registrationOpens}">Registration opens</label>
+                                <input type="datetime-local" th:field="*{registrationOpens}">
+                                <select th:field="*{registrationOpensTZ}">
+                                    <option value="-07:00">PDT</option>
+                                    <option value="-06:00">MDT</option>
+                                    <option value="-05:00">CDT</option>
+                                    <option value="-04:00">EDT</option>
+                                    <option value="-03:00">Brazil</option>
+                                    <option value="Z">UTC</option>
+                                    <option value="+01:00">BST</option>
+                                    <option value="+02:00">CEST</option>
+                                    <option value="+03:00">MSK</option>
+                                    <option value="+04:00">Dubai</option>
+                                    <option value="+05:30">IST</option>
+                                    <option value="+08:00">CST</option>
+                                    <option value="+09:00">JST</option>
+                                    <option value="+10:00">AEST</option>
+                                    <option value="+12:00">NZST</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;" th:for="*{registrationCloses}">Registration closes</label>
+                                <input type="datetime-local" th:field="*{registrationCloses}">
+                                <select th:field="*{registrationClosesTZ}">
+                                    <option value="-07:00">PDT</option>
+                                    <option value="-06:00">MDT</option>
+                                    <option value="-05:00">CDT</option>
+                                    <option value="-04:00">EDT</option>
+                                    <option value="-03:00">Brazil</option>
+                                    <option value="Z">UTC</option>
+                                    <option value="+01:00">BST</option>
+                                    <option value="+02:00">CEST</option>
+                                    <option value="+03:00">MSK</option>
+                                    <option value="+04:00">Dubai</option>
+                                    <option value="+05:30">IST</option>
+                                    <option value="+08:00">CST</option>
+                                    <option value="+09:00">JST</option>
+                                    <option value="+10:00">AEST</option>
+                                    <option value="+12:00">NZST</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;" th:for="*{irLeagueID}">iRacing League ID</label>
+                                <input type="number" th:field="*{irLeagueID}">
+                                <button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check league in iRacing" onclick="checkIRacingLeagueId();">
+                                    <i class="far fa-question-circle"></i>
+                                </button>
+                                <input type="text" style="width: 17em;margin-top: 10px;" readonly="" th:field="*{irLeagueName}">
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label>Car classes</label>
+                            <button class="btn btn-primary float-right" type="button" data-target="#carclass-modal" data-toggle="modal" th:disabled="*{eventId == 0}">
+                                <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" th:title="*{eventId == 0} ? 'Save event first before beeing able to add car classes' : 'Add car class'"></i>
+                            </button>
+                            <div class="table-responsive">
+                                <table id="carClassTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 3em;padding-right: 2px;padding-left: 2px;">Class</th>
+                                            <th>Cars</th>
+                                            <th style="width: 2em;padding-right: 2px;padding-left: 2px;">Slots</th>
+                                            <th style="width: 3em;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="carClass,carClassStat : *{carClassPreset}">
+                                            <td style="font-size: 14px;cursor: pointer;" th:text="${carClass.name}" th:onclick="'editCarClass(' + ${carClassStat.index} + ');'">SP9</td>
+                                            <td style="font-size: 12px;padding: 2px;">
+                                                <span class="d-block" th:each="car: ${carClass.cars}" th:text="${car.name}">Lamborghini Huracan Evo GT3</span>
+                                            </td>
+                                            <td style="font-size: 14px;" th:text="${carClass.slots} + '/' + ${carClass.wildcards}">15/2</td>
+                                            <td style="padding: 2px;">
+                                                <button class="btn btn-danger" type="button" th:onclick="'confirmCarClassRemove(' + ${carClassStat.index} + ')'">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                                <div th:replace="index.html::deleteModal('carclass-remove-confirm-' + ${carClassStat.index}, 'Do you really want to remove car class ' + ${carClass.name} + ' ?', @{/remove-car-class(classId=${carClass.id})})"></div>
+                                            </td>
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_id'" th:value="${carClass.id}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_name'" th:value="${carClass.name}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_slots'" th:value="${carClass.slots}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_wildcards'" th:value="${carClass.wildcards}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_carIds'" th:value="${carClass.carIds}">
+                                            <input type="hidden" th:id="'carClass' + ${carClassStat.index} + '_order'" th:value="${carClass.classOrder}">
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <label>Organizing staff</label>
+                            <button class="btn btn-primary float-right" type="button" data-target="#staff-modal" data-toggle="modal" th:disabled="*{eventId == 0}">
+                                <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" title="Add person"></i>
+                            </button>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 7em;">Name</th>
+                                            <th></th>
+                                            <th>Role</th>
+                                            <th style="width: 3em;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="person, personStat: *{organizingStaff}">
+                                            <td style="font-size: 12px; cursor: pointer;" th:text="${person.name}" th:onclick="'editStaffPerson(' + ${personStat.index} + ');'">Robert Bausdorf</td>
+                                            <td class="text-center">
+                                                <i th:if="${person.registered || person.leagueMember}"
+                                                   th:class="'far fa-check-circle ' + ${(person.registered && person.leagueMember) ? 'text-success' : (person.registered ? 'text-warning' : 'text-danger')}"
+                                                   th:title="${(person.registered && person.leagueMember) ? 'League member and registered here' : (person.registered ? 'Registered here but not a league member' : 'Valid iRacing ID but not registered here and not a league member')}" data-toggle="tooltip"></i>
+                                                <i th:if="${!person.registered && !person.leagueMember}" class="far fa-question-circle text-danger" data-toggle="tootltip" title="Unchecked iRacing Id"></i>
+                                            </td>
+                                            <td style="font-size: 12px;" th:text="${person.role}">RACE DIRECTOR</td>
+                                            <td style="padding: 2px;">
+                                                <button class="btn btn-danger" type="button" th:onclick="'confirmStaffRemove(' + ${personStat.index} + ')'">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                                <div th:replace="index.html::deleteModal('staff-remove-confirm-' + ${personStat.index}, 'Do you really want to remove ' + ${person.name} + ' ?', @{/remove-staff(personId=${person.id})})"></div>
+                                            </td>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_id'" th:value="${person.id}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingId'" th:value="${person.iracingId}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_eventId'" th:value="${person.eventId}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_name'" th:value="${person.name}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_role'" th:value="${person.role}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_registered'" th:value="${person.registered}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_leagueMember'" th:value="${person.leagueMember}"/>
+                                            <input type="hidden" th:id="'staff' + ${personStat.index} + '_iracingChecked'" th:value="${person.iracingChecked}"/>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"><button class="btn btn-primary float-right" type="submit">Save</button></div>
+            </div>
+        </form>
+        <div th:replace="action-modals.html :: upload-modal('logo-upload-modal', 'Upload event logo', ${eventView.eventId}, '/event-logo-upload')"></div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="carclass-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add car class</h4><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <form method="post" th:object="${editCarClassView}" th:action="@{/event-save-carclass}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <input type="hidden" th:field="*{id}">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label style="width: 8em;">Car class name</label>
+                                <input type="text" th:field="*{name}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Car class order</label>
+                                <input type="text" th:field="*{classOrder}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Slots/Wildcards</label>
+                                <input type="number" style="width: 4em;" th:field="*{slots}">
+                                <input type="number" style="width: 4em;" th:field="*{wildcards}">
+                            </div>
+                            <div class="form-group">
+                                <label style="width: 8em;">Cars</label>
+                                <select style="height: 10em;" class="form-control" multiple="" th:field="*{carIds}">
+                                    <option th:each="car : ${allCars}" th:value="${car.carId}" th:text="${car.name}"></option>
+                                </select>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div th:replace="action-modals.html :: staff-modal('Add organizing person', '/event-save-person', ${editStaffView})"></div>
+        <div class="modal fade" role="dialog" tabindex="-1" id="discord-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Manage Discord</h4>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                        <div class="modal-body">
+                            <div>
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li class="nav-item" role="presentation"><a class="nav-link active" role="tab" data-toggle="tab" href="#tab-channels">Team channels</a></li>
+                                    <li class="nav-item" role="presentation"><a class="nav-link" role="tab" data-toggle="tab" href="#tab-roles">Roles</a></li>
+                                </ul>
+                                <div class="tab-content">
+                                    <div id="tab-channels" class="tab-pane active" role="tabpanel">
+                                        <form method="post" th:action="@{/delete-from-discord}" th:object="${discordCleanupView}">
+                                            <div class="form-group">
+                                                <input type="hidden" th:field="*{eventId}">
+                                                <input type="hidden" th:field="*{serverId}">
+                                                <label>Team categories</label>
+                                                <select class="form-control" multiple style="height: 30em;" th:field="*{selectedItems}">
+                                                    <optgroup th:each="category : *{categories}" th:class="${category.inEvent ? 'text-success' : 'text-danger'}" th:label="${category.name}">
+                                                        <option th:each="channel: ${category.children}" th:class="${channel.inEvent ? 'text-success' : 'text-danger'}" th:value="${channel.getId() + ':' + channel.categoryId}" th:text="${channel.getName()}">This is item 1</option>
+                                                    </optgroup>
+                                                </select>
+                                                <button class="btn btn-primary" type="button" onclick="selectNotMachingItems();">Select all not matching</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div id="tab-roles" class="tab-pane" role="tabpanel">
+                                        <form method="post" th:action="@{/delete-from-discord}" th:object="${discordCleanupView}">
+                                            <div class="form-group">
+                                                <input type="hidden" th:field="*{eventId}">
+                                                <input type="hidden" th:field="*{serverId}">
+                                                <label>Team categories</label>
+                                                <select class="form-control" multiple style="height: 30em;" th:field="*{selectedItems}">
+                                                    <option th:each="role: *{roles}" th:class="${role.inEvent ? 'text-success' : 'text-danger'}" th:value="${role.getId()}" th:text="${role.getName()}">This is item 1</option>
+                                                </select>
+                                                <button class="btn btn-primary" type="button" onclick="selectNotMachingItems();">Select all not matching</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="button" onclick="submitDiscordCleanupForm();">Delete selected</button>
+                        </div>
+                </div>
+            </div>
+        </div>
+        <div th:insert="index :: footer"></div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="/webjars/jquery-ui/jquery-ui.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $(function() {
+                $("#staff-modal #name").autocomplete({
+                    minLength : 2,
+                    appendTo: "#staff-modal",
+                    source : function(request, response) {
+                        $.ajax({
+                            url : "/rest/staff-search",
+                            dataType : "json",
+                            data : {
+                                q : request.term,
+                                league : $("#irLeagueID").val()
+                            },
+                            success : function(data) {
+                                response(data);
+                            }
+                        });
+                    },
+                    select: function(event, ui) {
+                        personSelected(ui.item);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -23,16 +23,17 @@
 
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 
-<head>
+<head th:fragment="live-head">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>racecontrol</title>
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Mono">
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/dark-mode.css">
 </head>
 
-<body>
+<body class="live">
     <div th:fragment="header">
         <table class="table" style="margin-bottom: 5px;">
             <tbody>
@@ -40,7 +41,7 @@
             <tr style="line-height: 1.1">
                 <td rowspan="2" style="width: 80px; padding: 0;">
                     <a th:href="@{/index(userId=${user.id})}">
-                        <img src="assets/img/be-logoV2.png" width="80" />
+                        <img src="assets/img/be-logo.png" width="80" />
                     </a>
                 </td>
                 <td style="width: 150Px; padding: 0 6px;vertical-align: middle;">
@@ -186,16 +187,19 @@
         </div>
     </div>
 
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
-    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
-    <script src="assets/js/timetable-client.js"></script>
-    <script>
-        window.onload = function afterPageReload() {
-            connect();
-        }
-    </script>
+    <div th:fragment="live-script-bottom">
+        <script src="assets/js/dark-mode-switch.js"></script>
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+        <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+        <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+        <script src="assets/js/timetable-client.js"></script>
+        <script>
+            window.onload = function afterPageReload() {
+                connect();
+            }
+        </script>
+    </div>
 </body>
 
 </html>

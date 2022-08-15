@@ -27,12 +27,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import de.bausdorf.simracing.racecontrol.api.EventType;
+import de.bausdorf.simracing.racecontrol.live.api.EventType;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
-import de.bausdorf.simracing.racecontrol.web.security.GoogleUserService;
-import de.bausdorf.simracing.racecontrol.web.security.RcUser;
-import de.bausdorf.simracing.racecontrol.web.security.RcUserType;
-import de.bausdorf.simracing.racecontrol.web.security.SubscriptionType;
+import de.bausdorf.simracing.racecontrol.web.security.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -48,21 +45,39 @@ public class UserProfileView {
 	private String email;
 	private String imageUrl;
 	private long iRacingId;
-	private String iRacingName;
+	private String irClubName;
 	private String clientMessageAccessToken;
 	private String userType;
 	private SubscriptionType subscriptionType;
 	private String subscriptionExpiration;
 	private String timezone;
+	private String localeTag;
 	private String created;
 	private List<String> eventFilter;
 	private Boolean enabled;
 	private Boolean locked;
 	private Boolean expired;
 	private Boolean racecontrol;
+	private Boolean racedirection;
 
 	// Read-only
 	private String username;
+
+	public boolean isKnown() {
+		return !"Unknown".equalsIgnoreCase(name);
+	}
+
+	public String getInitials() {
+		if(name == null) {
+			return "--";
+		}
+		String[] nameParts = name.split(" ");
+		StringBuilder initials = new StringBuilder();
+		for (String namePart : nameParts) {
+			initials.append(namePart.isEmpty() ? "" : namePart.charAt(0));
+		}
+		return initials.toString();
+	}
 
 	public UserProfileView(RcUser user) {
 		this.id = user.getOauthId();
@@ -70,7 +85,7 @@ public class UserProfileView {
 		this.email = user.getEmail();
 		this.imageUrl = user.getImageUrl();
 		this.iRacingId = user.getIRacingId();
-		this.iRacingName = user.getIRacingName();
+		this.irClubName = user.getIrClubName();
 		this.userType = user.getUserType().name();
 		this.clientMessageAccessToken = user.getClientMessageAccessToken();
 		this.enabled = user.isEnabled();
@@ -78,28 +93,30 @@ public class UserProfileView {
 		this.expired = user.isExpired();
 		this.username = user.getUsername();
 		this.timezone = user.getTimezone() != null ? TimeTools.toShortZoneId(user.getTimezone()) : "";
+		this.localeTag = user.getLocaleTag() != null ? user.getLocaleTag() : "";
 		this.subscriptionType = user.getSubscriptionType();
 		this.created = user.getCreated().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")); //2020-10-28T20:02
 		this.eventFilter = user.getEventFilter() != null ? user.getEventFilter().stream()
 						.map(EventType::name)
 						.collect(Collectors.toList())
-				: GoogleUserService.defaultEventFilter().stream()
+				: RcAuthenticationProvider.defaultEventFilter().stream()
 						.map(EventType::name)
 						.collect(Collectors.toList());
-//		this.subscriptionExpiration = subscriptionType != SubscriptionType.NONE
-//				? user.getLastSubscription().plus(this.subscriptionType.getDuration()).toLocalDate().toString()
-//				: "Not relevant";
 		this.racecontrol = user.getUserType() == RcUserType.SYSADMIN
 				|| user.getUserType() == RcUserType.RACE_DIRECTOR
 				|| user.getUserType() == RcUserType.STEWARD;
+		this.racedirection = user.getUserType() == RcUserType.SYSADMIN
+				|| user.getUserType() == RcUserType.RACE_DIRECTOR;
 	}
 
 	public RcUser apply(RcUser merge) {
-		merge.setName(name != null ? name : merge.getIRacingName());
 		merge.setClientMessageAccessToken(clientMessageAccessToken != null ? clientMessageAccessToken : merge.getClientMessageAccessToken());
+		merge.setName(name != null ? name : merge.getName());
 		merge.setIRacingId(iRacingId != 0 ? iRacingId : merge.getIRacingId());
-		merge.setIRacingName(iRacingId != 0 ? iRacingName : merge.getIRacingName());
+		merge.setIrClubName(irClubName != null ? irClubName : merge.getIrClubName());
+		merge.setUserType(userType != null ? RcUserType.valueOf(userType) : merge.getUserType());
 		merge.setTimezone(timezone != null ? ZoneId.of(timezone) : merge.getTimezone());
+		merge.setLocaleTag(localeTag != null ? localeTag : merge.getLocaleTag());
 		return merge;
 	}
 }

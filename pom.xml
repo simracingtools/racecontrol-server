@@ -4,12 +4,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.4.0</version>
+    <version>2.6.3</version>
     <relativePath /> <!-- lookup parent from repository -->
   </parent>
   <groupId>de.bausdorf.simracing</groupId>
   <artifactId>racecontrol-server</artifactId>
-  <version>1.2.1-SNAPSHOT</version>
+  <version>2.0.2-SNAPSHOT</version>
   <name>racecontrol-server</name>
   <organization>
     <name>bausdorf engineering</name>
@@ -19,20 +19,26 @@
   <description>Server to support iRacing race control</description>
 
   <properties>
-    <java.version>1.8</java.version>
-    <oauth.autoconfigure.version>2.3.4.RELEASE</oauth.autoconfigure.version>
-    <testcontainers.version>1.14.3</testcontainers.version>
-    <socksjs-client.version>1.1.2</socksjs-client.version>
-    <stomp-websocket.version>2.3.3-1</stomp-websocket.version>
-    <momentjs.version>2.24.0</momentjs.version>
+    <java.version>11</java.version>
+    <testcontainers.version>1.16.3</testcontainers.version>
+    <socksjs-client.version>1.5.1</socksjs-client.version>
+    <stomp-websocket.version>2.3.4</stomp-websocket.version>
+    <momentjs.version>2.29.3</momentjs.version>
+    <madiadb-client.version>2.7.3</madiadb-client.version>
+    <keycloak.version>17.0.1</keycloak.version>
+    <ir-data-api.version>2.4.1</ir-data-api.version>
+    <jquery-ui.version>1.13.1</jquery-ui.version>
+    <jda.version>5.0.0-alpha.11</jda.version>
   </properties>
 
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.springframework.security.oauth.boot</groupId>
-        <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-        <version>${oauth.autoconfigure.version}</version>
+        <groupId>org.keycloak.bom</groupId>
+        <artifactId>keycloak-adapter-bom</artifactId>
+        <version>${keycloak.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -44,20 +50,25 @@
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-oauth2-client</artifactId>
-        <exclusions>
-          <exclusion>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-          </exclusion>
-        </exclusions>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-spring-boot-starter</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework.security.oauth.boot</groupId>
-      <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+      <groupId>org.keycloak</groupId>
+      <artifactId>keycloak-admin-client</artifactId>
+      <version>${keycloak.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
-
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>28.1-jre</version>
+    </dependency>
     <!-- Spring web -->
     <dependency>
         <groupId>org.springframework.boot</groupId>
@@ -82,8 +93,20 @@
       <artifactId>spring-boot-starter-websocket</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-messaging</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-messaging</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-java8time</artifactId>
     </dependency>
 
     <!-- Spring data -->
@@ -134,12 +157,23 @@
       <artifactId>momentjs</artifactId>
       <version>${momentjs.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>jquery-ui</artifactId>
+      <version>${jquery-ui.version}</version>
+    </dependency>
 
     <!-- logging -->
     <dependency>
       <groupId>io.logz.logback</groupId>
       <artifactId>logzio-logback-appender</artifactId>
       <version>1.0.24</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jolokia</groupId>
@@ -148,9 +182,16 @@
 
     <!-- For iRacing website access -->
     <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython</artifactId>
-      <version>2.7.2</version>
+      <groupId>de.bausdorf.simracing</groupId>
+      <artifactId>ir-data-api-client</artifactId>
+      <version>${ir-data-api.version}</version>
+    </dependency>
+
+    <!-- For Discord access -->
+    <dependency>
+      <groupId>net.dv8tion</groupId>
+      <artifactId>JDA</artifactId>
+      <version>${jda.version}</version>
     </dependency>
 
     <!-- Spring test -->
@@ -158,6 +199,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>asm</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
@@ -174,6 +221,12 @@
       <groupId>org.testcontainers</groupId>
       <artifactId>testcontainers</artifactId>
       <version>${testcontainers.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jetbrains</groupId>
+          <artifactId>annotations</artifactId>
+        </exclusion>
+      </exclusions>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -190,10 +243,9 @@
     <dependency>
       <groupId>org.mariadb.jdbc</groupId>
       <artifactId>mariadb-java-client</artifactId>
-      <version>2.7.0</version>
+      <version>${madiadb-client.version}</version>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 
   <build>
@@ -212,13 +264,18 @@
         <version>2.0.0</version>
         <configuration>
           <licenseName>gpl_v3</licenseName>
-          <!--          <licenseResolver>${project.baseUri}/src/license</licenseResolver>-->
           <excludes>
-            <exclude>*.eot</exclude>
-            <exclude>*.svg</exclude>
-            <exclude>*.ttf</exclude>
-            <exclude>*.woff</exclude>
-            <exclude>*.woff2</exclude>
+            <exclude>**/*.eot</exclude>
+            <exclude>**/*.svg</exclude>
+            <exclude>**/*.ttf</exclude>
+            <exclude>**/*.woff</exclude>
+            <exclude>**/*.woff2</exclude>
+            <exclude>**/*.json</exclude>
+            <exclude>**/*.py</exclude>
+            <exclude>**/*.sql</exclude>
+            <exclude>**/*.jpg</exclude>
+            <exclude>**/*.png</exclude>
+            <exclude>**/fonts/*</exclude>
           </excludes>
         </configuration>
       </plugin>

@@ -35,13 +35,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import de.bausdorf.simracing.racecontrol.model.DriverChangeRepository;
-import de.bausdorf.simracing.racecontrol.model.DriverRepository;
-import de.bausdorf.simracing.racecontrol.model.EventRepository;
-import de.bausdorf.simracing.racecontrol.model.Session;
-import de.bausdorf.simracing.racecontrol.model.SessionRepository;
+import de.bausdorf.simracing.racecontrol.live.model.DriverChangeRepository;
+import de.bausdorf.simracing.racecontrol.live.model.DriverRepository;
+import de.bausdorf.simracing.racecontrol.live.model.EventRepository;
+import de.bausdorf.simracing.racecontrol.live.model.Session;
+import de.bausdorf.simracing.racecontrol.live.model.SessionRepository;
 import de.bausdorf.simracing.racecontrol.util.TimeTools;
-import de.bausdorf.simracing.racecontrol.web.model.SessionAdminView;
+import de.bausdorf.simracing.racecontrol.web.model.live.SessionAdminView;
 import lombok.extern.slf4j.Slf4j;
 
 @Controller
@@ -67,9 +67,9 @@ public class SessionAdminController extends ControllerBase {
 
 	@GetMapping("/sessionadmin")
 	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
-	public String getSessionAdministration(@RequestParam Optional<String> error, Model model) {
+	public String getSessionAdministration(@RequestParam Optional<String> messages, Model model) {
 		this.activeNav = "sessionAdmin";
-		error.ifPresent(s -> addError(s, model));
+		messages.ifPresent(s -> decodeMessagesToModel(s, model));
 		List<SessionAdminView> sessionViews = new ArrayList<>();
 		for(Session session : sessionRepository.findAll()) {
 			sessionViews.add(SessionAdminView.builder()
@@ -88,7 +88,7 @@ public class SessionAdminController extends ControllerBase {
 	@GetMapping("/deletesession")
 	@Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR"})
 	@Transactional
-	public String deleteSession(@RequestParam String sessionId) {
+	public String deleteSession(@RequestParam String sessionId, Model model) {
 
 		try {
 			changeRepository.deleteAllBySessionId(sessionId);
@@ -97,7 +97,8 @@ public class SessionAdminController extends ControllerBase {
 			sessionRepository.deleteById(sessionId);
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
-			return "redirect:/sessionadmin?error=" + e.getMessage();
+			addError(e.getMessage(), model);
+			return "redirect:/sessionadmin?messages=" + messagesEncoded(model);
 		}
 		return "redirect:/sessionadmin";
 	}

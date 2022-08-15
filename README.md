@@ -1,7 +1,16 @@
 # iRacing RaceControl
 
-This server enables a live race control support for (team) endurance 
-racing on the iRacing platform.
+This server supports the organization of team endurance events and enables a live race control support for 
+(team) endurance racing on the iRacing platform.
+
+Event organization is supported by
+
+* Team and driver self registration process
+* Consistency check of a drivers iRacing id and name utilizing the iRacing Data API
+* Automatic creation of Discord roles/channels for registered teams
+* Optional check for iRacing league and/or team membership
+* Support for limited grid slots/wildcards/waiting-list in multiple classes
+* Direct utilization of car/track information from iRacing
 
 RaceControl is supported by the server providing information about
 
@@ -18,8 +27,10 @@ race control staff may click on a track events timestamp to set the
 replay position to time and driver causing the event. This helps in
 investigating incidents faster.
 
-User security relies on Google oAuth provider - so you need a Google
-account to be able to login.
+User security relies on Keycloak - so you need a running instance
+to be able to login.
+
+[logz.io](https://app-eu.logz.io/) is supported as logging backend.
 
 ## Components
 
@@ -43,10 +54,7 @@ to enable fast event based replay time and driver selection.
 
 ## Build
 
-The server requires Java 8 or higher. Be aware using Java 11 or 
-higher may cause problems while some internal implementation classes
-have been removed. There are no problems expected but as the project
-utilizes the Spring Boot framework side effects ***may*** occur.
+The server requires Java 11 or higher.
 
 Server component is build as executable jar file by executing
 
@@ -56,9 +64,9 @@ Server component is build as executable jar file by executing
 
 Mandatory requirements are
 
-* Java 8 JRE or higher
+* Java 11 JRE or higher
 * MariaDB / MySQL server installed
-* Google account to be able to do login
+* Access to running keycloak instance to be able to do login
 
 Optional requirements are
 
@@ -74,6 +82,7 @@ should provide help to
 * add a user dedicated to run the server
 * run the server as system service
 * configure an nginx proxy 
+* initial/update deployment of a server
 
 In these support file it is assumed the server's home will be 
 
@@ -81,35 +90,15 @@ In these support file it is assumed the server's home will be
     
 ## Configuration
 
-To enable user authentication you have to configure 
-[Google OAuth 2.0](https://developers.google.com/identity/protocols/oauth2/openid-connect)
-for your server / domain.
+To enable user authentication you have to configure a Keycloak 
+realm and an OpenId Connect client withing this realm for your server / domain.
 
-Configuration is done by providing an external application.properties file:
+Server configuration is done by modifying the deployed application.properties.template
+and save it as application.properties.
 
-    # You must provide values here depending on your personal 
-    # Google OAuth 2.0 configuration
-    spring.security.oauth2.client.registration.google.client-id=
-    spring.security.oauth2.client.registration.google.client-secret=
-    
-    # URL on which your server is publically reachable 
-    racecontrol.serverBaseUrl=http://race-control.bausdorf-engineering.de
-    
-    #
-    # Rule enforcement settings
-    #
-    
-    # Max track time allowed between driver change
-    racecontrol.maxDrivingTimeMinutes=180
-    
-    # Max track time after which a rest period is required for a driver
-    racecontrol.maxDrivingTimeRequiresRestMinutes=120
-    
-    # Min rest time for a driver
-    racecontrol.minRestTimeMinutes=120
-    
-    # Time based fair share track time factor
-    racecontrol.fairShareFactor=0.5
-    
-    # iRating value limit for a driver/team to be considered as PRO
-    racecontrol.proAmDiscriminator = 2500
+You can use logz.io for analyzing your server logs by modifying the deployed
+logback.xml.template by interting your personal logz.io token and saving it as
+logback.xml
+
+You can change your server port by providing the environment variable 
+SERVER_PORT=[your desired port number]. 

@@ -22,10 +22,13 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 public class Messages extends ArrayList<Message> {
 
     public List<Message> errors() {

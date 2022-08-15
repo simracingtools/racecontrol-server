@@ -22,28 +22,28 @@ package de.bausdorf.simracing.racecontrol.web.security;
  * #L%
  */
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import javax.persistence.Convert;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import de.bausdorf.simracing.racecontrol.api.EventType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import de.bausdorf.simracing.racecontrol.live.api.EventType;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 public class RcUser implements UserDetails {
@@ -52,15 +52,18 @@ public class RcUser implements UserDetails {
 
 	private String name;
 	private String email;
+	private String discordHandle;
 	private String imageUrl;
 	private long iRacingId;
-	private String iRacingName;
 	private String clientMessageAccessToken;
 	private RcUserType userType;
+	@Convert(converter = ZoneIdConverter.class)
 	private ZoneId timezone;
-	private ZonedDateTime created;
-	private ZonedDateTime lastAccess;
-	private ZonedDateTime lastSubscription;
+	private String localeTag;
+	private String irClubName;
+	private LocalDateTime created;
+	private LocalDateTime lastAccess;
+	private LocalDateTime lastSubscription;
 	private SubscriptionType subscriptionType;
 	@ElementCollection(targetClass=EventType.class)
 	private Set<EventType> eventFilter;

@@ -45,7 +45,7 @@ import de.bausdorf.simracing.racecontrol.orga.model.RuleViolationRepository;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles("local")
 @Slf4j
 class RuleViolationTest {
 

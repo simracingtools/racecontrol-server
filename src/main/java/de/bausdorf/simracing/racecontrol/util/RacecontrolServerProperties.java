@@ -22,9 +22,11 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
+import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
@@ -42,8 +44,23 @@ public class RacecontrolServerProperties {
     private int minRestTimeMinutes;
     private double fairShareFactor;
     private int proAmDiscriminator;
-    private String iRacingUsername;
-    private String iRacingPassword;
     private String discordBulletinUrl;
-    private String jythonHome;
+    private String keycloakUser;
+    private String keycloakPassword;
+    private String keycloakServer;
+    private String keycloakRealm;
+    private String fileUploadBasePath;
+    private String uploadBaseUri;
+    private String flagImageResourcePath;
+    private long leagueInfoCacheMaxAgeMinutes;
+    private String discordBotToken;
+
+    @Bean
+    ConfigProperties configProperties() {
+        return new ConfigProperties();
+    }
+
+    public long getLeagueInfoCacheMaxAgeMillis() {
+        return leagueInfoCacheMaxAgeMinutes * 60000L;
+    }
 }
