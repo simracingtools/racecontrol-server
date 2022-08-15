@@ -196,7 +196,6 @@ public class RegistrationController extends ControllerBase {
             addError("No initial state for workflow " + REGISTRATION_WORKFLOW + " found", model);
         } else {
             registration.setWorkflowState(initialWorkflowState);
-//            registration.getTeamMembers().add(creator);
 
             registration = eventOrganizer.saveRegistration(registration);
             createWorkFlowAction(registration);
@@ -234,8 +233,9 @@ public class RegistrationController extends ControllerBase {
             return "Team id " + irTeamId + " not found on iRacing service.";
         }
 
-        String fullTeamName = teamName + (carQualifier != null ? " " + carQualifier : "");
+        String fullTeamName = teamName + (carQualifier != null && !carQualifier.trim().isEmpty() ? " " + carQualifier : "");
         if(!irTeamName.equalsIgnoreCase(fullTeamName)) {
+            log.info("Team name mismatch - iRacing team name: '{}', registered name and qualifier: '{}' '{}'", irTeamName, teamName, carQualifier);
             return "Team name " + fullTeamName + " does not match iRacing team name " + irTeamName;
         }
 
