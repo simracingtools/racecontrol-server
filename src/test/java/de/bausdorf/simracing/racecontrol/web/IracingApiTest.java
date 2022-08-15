@@ -27,13 +27,11 @@ import de.bausdorf.simracing.irdataapi.client.impl.IrDataClientImpl;
 import de.bausdorf.simracing.irdataapi.config.ConfigProperties;
 import de.bausdorf.simracing.irdataapi.model.AuthResponseDto;
 import de.bausdorf.simracing.irdataapi.model.LoginRequestDto;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.extern.slf4j.Slf4j;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -49,7 +47,6 @@ class IracingApiTest {
 	private final IrDataClient dataClient = new IrDataClientImpl();
 
 	@Test
-	@Disabled("Intergation test to run manually")
 	void testIracingLogin() {
 		try {
 			LoginRequestDto irLoginRequest = LoginRequestDto.builder()

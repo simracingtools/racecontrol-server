@@ -8,6 +8,17 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v1
+      - name: Provide test properties
+        run: |
+          cat src/test/resources/application-test.properties > application-local.properties
+          echo "irdataapi.user=$IRDATAAPI_USER" >> application-local.properties
+          echo "irdataapi.password=$IRDATAAPI_PASSWORD" >> application-local.properties
+          echo "racecontrol.discordBotToken=$DISCORD_BOT_TOKEN" >> application-local.properties
+          cat application-local.properties
+        env:
+          IRDATAAPI_USER: ${{secrets.IR_USERNAME}}
+          IRDATAAPI_PASSWORD: ${{secrets.IR_PASSWORD}}
+          DISCORD_BOT_TOKEN: ${{secrets.DISCORD_BOT_TOKEN}}
       - name: Build and Run Tests
         run: mvn test --batch-mode -Dmaven.test.failure.ignore=true
       - name: Publish Test Report

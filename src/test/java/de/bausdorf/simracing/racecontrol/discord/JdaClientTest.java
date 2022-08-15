@@ -10,12 +10,12 @@ package de.bausdorf.simracing.racecontrol.discord;
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -26,34 +26,30 @@ import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.SelfUser;
-import net.dv8tion.jda.internal.handle.GuildSetupController;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-
-
-@SpringBootTest(classes = {JdaClient.class})
-@EnableConfigurationProperties(value = RacecontrolServerProperties.class)
-@TestPropertySource("file:application-local.properties")
+@SpringBootTest
+@ActiveProfiles("local")
 @Slf4j
-public class JdaClientTest {
+class JdaClientTest {
 
-    @Autowired private RacecontrolServerProperties config;
-    @Autowired private JdaClient jdaClient;
+    @Autowired
+    RacecontrolServerProperties config;
+    @Autowired
+    JdaClient jdaClient;
 
     @Test
-    public void testJda() {
+//    @Disabled
+    void testJda() {
         JDA api = jdaClient.getApi();
         SelfUser self = api.getSelfUser();
         log.info(self.toString());
-        AccountType accoutType = api.getAccountType();
-        log.info(accoutType.toString());
+        AccountType accountType = api.getAccountType();
+        log.info(accountType.toString());
 //        Guild guild = api.getGuildById(631774413057949706L);
 //
 //
