@@ -153,6 +153,11 @@ public class EventAdminController extends ControllerBase {
             eventSeriesToSave = eventRepository.save(eventView.toEntity(eventSeriesToSave));
             return redirectView(eventSeriesToSave.getId(), model);
         }
+        if(eventSeriesToSave == null) {
+            eventSeriesToSave = eventRepository.save(eventView.toEntity(eventSeriesToSave));
+            checkDiscord(eventSeriesToSave, model);
+            return redirectView(eventSeriesToSave.getId(), model);
+        }
         return redirectView(0L, model);
     }
 
