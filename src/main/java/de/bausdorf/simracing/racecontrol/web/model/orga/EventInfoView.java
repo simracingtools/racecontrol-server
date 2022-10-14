@@ -23,7 +23,6 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  */
 
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
-import de.bausdorf.simracing.racecontrol.web.model.TrackView;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -65,11 +64,14 @@ public class EventInfoView {
     private List<SessionInfoView> trackSessions = new ArrayList<>();
 
     public boolean isRegistrationOpen() {
-        return LocalDateTime.now().isAfter(registrationOpens) && LocalDateTime.now().isBefore(registrationCloses);
+        ZonedDateTime regOpenZoned = ZonedDateTime.of(registrationOpens, ZoneId.of(registrationOpensTZ));
+        ZonedDateTime regCloseZoned = ZonedDateTime.of(registrationCloses, ZoneId.of(registrationClosesTZ));
+        return ZonedDateTime.now().isAfter(regOpenZoned) && ZonedDateTime.now().isBefore(regCloseZoned);
     }
 
     public boolean isRegistrationClosed() {
-        return LocalDateTime.now().isAfter(registrationCloses);
+        ZonedDateTime regCloseZoned = ZonedDateTime.of(registrationCloses, ZoneId.of(registrationClosesTZ));
+        return ZonedDateTime.now().isAfter(regCloseZoned);
     }
 
     public static EventInfoView fromEntity(EventSeries eventSeries) {
