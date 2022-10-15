@@ -89,6 +89,10 @@ public class EventDetailController extends ControllerBase {
                               @RequestParam Optional<String> activeCarClass,
                               Model model) {
         Person currentPerson = currentPerson(eventId);
+        log.debug("/event-detail current person: {}", currentPerson);
+        if(currentPerson == null) {
+            return INDEX_VIEW;
+        }
         messages.ifPresent(e -> decodeMessagesToModel(e, model));
         activeTab.ifPresentOrElse(
                 s -> setActiveNav(s, model),
@@ -130,13 +134,13 @@ public class EventDetailController extends ControllerBase {
                     .confirmedTeams(eventOrganizer.getConfirmedRegistrationsWithoutPaintRequest(eventId))
                     .build());
 
-            if  (currentPerson != null) {
+//            if  (currentPerson != null) {
                 model.addAttribute("actions", eventOrganizer.getActiveWorkflowActionListForRole(
                         eventId, currentPerson));
-            } else {
-                model.addAttribute("actions", new ArrayList<>());
-            }
-        } else {
+//            } else {
+//                model.addAttribute("actions", new ArrayList<>());
+//            }
+//        } else {
             addError("Event with id " + eventId + " not found", model);
             model.addAttribute(EVENT_VIEW_MODEL_KEY, EventInfoView.createEmpty());
             model.addAttribute("editStaffView", PersonView.builder()
