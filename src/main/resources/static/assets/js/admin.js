@@ -365,7 +365,7 @@ function registrationOpenCountdown() {
   const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
   if(moment().isBefore(regOpens)) {
     timeLeft = moment.duration(regOpens.diff(moment()));
-    $("#regOpensCountdown").text(timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
+    $("#regOpensCountdown").text(timeLeft.months() + " M " + timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
   } else {
     $("#regOpensCountdown").text("");
   }
@@ -376,7 +376,7 @@ function registrationClosedCountdown() {
   const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
   if(moment().isAfter(regOpens) && moment().isBefore(regCloses)) {
     var timeLeft = moment.duration(regCloses.diff(moment()));
-    $("#regClosesCountdown").text(timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
+    $("#regClosesCountdown").text(timeLeft.months() + " M " + timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
   } else {
     $("#regClosesCountdown").text("");
   }
