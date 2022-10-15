@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.*;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Builder
 @ToString
+@Slf4j
 public class EventInfoView {
     private long eventId;
     private String title;
@@ -64,8 +66,27 @@ public class EventInfoView {
     private List<SessionInfoView> trackSessions = new ArrayList<>();
 
     public boolean isRegistrationOpen() {
-        ZonedDateTime regOpenZoned = ZonedDateTime.of(registrationOpens, ZoneId.of(registrationOpensTZ));
-        ZonedDateTime regCloseZoned = ZonedDateTime.of(registrationCloses, ZoneId.of(registrationClosesTZ));
+        if(registrationOpens == null || registrationCloses == null) {
+            log.error("Registration period incomplete: {}, {}", registrationOpens, registrationCloses);
+            return false;
+        }
+        log.debug("isRegistrationOpen: {} {} until {} {}", registrationOpens, registrationOpensTZ, registrationCloses, registrationClosesTZ);
+        if(registrationOpensTZ == null) {
+            log.warn("Registration opens TZ is null, falling back to UTC");
+            registrationOpensTZ = "UTC";
+        }
+        if(registrationClosesTZ == null) {
+            log.warn("Registration closes TZ is null, falling back to UTC");
+            registrationClosesTZ = "UTC";
+        }
+
+        ZoneId opensZone = ZoneId.of(registrationOpensTZ);
+        ZoneId closesZone = ZoneId.of(registrationClosesTZ);
+
+        log.debug("used ZoneID's: {}, {}", opensZone, closesZone);
+        ZonedDateTime regOpenZoned = ZonedDateTime.of(registrationOpens, opensZone);
+        ZonedDateTime regCloseZoned = ZonedDateTime.of(registrationCloses, closesZone);
+
         return ZonedDateTime.now().isAfter(regOpenZoned) && ZonedDateTime.now().isBefore(regCloseZoned);
     }
 
@@ -107,7 +128,9 @@ public class EventInfoView {
     public static EventInfoView createEmpty() {
         return EventInfoView.builder()
                 .registrationOpens(LocalDateTime.now())
+                .registrationCloses(LocalDateTime.now())
                 .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
                 .active(true)
                 .registrationOpensTZ(ZonedDateTime.now().getOffset().toString())
                 .registrationClosesTZ(ZonedDateTime.now().getOffset().toString())

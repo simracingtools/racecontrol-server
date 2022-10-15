@@ -134,13 +134,9 @@ public class EventDetailController extends ControllerBase {
                     .confirmedTeams(eventOrganizer.getConfirmedRegistrationsWithoutPaintRequest(eventId))
                     .build());
 
-//            if  (currentPerson != null) {
-                model.addAttribute("actions", eventOrganizer.getActiveWorkflowActionListForRole(
-                        eventId, currentPerson));
-//            } else {
-//                model.addAttribute("actions", new ArrayList<>());
-//            }
-//        } else {
+            model.addAttribute("actions", eventOrganizer.getActiveWorkflowActionListForRole(
+                    eventId, currentPerson));
+        } else {
             addError("Event with id " + eventId + " not found", model);
             model.addAttribute(EVENT_VIEW_MODEL_KEY, EventInfoView.createEmpty());
             model.addAttribute("editStaffView", PersonView.builder()
