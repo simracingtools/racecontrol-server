@@ -91,7 +91,7 @@ public class EventDetailController extends ControllerBase {
         Person currentPerson = currentPerson(eventId);
         log.debug("/event-detail current person: {}", currentPerson);
         if(currentPerson == null) {
-            return INDEX_VIEW;
+            return redirectView(INDEX_VIEW, 0L, model);
         }
         messages.ifPresent(e -> decodeMessagesToModel(e, model));
         activeTab.ifPresentOrElse(
