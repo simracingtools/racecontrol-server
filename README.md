@@ -102,3 +102,12 @@ logback.xml
 
 You can change your server port by providing the environment variable 
 SERVER_PORT=[your desired port number]. 
+
+## Hints
+
+### Delete registration in database
+
+    delete from workflow_action where workflow_item_id =
+    delete from team_registration where id=
+
+This only works if no team_member is registered before.
