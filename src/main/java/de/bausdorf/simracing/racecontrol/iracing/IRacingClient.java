@@ -47,6 +47,7 @@ import org.springframework.web.client.HttpClientErrorException;
 @Slf4j
 public class IRacingClient {
 
+	public static final String I_RACING_HTTP_ERROR = "iRacing http error {}: {}";
 	private final ConfigProperties serverProperties;
 	private final IrDataClient dataClient;
 	private final StockDataCache dataCache;
@@ -103,7 +104,7 @@ public class IRacingClient {
 			authenticate();
 			return dataClient.getLeagueInfo(leagueId);
 		} catch(HttpClientErrorException clientError) {
-			log.warn("iRacing http error {}: {}",clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -115,11 +116,36 @@ public class IRacingClient {
 			authenticate();
 			return Optional.of(dataClient.getTeamMembers(teamId));
 		} catch(HttpClientErrorException clientError) {
-			log.warn("iRacing http error {}: {}",clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
 		} catch(Exception e) {
 			log.error(e.getMessage(), e);
 		}
 		return Optional.empty();
+	}
+
+	public Optional<SubsessionResultDto> getSubsessionResult(long subsessionId) {
+		try {
+			authenticate();
+			return Optional.of(dataClient.getSubsessionResult(subsessionId));
+		} catch(HttpClientErrorException clientError) {
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return Optional.empty();
+	}
+
+	public List<LapChartEntryDto> getLapChartData(long subsessionId, long simsessionNumber) {
+		try {
+			authenticate();
+			LapChartDto lapChartDto = dataClient.getLapChartData(subsessionId, simsessionNumber);
+			return dataClient.getLapEntries(lapChartDto.getChunkInfo());
+		} catch(HttpClientErrorException clientError) {
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return List.of();
 	}
 
 	private void authenticate() {
