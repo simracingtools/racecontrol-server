@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.util;
  */
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +36,7 @@ import java.util.Locale;
 public class TimeTools {
 
     public static final String HH_MM_SS = "HH:mm:ss";
-    public static final String HH_MM_SS_XXX = "HH:mm:ssxxx";
+    public static final String MM_SS_XXX = "m:ss.SS";
     public static final ZoneId GMT = ZoneId.of("GMT");
     private static final List<String> TIME_PATTERNS = new ArrayList<>();
 
@@ -205,5 +206,22 @@ public class TimeTools {
         String strippedPostfix = sessionDurationWithSec.replaceFirst(" sec", "");
         double durationSeconds = Double.parseDouble(strippedPostfix);
         return Duration.ofSeconds((long)durationSeconds);
+    }
+
+    public static LocalTime localTimeFromDuration(@Nullable Duration duration) {
+        if (duration == null) {
+            return null;
+        }
+        return LocalTime.of(duration.toHoursPart(),
+                duration.toMinutesPart(),
+                duration.toSecondsPart(),
+                duration.toNanosPart());
+    }
+
+    public static String lapDisplayTimeFromDuration(@Nullable Duration lapTime) {
+        if (lapTime == null) {
+            return "--:--.--";
+        }
+        return localTimeFromDuration(lapTime).format(DateTimeFormatter.ofPattern(MM_SS_XXX));
     }
 }

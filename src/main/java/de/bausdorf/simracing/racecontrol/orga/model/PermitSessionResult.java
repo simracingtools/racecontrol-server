@@ -54,4 +54,5 @@ public class PermitSessionResult {
     private Duration slowestLapTime;
     private Duration fastestLapTime;
     private Duration averageLapTime;
+    private String events;
 }

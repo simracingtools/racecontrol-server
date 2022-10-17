@@ -34,8 +34,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -136,6 +134,18 @@ public class ResultManager {
         return permitted;
     }
 
+    public Duration getTeamPermissionTime(long eventId, List<Long> iracingIds) {
+        List<DriverPermission> driverPermissions = driverPermissionRepository.findAllByEventIdAndIracingIdInOrderByPermissionTimeAsc(eventId, iracingIds);
+        if (log.isDebugEnabled()) {
+            driverPermissions.forEach(p -> log.debug("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
+        }
+        OptionalDouble teamPermitTime = driverPermissions.stream()
+                .mapToLong(DriverPermission::getPermissionTime)
+                .average();
+        long millis = (long)teamPermitTime.orElse(0.0D);
+        return Duration.ofMillis(millis);
+    }
+
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {
         List<LapChartEntryDto> lapData = dataClient.getLapChartData(subsessionId, simsessionNumber);
         lapData.forEach(data -> {
@@ -143,26 +153,30 @@ public class ResultManager {
             if (permitSessionResult == null) {
                 throw new IllegalStateException("Driver id " + data.getCustId() + " has no lap data");
             }
-            if (Boolean.TRUE.equals(!data.getIncident()) && data.getLapTime() != -1) {
+            if (isValidLap(data)) {
                 permitSessionResult.setLapCount(permitSessionResult.getLapCount() + 1);
+            } else {
+                annotateInvalidLap(data, permitSessionResult);
             }
+
             Duration lapDuration = Duration.ofMillis(data.getLapTime() / 10);
             if (permitSessionResult.getSlowestLapTime() == null || permitSessionResult.getSlowestLapTime().toMillis() < lapDuration.toMillis()) {
                 permitSessionResult.setSlowestLapTime(lapDuration);
             }
         });
     }
+
+    private static boolean isValidLap(final LapChartEntryDto lapData) {
+        List<String> lapEvents = List.of(lapData.getLapEvents());
+        return lapData.getLapTime() != -1 && !lapEvents.contains("invalid");
+    }
+
     private static void updatePermission(DriverPermission permit, PermitSessionResult result) {
         permit.setDriverName(result.getName());
         permit.setCarName(result.getCarName());
         permit.setPermitDateTime(result.getBestLapAt());
         permit.setPermissionTime(result.getAverageLapTime().toMillis());
-        permit.setDisplayTime(LocalTime.of(
-                        result.getAverageLapTime().toHoursPart(),
-                        result.getAverageLapTime().toMinutesPart(),
-                        result.getAverageLapTime().toSecondsPart(),
-                        result.getAverageLapTime().toMillisPart())
-                .format(DateTimeFormatter.ofPattern("mm:ss.S")));
+        permit.setDisplayTime(TimeTools.lapDisplayTimeFromDuration(result.getAverageLapTime()));
     }
     private static PermitSessionResult fetchPermitSessionResult(long eventId, long subsessionId, MemberSessionResultDto memberResult) {
         PermitSessionResult permitSessionResult = new PermitSessionResult();
@@ -176,5 +190,16 @@ public class ResultManager {
         permitSessionResult.setFastestLapTime(Duration.ofMillis(memberResult.getBestLapTime() / 10));
         permitSessionResult.setBestLapAt(memberResult.getBestQualLapAt().toOffsetDateTime());
         return permitSessionResult;
+    }
+
+    private static void annotateInvalidLap(LapChartEntryDto data, PermitSessionResult permitSessionResult) {
+        if (!"0".equals(data.getLapNumber())) {
+            if (permitSessionResult.getEvents() == null) {
+                permitSessionResult.setEvents("Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents()));
+            } else {
+                permitSessionResult.setEvents(permitSessionResult.getEvents()
+                        + ", Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents()));
+            }
+        }
     }
 }

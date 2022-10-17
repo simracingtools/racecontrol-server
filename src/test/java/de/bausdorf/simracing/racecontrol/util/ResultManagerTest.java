@@ -25,11 +25,13 @@ package de.bausdorf.simracing.racecontrol.util;
 import de.bausdorf.simracing.racecontrol.orga.model.DriverPermission;
 import de.bausdorf.simracing.racecontrol.orga.model.PermitSessionResult;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.Duration;
 import java.util.List;
 
 @SpringBootTest
@@ -41,7 +43,8 @@ class ResultManagerTest {
 
     @Test
     void testFetchPermitSessionResult() {
-        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 50380624L);
+        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 51632638L);
+//        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 50380624L);
 //        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 43352007L);
 
         permitSessionResults.forEach(data -> {
@@ -53,7 +56,29 @@ class ResultManagerTest {
 
     @Test
     void testUpdatePermissions() {
-        List<DriverPermission> permissionList = resultManager.updatePermissions(1L, 50380624L);
+        List<DriverPermission> permissionList = resultManager.updatePermissions(2L, 51632638L);
+//        List<DriverPermission> permissionList = resultManager.updatePermissions(1L, 50380624L);
         permissionList.forEach(p -> log.info(p.toString()));
     }
-}
+
+    @Test
+    void testGetTeamPermissionTime() {
+        Duration teamPermissionTime = resultManager.getTeamPermissionTime(1L, List.of(372473L, 315956L, 229120L));
+
+        log.info("Team Permit Time: {}", TimeTools.lapDisplayTimeFromDuration(teamPermissionTime));
+    }
+
+    @Test
+    void testGetTeamPermissionTimeOneDriverWithoutPermission() {
+        Duration teamPermissionTime = resultManager.getTeamPermissionTime(1L, List.of(372473L, 315956L, 229120L, 0L));
+
+        log.info("Team Permit Time: {}", TimeTools.lapDisplayTimeFromDuration(teamPermissionTime));
+    }
+
+    @Test
+    void testGetTeamPermissionTimeEmptyList() {
+        Duration teamPermissionTime = resultManager.getTeamPermissionTime(1L, List.of());
+
+        log.info("Team Permit Time: {}", TimeTools.lapDisplayTimeFromDuration(teamPermissionTime));
+        Assertions.assertEquals(Duration.ZERO, teamPermissionTime);
+    }}
