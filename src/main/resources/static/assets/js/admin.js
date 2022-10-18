@@ -283,6 +283,10 @@ function editSubsession(subsessionId) {
   $("#subsession-modal").modal('show');
 }
 
+function duplicateSession() {
+  $("#duplicate-session-modal").modal('show');
+}
+
 function checkIRacingLeagueId() {
   $("#irLeagueName").val("");
   $.ajax({

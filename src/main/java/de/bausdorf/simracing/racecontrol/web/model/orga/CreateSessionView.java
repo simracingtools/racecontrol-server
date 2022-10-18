@@ -90,9 +90,9 @@ public class CreateSessionView {
         s.setTemperature(temperature == null ? s.getTemperature() : temperature);
         s.setHumidity(humidity == null ? s.getHumidity() : humidity);
         s.setWindSpeed(windSpeed == null ? s.getWindSpeed() : windSpeed);
-        s.setWindDirection(windDirection == null ? s.getWindDirection() : WindDirectionType.ofCode(windDirection));
+        s.setWindDirection(windDirection == null || windDirection.isEmpty() ? s.getWindDirection() : WindDirectionType.ofCode(windDirection));
         s.setGeneratedSky(generatedSky == null ? s.isGeneratedSky() : generatedSky);
-        s.setSky(sky == null ? s.getSky() : SkyConditionType.ofName(sky));
+        s.setSky(sky == null || sky.isEmpty() ? s.getSky() : SkyConditionType.ofName(sky));
         s.setSkyVarInitial(skyVarInitial == null ? s.getSkyVarInitial() : skyVarInitial);
         s.setSkyVarContinued(skyVarContinued == null ? s.getSkyVarContinued() : skyVarContinued);
 

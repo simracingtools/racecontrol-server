@@ -340,6 +340,36 @@ public class EventAdminController extends ControllerBase {
                 .build(model);
     }
 
+    @PostMapping("/duplicate-session")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
+    public String duplicateSession(@ModelAttribute CreateSessionView sessionEditView, Model model) {
+        TrackSession existingSession = sessionRepository.findById(sessionEditView.getId()).orElse(null);
+        sessionEditView.setId(0);
+        TrackSession trackSession = sessionEditView.toEntity(null);
+        trackSession = sessionRepository.save(trackSession);
+
+        final long tracksessionId = trackSession.getId();
+        final List<TrackSubsession> clonedSubsessions = new ArrayList<>();
+        if(existingSession != null) {
+            List<TrackSubsession> originalSubsessions = existingSession.getSessionParts();
+            originalSubsessions.forEach(subSession -> {
+                TrackSubsession session = new TrackSubsession();
+                session.setTrackSessionId(tracksessionId);
+                session.setSessionType(subSession.getSessionType());
+                session.setDuration(subSession.getDuration());
+                session.setIrSubsessionId(subSession.getIrSubsessionId());
+                clonedSubsessions.add(subsessionRepository.save(session));
+            });
+
+            trackSession.setSessionParts(clonedSubsessions);
+            sessionRepository.save(trackSession);
+        }
+        return redirectBuilder(CREATE_SESSION_VIEW)
+                .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
+                .withParameter(SESSION_ID_PARAM, trackSession.getId())
+                .build(model);
+    }
+
     @PostMapping("/save-subsession")
     public String saveSubsession(@ModelAttribute TrackSubsessionView subsessionEditView, Model model) {
         TrackSubsession trackSubsession = subsessionEditView.toEntity(subsessionRepository.findById(subsessionEditView.getId()).orElse(null));
