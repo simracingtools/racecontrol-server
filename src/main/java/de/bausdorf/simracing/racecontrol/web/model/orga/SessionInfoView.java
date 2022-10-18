@@ -48,6 +48,7 @@ public class SessionInfoView {
 
     private TrackConfigurationView trackConfigView;
     private Long irSessionId;
+    private Boolean permitSession;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime simulatedTimeOfDay;
@@ -97,6 +98,7 @@ public class SessionInfoView {
                 .zoneOffset(session.getDateTime().getOffset().getId())
                 .irSessionId(session.getIrSessionId())
                 .simulatedTimeOfDay(session.getSimulatedTimeOfDay())
+                .permitSession(session.isPermitSession())
                 .trackUsagePercent(session.getTrackUsagePercent())
                 .trackStateCarryOver(session.isTrackStateCarryOver())
                 .generatedWeather(session.isGeneratedWeather())

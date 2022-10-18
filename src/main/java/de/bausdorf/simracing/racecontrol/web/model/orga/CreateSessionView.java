@@ -48,6 +48,7 @@ public class CreateSessionView {
 
     private long trackConfigId;
     private Long irSessionId;
+    private Boolean permitSession;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime simulatedTimeOfDay;
@@ -83,6 +84,7 @@ public class CreateSessionView {
         s.setDateTime(datetime == null ? s.getDateTime() : OffsetDateTime.of(datetime, ZoneOffset.of(zoneOffset)));
         s.setTrackConfigId(trackConfigId == 0L ? s.getTrackConfigId() : trackConfigId);
         s.setIrSessionId(irSessionId == null ? s.getIrSessionId() : irSessionId);
+        s.setPermitSession(permitSession == null ? s.isPermitSession() : permitSession);
         s.setSimulatedTimeOfDay(simulatedTimeOfDay == null ? s.getSimulatedTimeOfDay() : simulatedTimeOfDay);
         s.setTrackUsagePercent(trackUsagePercent == 0L ? s.getTrackUsagePercent() : trackUsagePercent);
         s.setTrackStateCarryOver(trackStateCarryOver == null ? s.isTrackStateCarryOver() : trackStateCarryOver);
@@ -108,6 +110,7 @@ public class CreateSessionView {
                 .zoneOffset(session.getDateTime().getOffset().getId())
                 .trackConfigId(session.getTrackConfigId())
                 .irSessionId(session.getIrSessionId())
+                .permitSession(session.isPermitSession())
                 .simulatedTimeOfDay(session.getSimulatedTimeOfDay())
                 .trackUsagePercent(session.getTrackUsagePercent())
                 .trackStateCarryOver(session.isTrackStateCarryOver())
