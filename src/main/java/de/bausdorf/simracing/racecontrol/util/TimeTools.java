@@ -36,7 +36,7 @@ import java.util.Locale;
 public class TimeTools {
 
     public static final String HH_MM_SS = "HH:mm:ss";
-    public static final String MM_SS_XXX = "m:ss.SS";
+    public static final String MM_SS_XXX = "m:ss.SSS";
     public static final ZoneId GMT = ZoneId.of("GMT");
     private static final List<String> TIME_PATTERNS = new ArrayList<>();
 
@@ -87,11 +87,11 @@ public class TimeTools {
     public static String longDurationString(Duration duration) {
         long h = duration.toHours();
         long m = duration.toMinutes() - (h * 60);
-        double S = ((double)duration.toMillis() / 1000) - (m * 60) - (h * 3600);
-        if (S < 0) {
-            S = 0.0;
+        double s = ((double)duration.toMillis() / 1000) - (m * 60) - (h * 3600);
+        if (s < 0) {
+            s = 0.0;
         }
-        return String.format(Locale.US,"%d:%02d:%06.3f", h, m, S);
+        return String.format(Locale.US,"%d:%02d:%06.3f", h, m, s);
     }
 
     public static String longDurationDeltaString(Duration d1, Duration d2) {
@@ -115,8 +115,8 @@ public class TimeTools {
         }
         long h = d.toHours();
         long m = d.toMinutes() - (h * 60);
-        long S = d.getSeconds() - (m * 60) - (h * 3600);
-        return prefix + String.format("%d:%02d:%02d", h, m, S);
+        long s = d.getSeconds() - (m * 60) - (h * 3600);
+        return prefix + String.format("%d:%02d:%02d", h, m, s);
     }
 
     public static LocalTime timeFromString(String time) {
