@@ -50,6 +50,7 @@ public class TrackSession {
 	private OffsetDateTime dateTime;
 	private long trackConfigId;
 	private Long irSessionId;
+	private boolean permitSession;
 
 	private LocalDateTime simulatedTimeOfDay;
 	private long trackUsagePercent;

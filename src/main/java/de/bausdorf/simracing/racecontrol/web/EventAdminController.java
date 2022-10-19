@@ -31,6 +31,7 @@ import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
+import de.bausdorf.simracing.racecontrol.util.ResultManager;
 import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.TimezoneView;
 import de.bausdorf.simracing.racecontrol.web.model.TrackConfigurationView;
@@ -66,6 +67,7 @@ import java.util.stream.Collectors;
 public class EventAdminController extends ControllerBase {
     private static final String CREATE_EVENT_VIEW = "create-event";
     private static final String CREATE_SESSION_VIEW = "create-session";
+    private static final String PERMIT_RESULT_VIEW = "permit-result";
     private static final String EVENT_VIEW_MODEL_KEY = "eventView";
     public static final String SESSION_ID_PARAM = "sessionId";
     public static final String SUBSESSION_EDIT_VIEW_KEY = "subsessionEditView";
@@ -73,6 +75,7 @@ public class EventAdminController extends ControllerBase {
     public static final String SESSION_EDIT_VIEW_KEY = "sessionEditView";
     public static final String DISCORD_CLEANUP_VIEW_KEY = "discordCleanupView";
 
+    private final ResultManager resultManager;
     private final EventSeriesRepository eventRepository;
     private final CarClassRepository carClassRepository;
     private final BalancedCarRepository balancedCarRepository;
@@ -84,7 +87,8 @@ public class EventAdminController extends ControllerBase {
     private final UploadFileManager uploadFileManager;
     private final JdaClient jdaClient;
 
-    public EventAdminController(@Autowired EventSeriesRepository eventRepository,
+    public EventAdminController(@Autowired ResultManager resultManager,
+                                @Autowired EventSeriesRepository eventRepository,
                                 @Autowired CarClassRepository carClassRepository,
                                 @Autowired BalancedCarRepository balancedCarRepository,
                                 @Autowired PersonRepository personRepository,
@@ -94,6 +98,7 @@ public class EventAdminController extends ControllerBase {
                                 @Autowired UploadFileManager uploadFileManager,
                                 @Autowired IRacingClient iRacingClient,
                                 @Autowired JdaClient jdaClient) {
+        this.resultManager = resultManager;
         this.eventRepository = eventRepository;
         this.carClassRepository = carClassRepository;
         this.balancedCarRepository = balancedCarRepository;
@@ -331,9 +336,52 @@ public class EventAdminController extends ControllerBase {
     @PostMapping("/save-session")
     @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
     public String saveSession(@ModelAttribute CreateSessionView sessionEditView, Model model) {
-        TrackSession trackSession = sessionEditView.toEntity(sessionRepository.findById(sessionEditView.getId()).orElse(null));
+        TrackSession existingSession = sessionRepository.findById(sessionEditView.getId()).orElse(null);
+        long existingIrSessionId = (existingSession != null && existingSession.getIrSessionId() != null) ? existingSession.getIrSessionId() : 0L;
+        TrackSession trackSession = sessionEditView.toEntity(existingSession);
+
+        if (existingIrSessionId == 0L && (trackSession.getIrSessionId() != null || Long.valueOf(0L).equals(trackSession.getIrSessionId()))) {
+            log.info("Tying to fetch result information on {}({})})", trackSession.getTitle(), trackSession.getIrSessionId());
+            // Fetch sessionResults
+            if (trackSession.isPermitSession()) {
+                resultManager.fetchPermitSessionResult(trackSession.getEventId(), trackSession.getIrSessionId(), trackSession);
+                resultManager.updatePermissions(trackSession.getEventId(), trackSession.getIrSessionId());
+            } else {
+                log.info("Session is no permit session<span></span>");
+            }
+        }
         trackSession = sessionRepository.save(trackSession);
 
+        return redirectBuilder(CREATE_SESSION_VIEW)
+                .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
+                .withParameter(SESSION_ID_PARAM, trackSession.getId())
+                .build(model);
+    }
+
+    @PostMapping("/duplicate-session")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
+    public String duplicateSession(@ModelAttribute CreateSessionView sessionEditView, Model model) {
+        TrackSession existingSession = sessionRepository.findById(sessionEditView.getId()).orElse(null);
+        sessionEditView.setId(0);
+        TrackSession trackSession = sessionEditView.toEntity(null);
+        trackSession = sessionRepository.save(trackSession);
+
+        final long tracksessionId = trackSession.getId();
+        final List<TrackSubsession> clonedSubsessions = new ArrayList<>();
+        if(existingSession != null) {
+            List<TrackSubsession> originalSubsessions = existingSession.getSessionParts();
+            originalSubsessions.forEach(subSession -> {
+                TrackSubsession session = new TrackSubsession();
+                session.setTrackSessionId(tracksessionId);
+                session.setSessionType(subSession.getSessionType());
+                session.setDuration(subSession.getDuration());
+                session.setIrSubsessionId(subSession.getIrSubsessionId());
+                clonedSubsessions.add(subsessionRepository.save(session));
+            });
+
+            trackSession.setSessionParts(clonedSubsessions);
+            sessionRepository.save(trackSession);
+        }
         return redirectBuilder(CREATE_SESSION_VIEW)
                 .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
                 .withParameter(SESSION_ID_PARAM, trackSession.getId())
@@ -370,6 +418,23 @@ public class EventAdminController extends ControllerBase {
         }
         return redirectBuilder("index").build(model);
     }
+
+    @GetMapping("/session-result")
+    public String showSessionResult(@RequestParam long eventId, @RequestParam long irSessionId, @RequestParam String activeTab, Model model) {
+        Optional<TrackSession> trackSession = sessionRepository.findByEventIdAndIrSessionId(eventId, irSessionId);
+        if(trackSession.isPresent() && trackSession.get().isPermitSession()) {
+            PermitSessionResultView permitSessionResultView = resultManager.getPermitSessionResultView(eventId, irSessionId, trackSession.get());
+            model.addAttribute("resultsView", permitSessionResultView);
+            model.addAttribute("navigation", activeTab);
+
+            return PERMIT_RESULT_VIEW;
+        }
+        return redirectBuilder("event-detail")
+                .withParameter(EVENT_ID_PARAM, eventId)
+                .withParameter("activeTab", activeTab)
+                .build(model);
+    }
+
 
     @ModelAttribute("allTracks")
     public List<TrackView> getAllTracks() {

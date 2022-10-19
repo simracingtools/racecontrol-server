@@ -38,22 +38,32 @@ import org.springframework.stereotype.Component;
 public class RacecontrolServerProperties {
     private String version;
     private String serverBaseUrl;
+
+    // Ruling properties
     private int maxDrivingTimeRequiresRestMinutes;
     private int formationLapMinutes;
     private int maxDrivingTimeMinutes;
     private int minRestTimeMinutes;
     private double fairShareFactor;
     private int proAmDiscriminator;
+    private int requiredCleanPermitLapNum;
+    private int maxPermitLapTimeDiffSeconds;
+
+    // Discord properties
     private String discordBulletinUrl;
+    private String discordBotToken;
+
+    // Keycloak properties
     private String keycloakUser;
     private String keycloakPassword;
     private String keycloakServer;
     private String keycloakRealm;
+
+    // Portal properties
     private String fileUploadBasePath;
     private String uploadBaseUri;
     private String flagImageResourcePath;
     private long leagueInfoCacheMaxAgeMinutes;
-    private String discordBotToken;
 
     @Bean
     ConfigProperties configProperties() {

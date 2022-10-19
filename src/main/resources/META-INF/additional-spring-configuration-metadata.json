@@ -1,0 +1,13 @@
+{
+  "properties": [
+    {
+      "name": "racecontrol.requiredCleanPermitLapNum",
+      "type": "java.lang.Integer",
+      "description": "Required number of clean laps for permission."
+    },
+    {
+      "name": "racecontrol.maxPermitLapTimeDiffSeconds",
+      "type": "java.lang.Integer",
+      "description": "Max permitted diff between slowest and fastest lap time."
+    }
+  ] }

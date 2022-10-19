@@ -28,7 +28,7 @@
         <div th:replace="index :: messages"></div>
         <div th:replace="index :: menu(title='Create/Edit event session')"></div>
 
-        <form method="post" th:action="@{/save-session}" th:object="${sessionEditView}">
+        <form id="session-form" method="post" th:action="@{/save-session}" th:object="${sessionEditView}">
             <div class="row">
                 <div class="col-xl-3">
                     <input type="hidden" th:field="*{eventId}">
@@ -98,6 +98,12 @@
                         <label>Overall duration (calculated)</label>
                         <input type="text" style="margin-left: 1em;" th:value="${sessionEditView.getOverallDuration()}" readonly>
                     </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" th:field="*{permitSession}"/>
+                            <label class="form-check-label" th:for="*{permitSession}">Permit session</label>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-xl-2">
                     <h5>Weather</h5>
@@ -159,7 +165,8 @@
                     <a th:href="@{/event-detail(eventId=${sessionEditView.eventId})}">
                         <button class="btn btn-primary float-left" type="button">Back to event</button>
                     </a>
-                    <button class="btn btn-primary float-right" type="submit">Save</button>
+                    <button class="btn btn-primary float-right" type="button" th:onclick="'duplicateSession();'">Duplicate</button>
+                    <button class="btn btn-primary float-right" type="submit" style="margin-left: 5px; margin-right: 5px;">Save</button>
                 </div>
             </div>
         </form>
@@ -200,6 +207,54 @@
                         <div class="modal-footer">
                             <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
                             <button class="btn btn-primary" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div id="duplicate-session-modal" class="modal fade" role="dialog" tabindex="-1">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form method="post" th:action="@{/duplicate-session}" th:object="${sessionEditView}">
+                        <input type="hidden" th:field="*{id}">
+                        <input type="hidden" th:field="*{eventId}">
+                        <input type="hidden" th:field="*{trackConfigId}">
+                        <input type="hidden" th:field="*{trackUsagePercent}">
+                        <input type="hidden" th:field="*{generatedWeather}">
+                        <input type="hidden" th:field="*{generatedSky}">
+                        <input type="hidden" th:field="*{trackStateCarryOver}">
+                        <input type="hidden" th:field="*{windSpeed}">
+                        <input type="hidden" th:field="*{windDirection}">
+                        <input type="hidden" th:field="*{humidity}">
+                        <input type="hidden" th:field="*{sky}">
+                        <input type="hidden" th:field="*{skyVarInitial}">
+                        <input type="hidden" th:field="*{skyVarContinued}">
+                        <input type="hidden" th:field="*{temperature}">
+                        <input type="hidden" th:field="*{permitSession}">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Duplicate session</h4>
+                            <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Duplicate Session title" required="" minlength="3" maxlength="155" th:field="*{title}">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;">Session start</label>
+                                <input type="datetime-local" style="width: 11em;" required th:field="*{datetime}">
+                                <select th:field="*{zoneOffset}">
+                                    <option th:each="zone : ${timezones}" th:value="${zone.utcOffset.id}" th:text="${zone.shortName}">UTC+12</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;">Simulated time of Day</label>
+                                <input type="datetime-local" style="width: 11em;" th:field="*{simulatedTimeOfDay}" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
+                            <button class="btn btn-primary" type="submit">Duplicate</button>
                         </div>
                     </form>
                 </div>

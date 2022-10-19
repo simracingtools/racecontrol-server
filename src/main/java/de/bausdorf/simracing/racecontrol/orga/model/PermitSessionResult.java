@@ -22,12 +22,37 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
-import org.springframework.data.repository.CrudRepository;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import java.util.List;
-import java.util.Optional;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import java.time.Duration;
+import java.time.OffsetDateTime;
 
-public interface TrackSessionRepository extends CrudRepository<TrackSession, Long> {
-    List<TrackSession> findAllByEventId(long eventId);
-    Optional<TrackSession> findByEventIdAndIrSessionId(long eventId, long irSessionId);
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
+@Entity
+public class PermitSessionResult {
+    @Id
+    @GeneratedValue
+    private long id;
+
+    private long eventId;
+    private long iracingId;
+    private long subsessionId;
+    private String name;
+    private long carId;
+    private String carName;
+    private long lapCount;
+    private OffsetDateTime bestLapAt;
+    private Duration slowestLapTime;
+    private Duration fastestLapTime;
+    private Duration averageLapTime;
+    private String events;
 }

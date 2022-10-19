@@ -25,9 +25,10 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface TrackSessionRepository extends CrudRepository<TrackSession, Long> {
-    List<TrackSession> findAllByEventId(long eventId);
-    Optional<TrackSession> findByEventIdAndIrSessionId(long eventId, long irSessionId);
+public interface PermitSessionResultRepository extends CrudRepository<PermitSessionResult, Long> {
+    List<PermitSessionResult> findAllByEventId(long eventId);
+    List<PermitSessionResult> findByEventIdAndSubsessionId(long eventId, long subsessionId);
+    List<PermitSessionResult> findAllByEventIdAndIracingId(long eventId, long iracingId);
+    void deleteAllByEventIdAndSubsessionId(long eventId, long subsessionId);
 }

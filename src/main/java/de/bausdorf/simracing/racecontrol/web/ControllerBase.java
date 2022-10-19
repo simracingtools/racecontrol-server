@@ -122,7 +122,11 @@ public class ControllerBase {
 
 	@ExceptionHandler
 	public String handleException(Exception e) {
-		log.error(e.getMessage(), e);
+		if (e instanceof AccessDeniedException) {
+			log.debug(e.getMessage(), e);
+		} else {
+			log.error(e.getMessage(), e);
+		}
 		if(e instanceof AccessDeniedException) {
 			return redirectBuilder("/index")
 					.withParameter("error", "Access denied")

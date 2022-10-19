@@ -459,9 +459,12 @@
                                     <tr th:each="sessionView : ${event.trackSessions}">
                                         <td>
                                             <a th:if="${user.racedirection}" th:href="@{/create-session(eventId=${event.eventId}, sessionId=${sessionView.id})}">
-                                                <span th:text="${sessionView.title}"></span>
+                                                <span class="d-block" th:text="${sessionView.title}"></span>
                                             </a>
-                                            <span th:if="${!user.racedirection}" th:text="${sessionView.title}"></span>
+                                            <span class="d-block" th:if="${!user.racedirection}" th:text="${sessionView.title}"></span>
+                                            <a th:if="${sessionView.irSessionId}" th:href="@{/session-result(eventId=${event.eventId}, irSessionId=${sessionView.irSessionId}, activeTab=${navigation})}">
+                                                <span class="d-block">Results</span>
+                                            </a>
                                         </td>
                                         <td>
                                             <span class="offset-time" th:text="${#temporals.format(sessionView.datetime, 'dd.MM.yyyy HH:mm Z')}"></span>

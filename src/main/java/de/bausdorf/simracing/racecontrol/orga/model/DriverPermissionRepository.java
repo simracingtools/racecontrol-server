@@ -27,7 +27,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface TrackSessionRepository extends CrudRepository<TrackSession, Long> {
-    List<TrackSession> findAllByEventId(long eventId);
-    Optional<TrackSession> findByEventIdAndIrSessionId(long eventId, long irSessionId);
+public interface DriverPermissionRepository extends CrudRepository<DriverPermission, Long> {
+    List<DriverPermission> findAllByEventIdAndIracingIdInOrderByPermissionTimeAsc(long eventId, List<Long> iracingIds);
+    Optional<DriverPermission> findByEventIdAndIracingIdAndCarId(long eventId, long iracingId, long carId);
 }
