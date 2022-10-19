@@ -47,4 +47,8 @@ public enum SkyConditionType {
             default: throw new IllegalArgumentException("'" + name + "' is an unknown sky type name");
         }
     }
+
+    public static SkyConditionType ofOrdonalNumber(int no) {
+        return SkyConditionType.values()[no];
+    }
 }

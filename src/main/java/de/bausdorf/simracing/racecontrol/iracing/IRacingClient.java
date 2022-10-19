@@ -74,6 +74,10 @@ public class IRacingClient {
 		log.info("Stock data cache renewed");
 	}
 
+	public TrackInfoDto getTrackFromCache(long trackId) {
+		return Arrays.stream(dataCache.getTracks()).filter(track -> track.getTrackId() == trackId).findFirst().orElse(null);
+	}
+
 	public Optional<MemberInfo> getMemberInfo(Long ircacingId) {
 		return getMemberInfo(List.of(ircacingId)).stream().findFirst();
 	}

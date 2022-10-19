@@ -55,5 +55,9 @@ public enum WindDirectionType {
             default: throw new IllegalArgumentException("'" + code + "' is no valid wind direction code.");
         }
     }
+
+    public static WindDirectionType ofOrdonalNumber(int no) {
+        return WindDirectionType.values()[no];
+    }
 }
 

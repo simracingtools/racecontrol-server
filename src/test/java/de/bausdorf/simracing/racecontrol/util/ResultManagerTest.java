@@ -43,7 +43,7 @@ class ResultManagerTest {
 
     @Test
     void testFetchPermitSessionResult() {
-        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 51632638L);
+        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 51632638L, null);
 //        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 50380624L);
 //        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 43352007L);
 

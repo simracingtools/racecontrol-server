@@ -24,12 +24,14 @@ package de.bausdorf.simracing.racecontrol.util;
 
 import de.bausdorf.simracing.irdataapi.model.*;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
-import de.bausdorf.simracing.racecontrol.orga.model.DriverPermission;
-import de.bausdorf.simracing.racecontrol.orga.model.DriverPermissionRepository;
-import de.bausdorf.simracing.racecontrol.orga.model.PermitSessionResult;
-import de.bausdorf.simracing.racecontrol.orga.model.PermitSessionResultRepository;
+import de.bausdorf.simracing.racecontrol.orga.api.SkyConditionType;
+import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
+import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.web.model.orga.DriverPermitResultView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.PermitSessionResultView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +58,7 @@ public class ResultManager {
     }
 
     @Transactional
-    public List<PermitSessionResult> fetchPermitSessionResult(long eventId, long subsessionId) {
+    public List<PermitSessionResult> fetchPermitSessionResult(long eventId, long subsessionId, TrackSession session) {
         SubsessionResultDto subsessionResult = dataClient.getSubsessionResult(subsessionId).orElse(null);
         if (subsessionResult == null) {
             return List.of();
@@ -67,6 +69,9 @@ public class ResultManager {
                 .filter(sessionResult -> sessionResult.getSimsessionName().equals("QUALIFY"))
                 .findFirst();
         if (qualifyResult.isPresent()) {
+            if (session != null) {
+                updateSessionWeather(session, subsessionResult);
+            }
             List<PermitSessionResult> resultList = new ArrayList<>();
 
             Arrays.stream(qualifyResult.get().getResults()).forEach(memberResult -> {
@@ -128,7 +133,7 @@ public class ResultManager {
         if (result.getLapCount() < config.getRequiredCleanPermitLapNum()) {
             permitted = false;
         }
-        if (result.getSlowestLapTime().toSeconds() - result.getFastestLapTime().toSeconds() > config.getMaxPermitLapTimeDiffSeconds()) {
+        if (result.getSlowestLapTime().toSeconds() - result.getFastestLapTime().toSeconds()> config.getMaxPermitLapTimeDiffSeconds()) {
             permitted = false;
         }
         return permitted;
@@ -144,6 +149,28 @@ public class ResultManager {
                 .average();
         long millis = (long)teamPermitTime.orElse(0.0D);
         return Duration.ofMillis(millis);
+    }
+
+    public PermitSessionResultView getPermitSessionResultView(long eventId, long irSessionId, @NonNull TrackSession trackSession) {
+        List<PermitSessionResult> sessionResult = permitSessionResultRepository.findByEventIdAndSubsessionId(eventId, irSessionId);
+        PermitSessionResultView permitSessionResultView = PermitSessionResultView.fromEntitiy(trackSession);
+        TrackInfoDto trackInfo = dataClient.getTrackFromCache(trackSession.getTrackConfigId());
+        String trackName = "unknown";
+        if (trackInfo != null) {
+            trackName = trackInfo.getTrackName() + " - " + trackInfo.getConfigName();
+        }
+        permitSessionResultView.setTrackName(trackName);
+
+        List<DriverPermitResultView> driverResults = new ArrayList<>();
+        sessionResult.forEach(driverResult -> {
+            DriverPermitResultView permitResultView = DriverPermitResultView.fromEntity(driverResult);
+            permitResultView.setLapCountOk(driverResult.getLapCount() >= config.getRequiredCleanPermitLapNum());
+            permitResultView.setVarianceOk(
+                    driverResult.getSlowestLapTime().minus(driverResult.getFastestLapTime()).toSeconds() <= config.getMaxPermitLapTimeDiffSeconds());
+            driverResults.add(permitResultView);
+        });
+        permitSessionResultView.setResults(driverResults);
+        return permitSessionResultView;
     }
 
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {
@@ -166,17 +193,28 @@ public class ResultManager {
         });
     }
 
+    private static void updateSessionWeather(TrackSession session, SubsessionResultDto irSessionResult) {
+        WeatherDto weather = irSessionResult.getWeather();
+        session.setHumidity(weather.getRelHumidity());
+        session.setTemperature(weather.getTempValue());
+        session.setWindDirection(WindDirectionType.ofOrdonalNumber(weather.getWindDir().intValue()));
+        session.setWindSpeed(weather.getWindValue());
+        session.setSky(SkyConditionType.ofOrdonalNumber(weather.getSkies().intValue()));
+    }
+
     private static boolean isValidLap(final LapChartEntryDto lapData) {
         List<String> lapEvents = List.of(lapData.getLapEvents());
         return lapData.getLapTime() != -1 && !lapEvents.contains("invalid");
     }
 
     private static void updatePermission(DriverPermission permit, PermitSessionResult result) {
-        permit.setDriverName(result.getName());
-        permit.setCarName(result.getCarName());
-        permit.setPermitDateTime(result.getBestLapAt());
-        permit.setPermissionTime(result.getAverageLapTime().toMillis());
-        permit.setDisplayTime(TimeTools.lapDisplayTimeFromDuration(result.getAverageLapTime()));
+        if (permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
+            permit.setDriverName(result.getName());
+            permit.setCarName(result.getCarName());
+            permit.setPermitDateTime(result.getBestLapAt());
+            permit.setPermissionTime(result.getAverageLapTime().toMillis());
+            permit.setDisplayTime(TimeTools.lapDisplayTimeFromDuration(result.getAverageLapTime()));
+        }
     }
     private static PermitSessionResult fetchPermitSessionResult(long eventId, long subsessionId, MemberSessionResultDto memberResult) {
         PermitSessionResult permitSessionResult = new PermitSessionResult();
