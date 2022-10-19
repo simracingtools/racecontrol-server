@@ -337,14 +337,17 @@ public class EventAdminController extends ControllerBase {
     @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
     public String saveSession(@ModelAttribute CreateSessionView sessionEditView, Model model) {
         TrackSession existingSession = sessionRepository.findById(sessionEditView.getId()).orElse(null);
-        long existingIrSessionId = existingSession != null ? existingSession.getIrSessionId() : 0L;
+        long existingIrSessionId = (existingSession != null && existingSession.getIrSessionId() != null) ? existingSession.getIrSessionId() : 0L;
         TrackSession trackSession = sessionEditView.toEntity(existingSession);
 
-        if (existingIrSessionId == 0L && (trackSession.getIrSessionId() != null || trackSession.getIrSessionId() != 0L)) {
+        if (existingIrSessionId == 0L && (trackSession.getIrSessionId() != null || Long.valueOf(0L).equals(trackSession.getIrSessionId()))) {
+            log.info("Tying to fetch result information on {}({})})", trackSession.getTitle(), trackSession.getIrSessionId());
             // Fetch sessionResults
             if (trackSession.isPermitSession()) {
                 resultManager.fetchPermitSessionResult(trackSession.getEventId(), trackSession.getIrSessionId(), trackSession);
                 resultManager.updatePermissions(trackSession.getEventId(), trackSession.getIrSessionId());
+            } else {
+                log.info("Session is no permit session<span></span>");
             }
         }
         trackSession = sessionRepository.save(trackSession);
