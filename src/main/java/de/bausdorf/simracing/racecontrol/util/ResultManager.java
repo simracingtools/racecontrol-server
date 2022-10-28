@@ -107,12 +107,8 @@ public class ResultManager {
                         .findByEventIdAndIracingIdAndCarId(eventId, result.getIracingId(), result.getCarId());
                 driverPermission.ifPresentOrElse(
                         permit -> {
-                            if (permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
-                                permit.setEventId(eventId);
-                                permit.setSubsessionId(subsessionId);
-                                updatePermission(permit, result);
-                                resultList.add(driverPermissionRepository.save(permit));
-                            }
+                            updatePermission(permit, result);
+                            resultList.add(driverPermissionRepository.save(permit));
                         },
                         () -> {
                             DriverPermission permit = new DriverPermission();
@@ -246,14 +242,16 @@ public class ResultManager {
     }
 
     private static void updatePermission(DriverPermission permit, PermitSessionResult result) {
-        if (permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
+        if (permit.getPermissionTime() == 0L || permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
             permit.setDriverName(result.getName());
             permit.setCarName(result.getCarName());
             permit.setPermitDateTime(result.getBestLapAt());
             permit.setPermissionTime(result.getAverageLapTime().toMillis());
+            permit.setSubsessionId(result.getSubsessionId());
             permit.setDisplayTime(TimeTools.lapDisplayTimeFromDuration(result.getAverageLapTime()));
         }
     }
+
     private static PermitSessionResult fetchPermitSessionResult(long eventId, long subsessionId, MemberSessionResultDto memberResult) {
         PermitSessionResult permitSessionResult = new PermitSessionResult();
         permitSessionResult.setSubsessionId(subsessionId);

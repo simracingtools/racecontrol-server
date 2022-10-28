@@ -74,6 +74,7 @@ public class EventAdminController extends ControllerBase {
     public static final String EVENT_ID_PARAM = "eventId";
     public static final String SESSION_EDIT_VIEW_KEY = "sessionEditView";
     public static final String DISCORD_CLEANUP_VIEW_KEY = "discordCleanupView";
+    public static final String INDEX_VIEW = "index";
 
     private final ResultManager resultManager;
     private final EventSeriesRepository eventRepository;
@@ -291,7 +292,7 @@ public class EventAdminController extends ControllerBase {
         EventSeries series = eventRepository.findById(eventId).orElse(null);
         if(series == null) {
             addError("Event not found for id " + eventId, model);
-            return redirectBuilder("index").build(model);
+            return redirectBuilder(INDEX_VIEW).build(model);
         }
         sessionId.ifPresentOrElse(sid -> sessionRepository.findById(sid).ifPresentOrElse(
                         session -> {
@@ -347,7 +348,7 @@ public class EventAdminController extends ControllerBase {
                 resultManager.fetchPermitSessionResult(trackSession.getEventId(), trackSession.getIrSessionId(), trackSession);
                 resultManager.updatePermissions(trackSession.getEventId(), trackSession.getIrSessionId());
             } else {
-                log.info("Session is no permit session<span></span>");
+                log.info("Session is no permit session");
             }
         }
         trackSession = sessionRepository.save(trackSession);
@@ -356,6 +357,22 @@ public class EventAdminController extends ControllerBase {
                 .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
                 .withParameter(SESSION_ID_PARAM, trackSession.getId())
                 .build(model);
+    }
+
+    @GetMapping("/refetch-session")
+    public String refectchSession(@RequestParam Long eventId, @RequestParam Long irSessionid, Model model) {
+        TrackSession trackSession = sessionRepository.findByEventIdAndIrSessionId(eventId, irSessionid).orElse(null);
+        if (trackSession != null) {
+            if (trackSession.isPermitSession()) {
+                resultManager.updatePermissions(trackSession.getEventId(), trackSession.getIrSessionId());
+            }
+            return redirectBuilder(CREATE_SESSION_VIEW)
+                    .withParameter(EVENT_ID_PARAM, trackSession.getEventId())
+                    .withParameter(SESSION_ID_PARAM, trackSession.getId())
+                    .build(model);
+        }
+
+        return redirectBuilder(INDEX_VIEW).build(model);
     }
 
     @PostMapping("/duplicate-session")
@@ -416,7 +433,7 @@ public class EventAdminController extends ControllerBase {
         } else {
             addError("No subsession for id " + subSessionId, model);
         }
-        return redirectBuilder("index").build(model);
+        return redirectBuilder(INDEX_VIEW).build(model);
     }
 
     @GetMapping("/session-result")
