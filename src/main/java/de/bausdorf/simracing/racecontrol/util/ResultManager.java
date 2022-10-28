@@ -180,6 +180,7 @@ public class ResultManager {
             if (permitSessionResult == null) {
                 throw new IllegalStateException("Driver id " + data.getCustId() + " has no lap data");
             }
+            log.debug(data.toString());
             if (isValidLap(data)) {
                 permitSessionResult.setLapCount(permitSessionResult.getLapCount() + 1);
             } else {
@@ -187,8 +188,14 @@ public class ResultManager {
             }
 
             Duration lapDuration = Duration.ofMillis(data.getLapTime() / 10);
-            if (permitSessionResult.getSlowestLapTime() == null || permitSessionResult.getSlowestLapTime().toMillis() < lapDuration.toMillis()) {
-                permitSessionResult.setSlowestLapTime(lapDuration);
+            if (data.getLapTime() > -1) {
+                if (permitSessionResult.getSlowestLapTime() == null
+                        || permitSessionResult.getSlowestLapTime().isZero()
+                        || permitSessionResult.getSlowestLapTime().toMillis() < lapDuration.toMillis()) {
+                    permitSessionResult.setSlowestLapTime(lapDuration);
+                }
+            } else if (permitSessionResult.getSlowestLapTime() == null) {
+                permitSessionResult.setSlowestLapTime(Duration.ZERO);
             }
         });
     }
@@ -203,8 +210,7 @@ public class ResultManager {
     }
 
     private static boolean isValidLap(final LapChartEntryDto lapData) {
-        List<String> lapEvents = List.of(lapData.getLapEvents());
-        return lapData.getLapTime() != -1 && !lapEvents.contains("invalid");
+        return !lapData.getIncident() && !lapData.getLapNumber().equals("0");
     }
 
     private static void updatePermission(DriverPermission permit, PermitSessionResult result) {

@@ -43,8 +43,8 @@ class ResultManagerTest {
 
     @Test
     void testFetchPermitSessionResult() {
-        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 51632638L, null);
-//        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 50380624L);
+//        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 51632638L, null);
+        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 51810178L, null);
 //        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 43352007L);
 
         permitSessionResults.forEach(data -> {
@@ -56,8 +56,8 @@ class ResultManagerTest {
 
     @Test
     void testUpdatePermissions() {
-        List<DriverPermission> permissionList = resultManager.updatePermissions(2L, 51632638L);
-//        List<DriverPermission> permissionList = resultManager.updatePermissions(1L, 50380624L);
+//        List<DriverPermission> permissionList = resultManager.updatePermissions(2L, 51632638L);
+        List<DriverPermission> permissionList = resultManager.updatePermissions(1L, 51810178L);
         permissionList.forEach(p -> log.info(p.toString()));
     }
 
