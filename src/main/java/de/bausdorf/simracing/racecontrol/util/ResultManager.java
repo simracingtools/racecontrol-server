@@ -150,14 +150,14 @@ public class ResultManager {
             driverPermissions.forEach(p -> log.debug("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
         }
         if (driverPermissions.size() < config.getCountingDriverPermits()) {
-            return Duration.ZERO;
+            return Duration.ofMinutes(60);
         }
 
         OptionalDouble teamPermitTime = driverPermissions.stream()
                 .limit(config.getCountingDriverPermits())
                 .mapToLong(DriverPermission::getPermissionTime)
                 .average();
-        long millis = (long)teamPermitTime.orElse(0.0D);
+        long millis = (long)teamPermitTime.orElse(Duration.ofMinutes(60).toMillis());
         return Duration.ofMillis(millis);
     }
 
@@ -198,7 +198,7 @@ public class ResultManager {
         });
 
         Duration teamPermitTime = getTeamPermissionTime(driverPermissions);
-        registrationView.setTeamPermitTime(Duration.ZERO.equals(teamPermitTime) ? "NONE" : TimeTools.lapDisplayTimeFromDuration(teamPermitTime));
+        registrationView.setTeamPermitTime(Duration.ofMinutes(60).equals(teamPermitTime) ? "NONE" : TimeTools.lapDisplayTimeFromDuration(teamPermitTime));
     }
 
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {
