@@ -418,7 +418,7 @@
                             </ul>
                             <div class="tab-content">
                                 <div th:each="carClass,carClassStat : ${teamRegistrations}" th:id="${'tab-' + carClass.name}" th:class="${'tab-pane' + (activeCarClass.equalsIgnoreCase(carClass.name) ? ' active' : '')}" role="tabpanel">
-                                    <div class="table-responsive" style="font-size: 14px;">
+                                    <div class="table-responsive" style="font-size: 14px; overflow: auto; max-height: 40em;">
                                         <table class="table">
                                             <thead>
                                                 <tr>
