@@ -31,18 +31,17 @@ import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.util.ResultManager;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,6 +59,7 @@ public class EventOrganizer {
     private final WorkflowStateRepository stateRepository;
     private final PersonRepository personRepository;
     private final EventSeriesRepository seriesRepository;
+    private final ResultManager resultManager;
     private final IRacingClient dataClient;
     public EventOrganizer(@Autowired CarClassRepository carClassRepository,
                           @Autowired TeamRegistrationRepository registrationRepository,
@@ -67,12 +67,14 @@ public class EventOrganizer {
                           @Autowired WorkflowStateRepository stateRepository,
                           @Autowired PersonRepository personRepository,
                           @Autowired EventSeriesRepository seriesRepository,
+                          @Autowired ResultManager resultManager,
                           @Autowired IRacingClient dataClient) {
         this.carClassRepository = carClassRepository;
         this.registrationRepository = registrationRepository;
         this.stateRepository = stateRepository;
         this.personRepository = personRepository;
         this.seriesRepository = seriesRepository;
+        this.resultManager = resultManager;
         this.dataClient = dataClient;
         this.actionRepository = actionRepository;
     }
@@ -89,7 +91,8 @@ public class EventOrganizer {
             AtomicReference<List<TeamRegistrationView>> waitingList = new AtomicReference<>(new ArrayList<>());
             AtomicReference<CarClassRegistrationsView> classView = new AtomicReference<>(new CarClassRegistrationsView());
             AtomicLong regCount = new AtomicLong(0L);
-            eventRegistrations.stream()
+            List<TeamRegistration> reorderedRegistrations = reorderByPermitTime(eventRegistrations);
+            reorderedRegistrations.stream()
                     .filter(r -> (r.getCar().getCarClassId() == carClass.getId()
                             && !r.getWorkflowState().isInActive()))
                     .forEach(r -> {
@@ -102,6 +105,7 @@ public class EventOrganizer {
                         }
                         CarAssetDto assets = getCarAsset(r.getCar().getCarId());
                         TeamRegistrationView view = TeamRegistrationView.fromEntity(r);
+                        resultManager.fillPermitTimes(view);
                         view.setCarClass(CarClassView.fromEntity(carClass));
                         if(assets != null) {
                             view.getCar().setCarLogoUrl(ASSET_BASE_URL + assets.getLogo());
@@ -121,6 +125,31 @@ public class EventOrganizer {
             resultList.add(classView.get());
         });
         return resultList;
+    }
+
+    static class TimedTeam {
+        @Getter
+        private final Duration teamPermitTime;
+        @Getter
+        private final TeamRegistration teamRegistration;
+
+        public TimedTeam(TeamRegistration registration, Duration teamPermitTime) {
+            this.teamRegistration = registration;
+            this.teamPermitTime = teamPermitTime;
+        }
+    }
+
+    private List<TeamRegistration> reorderByPermitTime(List<TeamRegistration> eventRegistrations) {
+        List<TimedTeam> timedList = new ArrayList<>();
+        eventRegistrations.forEach(registration -> {
+            List<DriverPermission> driverPermissions = resultManager.getDriverPermissons(registration);
+            Duration teamPermissionTime = resultManager.getTeamPermissionTime(driverPermissions);
+            timedList.add(new TimedTeam(registration, teamPermissionTime));
+        });
+        return timedList.stream()
+                .sorted(Comparator.comparing(TimedTeam::getTeamPermitTime))
+                .map(TimedTeam::getTeamRegistration)
+                .collect(Collectors.toList());
     }
 
     public List<AvailableSlotsView> getAvailableGridSlots(long eventId) {

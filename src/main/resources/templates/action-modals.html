@@ -307,8 +307,9 @@
                                     <label class="form-check-label" for="useWildcard">Use wildcard</label>
                                 </div>
                             </div>
+                            <p th:text="${'Team Permit Time: ' + registration.teamPermitTime}"></p>
                             <p>Drivers:
-                                <span class="d-block" style="margin-top: 4px;" th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}" th:text="${driver.name}">Text</span>
+                                <span class="d-block" style="margin-top: 4px;" th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}" th:text="${driver.name + ' ' + driver.permitTime}">Text</span>
                             </p>
                         </div>
                         <div class="modal-footer">

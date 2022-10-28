@@ -28,6 +28,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface DriverPermissionRepository extends CrudRepository<DriverPermission, Long> {
-    List<DriverPermission> findAllByEventIdAndIracingIdInOrderByPermissionTimeAsc(long eventId, List<Long> iracingIds);
+    List<DriverPermission> findAllByEventIdAndCarIdAndIracingIdInOrderByPermissionTimeAsc(long eventId, long carId, List<Long> iracingIds);
     Optional<DriverPermission> findByEventIdAndIracingIdAndCarId(long eventId, long iracingId, long carId);
 }

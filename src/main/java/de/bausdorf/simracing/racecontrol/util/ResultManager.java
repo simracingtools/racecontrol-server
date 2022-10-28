@@ -29,6 +29,8 @@ import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.DriverPermitResultView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.PermitSessionResultView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.PersonView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -139,12 +141,24 @@ public class ResultManager {
         return permitted;
     }
 
-    public Duration getTeamPermissionTime(long eventId, List<Long> iracingIds) {
-        List<DriverPermission> driverPermissions = driverPermissionRepository.findAllByEventIdAndIracingIdInOrderByPermissionTimeAsc(eventId, iracingIds);
+    public List<DriverPermission> getDriverPermissons(TeamRegistration registration) {
+        List<Long> personIds = registration.getTeamMembers().stream()
+                .map(Person::getIracingId)
+                .collect(Collectors.toList());
+        return driverPermissionRepository.findAllByEventIdAndCarIdAndIracingIdInOrderByPermissionTimeAsc(
+                registration.getEventId(), registration.getCar().getCarId(), personIds);
+    }
+
+    public Duration getTeamPermissionTime(List<DriverPermission> driverPermissions) {
         if (log.isDebugEnabled()) {
             driverPermissions.forEach(p -> log.debug("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
         }
+        if (driverPermissions.size() < config.getCountingDriverPermits()) {
+            return Duration.ZERO;
+        }
+
         OptionalDouble teamPermitTime = driverPermissions.stream()
+                .limit(config.getCountingDriverPermits())
                 .mapToLong(DriverPermission::getPermissionTime)
                 .average();
         long millis = (long)teamPermitTime.orElse(0.0D);
@@ -171,6 +185,24 @@ public class ResultManager {
         });
         permitSessionResultView.setResults(driverResults);
         return permitSessionResultView;
+    }
+
+    public void fillPermitTimes(TeamRegistrationView registrationView) {
+        List<Long> personIds = registrationView.getTeamMembers().stream()
+                .map(PersonView::getIracingId)
+                .collect(Collectors.toList());
+        List<DriverPermission> driverPermissions = driverPermissionRepository.findAllByEventIdAndCarIdAndIracingIdInOrderByPermissionTimeAsc(
+                registrationView.getEventId(), registrationView.getCar().getCarId(), personIds);
+
+        registrationView.getTeamMembers().forEach(p -> {
+            Optional<DriverPermission> permission = driverPermissions.stream().filter(s -> s.getIracingId() == p.getIracingId()).findFirst();
+            permission.ifPresentOrElse(
+                    driverPermission -> p.setPermitTime(TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(driverPermission.getPermissionTime()))),
+                    () -> p.setPermitTime("NONE"));
+        });
+
+        Duration teamPermitTime = getTeamPermissionTime(driverPermissions);
+        registrationView.setTeamPermitTime(Duration.ZERO.equals(teamPermitTime) ? "NONE" : TimeTools.lapDisplayTimeFromDuration(teamPermitTime));
     }
 
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {
