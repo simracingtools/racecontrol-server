@@ -147,7 +147,7 @@ public class EventOrganizer {
             timedList.add(new TimedTeam(registration, teamPermissionTime));
         });
         return timedList.stream()
-                .sorted(Comparator.comparing(TimedTeam::getTeamPermitTime))
+                .sorted(Comparator.comparing(TimedTeam::getTeamPermitTime).reversed())
                 .map(TimedTeam::getTeamRegistration)
                 .collect(Collectors.toList());
     }
