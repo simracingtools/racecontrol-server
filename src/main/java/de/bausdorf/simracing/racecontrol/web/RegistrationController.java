@@ -168,6 +168,14 @@ public class RegistrationController extends ControllerBase {
                     .build(model);
         }
 
+        if (eventOrganizer.isIracingTeamIdRegistered(createRegistrationView.getEventId(), createRegistrationView.getIracingId())) {
+            addError("Team " + createRegistrationView.getTeamName() + " (" + createRegistrationView.getIracingId() + ") is already registered.", model);
+            return redirectBuilder(REGISTER_TEAM_VIEW)
+                    .withParameter(EVENT_ID_PARAM, createRegistrationView.getEventId())
+                    .withParameter(TEAM_ID_PARAM, createRegistrationView.getOtherTeamId())
+                    .build(model);
+        }
+
         TeamRegistration registration = new TeamRegistration();
         registration.setEventId(createRegistrationView.getEventId());
         registration.setCreated(OffsetDateTime.now());
@@ -228,7 +236,7 @@ public class RegistrationController extends ControllerBase {
     }
 
     private String checkTeamIdAndName(long irTeamId, @NonNull String teamName, @Nullable String carQualifier, RcUser currentUser) {
-        String irTeamName = eventOrganizer.getTeamName(irTeamId);
+        String irTeamName = eventOrganizer.getTeamNameFromIRacing(irTeamId);
         if(irTeamName == null) {
             return "Team id " + irTeamId + " not found on iRacing service.";
         }

@@ -239,7 +239,7 @@ public class EventOrganizer {
                 .map(teamInfoDto -> Arrays.asList(teamInfoDto.getRoster())).orElseGet(List::of);
     }
 
-    public String getTeamName(long iracingTeamId) {
+    public String getTeamNameFromIRacing(long iracingTeamId) {
         Optional<TeamInfoDto> team = dataClient.getTeamMembers(iracingTeamId);
         if(team.isEmpty()) {
             return null;
@@ -255,6 +255,10 @@ public class EventOrganizer {
                 .filter(r -> !r.getWorkflowState().isInActive())
                 .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == person.getIracingId()))
                 .collect(Collectors.toList());
+    }
+
+    public boolean isIracingTeamIdRegistered(long eventId, long iracingTeamId) {
+        return registrationRepository.findAllByEventId(eventId).stream().anyMatch(r -> r.getIracingId() == iracingTeamId);
     }
 
     public boolean isQualifierUnique(long eventId, String teamName, String qualifier) {
