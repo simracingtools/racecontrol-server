@@ -55,6 +55,7 @@ public class TeamRegistrationView {
     private boolean wildcard;
     WorkflowStateInfoView workflowState;
     private List<PersonView> teamMembers;
+    private String teamPermitTime;
 
     public String getColorStyleString() {
         if(workflowState != null) {

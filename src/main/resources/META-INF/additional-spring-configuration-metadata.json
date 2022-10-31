@@ -9,5 +9,10 @@
       "name": "racecontrol.maxPermitLapTimeDiffSeconds",
       "type": "java.lang.Integer",
       "description": "Max permitted diff between slowest and fastest lap time."
+    },
+    {
+      "name": "racecontrol.countingDriverPermits",
+      "type": "java.lang.Integer",
+      "description": "Number of driver permits counted for team."
     }
   ] }

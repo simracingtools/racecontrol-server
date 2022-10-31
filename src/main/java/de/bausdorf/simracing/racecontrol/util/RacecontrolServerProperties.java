@@ -48,6 +48,7 @@ public class RacecontrolServerProperties {
     private int proAmDiscriminator;
     private int requiredCleanPermitLapNum;
     private int maxPermitLapTimeDiffSeconds;
+    private int countingDriverPermits;
 
     // Discord properties
     private String discordBulletinUrl;

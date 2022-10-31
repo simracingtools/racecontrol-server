@@ -93,6 +93,10 @@
     color: #4cdfe8 !important;
 }
 
+[data-theme="dark"] .text-permit {
+    color: #FFFFFF !important;
+}
+
 [data-theme="dark"] .table-warning {
     background-color: #96855f !important;
 }

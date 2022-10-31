@@ -29,6 +29,8 @@ import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.web.model.orga.DriverPermitResultView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.PermitSessionResultView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.PersonView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -105,12 +107,8 @@ public class ResultManager {
                         .findByEventIdAndIracingIdAndCarId(eventId, result.getIracingId(), result.getCarId());
                 driverPermission.ifPresentOrElse(
                         permit -> {
-                            if (permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
-                                permit.setEventId(eventId);
-                                permit.setSubsessionId(subsessionId);
-                                updatePermission(permit, result);
-                                resultList.add(driverPermissionRepository.save(permit));
-                            }
+                            updatePermission(permit, result);
+                            resultList.add(driverPermissionRepository.save(permit));
                         },
                         () -> {
                             DriverPermission permit = new DriverPermission();
@@ -139,15 +137,27 @@ public class ResultManager {
         return permitted;
     }
 
-    public Duration getTeamPermissionTime(long eventId, List<Long> iracingIds) {
-        List<DriverPermission> driverPermissions = driverPermissionRepository.findAllByEventIdAndIracingIdInOrderByPermissionTimeAsc(eventId, iracingIds);
+    public List<DriverPermission> getDriverPermissons(TeamRegistration registration) {
+        List<Long> personIds = registration.getTeamMembers().stream()
+                .map(Person::getIracingId)
+                .collect(Collectors.toList());
+        return driverPermissionRepository.findAllByEventIdAndCarIdAndIracingIdInOrderByPermissionTimeAsc(
+                registration.getEventId(), registration.getCar().getCarId(), personIds);
+    }
+
+    public Duration getTeamPermissionTime(List<DriverPermission> driverPermissions) {
         if (log.isDebugEnabled()) {
             driverPermissions.forEach(p -> log.debug("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
         }
+        if (driverPermissions.size() < config.getCountingDriverPermits()) {
+            return Duration.ofMinutes(60);
+        }
+
         OptionalDouble teamPermitTime = driverPermissions.stream()
+                .limit(config.getCountingDriverPermits())
                 .mapToLong(DriverPermission::getPermissionTime)
                 .average();
-        long millis = (long)teamPermitTime.orElse(0.0D);
+        long millis = (long)teamPermitTime.orElse(Duration.ofMinutes(60).toMillis());
         return Duration.ofMillis(millis);
     }
 
@@ -171,6 +181,24 @@ public class ResultManager {
         });
         permitSessionResultView.setResults(driverResults);
         return permitSessionResultView;
+    }
+
+    public void fillPermitTimes(TeamRegistrationView registrationView) {
+        List<Long> personIds = registrationView.getTeamMembers().stream()
+                .map(PersonView::getIracingId)
+                .collect(Collectors.toList());
+        List<DriverPermission> driverPermissions = driverPermissionRepository.findAllByEventIdAndCarIdAndIracingIdInOrderByPermissionTimeAsc(
+                registrationView.getEventId(), registrationView.getCar().getCarId(), personIds);
+
+        registrationView.getTeamMembers().forEach(p -> {
+            Optional<DriverPermission> permission = driverPermissions.stream().filter(s -> s.getIracingId() == p.getIracingId()).findFirst();
+            permission.ifPresentOrElse(
+                    driverPermission -> p.setPermitTime(TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(driverPermission.getPermissionTime()))),
+                    () -> p.setPermitTime("NONE"));
+        });
+
+        Duration teamPermitTime = getTeamPermissionTime(driverPermissions);
+        registrationView.setTeamPermitTime(Duration.ofMinutes(60).equals(teamPermitTime) ? "NONE" : TimeTools.lapDisplayTimeFromDuration(teamPermitTime));
     }
 
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {
@@ -214,14 +242,16 @@ public class ResultManager {
     }
 
     private static void updatePermission(DriverPermission permit, PermitSessionResult result) {
-        if (permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
+        if (permit.getPermissionTime() == 0L || permit.getPermissionTime() >= result.getAverageLapTime().toMillis()) {
             permit.setDriverName(result.getName());
             permit.setCarName(result.getCarName());
             permit.setPermitDateTime(result.getBestLapAt());
             permit.setPermissionTime(result.getAverageLapTime().toMillis());
+            permit.setSubsessionId(result.getSubsessionId());
             permit.setDisplayTime(TimeTools.lapDisplayTimeFromDuration(result.getAverageLapTime()));
         }
     }
+
     private static PermitSessionResult fetchPermitSessionResult(long eventId, long subsessionId, MemberSessionResultDto memberResult) {
         PermitSessionResult permitSessionResult = new PermitSessionResult();
         permitSessionResult.setSubsessionId(subsessionId);

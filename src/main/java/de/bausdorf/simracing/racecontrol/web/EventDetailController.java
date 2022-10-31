@@ -25,6 +25,7 @@ package de.bausdorf.simracing.racecontrol.web;
 import de.bausdorf.simracing.racecontrol.discord.JdaClient;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.util.ResultManager;
 import de.bausdorf.simracing.racecontrol.web.action.WorkflowAction;
 import de.bausdorf.simracing.racecontrol.web.action.ActionException;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
@@ -65,6 +66,7 @@ public class EventDetailController extends ControllerBase {
     private final PersonRepository personRepository;
     private final BalancedCarRepository carRepository;
     private final EventOrganizer eventOrganizer;
+    private final ResultManager resultManager;
     private final JdaClient jdaClient;
     private final ApplicationContext appContext;
 
@@ -72,12 +74,14 @@ public class EventDetailController extends ControllerBase {
                                  @Autowired PersonRepository personRepository,
                                  @Autowired BalancedCarRepository carRepository,
                                  @Autowired EventOrganizer eventOrganizer,
+                                 @Autowired ResultManager resultManager,
                                  @Autowired JdaClient jdaClient,
                                  @Autowired ApplicationContext appContext) {
         this.eventRepository = eventRepository;
         this.personRepository = personRepository;
         this.carRepository = carRepository;
         this.eventOrganizer = eventOrganizer;
+        this.resultManager = resultManager;
         this.jdaClient = jdaClient;
         this.appContext = appContext;
     }
@@ -111,6 +115,7 @@ public class EventDetailController extends ControllerBase {
                     .map(r -> {
                         TeamRegistrationView registrationView = TeamRegistrationView.fromEntity(r);
                         registrationView.setCarClass(eventOrganizer.getCarClassView(r.getCar().getCarClassId()));
+                        resultManager.fillPermitTimes(registrationView);
                         return registrationView;
                     })
                     .collect(Collectors.toList()));

@@ -46,6 +46,7 @@ public class PersonView {
     private Boolean registered;
     private Boolean iracingChecked;
     private Boolean iracingTeamChecked;
+    private String permitTime;
 
     public Person toEntity(Person person) {
         if(person == null) {
