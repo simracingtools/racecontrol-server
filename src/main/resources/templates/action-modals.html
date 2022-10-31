@@ -307,10 +307,20 @@
                                     <label class="form-check-label" for="useWildcard">Use wildcard</label>
                                 </div>
                             </div>
-                            <p th:text="${'Team Permit Time: ' + registration.teamPermitTime}"></p>
-                            <p>Drivers:
-                                <span class="d-block" style="margin-top: 4px;" th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}" th:text="${driver.name + ' ' + driver.permitTime}">Text</span>
-                            </p>
+<!--                            <table style="margin-top: 4px;">-->
+                            <table class="table-sm" style="border-width: 0;">
+                                <tr>
+                                    <th>Team Permit Time</th>
+                                    <th th:text="${registration.teamPermitTime}"></th>
+                                </tr>
+                                <tr>
+                                    <th colspan="2">Drivers:</th>
+                                </tr>
+                                <tr th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}">
+                                    <td style="border-width: 0;" th:text="${driver.name}">Driver name</td>
+                                    <td style="border-width: 0;" th:text="${driver.permitTime}"></td>
+                                </tr>
+                            </table>
                         </div>
                         <div class="modal-footer">
                             <button class="btn btn-light" type="button" data-dismiss="modal">Close</button>
