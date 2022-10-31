@@ -26,7 +26,6 @@ import de.bausdorf.simracing.racecontrol.orga.model.DriverPermission;
 import de.bausdorf.simracing.racecontrol.orga.model.DriverPermissionRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.PermitSessionResult;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -86,5 +85,4 @@ class ResultManagerTest {
         Duration teamPermissionTime = resultManager.getTeamPermissionTime(List.of());
 
         log.info("Team Permit Time: {}", TimeTools.lapDisplayTimeFromDuration(teamPermissionTime));
-        Assertions.assertEquals(Duration.ZERO, teamPermissionTime);
     }}
