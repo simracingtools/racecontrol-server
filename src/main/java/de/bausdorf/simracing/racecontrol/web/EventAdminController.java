@@ -365,6 +365,7 @@ public class EventAdminController extends ControllerBase {
     }
 
     @GetMapping("/refetch-session")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
     public String refectchSession(@RequestParam Long eventId, @RequestParam Long irSessionid, Model model) {
         TrackSession trackSession = sessionRepository.findByEventIdAndIrSessionId(eventId, irSessionid).orElse(null);
         if (trackSession != null) {
@@ -381,6 +382,7 @@ public class EventAdminController extends ControllerBase {
     }
 
     @GetMapping("/fetch-league-sessions")
+    @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
     public String fetchLeagueSessions(@RequestParam Long eventId, Model model) {
         sessionManager.fetchFutureTrackSessions(eventId);
 
