@@ -51,6 +51,8 @@ public class EventSeries {
 	private long discordSpacerCategoryId;
 	private long iRLeagueID;
 	private String iRLeagueName;
+	private long irSeasonId;
+	private String irSeasonName;
 	private String description;
 	@Convert(converter = OffsetDateTimeConverter.class)
 	private OffsetDateTime registrationOpens;

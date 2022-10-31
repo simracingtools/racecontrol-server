@@ -49,6 +49,7 @@ public class TrackSession {
 	@Convert(converter = OffsetDateTimeConverter.class)
 	private OffsetDateTime dateTime;
 	private long trackConfigId;
+	private Long irPrivateSessionId;
 	private Long irSessionId;
 	private boolean permitSession;
 

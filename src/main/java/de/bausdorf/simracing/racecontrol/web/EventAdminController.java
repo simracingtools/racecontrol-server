@@ -32,6 +32,7 @@ import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
 import de.bausdorf.simracing.racecontrol.util.ResultManager;
+import de.bausdorf.simracing.racecontrol.util.SessionManager;
 import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.TimezoneView;
 import de.bausdorf.simracing.racecontrol.web.model.TrackConfigurationView;
@@ -68,6 +69,7 @@ public class EventAdminController extends ControllerBase {
     private static final String CREATE_EVENT_VIEW = "create-event";
     private static final String CREATE_SESSION_VIEW = "create-session";
     private static final String PERMIT_RESULT_VIEW = "permit-result";
+    public static final String EVENT_DETAIL_VIEW = "event-detail";
     private static final String EVENT_VIEW_MODEL_KEY = "eventView";
     public static final String SESSION_ID_PARAM = "sessionId";
     public static final String SUBSESSION_EDIT_VIEW_KEY = "subsessionEditView";
@@ -77,6 +79,7 @@ public class EventAdminController extends ControllerBase {
     public static final String INDEX_VIEW = "index";
 
     private final ResultManager resultManager;
+    private final SessionManager sessionManager;
     private final EventSeriesRepository eventRepository;
     private final CarClassRepository carClassRepository;
     private final BalancedCarRepository balancedCarRepository;
@@ -89,6 +92,7 @@ public class EventAdminController extends ControllerBase {
     private final JdaClient jdaClient;
 
     public EventAdminController(@Autowired ResultManager resultManager,
+                                @Autowired SessionManager sessionManager,
                                 @Autowired EventSeriesRepository eventRepository,
                                 @Autowired CarClassRepository carClassRepository,
                                 @Autowired BalancedCarRepository balancedCarRepository,
@@ -100,6 +104,7 @@ public class EventAdminController extends ControllerBase {
                                 @Autowired IRacingClient iRacingClient,
                                 @Autowired JdaClient jdaClient) {
         this.resultManager = resultManager;
+        this.sessionManager = sessionManager;
         this.eventRepository = eventRepository;
         this.carClassRepository = carClassRepository;
         this.balancedCarRepository = balancedCarRepository;
@@ -375,6 +380,16 @@ public class EventAdminController extends ControllerBase {
         return redirectBuilder(INDEX_VIEW).build(model);
     }
 
+    @GetMapping("/fetch-league-sessions")
+    public String fetchLeagueSessions(@RequestParam Long eventId, Model model) {
+        sessionManager.fetchFutureTrackSessions(eventId);
+
+        return redirectBuilder(EVENT_DETAIL_VIEW)
+                .withParameter(EVENT_ID_PARAM, eventId)
+                .withParameter("activeTab", "tasks")
+                .build(model);
+    }
+
     @PostMapping("/duplicate-session")
     @Secured({"ROLE_SYSADMIN", "ROLE_RACE_DIRECTOR", "ROLE_STEWARD"})
     public String duplicateSession(@ModelAttribute CreateSessionView sessionEditView, Model model) {
@@ -446,7 +461,7 @@ public class EventAdminController extends ControllerBase {
 
             return PERMIT_RESULT_VIEW;
         }
-        return redirectBuilder("event-detail")
+        return redirectBuilder(EVENT_DETAIL_VIEW)
                 .withParameter(EVENT_ID_PARAM, eventId)
                 .withParameter("activeTab", activeTab)
                 .build(model);

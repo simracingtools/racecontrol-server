@@ -46,6 +46,8 @@ public class EventInfoView {
     private String description;
     private long irLeagueID;
     private String irLeagueName;
+    private long irSeasonId;
+    private String irSeasonName;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime registrationOpens;
     private String registrationOpensTZ;
@@ -103,6 +105,8 @@ public class EventInfoView {
                 .discordInvite(eventSeries.getDiscordInvite())
                 .irLeagueID(eventSeries.getIRLeagueID())
                 .irLeagueName(eventSeries.getIRLeagueName())
+                .irSeasonId(eventSeries.getIrSeasonId())
+                .irSeasonName(eventSeries.getIrSeasonName())
                 .description(eventSeries.getDescription())
                 .registrationOpens(eventSeries.getRegistrationOpens().toLocalDateTime())
                 .registrationOpensTZ(eventSeries.getRegistrationOpens().getOffset().toString())

@@ -35,11 +35,11 @@
                     <input type="hidden" th:field="*{id}">
                     <h5>Location and time</h5>
                     <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Session title" required="" minlength="3" maxlength="155" th:field="*{title}">
+                        <input type="text" class="form-control" placeholder="Session title" required="" minlength="3" maxlength="155" th:field="*{title}" th:disabled="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-group">
                         <label class="d-block" style="width: 8em;">Track</label>
-                        <select class="form-control" th:field="*{trackConfigId}" required>
+                        <select class="form-control" th:field="*{trackConfigId}" th:readonly="${sessionEditView.isFetchedSession()}">
                             <optgroup th:each="track : ${allTracks}" th:label="${track.name}">
                                 <option th:each="config : ${track.configViewList}" th:value="${config.trackId}" th:text="${config.configName.equals(config.track.name) ? config.configName : (config.track.name + ' - ' + config.configName)}">Track confioguration</option>
                             </optgroup>
@@ -47,19 +47,23 @@
                     </div>
                     <div class="form-group">
                         <label class="d-block" style="width: 10em;">Session start</label>
-                        <input type="datetime-local" style="width: 11em;" required th:field="*{datetime}">
-                        <select th:field="*{zoneOffset}">
+                        <input type="datetime-local" style="width: 11em;" required th:field="*{datetime}" th:disabled="${sessionEditView.isFetchedSession()}">
+                        <select th:field="*{zoneOffset}" th:disabled="${sessionEditView.isFetchedSession()}">
                             <option th:each="zone : ${timezones}" th:value="${zone.utcOffset.id}" th:text="${zone.shortName}">UTC+12</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="d-block" style="width: 10em;">Simulated time of Day</label>
-                        <input type="datetime-local" style="width: 11em;" th:field="*{simulatedTimeOfDay}" required>
+                        <input type="datetime-local" style="width: 11em;" th:field="*{simulatedTimeOfDay}" required th:disabled="${sessionEditView.isFetchedSession()}">
+                    </div>
+                    <div class="form-group">
+                        <label class="d-block" style="width: 10em;">Private session ID</label>
+                        <input type="number" th:field="*{irPrivateId}" th:disabled="${sessionEditView.isFetchedSession()}"/>
                     </div>
                     <div class="form-group">
                         <label class="d-block" style="width: 10em;">iRacing session ID</label>
                         <input type="number" th:field="*{irSessionId}">
-                        <a th:href="@{/refetch-session(eventId = *{eventId}, irSessionid = *{irSessionId})}">
+                        <a th:if="${sessionEditView.irSessionId != null && sessionEditView.irSessionId > 0}" th:href="@{/refetch-session(eventId = *{eventId}, irSessionid = *{irSessionId})}">
                             <button class="btn btn-primary" type="button" style="margin-left: 1em;">
                                 <i class="far fa-question-circle" data-toggle="tooltip" title="Update driver permissions"></i>
                             </button>
@@ -68,7 +72,7 @@
                 </div>
                 <div class="col">
                     <h5 class="d-inline">Subsessions</h5>
-                    <button class="btn btn-primary float-right" type="button" data-target="#subsession-modal" data-toggle="modal" th:disabled="${sessionEditView.id == 0}">
+                    <button th:if="${!sessionEditView.isFetchedSession()}" class="btn btn-primary float-right" type="button" data-target="#subsession-modal" data-toggle="modal" th:disabled="${sessionEditView.id == 0}">
                         <i class="fas fa-plus" data-toggle="tooltip" data-bss-tooltip="" title="Add car class"></i>
                     </button>
                     <div class="table-responsive">
@@ -90,7 +94,7 @@
                                         <input type="hidden" th:id="'subsessionId-' + ${subsession.id}" th:value="${subsession.id}">
                                         <input type="hidden" th:id="'durationHours-' + ${subsession.id}" th:value="${subsession.hours}">
                                         <input type="hidden" th:id="'durationMinutes-' + ${subsession.id}" th:value="${subsession.minutes}">
-                                        <button class="btn btn-danger" type="button" th:data-target="${'#subsession-remove-modal-' + subsession.id}" data-toggle="modal">
+                                        <button th:if="${!sessionEditView.isFetchedSession()}" class="btn btn-danger" type="button" th:data-target="${'#subsession-remove-modal-' + subsession.id}" data-toggle="modal">
                                             <i class="far fa-trash-alt"></i>
                                         </button>
                                     </td>
@@ -113,24 +117,24 @@
                 <div class="col-xl-2">
                     <h5>Weather</h5>
                     <div class="form-check form-control">
-                        <input class="form-check-input" type="checkbox" id="formCheck-2" th:field="*{generatedWeather}">
+                        <input class="form-check-input" type="checkbox" id="formCheck-2" th:field="*{generatedWeather}" th:disabled="${sessionEditView.isFetchedSession()}">
                         <label class="form-check-label" for="formCheck-2">Dynamic weather</label>
                     </div>
                     <div class="form-group">
                         <label>Temperature (°C)</label>
-                        <input type="number" class="form-control" th:field="*{temperature}">
+                        <input type="number" class="form-control" th:field="*{temperature}" th:disabled="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-group">
                         <label>Humidity (%)</label>
-                        <input type="number" class="form-control" th:field="*{humidity}">
+                        <input type="number" class="form-control" th:field="*{humidity}" th:disabled="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-group">
                         <label>Wind speed (kph)</label>
-                        <input type="number" class="form-control" th:field="*{windSpeed}">
+                        <input type="number" class="form-control" th:field="*{windSpeed}" th:disabled="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-group">
                         <label>Wind direction</label>
-                        <select class="form-control" th:field="*{windDirection}">
+                        <select class="form-control" th:field="*{windDirection}" th:disabled="${sessionEditView.isFetchedSession()}">
                             <option value="N">N</option>
                             <option value="NE">NE</option>
                             <option value="E">E</option>
@@ -145,22 +149,22 @@
                     <div class="form-group">
                         <h5>Sky &amp; Track usage</h5>
                         <div class="form-check form-control">
-                            <input class="form-check-input" type="checkbox" id="formCheck-1" th:field="*{generatedSky}">
+                            <input class="form-check-input" type="checkbox" id="formCheck-1" th:field="*{generatedSky}" th:disabled="${sessionEditView.isFetchedSession()}">
                             <label class="form-check-label" for="formCheck-1">Dynamic Sky</label>
                         </div>
                         <label>Variability initial (%)</label>
-                        <input type="number" class="form-control" th:field="*{skyVarInitial}">
+                        <input type="number" class="form-control" th:field="*{skyVarInitial}" th:disabled="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-group">
                         <label>Variability then (%)</label>
-                        <input type="number" class="form-control" th:field="*{skyVarContinued}">
+                        <input type="number" class="form-control" th:field="*{skyVarContinued}" th:disabled="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-group">
                         <label>Track usage (%)</label>
-                        <input type="number" class="form-control" th:field="*{trackUsagePercent}">
+                        <input type="number" class="form-control" th:field="*{trackUsagePercent}" th:readonly="${sessionEditView.isFetchedSession()}">
                     </div>
                     <div class="form-check form-control">
-                        <input class="form-check-input" type="checkbox" id="formCheck-3" th:field="*{trackStateCarryOver}">
+                        <input class="form-check-input" type="checkbox" id="formCheck-3" th:field="*{trackStateCarryOver}" th:disabled="${sessionEditView.isFetchedSession()}">
                         <label class="form-check-label" for="formCheck-3">Leave marbles on track</label>
                     </div>
                 </div>

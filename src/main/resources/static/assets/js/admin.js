@@ -34,6 +34,12 @@ function checkTeamMemberStatus(teamId) {
   window.location = '/team-check-members?teamId=' + teamId;
 }
 
+function checkEventSessions(eventId) {
+  $('#check-sessions-icon').hide();
+  $('#check-sessions-spinner').show();
+  window.location = '/fetch-league-sessions?eventId=' + eventId;
+}
+
 function confirmUserRemove(index) {
   $("#user-remove-confirm-" + index).modal('show');
 }
@@ -288,6 +294,8 @@ function duplicateSession() {
 }
 
 function checkIRacingLeagueId() {
+  $("#check-league-icon").hide();
+  $("#check-league-spinner").show();
   $("#irLeagueName").val("");
   $.ajax({
     type: "GET",
@@ -296,8 +304,25 @@ function checkIRacingLeagueId() {
     success: function (data) {
       $("#irLeagueID").val(data.leagueId);
       $("#irLeagueName").val(data.leagueName);
+      $.each(data.activeSeasons, function (i, season) {
+        $("#irSeasonId").append($("<option>", {
+          value: season.seasonId,
+          text: season.seasonName
+        }));
+      });
+      $("#check-league-spinner").hide();
+      $("#check-league-icon").show();
     }
   });
+}
+
+function changeSeasonSelect() {
+  $("#irSeasonId > option").each(function() {
+    if (this.selected === true) {
+      $("#irSeasonName").val($(this).text());
+    }
+  });
+
 }
 
 function checkIRacingMemberId() {
