@@ -35,6 +35,7 @@ import de.bausdorf.simracing.racecontrol.util.ResultManager;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
@@ -50,6 +51,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Component
+@Slf4j
 public class EventOrganizer {
     public static final String ASSET_BASE_URL = "https://images-static.iracing.com";
     public static final String PAINT_COLLECTION = "PaintCollection";
@@ -109,6 +111,9 @@ public class EventOrganizer {
                         view.setCarClass(CarClassView.fromEntity(carClass));
                         if(assets != null) {
                             view.getCar().setCarLogoUrl(ASSET_BASE_URL + assets.getLogo());
+                        } else {
+                            log.error("No assets for car {}, renew data cache (rest/data/renew) ?", r.getCar());
+                            view.getCar().setCarLogoUrl("");
                         }
                         fillRegisteredSlots(view, carClass, regArray, regCount, waitingList);
                         regCount.incrementAndGet();
