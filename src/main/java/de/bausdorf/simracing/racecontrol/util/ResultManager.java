@@ -61,7 +61,7 @@ public class ResultManager {
     }
 
     @Transactional
-    public List<PermitSessionResult> fetchPermitSessionResult(long eventId, long subsessionId, TrackSession session) {
+    public List<PermitSessionResult> fetchPermitSessionResult(long eventId, long subsessionId, @NonNull TrackSession session) {
         SubsessionResultDto subsessionResult = dataClient.getSubsessionResult(subsessionId).orElse(null);
         if (subsessionResult == null) {
             return List.of();
@@ -72,9 +72,17 @@ public class ResultManager {
                 .filter(sessionResult -> sessionResult.getSimsessionName().equals("QUALIFY"))
                 .findFirst();
         if (qualifyResult.isPresent()) {
-            if (session != null) {
-                updateSessionWeather(session, subsessionResult);
+            if ((session.getIrSessionId() != null && session.getIrSessionId() != 0L) && session.getIrSessionId() != subsessionId) {
+                log.warn("Non-matching subsession id for {}: {} vs. {}", session.getTitle(), session.getIrSessionId(), subsessionId);
+                return List.of();
+            } else if (session.getIrSessionId() == null || session.getIrSessionId() == 0L) {
+                session.setIrSessionId(subsessionId);
+            } else {
+                log.debug("Will not overwrite existing result for session {}", session.getTitle());
+                return List.of();
             }
+            updateSessionWeather(session, subsessionResult);
+
             List<PermitSessionResult> resultList = new ArrayList<>();
 
             Arrays.stream(qualifyResult.get().getResults()).forEach(memberResult -> {
@@ -144,8 +152,8 @@ public class ResultManager {
     }
 
     public Duration getTeamPermissionTime(List<DriverPermission> driverPermissions) {
-        if (log.isDebugEnabled()) {
-            driverPermissions.forEach(p -> log.debug("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
+        if (log.isTraceEnabled()) {
+            driverPermissions.forEach(p -> log.trace("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
         }
         if (driverPermissions.size() < config.getCountingDriverPermits()) {
             return Duration.ofMinutes(60);

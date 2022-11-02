@@ -27,6 +27,7 @@ import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,11 +58,18 @@ class SessionFetchTest {
         Optional<EventSeries> event = eventRepository.findById(8001L);
         event.ifPresent(evt -> {
             Optional<LeagueSeasonSessionsDto> seasonSessions = dataClient.getLeaguePastSessions(evt.getIRLeagueID(), evt.getIrSeasonId());
-            seasonSessions.ifPresent(sessions -> {
-                Arrays.stream(sessions.getSessions()).forEach(session -> {
-                    log.info("{}: {} ({})", session.getPrivateSessionId(), session.getSessionDescription(), session.getSubsessionId());
-                });
-            });
+            seasonSessions.ifPresent(sessions -> Arrays.stream(sessions.getSessions()).forEach(
+                    session -> log.info("{}: {} ({})", session.getPrivateSessionId(), session.getSessionDescription(), session.getSubsessionId())
+            ));
         });
+    }
+
+    @Test
+    void testFetchSessionsResultJob() {
+        try {
+            sessionManager.fetchSessionResults();
+        } catch (Exception e) {
+            Assertions.fail(e.getMessage(), e);
+        }
     }
 }

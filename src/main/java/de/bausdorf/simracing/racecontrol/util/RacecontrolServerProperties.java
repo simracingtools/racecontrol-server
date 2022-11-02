@@ -65,7 +65,7 @@ public class RacecontrolServerProperties {
     private String uploadBaseUri;
     private String flagImageResourcePath;
     private long leagueInfoCacheMaxAgeMinutes;
-
+    private String fetchSessionsCron;
     @Bean
     ConfigProperties configProperties() {
         return new ConfigProperties();

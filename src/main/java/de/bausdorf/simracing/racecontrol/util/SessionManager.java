@@ -30,7 +30,9 @@ import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,15 +45,18 @@ public class SessionManager {
     private final TrackSessionRepository trackSessionRepository;
     private final EventSeriesRepository eventSeriesRepository;
     private final TrackSubsessionRepository subsessionRepository;
+    private final ResultManager resultManager;
     private final IRacingClient dataClient;
 
     public SessionManager(@Autowired TrackSessionRepository trackSessionRepository,
                           @Autowired EventSeriesRepository eventSeriesRepository,
                           @Autowired TrackSubsessionRepository subsessionRepository,
+                          @Autowired ResultManager resultManager,
                           @Autowired IRacingClient dataClient) {
         this.trackSessionRepository = trackSessionRepository;
         this.eventSeriesRepository = eventSeriesRepository;
         this.subsessionRepository = subsessionRepository;
+        this.resultManager = resultManager;
         this.dataClient = dataClient;
     }
 
@@ -72,6 +77,45 @@ public class SessionManager {
                         updateTrackSubSessions(irSession, newSession);
                     }));
         });
+    }
+
+    @Scheduled(cron = "${racecontrol.fetchSessionsCron}")
+    @Transactional
+    public void fetchSessionResults() {
+        List<EventSeries> activeEvents = eventSeriesRepository.findAllByActive(true);
+        log.debug("try to fetch sessionResults for {} active events", activeEvents.size());
+        activeEvents.forEach(event -> {
+            if( event.getIrSeasonId() != 0 || event.getIRLeagueID() != 0) {
+                List<TrackSession> eventSessions = trackSessionRepository.findAllByEventId(event.getId());
+                Optional<LeagueSeasonSessionsDto> seasonSessions = dataClient.getLeaguePastSessions(event.getIRLeagueID(), event.getIrSeasonId());
+                seasonSessions.ifPresent(sessions ->  Arrays.stream(sessions.getSessions()).forEach(session -> {
+                        Optional<TrackSession> matchingTrackSession = eventSessions.stream()
+                                .filter(trackSession -> Objects.equals(session.getPrivateSessionId(), trackSession.getIrPrivateSessionId())
+                                        && (trackSession.getIrSessionId() == null || trackSession.getIrSessionId() == 0L)
+                                        && session.getSubsessionId() != null)
+                                .findFirst();
+                        if (matchingTrackSession.isEmpty()) {
+                            log.debug("{}: No updatable TrackSession for existing subsession ({}) result at {}, privateSessionId {}",
+                                    event.getTitle(), session.getSubsessionId(), session.getLaunchAt(), session.getPrivateSessionId());
+                        }
+                        matchingTrackSession.ifPresent(trackSession -> fetchEventSessionResults(event.getId(), session, trackSession));
+                    })
+                );
+            } else {
+                log.debug("Event {} has no configured league or season", event.getTitle());
+            }
+        });
+    }
+
+    private void fetchEventSessionResults(long eventId, LeagueSessionInfoDto session, @NonNull TrackSession trackSession) {
+        if (trackSession.isPermitSession()) {
+            resultManager.fetchPermitSessionResult(eventId, session.getSubsessionId(), trackSession);
+            trackSessionRepository.save(trackSession);
+            log.info("Fetched new result on private session {}: {} ({})", session.getPrivateSessionId(), session.getSessionDescription(), session.getSubsessionId());
+            resultManager.updatePermissions(eventId, trackSession.getIrSessionId());
+        } else {
+            log.debug("TrackSession {} is not a Permit Session", trackSession.getTitle());
+        }
     }
 
     private TrackSession trackSessionFromIrSession(long eventId, CustomSessionInfoDto irSession, @Nullable TrackSession trackSession) {

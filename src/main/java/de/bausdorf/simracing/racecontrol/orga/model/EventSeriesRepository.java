@@ -25,11 +25,10 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 import org.springframework.data.repository.CrudRepository;
 
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
 import java.util.List;
 
 public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
     List<EventSeries> findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate openBefore, boolean active);
-    List<EventSeries> findAllByRegistrationOpensBeforeAndEndDateAfterAndActiveOrderByStartDateAsc(OffsetDateTime regCloseBefore, LocalDate dateAfter, boolean active);
     List<EventSeries> findAllByDiscordGuildIdAndActive(long guildId, boolean active);
+    List<EventSeries> findAllByActive(boolean active);
 }

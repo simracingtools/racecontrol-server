@@ -349,7 +349,9 @@ public class EventAdminController extends ControllerBase {
         if (existingIrSessionId == 0L && (trackSession.getIrSessionId() != null || Long.valueOf(0L).equals(trackSession.getIrSessionId()))) {
             log.info("Tying to fetch result information on {}({})})", trackSession.getTitle(), trackSession.getIrSessionId());
             // Fetch sessionResults
-            if (trackSession.isPermitSession()) {
+            if (trackSession.isPermitSession()
+                    && trackSession.getIrSessionId() != null
+                    && trackSession.getIrSessionId() != 0L) {
                 resultManager.fetchPermitSessionResult(trackSession.getEventId(), trackSession.getIrSessionId(), trackSession);
                 resultManager.updatePermissions(trackSession.getEventId(), trackSession.getIrSessionId());
             } else {
