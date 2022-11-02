@@ -56,6 +56,7 @@ public class PermitSessionResultView {
     private Boolean dynamicSkies;
 
     private List<DriverPermitResultView> results;
+    private int permitAchievedCount;
 
     public static PermitSessionResultView fromEntitiy(TrackSession trackSession) {
         return PermitSessionResultView.builder()

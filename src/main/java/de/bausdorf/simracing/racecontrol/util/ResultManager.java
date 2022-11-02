@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -127,11 +128,8 @@ public class ResultManager {
     }
 
     public boolean isDriverPermitted(PermitSessionResult result) {
-        boolean permitted = true;
-        if (result.getLapCount() < config.getRequiredCleanPermitLapNum()) {
-            permitted = false;
-        }
-        if (result.getSlowestLapTime().toSeconds() - result.getFastestLapTime().toSeconds()> config.getMaxPermitLapTimeDiffSeconds()) {
+        boolean permitted = result.getLapCount() >= config.getRequiredCleanPermitLapNum();
+        if (result.getSlowestLapTime().toSeconds() - result.getFastestLapTime().toSeconds() > config.getMaxPermitLapTimeDiffSeconds()) {
             permitted = false;
         }
         return permitted;
@@ -172,13 +170,18 @@ public class ResultManager {
         permitSessionResultView.setTrackName(trackName);
 
         List<DriverPermitResultView> driverResults = new ArrayList<>();
+        AtomicInteger permitAchievedCount = new AtomicInteger();
         sessionResult.forEach(driverResult -> {
             DriverPermitResultView permitResultView = DriverPermitResultView.fromEntity(driverResult);
             permitResultView.setLapCountOk(driverResult.getLapCount() >= config.getRequiredCleanPermitLapNum());
             permitResultView.setVarianceOk(
                     driverResult.getSlowestLapTime().minus(driverResult.getFastestLapTime()).toSeconds() <= config.getMaxPermitLapTimeDiffSeconds());
+            if (permitResultView.isPermitted()) {
+                permitAchievedCount.getAndIncrement();
+            }
             driverResults.add(permitResultView);
         });
+        permitSessionResultView.setPermitAchievedCount(permitAchievedCount.get());
         permitSessionResultView.setResults(driverResults);
         return permitSessionResultView;
     }

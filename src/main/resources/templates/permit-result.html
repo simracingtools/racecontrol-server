@@ -41,7 +41,13 @@
                         09213409
                     </a>
                 </div>
-                <div><span><strong>Time Of Day :&nbsp;</strong></span><span th:text="${#temporals.format(resultsView.timeOfDay, 'dd.MM.yyyy HH:mm')}">30.11.2022 15:00</span></div>
+                <div>
+                    <span><strong>Time Of Day :&nbsp;</strong></span><span th:text="${#temporals.format(resultsView.timeOfDay, 'dd.MM.yyyy HH:mm')}">30.11.2022 15:00</span>
+                </div>
+                <div>
+                    <span>Achievement Ratio :&nbsp;</span>
+                    <span th:text="${resultsView.permitAchievedCount + '/' + resultsView.results.size()}">0/0</span>
+                </div>
             </div>
             <div class="col">
                 <div><span><strong th:text="${resultsView.dynamicWeather ? 'Dynamic Weather' : 'Static Weather'}">Dynamic Weather</strong></span></div>
