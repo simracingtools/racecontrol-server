@@ -22,7 +22,6 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -49,6 +48,8 @@ public class CreateEventView {
     private String description;
     private long irLeagueID;
     private String irLeagueName;
+    private long irSeasonId;
+    private String irSeasonName;
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime registrationOpens;
     private String registrationOpensTZ;
@@ -78,6 +79,8 @@ public class CreateEventView {
         eventSeries.setDiscordSpacerCategoryId(discordSpacerCategoryId == 0 ? eventSeries.getDiscordSpacerCategoryId() : discordSpacerCategoryId);
         eventSeries.setIRLeagueName(irLeagueName == null ? eventSeries.getIRLeagueName() : irLeagueName);
         eventSeries.setIRLeagueID(irLeagueID == 0 ? eventSeries.getIRLeagueID() : irLeagueID);
+        eventSeries.setIrSeasonId(irSeasonId == 0 ? eventSeries.getIrSeasonId() : irSeasonId);
+        eventSeries.setIrSeasonName(irSeasonName == null ? eventSeries.getIrSeasonName() : irSeasonName);
         eventSeries.setDescription(description == null ? eventSeries.getDescription() : description);
         eventSeries.setRegistrationOpens(registrationOpens == null ? eventSeries.getRegistrationOpens()
                 : OffsetDateTime.of(registrationOpens, ZoneOffset.of(registrationOpensTZ)));
@@ -102,6 +105,8 @@ public class CreateEventView {
                 .discordSpacerCategoryId(eventSeries.getDiscordSpacerCategoryId())
                 .irLeagueID(eventSeries.getIRLeagueID())
                 .irLeagueName(eventSeries.getIRLeagueName())
+                .irSeasonId(eventSeries.getIrSeasonId())
+                .irSeasonName(eventSeries.getIrSeasonName())
                 .description(eventSeries.getDescription())
                 .registrationOpens(eventSeries.getRegistrationOpens().toLocalDateTime())
                 .registrationOpensTZ(eventSeries.getRegistrationOpens().getOffset().toString())

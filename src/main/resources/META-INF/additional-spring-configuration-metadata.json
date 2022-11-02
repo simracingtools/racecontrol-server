@@ -14,5 +14,10 @@
       "name": "racecontrol.countingDriverPermits",
       "type": "java.lang.Integer",
       "description": "Number of driver permits counted for team."
+    },
+    {
+      "name": "racecontrol.fetchSessionsCron",
+      "type": "java.lang.String",
+      "description": "Cron expression for job fetching session results."
     }
   ] }

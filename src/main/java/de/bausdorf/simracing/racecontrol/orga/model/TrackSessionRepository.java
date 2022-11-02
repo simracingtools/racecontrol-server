@@ -30,4 +30,5 @@ import java.util.Optional;
 public interface TrackSessionRepository extends CrudRepository<TrackSession, Long> {
     List<TrackSession> findAllByEventId(long eventId);
     Optional<TrackSession> findByEventIdAndIrSessionId(long eventId, long irSessionId);
+    Optional<TrackSession> findByEventIdAndIrPrivateSessionId(long eventId, long privateSessionId);
 }

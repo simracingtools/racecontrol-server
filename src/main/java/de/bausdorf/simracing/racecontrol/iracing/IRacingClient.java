@@ -152,6 +152,42 @@ public class IRacingClient {
 		return List.of();
 	}
 
+	public Optional<CustLeagueSessionsDto> getLeagueFutureSessions() {
+		try {
+			authenticate();
+			return Optional.of(dataClient.getLeagueSessions(true));
+		} catch(HttpClientErrorException clientError) {
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return Optional.empty();
+	}
+
+	public Optional<LeagueSeasonsDto> getLeagueSeasons(long seasonId) {
+		try {
+			authenticate();
+			return Optional.of(dataClient.getLeagueSeasons(seasonId, false));
+		} catch(HttpClientErrorException clientError) {
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return Optional.empty();
+	}
+
+	public Optional<LeagueSeasonSessionsDto> getLeaguePastSessions(long leagueId, long seasonId) {
+		try {
+			authenticate();
+			return Optional.of(dataClient.getLeagueSeasonSessions(leagueId, seasonId, true));
+		} catch(HttpClientErrorException clientError) {
+			log.warn(I_RACING_HTTP_ERROR,clientError.getRawStatusCode(), clientError.getResponseBodyAsString());
+		} catch(Exception e) {
+			log.error(e.getMessage(), e);
+		}
+		return Optional.empty();
+	}
+
 	private void authenticate() {
 		try {
 			dataClient.getMemberSummary(229120L);

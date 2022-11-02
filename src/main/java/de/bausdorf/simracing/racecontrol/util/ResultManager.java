@@ -39,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Component
@@ -60,7 +61,7 @@ public class ResultManager {
     }
 
     @Transactional
-    public List<PermitSessionResult> fetchPermitSessionResult(long eventId, long subsessionId, TrackSession session) {
+    public List<PermitSessionResult> fetchPermitSessionResult(long eventId, long subsessionId, @NonNull TrackSession session) {
         SubsessionResultDto subsessionResult = dataClient.getSubsessionResult(subsessionId).orElse(null);
         if (subsessionResult == null) {
             return List.of();
@@ -71,9 +72,17 @@ public class ResultManager {
                 .filter(sessionResult -> sessionResult.getSimsessionName().equals("QUALIFY"))
                 .findFirst();
         if (qualifyResult.isPresent()) {
-            if (session != null) {
-                updateSessionWeather(session, subsessionResult);
+            if ((session.getIrSessionId() != null && session.getIrSessionId() != 0L) && session.getIrSessionId() != subsessionId) {
+                log.warn("Non-matching subsession id for {}: {} vs. {}", session.getTitle(), session.getIrSessionId(), subsessionId);
+                return List.of();
+            } else if (session.getIrSessionId() == null || session.getIrSessionId() == 0L) {
+                session.setIrSessionId(subsessionId);
+            } else {
+                log.debug("Will not overwrite existing result for session {}", session.getTitle());
+                return List.of();
             }
+            updateSessionWeather(session, subsessionResult);
+
             List<PermitSessionResult> resultList = new ArrayList<>();
 
             Arrays.stream(qualifyResult.get().getResults()).forEach(memberResult -> {
@@ -127,11 +136,8 @@ public class ResultManager {
     }
 
     public boolean isDriverPermitted(PermitSessionResult result) {
-        boolean permitted = true;
-        if (result.getLapCount() < config.getRequiredCleanPermitLapNum()) {
-            permitted = false;
-        }
-        if (result.getSlowestLapTime().toSeconds() - result.getFastestLapTime().toSeconds()> config.getMaxPermitLapTimeDiffSeconds()) {
+        boolean permitted = result.getLapCount() >= config.getRequiredCleanPermitLapNum();
+        if (result.getSlowestLapTime().toSeconds() - result.getFastestLapTime().toSeconds() > config.getMaxPermitLapTimeDiffSeconds()) {
             permitted = false;
         }
         return permitted;
@@ -146,8 +152,8 @@ public class ResultManager {
     }
 
     public Duration getTeamPermissionTime(List<DriverPermission> driverPermissions) {
-        if (log.isDebugEnabled()) {
-            driverPermissions.forEach(p -> log.debug("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
+        if (log.isTraceEnabled()) {
+            driverPermissions.forEach(p -> log.trace("{}({}) {}", p.getDriverName(), p.getIracingId(), p.getDisplayTime()));
         }
         if (driverPermissions.size() < config.getCountingDriverPermits()) {
             return Duration.ofMinutes(60);
@@ -172,13 +178,18 @@ public class ResultManager {
         permitSessionResultView.setTrackName(trackName);
 
         List<DriverPermitResultView> driverResults = new ArrayList<>();
+        AtomicInteger permitAchievedCount = new AtomicInteger();
         sessionResult.forEach(driverResult -> {
             DriverPermitResultView permitResultView = DriverPermitResultView.fromEntity(driverResult);
             permitResultView.setLapCountOk(driverResult.getLapCount() >= config.getRequiredCleanPermitLapNum());
             permitResultView.setVarianceOk(
                     driverResult.getSlowestLapTime().minus(driverResult.getFastestLapTime()).toSeconds() <= config.getMaxPermitLapTimeDiffSeconds());
+            if (permitResultView.isPermitted()) {
+                permitAchievedCount.getAndIncrement();
+            }
             driverResults.add(permitResultView);
         });
+        permitSessionResultView.setPermitAchievedCount(permitAchievedCount.get());
         permitSessionResultView.setResults(driverResults);
         return permitSessionResultView;
     }

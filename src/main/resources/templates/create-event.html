@@ -146,9 +146,18 @@
                                 <label class="d-block" style="width: 10em;" th:for="*{irLeagueID}">iRacing League ID</label>
                                 <input type="number" th:field="*{irLeagueID}">
                                 <button class="btn btn-primary" data-toggle="tooltip" data-bss-tooltip="" type="button" style="margin-left: 15px;" title="Check league in iRacing" onclick="checkIRacingLeagueId();">
-                                    <i class="far fa-question-circle"></i>
+                                    <i id="check-league-icon" class="far fa-question-circle"></i>
+                                    <span id="check-league-spinner" style="display: none;" class="spinner-border spinner-border-sm" role="status"></span>
                                 </button>
                                 <input type="text" style="width: 17em;margin-top: 10px;" readonly="" th:field="*{irLeagueName}">
+                            </div>
+                            <div class="form-group">
+                                <label class="d-block" style="width: 10em;">iRacing Season</label>
+                                <input type="hidden" th:field="*{irSeasonName}">
+                                <select class="form-control" style="width: 17em;" th:field="*{irSeasonId}" onchange="changeSeasonSelect();">
+                                    <option th:if="*{irSeasonId != 0}" th:value="*{irSeasonId}" th:text="*{irSeasonName}"></option>
+                                    <option value="0" selected>No Season</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col">

@@ -105,7 +105,7 @@ public class SessionInfoView {
                 .temperature(session.getTemperature())
                 .humidity(session.getHumidity())
                 .windSpeed(session.getWindSpeed())
-                .windDirection(session.getWindDirection().getCode())
+                .windDirection(session.getWindDirection() != null ? session.getWindDirection().getCode() : "")
                 .generatedSky(session.isGeneratedSky())
                 .sky(session.getSky() != null ? session.getSky().getName() : null)
                 .sessionParts(TrackSubsessionView.fromEntityList(session.getSessionParts()))

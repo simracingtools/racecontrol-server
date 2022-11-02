@@ -19,13 +19,13 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-var stompClient = null;
+let stompClient = null;
 
 function showRcBulletinDialog(carNumber, eventIndex) {
   $("#carNo").val(carNumber);
   if(eventIndex > -1) {
-    var eventTime = $("#event-time-" + eventIndex).text();
-    var dotIndex = eventTime.indexOf('.');
+    let eventTime = $("#event-time-" + eventIndex).text();
+    const dotIndex = eventTime.indexOf('.');
     if(dotIndex > 0) {
       eventTime = eventTime.substr(0, dotIndex);
     }
@@ -36,15 +36,15 @@ function showRcBulletinDialog(carNumber, eventIndex) {
 }
 
 function violationSelect() {
-  var violationId = $("#violationId").val();
+  const violationId = $("#violationId").val();
   if( violationId === "0") {
     $("#penalty-params").attr("style", "display: none;");
     updateRcBulletinPreview(false);
   } else {
     $("#penalty-params").attr("style", "");
-    var codes = $("#violation-" + violationId).attr("data");
-    var firstVisibleSelected = false;
-    $("#selectedPenaltyCode option").each(function (i) {
+    const codes = $("#violation-" + violationId).attr("data");
+    let firstVisibleSelected = false;
+    $("#selectedPenaltyCode option").each(function () {
       if(codes.indexOf($(this).val()) >= 0) {
         $(this).show();
         if(!firstVisibleSelected) {
@@ -95,7 +95,7 @@ function sessionTimeChange() {
 }
 
 function updateRcBulletinPreview(checkViolation) {
-  var preview = $("#sessionType").text().substr(0, 1);
+  let preview = $("#sessionType").text().substr(0, 1);
   preview += $("#bulletinNo").val() + " ";
   preview += $("#sessionTime").val();
   preview += " #" + $("#carNo").val();
@@ -114,29 +114,26 @@ function updateRcBulletinPreview(checkViolation) {
 }
 
 function connect() {
-  var socket = new SockJS('/timingclient');
+  let socket = new SockJS('/timingclient');
   stompClient = Stomp.over(socket);
   stompClient.connect({}, function (frame) {
     // setConnected(true);
     console.log('Connected: ' + frame);
     stompClient.subscribe('/user/timing/client-ack', function(message) {
-      var jsonMessage = JSON.parse(message.body);
       console.log(message);
-      //showSessionData(jsonMessage);
     });
-    var sessionId = $("#sessionId").val();
+    const sessionId = $("#sessionId").val();
     stompClient.subscribe('/timing/' + sessionId + '/reload', function (message) {
-      // var jsonMessage = JSON.parse(message.body);
       console.log(message);
       reloadPage();
     });
     stompClient.subscribe('/timing/' + sessionId + '/driver', function (message) {
-      var jsonMessage = JSON.parse(message.body);
+      const jsonMessage = JSON.parse(message.body);
       console.log(jsonMessage);
       showDriverData(jsonMessage);
     });
     stompClient.subscribe('/timing/' + sessionId + '/event', function (message) {
-      var jsonMessage = JSON.parse(message.body);
+      const jsonMessage = JSON.parse(message.body);
       console.log(jsonMessage);
       showEventData(jsonMessage);
     });
@@ -167,7 +164,7 @@ function reloadPage() {
 }
 
 function showDriverData(message) {
-  var baseId = '#driver-' + message.iracingId;
+  let baseId = '#driver-' + message.iracingId;
 
   $(baseId + "-name").attr("class", message.name.cssClassString);
   $(baseId + "-drivingTime")
@@ -176,19 +173,19 @@ function showDriverData(message) {
 }
 
 function showEventData(message) {
-  if($('#selectedTeamId').val() != 'All' && $('#selectedTeamId').val() != message.teamId) {
+  if($('#selectedTeamId').val() !== 'All' && $('#selectedTeamId').val() !== message.teamId) {
     console.log("Discarding event for team " + message.teamId);
     return;
   }
 
-  var showEvent = $('#' + message.eventType.value).prop('checked')
+  const showEvent = $('#' + message.eventType.value).prop('checked')
   if(!showEvent) {
     console.log("Discard event type " + message.eventType.value);
     return;
   }
 
-  var tableSize = $('#eventTableSize').val()
-  for(var i = tableSize - 1; i >= 0; i--) {
+  const tableSize = $('#eventTableSize').val()
+  for(let i = tableSize - 1; i >= 0; i--) {
     if(i > 0) {
       $('#event-time-' + i).text($('#event-time-' + (i - 1)).text())
           .attr('onclick', $('#event-time-' + (i - 1)).attr('onclick'));

@@ -24,15 +24,12 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 import lombok.*;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @ToString
-public class LeagueInfoView {
-    private long leagueId;
-    private String leagueName;
-    private List<SeasonInfoView> activeSeasons;
+public class SeasonInfoView {
+    private long seasonId;
+    private String seasonName;
 }

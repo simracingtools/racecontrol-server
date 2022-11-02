@@ -19,7 +19,7 @@
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
  * #L%
  */
-var darkSwitch = document.getElementById("darkSwitch");
+let darkSwitch = document.getElementById("darkSwitch");
 window.addEventListener("load", function () {
     initTheme();
     if (darkSwitch) {
@@ -41,7 +41,7 @@ window.addEventListener("load", function () {
  * @return {void}
  */
 function initTheme() {
-    var darkThemeSelected =
+    const darkThemeSelected =
         localStorage.getItem("darkSwitch") !== null &&
         localStorage.getItem("darkSwitch") === "dark";
     if(darkSwitch) {

@@ -22,13 +22,12 @@ package de.bausdorf.simracing.racecontrol.web;
  * #L%
  */
 
-import de.bausdorf.simracing.irdataapi.model.LeagueInfoDto;
-import de.bausdorf.simracing.irdataapi.model.TeamInfoDto;
-import de.bausdorf.simracing.irdataapi.model.TeamMemberDto;
+import de.bausdorf.simracing.irdataapi.model.*;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.web.model.orga.LeagueInfoView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.SeasonInfoView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.Builder;
 import lombok.Data;
@@ -70,10 +69,20 @@ public class RestDataController {
     @GetMapping("/leagueInfo/{leagueId}")
     public LeagueInfoView checkLeagueInfo(@PathVariable Long leagueId) {
         LeagueInfoDto infoDto = dataClient.getLeagueInfo(leagueId);
+        Optional<LeagueSeasonsDto> seasonsDto = dataClient.getLeagueSeasons(leagueId);
         if (infoDto != null) {
+            List<SeasonInfoView> seasonInfoViews = new ArrayList<>();
+            seasonsDto.ifPresent(seasons -> Arrays.stream(seasons.getSeasons()).forEach(season -> {
+                SeasonInfoView seasonInfo = SeasonInfoView.builder()
+                        .seasonId(season.getSeasonId())
+                        .seasonName(season.getSeasonName())
+                        .build();
+                seasonInfoViews.add(seasonInfo);
+            }));
             return LeagueInfoView.builder()
                     .leagueId(infoDto.getLeagueId())
                     .leagueName(infoDto.getLeagueName())
+                    .activeSeasons(seasonInfoViews)
                     .build();
         }
         return LeagueInfoView.builder()
