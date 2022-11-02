@@ -25,6 +25,7 @@ package de.bausdorf.simracing.racecontrol.util;
 import de.bausdorf.simracing.racecontrol.orga.model.DriverPermission;
 import de.bausdorf.simracing.racecontrol.orga.model.DriverPermissionRepository;
 import de.bausdorf.simracing.racecontrol.orga.model.PermitSessionResult;
+import de.bausdorf.simracing.racecontrol.orga.model.TrackSession;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,14 +47,12 @@ class ResultManagerTest {
     @Test
     void testFetchPermitSessionResult() {
 //        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 51632638L, null);
-        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 51810178L, null);
+        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(1L, 51810178L, new TrackSession());
 //        List<PermitSessionResult> permitSessionResults = resultManager.fetchPermitSessionResult(2L, 43352007L);
 
-        permitSessionResults.forEach(data -> {
-            log.info("#{} {}({}) - {}({}): {} laps, Fast: {}, Avg: {}, Slow: {}", data.getId(),
-                    data.getName(), data.getIracingId(), data.getCarName(), data.getCarId(), data.getLapCount(),
-                    data.getFastestLapTime(), data.getAverageLapTime(), data.getSlowestLapTime());
-        });
+        permitSessionResults.forEach(data -> log.info("#{} {}({}) - {}({}): {} laps, Fast: {}, Avg: {}, Slow: {}", data.getId(),
+                data.getName(), data.getIracingId(), data.getCarName(), data.getCarId(), data.getLapCount(),
+                data.getFastestLapTime(), data.getAverageLapTime(), data.getSlowestLapTime()));
     }
 
     @Test
