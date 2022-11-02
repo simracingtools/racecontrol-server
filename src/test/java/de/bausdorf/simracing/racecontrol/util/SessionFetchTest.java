@@ -27,7 +27,6 @@ import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,14 +47,12 @@ class SessionFetchTest {
     EventSeriesRepository eventRepository;
 
     @Test
-    @Disabled("manual only")
     void testFetchFutureSessions() {
         sessionManager.fetchFutureTrackSessions(8001L);
         log.info("sessions fetched");
     }
 
     @Test
-    @Disabled("manual only")
     void testFetchCompletedSessions() {
         Optional<EventSeries> event = eventRepository.findById(8001L);
         event.ifPresent(evt -> {
