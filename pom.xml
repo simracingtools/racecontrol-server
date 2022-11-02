@@ -29,6 +29,8 @@
     <ir-data-api.version>2.5.0</ir-data-api.version>
     <jquery-ui.version>1.13.1</jquery-ui.version>
     <jda.version>5.0.0-alpha.11</jda.version>
+    <sonar.organization>simracingtools</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
   </properties>
 
   <dependencyManagement>
