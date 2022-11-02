@@ -207,7 +207,6 @@
   text-shadow: none;
   padding: .5rem 1rem;
   transition: background-color 0.25s;
-  font-size: inherit;
 }
 
 .navigation-clean-button .navbar-text .action-button:hover {

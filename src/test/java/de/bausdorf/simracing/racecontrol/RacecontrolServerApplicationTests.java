@@ -22,19 +22,13 @@ package de.bausdorf.simracing.racecontrol;
  * #L%
  */
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.testcontainers.containers.MariaDBContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -56,16 +50,21 @@ class RacecontrolServerApplicationTests {
 
 	@Test
 	void contextLoads() {
+		try {
+			log.info("context successfully loaded");
+		} catch (Exception e) {
+			Assertions.fail(e.getMessage(), e);
+		}
 	}
 
 	@Test
 	void testEncodings() {
 		String encoded = "J\u00f9lien Jean";
 		try {
-			String decoded = URLDecoder.decode(encoded, "UTF-8");
+			String decoded = URLDecoder.decode(encoded, StandardCharsets.UTF_8);
 			log.info("{} -> {}", encoded, decoded);
-		} catch (UnsupportedEncodingException e) {
-			log.error(e.getMessage(), e);
+		} catch (IllegalArgumentException e)  {
+			Assertions.fail(e.getMessage(), e);
 		}
 	}
 }

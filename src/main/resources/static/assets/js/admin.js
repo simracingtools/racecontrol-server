@@ -74,8 +74,8 @@ function personSelected(data) {
 }
 
 function selectTrackForConfig() {
-  var trackId = $("#trackSelector option:selected").val();
-  var configId = $("#trackId").val();
+  const trackId = $("#trackSelector option:selected").val();
+  const configId = $("#trackId").val();
   window.location = '/stockdata?activeTab=configs'
       + '&selectedTrackId=' + trackId
       + '&selectedTrackConfigId=' + configId;
@@ -393,7 +393,7 @@ function showLocalTime() {
 function registrationOpenCountdown() {
   const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
   if(moment().isBefore(regOpens)) {
-    timeLeft = moment.duration(regOpens.diff(moment()));
+    let timeLeft = moment.duration(regOpens.diff(moment()));
     $("#regOpensCountdown").text(timeLeft.months() + " M " + timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
   } else {
     $("#regOpensCountdown").text("");
@@ -404,7 +404,7 @@ function registrationClosedCountdown() {
   const regCloses = moment($("#regClosesTime").text(), "DD.MM.YYYY hh:mm ZZ");
   const regOpens = moment($("#regOpensTime").text(), "DD.MM.YYYY hh:mm ZZ");
   if(moment().isAfter(regOpens) && moment().isBefore(regCloses)) {
-    var timeLeft = moment.duration(regCloses.diff(moment()));
+    let timeLeft = moment.duration(regCloses.diff(moment()));
     $("#regClosesCountdown").text(timeLeft.months() + " M " + timeLeft.days() + " d " + timeLeft.hours() + " h " + timeLeft.minutes() + " m " + timeLeft.seconds() + " s");
   } else {
     $("#regClosesCountdown").text("");
@@ -448,13 +448,13 @@ function selectUserCountry(locale) {
 
 function number_format (number, decimals, dec_point, thousands_sep) {
   number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
-  var n = !isFinite(+number) ? 0 : +number,
+  let n = !isFinite(+number) ? 0 : +number,
       prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
       sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
       dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
       s = '',
       toFixedFix = function (n, prec) {
-        var k = Math.pow(10, prec);
+        let k = Math.pow(10, prec);
         return '' + Math.round(n * k) / k;
       };
   // Fix for IE parseFloat(0.55).toFixed(0) = 0;
