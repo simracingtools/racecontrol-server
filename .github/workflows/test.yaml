@@ -30,21 +30,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=simracingtools_racecontrol-server
-      - name: Provide test properties
+          IRDATAAPI_USER: ${{secrets.IRDATAAPI_USER}}
+          IRDATAAPI_PASSWORD: ${{secrets.IRDATAAPI_PASSWORD}}
+          DISCORD_BOT_TOKEN: ${{secrets.DISCORD_BOT_TOKEN}}
         run: |
           cat src/test/resources/application-test.properties > application-local.properties
           echo "irdataapi.user=$IRDATAAPI_USER" >> application-local.properties
           echo "irdataapi.password=$IRDATAAPI_PASSWORD" >> application-local.properties
           echo "racecontrol.discordBotToken=$DISCORD_BOT_TOKEN" >> application-local.properties
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=simracingtools_racecontrol-server -Dmaven.test.failure.ignore=true
           cat application-local.properties
-        env:
-          IRDATAAPI_USER: ${{secrets.IRDATAAPI_USER}}
-          IRDATAAPI_PASSWORD: ${{secrets.IRDATAAPI_PASSWORD}}
-          DISCORD_BOT_TOKEN: ${{secrets.DISCORD_BOT_TOKEN}}
-      - name: Run Tests
-        run: mvn test --batch-mode -Dmaven.test.failure.ignore=true
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
