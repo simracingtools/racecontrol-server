@@ -23,11 +23,8 @@ package de.bausdorf.simracing.racecontrol.web.security;
  */
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,13 +43,11 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -94,7 +89,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
 		http
-				.csrf().disable()
+//				.csrf().disable()
 				.headers()
 				.frameOptions().sameOrigin()
 				.and()

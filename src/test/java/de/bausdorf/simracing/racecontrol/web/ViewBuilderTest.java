@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,8 +56,6 @@ class ViewBuilderTest {
 	@Test
 	void testCuriousTeam() {
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId("roadamerica full@139239792#35010657#2",200098);
-		if(team.isPresent()) {
-			viewBuilder.buildFromTeam(team.get());
-		}
+		team.ifPresent(value -> Assertions.assertNotNull(viewBuilder.buildFromTeam(value)));
 	}
 }
