@@ -38,7 +38,7 @@ jobs:
           echo "irdataapi.user=$IRDATAAPI_USER" >> application-local.properties
           echo "irdataapi.password=$IRDATAAPI_PASSWORD" >> application-local.properties
           echo "racecontrol.discordBotToken=$DISCORD_BOT_TOKEN" >> application-local.properties
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=simracingtools_racecontrol-server -Dmaven.test.failure.ignore=true
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=simracingtools_racecontrol-server -Dsonar.sources="src/main/java,src/main/resources" -Dmaven.test.failure.ignore=true
           cat application-local.properties
       - name: Publish Test Report
         uses: scacap/action-surefire-report@v1
