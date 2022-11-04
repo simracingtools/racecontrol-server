@@ -25,6 +25,7 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
 import de.bausdorf.simracing.racecontrol.orga.api.SkyConditionType;
 import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import de.bausdorf.simracing.racecontrol.orga.model.TrackSession;
+import de.bausdorf.simracing.racecontrol.util.MapTools;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -83,26 +84,26 @@ public class CreateSessionView {
         if(s == null) {
             s = new TrackSession();
         }
-        s.setId(id == 0L ? s.getId() : id);
-        s.setEventId(eventId == 0L ? s.getEventId() : eventId);
-        s.setTitle(title == null ? s.getTitle() : title);
+        s.setId(MapTools.mapValue(id, s.getId(), Long.class));
+        s.setEventId(MapTools.mapValue(eventId, s.getEventId(), Long.class));
+        s.setTitle(MapTools.mapValue(title, s.getTitle(), String.class));
         s.setDateTime(datetime == null ? s.getDateTime() : OffsetDateTime.of(datetime, ZoneOffset.of(zoneOffset)));
-        s.setTrackConfigId(trackConfigId == 0L ? s.getTrackConfigId() : trackConfigId);
-        s.setIrSessionId(irSessionId == null ? s.getIrSessionId() : irSessionId);
-        s.setIrPrivateSessionId(irPrivateId == null ? s.getIrPrivateSessionId() : irPrivateId);
-        s.setPermitSession(permitSession == null ? s.isPermitSession() : permitSession);
-        s.setSimulatedTimeOfDay(simulatedTimeOfDay == null ? s.getSimulatedTimeOfDay() : simulatedTimeOfDay);
-        s.setTrackUsagePercent(trackUsagePercent == 0L ? s.getTrackUsagePercent() : trackUsagePercent);
-        s.setTrackStateCarryOver(trackStateCarryOver == null ? s.isTrackStateCarryOver() : trackStateCarryOver);
-        s.setGeneratedWeather(generatedWeather == null ? s.isGeneratedWeather() : generatedWeather);
-        s.setTemperature(temperature == null ? s.getTemperature() : temperature);
-        s.setHumidity(humidity == null ? s.getHumidity() : humidity);
-        s.setWindSpeed(windSpeed == null ? s.getWindSpeed() : windSpeed);
+        s.setTrackConfigId(MapTools.mapValue(trackConfigId, s.getTrackConfigId(), Long.class));
+        s.setIrSessionId(MapTools.mapValue(irSessionId, s.getIrSessionId(), Long.class));
+        s.setIrPrivateSessionId(MapTools.mapValue(irPrivateId, s.getIrPrivateSessionId(), Long.class));
+        s.setPermitSession(MapTools.mapValue(permitSession, s.isPermitSession(), Boolean.class));
+        s.setSimulatedTimeOfDay(MapTools.mapValue(simulatedTimeOfDay, s.getSimulatedTimeOfDay(), LocalDateTime.class));
+        s.setTrackUsagePercent(MapTools.mapValue(trackUsagePercent, s.getTrackUsagePercent(), Long.class));
+        s.setTrackStateCarryOver(MapTools.mapValue(trackStateCarryOver, s.isTrackStateCarryOver(), Boolean.class));
+        s.setGeneratedWeather(MapTools.mapValue(generatedWeather, s.isGeneratedWeather(), Boolean.class));
+        s.setTemperature(MapTools.mapValue(temperature, s.getTemperature(), Long.class));
+        s.setHumidity(MapTools.mapValue(humidity, s.getHumidity(), Long.class));
+        s.setWindSpeed(MapTools.mapValue(windSpeed, s.getWindSpeed(), Long.class));
         s.setWindDirection(windDirection == null || windDirection.isEmpty() ? s.getWindDirection() : WindDirectionType.ofCode(windDirection));
-        s.setGeneratedSky(generatedSky == null ? s.isGeneratedSky() : generatedSky);
+        s.setGeneratedSky(MapTools.mapValue(generatedSky, s.isGeneratedSky(), Boolean.class));
         s.setSky(sky == null || sky.isEmpty() ? s.getSky() : SkyConditionType.ofName(sky));
-        s.setSkyVarInitial(skyVarInitial == null ? s.getSkyVarInitial() : skyVarInitial);
-        s.setSkyVarContinued(skyVarContinued == null ? s.getSkyVarContinued() : skyVarContinued);
+        s.setSkyVarInitial(MapTools.mapValue(skyVarInitial, s.getSkyVarInitial(), Long.class));
+        s.setSkyVarContinued(MapTools.mapValue(skyVarContinued, s.getSkyVarContinued(), Long.class));
 
         return s;
     }

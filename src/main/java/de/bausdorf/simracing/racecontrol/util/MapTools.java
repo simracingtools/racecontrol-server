@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.lang.Nullable;
 
 @Slf4j
 public class MapTools {
@@ -163,7 +164,7 @@ public class MapTools {
 		return Integer.toHexString(intFromMap(key, data));
 	}
 
-	public static <K> K mapValue(K thisValue, K oldValue, Class<K> valueClass) {
+	public static <K> K mapValue(@Nullable K thisValue, @Nullable K oldValue, Class<K> valueClass) {
 		if (valueClass.equals(Long.class)) {
 			return thisValue == null || (Long)thisValue == 0L ? oldValue : thisValue;
 		}
