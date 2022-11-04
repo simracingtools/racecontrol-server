@@ -244,7 +244,6 @@ public class ViewBuilder {
 	}
 
 	public List<StintView> buildStintViews(Driver driver) {
-		List<StintView> stintViews = new ArrayList<>();
 
 		List<DriverChange> changes = changeRepository
 				.findBySessionIdAndTeamOrderByChangeTimeAsc(driver.getSessionId(), driver.getTeam()).stream()
@@ -252,12 +251,28 @@ public class ViewBuilder {
 				.collect(Collectors.toList());
 
 		StintViewData currentStintView = null;
-		StintViewData lastStintView = null;
 		if(changes.isEmpty()) {
 			// No driver change yet or single driver
 			currentStintView = new StintViewData(Duration.ZERO, Duration.ofHours(25), Duration.ZERO,
 					0,true, false, new ArrayList<>());
 		}
+
+		List<StintView> stintViews = processChanges(changes, currentStintView, driver);
+
+		if(currentStintView != null) {
+			// last stint
+			currentStintView.setStopTime(driver.getLastStint().getEndTime());
+			currentStintView.calculateTrackTime(driver);
+			stintViews.add(buildStintView(currentStintView));
+		}
+
+		return stintViews;
+	}
+
+	private List<StintView> processChanges(List<DriverChange> changes, StintViewData currentStintView, Driver driver) {
+		List<StintView> stintViews = new ArrayList<>();
+		StintViewData lastStintView = null;
+
 		for(DriverChange change : changes) {
 			if(currentStintView == null) {
 				if(change.getChangeToId() != driver.getIracingId()) {
@@ -288,13 +303,6 @@ public class ViewBuilder {
 				}
 			}
 		}
-		if(currentStintView != null) {
-			// last stint
-			currentStintView.setStopTime(driver.getLastStint().getEndTime());
-			currentStintView.calculateTrackTime(driver);
-			stintViews.add(buildStintView(currentStintView));
-		}
-
 		return stintViews;
 	}
 
@@ -339,7 +347,7 @@ public class ViewBuilder {
 	@Data
 	@AllArgsConstructor
 	@ToString
-	class StintViewData {
+	static class StintViewData {
 		private Duration startTime;
 		private Duration stopTime;
 		private Duration trackTime;
