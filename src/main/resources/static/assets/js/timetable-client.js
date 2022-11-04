@@ -117,7 +117,6 @@ function connect() {
   let socket = new SockJS('/timingclient');
   stompClient = Stomp.over(socket);
   stompClient.connect({}, function (frame) {
-    // setConnected(true);
     console.log('Connected: ' + frame);
     stompClient.subscribe('/user/timing/client-ack', function(message) {
       console.log(message);
@@ -211,7 +210,4 @@ function showEventData(message) {
     }
   }
 }
-  // function localTime(zonedTime) {
-  //   return moment(zonedTime, 'HH:mm:ssZZ').local().format('HH:mm:ss')
-  // }
 

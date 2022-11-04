@@ -59,6 +59,7 @@
 
 .navigation-clean-button .navbar-toggler {
   border-color: #ddd;
+  color: #888;
 }
 
 .navigation-clean-button .navbar-toggler:hover, .navigation-clean-button .navbar-toggler:focus {
@@ -67,13 +68,6 @@
 
 .navigation-clean-button.navbar-dark .navbar-toggler {
   border-color: #555;
-}
-
-.navigation-clean-button .navbar-toggler {
-  color: #888;
-}
-
-.navigation-clean-button.navbar-dark .navbar-toggler {
   color: #eee;
 }
 

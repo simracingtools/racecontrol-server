@@ -60,11 +60,10 @@
                                 We appreciate your interest to participate in our event!
                             </p>
                             <p class="text-left">
-                                            <span>
-                                                To be able to register successfully please keep your <strong>iRacing team ID</strong>
-                                                and <strong>iRacing team name</strong> at hand.
-                                            </span>
-                                <!--                                            <span th:text="${event.irLeagueName}"></span>-->
+                                <span>
+                                    To be able to register successfully please keep your <strong>iRacing team ID</strong>
+                                    and <strong>iRacing team name</strong> at hand.
+                                </span>
                             </p>
                             <form method="post" th:action="@{/register-car-for-team}" th:object="${teamRegistrationSelectView}">
                                 <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">
@@ -80,11 +79,6 @@
                                     </select>
                                 </form>
                             </div>
-<!--                            <form method="post" th:action="@{/register-member-for-team}" th:object="${teamRegistrationSelectView}">-->
-<!--                                <input type="hidden" id="eventId" name="eventId" th:value="${eventInfoView.eventId}">-->
-<!--                                <input type="hidden" th:field="*{teamId}">-->
-<!--                                <button class="btn btn-primary form-control" type="button" style="margin-top: 1em;">Register as team member</button>-->
-<!--                            </form>-->
                         </div>
                     </div>
                     <div class="modal-footer"><button class="btn btn-light" type="button" data-dismiss="modal">Close</button></div>
@@ -113,10 +107,6 @@
                                     <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
                                 </select>
                             </div>
-<!--                            <div class="form-group text-left">-->
-<!--                                <label style="font-size: 14px;">Due date</label>-->
-<!--                                <input class="form-control" type="date" th:field="*{dueDate}">-->
-<!--                            </div>-->
                             <div class="form-group text-left">
                                 <label th:for="*{message}" style="font-size: 14px;">Action message</label>
                                 <input class="form-control" type="text" th:field="*{message}">
@@ -184,10 +174,6 @@
                                     <option th:each="state : ${action.targetStates}" th:value="${state.stateKey}" th:text="${state.description}" th:style="${state.getColorStyleString()}">This is item 1</option>
                                 </select>
                             </div>
-<!--                            <div class="form-group text-left">-->
-<!--                                <label style="font-size: 14px;">Due date</label>-->
-<!--                                <input class="form-control" type="date" th:field="*{dueDate}">-->
-<!--                            </div>-->
                             <div class="form-group text-left">
                                 <label th:for="*{paintTga}" style="font-size: 14px;">Car paint (.tga file)</label>
                                 <input class="form-control" type="file" th:field="*{paintTga}" accept=".tga">
@@ -287,7 +273,7 @@
                         <input type="hidden" th:field="*{teamId}">
                         <div class="modal-header">
                             <h4 class="modal-title" th:text="${title}">SP9: #34 C3 Racing Red</h4>
-                            <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="28px" style="font-size: 12px; margin-left: 15px;" />
+                            <img th:if="${!registration.car.carLogoUrl.isEmpty()}" th:src="${registration.car.carLogoUrl}" width="28px" style="font-size: 12px; margin-left: 15px;" alt="Car logo"/>
                             <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
                         </div>
                         <div class="modal-body">
@@ -307,14 +293,14 @@
                                     <label class="form-check-label" for="useWildcard">Use wildcard</label>
                                 </div>
                             </div>
-<!--                            <table style="margin-top: 4px;">-->
                             <table class="table-sm" style="border-width: 0;">
+                                <caption>Team's Permit Times</caption>
                                 <tr>
-                                    <th>Team Permit Time</th>
-                                    <th th:text="${registration.teamPermitTime}"></th>
+                                    <th scope="row">Team Permit Time</th>
+                                    <th scope="row" th:text="${registration.teamPermitTime}"></th>
                                 </tr>
                                 <tr>
-                                    <th colspan="2">Drivers:</th>
+                                    <th scope="colgroup" colspan="2">Drivers:</th>
                                 </tr>
                                 <tr th:each="driver : ${registration.teamMembers}" th:if="${driver.role.equals('DRIVER')}">
                                     <td style="border-width: 0;" th:text="${driver.name}">Driver name</td>
