@@ -62,7 +62,6 @@ public class PrepareDisordAction extends WorkflowAction {
         de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
         if(currentAction != null) {
             TeamRegistration registration = updateCurrentAction(editView, currentAction, actor);
-//            TeamRegistration registration = getEventOrganizer().getTeamRegistration(currentAction.getWorkflowItemId());
             prepareDiscord(registration, editView.getMessage());
             getEventOrganizer().saveRegistration(registration);
             getEventOrganizer().createFollowUpAction(currentAction, actor, editView.getDueDate());
