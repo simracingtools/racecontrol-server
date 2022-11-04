@@ -24,6 +24,8 @@ package de.bausdorf.simracing.racecontrol.web.model.live;
 
 import lombok.AllArgsConstructor;
 
+import java.util.Objects;
+
 @AllArgsConstructor
 public class TableCellView {
 	private String value;
@@ -66,22 +68,19 @@ public class TableCellView {
 		if (!other.canEqual(this)) {
 			return false;
 		}
-		final Object this$value = this.getValue();
-		final Object other$value = other.getValue();
-		if (this$value == null ? other$value != null : !this$value.equals(other$value)) {
+		final Object thisValue = this.getValue();
+		final Object otherValue = other.getValue();
+		if (!Objects.equals(thisValue, otherValue)) {
 			return false;
 		}
-		final Object this$displayType = this.getDisplayType();
-		final Object other$displayType = other.getDisplayType();
-		if (this$displayType == null ? other$displayType != null : !this$displayType.equals(other$displayType)) {
+		final Object thisDisplayType = this.getDisplayType();
+		final Object otherDisplayType = other.getDisplayType();
+		if (!Objects.equals(thisDisplayType, otherDisplayType)) {
 			return false;
 		}
-		final Object this$cssClassString = this.getCssClassString();
-		final Object other$cssClassString = other.getCssClassString();
-		if (this$cssClassString == null ? other$cssClassString != null : !this$cssClassString.equals(other$cssClassString)) {
-			return false;
-		}
-		return true;
+		final Object thisCssClassString = this.getCssClassString();
+		final Object otherCssClassString = other.getCssClassString();
+		return Objects.equals(thisCssClassString, otherCssClassString);
 	}
 
 	protected boolean canEqual(final Object other) {
@@ -91,12 +90,12 @@ public class TableCellView {
 	public int hashCode() {
 		final int PRIME = 59;
 		int result = 1;
-		final Object $value = this.getValue();
-		result = result * PRIME + ($value == null ? 43 : $value.hashCode());
-		final Object $displayType = this.getDisplayType();
-		result = result * PRIME + ($displayType == null ? 43 : $displayType.hashCode());
-		final Object $cssClassString = this.getCssClassString();
-		result = result * PRIME + ($cssClassString == null ? 43 : $cssClassString.hashCode());
+		final Object lValue = this.getValue();
+		result = result * PRIME + (lValue == null ? 43 : lValue.hashCode());
+		final Object lDisplayType = this.getDisplayType();
+		result = result * PRIME + (lDisplayType == null ? 43 : lDisplayType.hashCode());
+		final Object lCssClassString = this.getCssClassString();
+		result = result * PRIME + (lCssClassString == null ? 43 : lCssClassString.hashCode());
 		return result;
 	}
 
