@@ -129,6 +129,7 @@ public class MapTools {
 		return ZonedDateTime.of(LocalDateTime.MIN, ZoneId.of("GMT"));
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<String> stringListFromMap(String key, Map<String, Object> data) {
 		try {
 			return (List<String>)data.get(key);
@@ -138,6 +139,7 @@ public class MapTools {
 		return new ArrayList<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static List<Map<String, Object>> mapListFromMap(String key, Map<String, Object> data) {
 		try {
 			return (List<Map<String, Object>>)data.get(key);
@@ -147,6 +149,7 @@ public class MapTools {
 		return new ArrayList<>();
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Map<String, Object> mapFromMap(String key, Map<String, Object> data) {
 		try {
 			return (Map<String, Object>)data.get(key);
@@ -158,5 +161,12 @@ public class MapTools {
 
 	public static String hexStringFromLong(String key, Map<String, Object> data) {
 		return Integer.toHexString(intFromMap(key, data));
+	}
+
+	public static <K> K mapValue(K thisValue, K oldValue, Class<K> valueClass) {
+		if (valueClass.equals(Long.class)) {
+			return thisValue == null || (Long)thisValue == 0L ? oldValue : thisValue;
+		}
+		return thisValue == null ? oldValue : thisValue;
 	}
 }

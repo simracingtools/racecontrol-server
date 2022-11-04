@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.web.model.orga;
  */
 
 import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
+import de.bausdorf.simracing.racecontrol.util.MapTools;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.lang.Nullable;
@@ -71,26 +72,26 @@ public class CreateEventView {
             eventSeries = new EventSeries();
         }
         eventSeries.setId(eventId);
-        eventSeries.setTitle(title == null ? eventSeries.getTitle() : title);
-        eventSeries.setLogoUrl(logoUrl == null ? eventSeries.getLogoUrl() : logoUrl);
-        eventSeries.setDiscordInvite(discordInvite == null ? eventSeries.getDiscordInvite() : discordInvite);
-        eventSeries.setDiscordGuildId(discordGuildId == 0 ? eventSeries.getDiscordGuildId() : discordGuildId);
-        eventSeries.setDiscordPresetChannelId(discordPresetChannelId == 0 ? eventSeries.getDiscordPresetChannelId() : discordPresetChannelId);
-        eventSeries.setDiscordSpacerCategoryId(discordSpacerCategoryId == 0 ? eventSeries.getDiscordSpacerCategoryId() : discordSpacerCategoryId);
-        eventSeries.setIRLeagueName(irLeagueName == null ? eventSeries.getIRLeagueName() : irLeagueName);
-        eventSeries.setIRLeagueID(irLeagueID == 0 ? eventSeries.getIRLeagueID() : irLeagueID);
-        eventSeries.setIrSeasonId(irSeasonId == 0 ? eventSeries.getIrSeasonId() : irSeasonId);
-        eventSeries.setIrSeasonName(irSeasonName == null ? eventSeries.getIrSeasonName() : irSeasonName);
-        eventSeries.setDescription(description == null ? eventSeries.getDescription() : description);
+        eventSeries.setTitle(MapTools.mapValue(title, eventSeries.getTitle(), String.class));
+        eventSeries.setLogoUrl(MapTools.mapValue(logoUrl, eventSeries.getLogoUrl(), String.class));
+        eventSeries.setDiscordInvite(MapTools.mapValue(discordInvite, eventSeries.getDiscordInvite(), String.class));
+        eventSeries.setDiscordGuildId(MapTools.mapValue(discordGuildId, eventSeries.getDiscordGuildId(), Long.class));
+        eventSeries.setDiscordPresetChannelId(MapTools.mapValue(discordPresetChannelId, eventSeries.getDiscordPresetChannelId(), Long.class));
+        eventSeries.setDiscordSpacerCategoryId(MapTools.mapValue(discordSpacerCategoryId, eventSeries.getDiscordSpacerCategoryId(), Long.class));
+        eventSeries.setIRLeagueName(MapTools.mapValue(irLeagueName, eventSeries.getIRLeagueName(), String.class));
+        eventSeries.setIRLeagueID(MapTools.mapValue(irLeagueID, eventSeries.getIRLeagueID(), Long.class));
+        eventSeries.setIrSeasonId(MapTools.mapValue(irSeasonId, eventSeries.getIrSeasonId(), Long.class));
+        eventSeries.setIrSeasonName(MapTools.mapValue(irSeasonName, eventSeries.getIrSeasonName(), String.class));
+        eventSeries.setDescription(MapTools.mapValue(description, eventSeries.getDescription(), String.class));
         eventSeries.setRegistrationOpens(registrationOpens == null ? eventSeries.getRegistrationOpens()
                 : OffsetDateTime.of(registrationOpens, ZoneOffset.of(registrationOpensTZ)));
         eventSeries.setRegistrationCloses(registrationCloses == null ? eventSeries.getRegistrationCloses()
                 : OffsetDateTime.of(registrationCloses, ZoneOffset.of(registrationClosesTZ)));
-        eventSeries.setStartDate(startDate == null ? eventSeries.getStartDate() : startDate);
-        eventSeries.setEndDate(endDate == null ? eventSeries.getEndDate() : endDate);
-        eventSeries.setActive(active == null ? eventSeries.isActive() : active);
-        eventSeries.setMaxTeamDrivers(maxTeamDrivers == 0 ? eventSeries.getMaxTeamDrivers() : maxTeamDrivers);
-        eventSeries.setMinTeamDrivers(minTeamDrivers == 0 ? eventSeries.getMinTeamDrivers() : minTeamDrivers);
+        eventSeries.setStartDate(MapTools.mapValue(startDate, eventSeries.getStartDate(), LocalDate.class));
+        eventSeries.setEndDate(MapTools.mapValue(endDate, eventSeries.getEndDate(), LocalDate.class));
+        eventSeries.setActive(MapTools.mapValue(active, eventSeries.isActive(), Boolean.class));
+        eventSeries.setMaxTeamDrivers(MapTools.mapValue(maxTeamDrivers, eventSeries.getMaxTeamDrivers(), Long.class));
+        eventSeries.setMinTeamDrivers(MapTools.mapValue(minTeamDrivers, eventSeries.getMinTeamDrivers(), Long.class));
         return eventSeries;
     }
 
