@@ -23,6 +23,7 @@ package de.bausdorf.simracing.racecontrol.live.model;
  */
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class EventPk implements Serializable {
 	private String sessionId;
@@ -64,12 +65,12 @@ public class EventPk implements Serializable {
 			return false;
 		}
 		final EventPk other = (EventPk) o;
-		if (!other.canEqual((Object) this)) {
+		if (!other.canEqual(this)) {
 			return false;
 		}
-		final Object this$sessionId = this.getSessionId();
-		final Object other$sessionId = other.getSessionId();
-		if (this$sessionId == null ? other$sessionId != null : !this$sessionId.equals(other$sessionId)) {
+		final Object thisSessionId = this.getSessionId();
+		final Object otherSessionId = other.getSessionId();
+		if (!Objects.equals(thisSessionId, otherSessionId)) {
 			return false;
 		}
 		return this.getEventNo() == other.getEventNo();
@@ -82,8 +83,8 @@ public class EventPk implements Serializable {
 	public int hashCode() {
 		final int PRIME = 59;
 		int result = 1;
-		final Object $sessionId = this.getSessionId();
-		result = result * PRIME + ($sessionId == null ? 43 : $sessionId.hashCode());
+		final Object localSessionId = this.getSessionId();
+		result = result * PRIME + (localSessionId == null ? 43 : localSessionId.hashCode());
 		final long $eventNo = this.getEventNo();
 		result = result * PRIME + (int) ($eventNo >>> 32 ^ $eventNo);
 		return result;
