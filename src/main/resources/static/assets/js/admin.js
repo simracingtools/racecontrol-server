@@ -381,6 +381,26 @@ function checkIracingTeamId() {
   });
 }
 
+function checkLeagueApplications() {
+  const leagueId = $('#irLeagueID').val();
+  $.ajax({
+    type: 'GET',
+    dataType: 'json',
+    url: '/rest/leagueInfo/applications/' + leagueId,
+    async: true,
+    success: function (data) {
+      $('#btnLeagueApplications').text(data.length + ' League application' + (data.length > 1 ? 's' : ''));
+      if (data.length > 0) {
+        $('#btnLeagueApplications').removeClass('btn-primary');
+        $('#btnLeagueApplications').addClass('btn-danger');
+      } else {
+        $('#btnLeagueApplications').addClass('btn-primary');
+        $('#btnLeagueApplications').removeClass('btn-danger');
+      }
+    }
+  });
+}
+
 function showLocalTime() {
   $('.offset-time').each(function() {
     const dateTime = moment($(this).text(), "DD.MM.YYYY hh:mm ZZ");
