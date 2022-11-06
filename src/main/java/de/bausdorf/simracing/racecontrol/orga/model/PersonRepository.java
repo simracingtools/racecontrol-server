@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.orga.model;
  * #L%
  */
 
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
@@ -31,4 +32,5 @@ public interface PersonRepository extends CrudRepository<Person, Long> {
     List<Person> findAllByEventId(long eventId);
     Optional<Person> findByEventIdAndIracingId(long eventId, long iRacingId);
     List<Person> findAllByIracingId(long iracingId);
+    Long countByEventIdAndRole(long eventId, OrgaRoleType role);
 }

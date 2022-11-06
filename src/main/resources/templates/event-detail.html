@@ -111,7 +111,7 @@
                                             </div>
                                         </div>
                                         <table class="table" style="font-size: 14px;">
-                                            <caption>Task table</caption>
+                                            <caption th:text="${'Active registrations: ' + event.activeRegistrations + ', Permitted teams: ' + event.teamPermissionCount}">Task table</caption>
                                             <thead>
                                                 <tr>
                                                     <th style="padding: 3px;">State</th>
@@ -425,10 +425,10 @@
                                 <div th:each="carClass,carClassStat : ${teamRegistrations}" th:id="${'tab-' + carClass.name}" th:class="${'tab-pane' + (activeCarClass.equalsIgnoreCase(carClass.name) ? ' active' : '')}" role="tabpanel">
                                     <div class="table-responsive" style="font-size: 14px; overflow: auto; max-height: 40em;">
                                         <table class="table">
-                                            <caption>Registration table</caption>
+                                            <caption th:text="${'Overall Driver Permit ratio: ' + event.driverPermitRatio}">Registration table</caption>
                                             <thead>
                                                 <tr>
-                                                    <th style="padding: 3px;">car #</th>
+                                                    <th style="padding: 3px;">#</th>
                                                     <th style="padding: 3px;">Team</th>
                                                     <th style="padding: 3px;">Permit</th>
                                                     <th style="padding: 3px;"></th>

@@ -47,6 +47,7 @@ import org.thymeleaf.util.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -109,6 +110,7 @@ public class EventDetailController extends ControllerBase {
         Optional<EventSeries> eventSeries = eventRepository.findById(eventId);
         if(eventSeries.isPresent()) {
             EventInfoView infoView = EventInfoView.fromEntity(eventSeries.get());
+            infoView.setDriverPermitRatio(resultManager.getDriverPermissionRatio(eventId));
             infoView.setAvailableSlots(eventOrganizer.getAvailableGridSlots(eventId));
             infoView.setUserRegistrations(eventOrganizer.myRegistrations(infoView.getEventId(), currentUser()).stream()
                     .filter(IndexController.distinctByKey(team -> team.getTeamName() + team.getCarQualifier()))
@@ -122,8 +124,20 @@ public class EventDetailController extends ControllerBase {
             model.addAttribute(EVENT_VIEW_MODEL_KEY, infoView);
             setActiveCarClass(infoView, model);
 
+            List<CarClassRegistrationsView> activeRegistrations = eventOrganizer.getTeamRegistrationsCarClassList(eventId);
+            AtomicLong activeRegistrationsCount = new AtomicLong(0L);
+            AtomicLong teamPermissionCount = new AtomicLong(0L);
+            activeRegistrations.forEach(carClassView -> {
+                activeRegistrationsCount.addAndGet(carClassView.getRegistrations().size());
+                carClassView.getRegistrations()
+                        .stream().filter(r -> r.getTeamPermitTime() == null || r.getTeamPermitTime().isEmpty())
+                        .forEach(registration -> teamPermissionCount.incrementAndGet());
+            });
+            infoView.setActiveRegistrations(activeRegistrationsCount.get());
+            infoView.setTeamPermissionCount(teamPermissionCount.get());
+
             model.addAttribute("currentPerson", PersonView.fromEntity(currentPerson));
-            model.addAttribute("teamRegistrations", eventOrganizer.getTeamRegistrationsCarClassList(eventId));
+            model.addAttribute("teamRegistrations", activeRegistrations);
             model.addAttribute("bopViews", eventOrganizer.getBopViews(eventId));
             model.addAttribute("bopEditView", BalancedCarView.builder().eventId(eventId).build());
             model.addAttribute("carsInClasses", CarClassView.fromEntityList(eventSeries.get().getCarClassPreset()));
