@@ -26,6 +26,7 @@ import de.bausdorf.simracing.irdataapi.model.*;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.LeagueDataCache;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
+import de.bausdorf.simracing.racecontrol.web.model.orga.LeagueApplicationView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.LeagueInfoView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.SeasonInfoView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
@@ -89,6 +90,20 @@ public class RestDataController {
                 .leagueId(leagueId)
                 .leagueName("League not found")
                 .build();
+    }
+
+    @GetMapping("leagueInfo/applications/{leagueId}")
+    public List<LeagueApplicationView> currentApplications(@PathVariable Long leagueId) {
+        LeagueInfoDto infoDto = dataClient.getLeagueInfo(leagueId);
+        List<LeagueApplicationView> current = new ArrayList<>();
+        if (infoDto.getLeagueApplications() != null) {
+            Arrays.stream(infoDto.getLeagueApplications())
+                    .forEach(application -> current.add(LeagueApplicationView.builder()
+                            .displayName(application.getDisplayName())
+                            .iracingId(application.getCustId())
+                            .build()));
+        }
+        return current;
     }
 
     @GetMapping("/memberInfo/{memberId}")

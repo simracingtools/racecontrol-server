@@ -60,6 +60,10 @@ public class EventInfoView {
     private boolean active;
     private long maxTeamDrivers;
     private long minTeamDrivers;
+    private String driverPermitRatio;
+    private Long activeRegistrations;
+    private Long teamPermissionCount;
+
     private String registrationClosesTZ;
     private List<CarClassView> carClassPreset = new ArrayList<>();
     private List<PersonView> organizingStaff = new ArrayList<>();

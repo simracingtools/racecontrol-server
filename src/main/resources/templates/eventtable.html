@@ -21,7 +21,7 @@
   #L%
   -->
 
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 
 <head th:replace="timetable.html :: live-head"></head>
 
@@ -36,22 +36,22 @@
                     <th class="text-center" style="border-right: 1px solid #dee2e6;">Teams</th>
                     <th class="text-center">Events
                         <div class="form-check form-check-inline" style="margin-left: 40px;background: #69c87e;font-weight: normal;">
-                            <input class="form-check-input" type="checkbox" id="ON_TRACK" style="margin: 0;margin-left: -20px;margin-bottom: 0px;margin-right: 5px;" th:checked="${user.eventFilter.contains('ON_TRACK')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'ON_TRACK\'' + ', ' + ${user.eventFilter.contains('ON_TRACK')} + ');'"><label class="form-check-label" for="ON_TRACK">ONTRACK</label>
+                            <input class="form-check-input" type="checkbox" id="ON_TRACK" style="margin: 0;margin-left: -20px;margin-bottom: 0;margin-right: 5px;" th:checked="${user.eventFilter.contains('ON_TRACK')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'ON_TRACK\'' + ', ' + ${user.eventFilter.contains('ON_TRACK')} + ');'"><label class="form-check-label" for="ON_TRACK">ONTRACK</label>
                         </div>
                         <div class="form-check form-check-inline" style="margin-left: 20px;background: #e8c977;font-weight: normal;">
-                            <input class="form-check-input" type="checkbox" id="OFF_TRACK" style="margin: 0;margin-left: -20px;margin-bottom: 0px;margin-right: 5px;" th:checked="${user.eventFilter.contains('OFF_TRACK')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'OFF_TRACK\'' + ', ' + ${user.eventFilter.contains('OFF_TRACK')} + ');'"><label class="form-check-label" for="OFF_TRACK">OFFTRACK</label>
+                            <input class="form-check-input" type="checkbox" id="OFF_TRACK" style="margin: 0;margin-left: -20px;margin-bottom: 0;margin-right: 5px;" th:checked="${user.eventFilter.contains('OFF_TRACK')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'OFF_TRACK\'' + ', ' + ${user.eventFilter.contains('OFF_TRACK')} + ');'"><label class="form-check-label" for="OFF_TRACK">OFFTRACK</label>
                         </div>
                         <div class="form-check form-check-inline" style="margin-left: 20px;background: #e8c977;font-weight: normal;">
-                            <input class="form-check-input" type="checkbox" id="APPROACHING_PITS" style="margin: 0;margin-left: -20px;margin-bottom: 0px;margin-right: 5px;" th:checked="${user.eventFilter.contains('APPROACHING_PITS')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'APPROACHING_PITS\'' + ', ' + ${user.eventFilter.contains('APPROACHING_PITS')} + ');'"><label class="form-check-label" for="APPROACHING_PITS">APPROACHING_PITS</label>
+                            <input class="form-check-input" type="checkbox" id="APPROACHING_PITS" style="margin: 0;margin-left: -20px;margin-bottom: 0;margin-right: 5px;" th:checked="${user.eventFilter.contains('APPROACHING_PITS')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'APPROACHING_PITS\'' + ', ' + ${user.eventFilter.contains('APPROACHING_PITS')} + ');'"><label class="form-check-label" for="APPROACHING_PITS">APPROACHING_PITS</label>
                         </div>
                         <div class="form-check form-check-inline" style="margin-left: 20px;background: #4ea9eb;font-weight: normal;">
-                            <input class="form-check-input" type="checkbox" id="ENTER_PITLANE" style="margin: 0;margin-left: -20px;margin-bottom: 0px;margin-right: 5px;" th:checked="${user.eventFilter.contains('ENTER_PITLANE')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'ENTER_PITLANE\'' + ', ' + ${user.eventFilter.contains('ENTER_PITLANE')} + ');'"><label class="form-check-label" for="ENTER_PITLANE">ENTER_PITLANE</label>
+                            <input class="form-check-input" type="checkbox" id="ENTER_PITLANE" style="margin: 0;margin-left: -20px;margin-bottom: 0;margin-right: 5px;" th:checked="${user.eventFilter.contains('ENTER_PITLANE')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'ENTER_PITLANE\'' + ', ' + ${user.eventFilter.contains('ENTER_PITLANE')} + ');'"><label class="form-check-label" for="ENTER_PITLANE">ENTER_PITLANE</label>
                         </div>
                         <div class="form-check form-check-inline" style="margin-left: 20px;background: #4ea9eb;font-style: normal;font-weight: normal;">
-                            <input class="form-check-input" type="checkbox" id="EXIT_PITLANE" style="margin: 0;margin-left: -20px;margin-bottom: 0px;margin-right: 5px;" th:checked="${user.eventFilter.contains('EXIT_PITLANE')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'EXIT_PITLANE\'' + ', ' + ${user.eventFilter.contains('EXIT_PITLANE')} + ');'"><label class="form-check-label" for="EXIT_PITLANE">EXIT_PITLANE</label>
+                            <input class="form-check-input" type="checkbox" id="EXIT_PITLANE" style="margin: 0;margin-left: -20px;margin-bottom: 0;margin-right: 5px;" th:checked="${user.eventFilter.contains('EXIT_PITLANE')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'EXIT_PITLANE\'' + ', ' + ${user.eventFilter.contains('EXIT_PITLANE')} + ');'"><label class="form-check-label" for="EXIT_PITLANE">EXIT_PITLANE</label>
                         </div>
                         <div class="form-check form-check-inline" style="margin-left: 20px;background: #4cdfe8;font-weight: normal;">
-                            <input class="form-check-input" type="checkbox" id="IN_PIT_STALL" style="margin: 0;margin-left: -20px;margin-bottom: 0px;margin-right: 5px;" th:checked="${user.eventFilter.contains('IN_PIT_STALL')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'IN_PIT_STALL\'' + ', ' + ${user.eventFilter.contains('IN_PIT_STALL')} + ');'"><label class="form-check-label" for="IN_PIT_STALL">IN_PIT_STALL</label>
+                            <input class="form-check-input" type="checkbox" id="IN_PIT_STALL" style="margin: 0;margin-left: -20px;margin-bottom: 0;margin-right: 5px;" th:checked="${user.eventFilter.contains('IN_PIT_STALL')}" th:onchange="'sendEventFilterChange(' + ${user.iRacingId} + ', \'IN_PIT_STALL\'' + ', ' + ${user.eventFilter.contains('IN_PIT_STALL')} + ');'"><label class="form-check-label" for="IN_PIT_STALL">IN_PIT_STALL</label>
                         </div>
                     </th>
                 </tr>

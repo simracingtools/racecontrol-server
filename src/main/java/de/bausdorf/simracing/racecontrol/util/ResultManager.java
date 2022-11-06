@@ -24,6 +24,7 @@ package de.bausdorf.simracing.racecontrol.util;
 
 import de.bausdorf.simracing.irdataapi.model.*;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.api.SkyConditionType;
 import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
@@ -47,15 +48,21 @@ import java.util.stream.Collectors;
 public class ResultManager {
     private final PermitSessionResultRepository permitSessionResultRepository;
     private final DriverPermissionRepository driverPermissionRepository;
+    private final PersonRepository personRepository;
+    private final TeamRegistrationRepository registrationRepository;
     private final IRacingClient dataClient;
     private final RacecontrolServerProperties config;
 
     public ResultManager(@Autowired PermitSessionResultRepository permitSessionResultRepository,
                          @Autowired DriverPermissionRepository driverPermissionRepository,
+                         @Autowired PersonRepository personRepository,
+                         @Autowired TeamRegistrationRepository registrationRepository,
                          @Autowired IRacingClient dataClient,
                          @Autowired RacecontrolServerProperties racecontrolServerProperties) {
         this.permitSessionResultRepository = permitSessionResultRepository;
         this.driverPermissionRepository = driverPermissionRepository;
+        this.personRepository = personRepository;
+        this.registrationRepository = registrationRepository;
         this.dataClient = dataClient;
         this.config = racecontrolServerProperties;
     }
@@ -210,6 +217,33 @@ public class ResultManager {
 
         Duration teamPermitTime = getTeamPermissionTime(driverPermissions);
         registrationView.setTeamPermitTime(Duration.ofMinutes(60).equals(teamPermitTime) ? "NONE" : TimeTools.lapDisplayTimeFromDuration(teamPermitTime));
+    }
+
+    public String getDriverPermissionRatio(long eventId) {
+        long driverCount = personRepository.countByEventIdAndRole(eventId, OrgaRoleType.DRIVER);
+        List<DriverPermission> eventPermits = driverPermissionRepository.findAllByEventId(eventId);
+
+        AtomicInteger permitCount = new AtomicInteger(0);
+        eventPermits.forEach(permit -> {
+            Optional<Person> permittedPerson = personRepository.findByEventIdAndIracingId(eventId, permit.getIracingId());
+            permittedPerson.ifPresent(person -> {
+                if (OrgaRoleType.DRIVER == person.getRole()) {
+                    List<TeamRegistration> personRegistrations = registrationRepository.findAllByEventIdAndTeamMembersContaining(eventId, person);
+                    if (!personRegistrations.isEmpty()) {
+                        if (personRegistrations.size() > 1) {
+                            log.warn("{} is registered as driver in {} teams: {}", person.getName(), personRegistrations.size(),
+                                    personRegistrations.stream()
+                                            .map(TeamRegistration::getTeamName).collect(Collectors.toList()));
+                        }
+                        if (personRegistrations.get(0).getCar().getCarId() == permit.getCarId()) {
+                            permitCount.incrementAndGet();
+                        }
+                    }
+                }
+            });
+        });
+
+        return permitCount.get() + " / " + driverCount;
     }
 
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {

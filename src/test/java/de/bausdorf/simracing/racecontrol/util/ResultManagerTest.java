@@ -84,4 +84,11 @@ class ResultManagerTest {
         Duration teamPermissionTime = resultManager.getTeamPermissionTime(List.of());
 
         log.info("Team Permit Time: {}", TimeTools.lapDisplayTimeFromDuration(teamPermissionTime));
-    }}
+    }
+
+    @Test
+    void testGetDriverPermissionRatio() {
+        String permissionRatio = resultManager.getDriverPermissionRatio(9001L);
+        log.info("Driver permission ratio for event {}: {}", 9001L, permissionRatio);
+    }
+}
