@@ -67,7 +67,7 @@ public class SessionManager {
             List<TrackSession> eventTrackSessions = trackSessionRepository.findAllByEventId(eventId);
             Optional<CustLeagueSessionsDto> leagueSessions = dataClient.getLeagueFutureSessions();
             leagueSessions.ifPresent(sessions -> Arrays.stream(sessions.getSessions())
-                    .filter(s -> Objects.equals(s.getLeagueId(), evt.getIRLeagueID()) && Objects.equals(s.getLeagueSessionId(), evt.getIrSeasonId()))
+                    .filter(s -> Objects.equals(s.getLeagueId(), evt.getIRLeagueID()) && Objects.equals(s.getLeagueSeasonId(), evt.getIrSeasonId()))
                     .forEach(irSession -> {
                         TrackSession trackSession = eventTrackSessions.stream()
                                 .filter(s -> Objects.equals(s.getIrPrivateSessionId(), irSession.getPrivateSessionId()))
