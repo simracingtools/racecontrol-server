@@ -130,7 +130,7 @@ public class EventDetailController extends ControllerBase {
             activeRegistrations.forEach(carClassView -> {
                 activeRegistrationsCount.addAndGet(carClassView.getRegistrations().size());
                 carClassView.getRegistrations()
-                        .stream().filter(r -> r.getTeamPermitTime() == null || r.getTeamPermitTime().isEmpty())
+                        .stream().filter(r -> r.getTeamPermitTime() != null && !r.getTeamPermitTime().equalsIgnoreCase("NONE"))
                         .forEach(registration -> teamPermissionCount.incrementAndGet());
             });
             infoView.setActiveRegistrations(activeRegistrationsCount.get());
