@@ -258,7 +258,7 @@ public class EventOrganizer {
         }
         return registrationRepository.findAllByEventId(person.getEventId()).stream()
                 .filter(r -> !r.getWorkflowState().isInActive())
-                .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == person.getIracingId()))
+                .filter(r -> r.getTeamMembers().stream().anyMatch(p -> p.getIracingId() == person.getIracingId() && p.getRole() == OrgaRoleType.DRIVER))
                 .collect(Collectors.toList());
     }
 
