@@ -228,9 +228,12 @@ public class ResultManager {
             Optional<Person> permittedPerson = personRepository.findByEventIdAndIracingId(eventId, permit.getIracingId());
             permittedPerson.ifPresent(person -> {
                 if (OrgaRoleType.DRIVER == person.getRole()) {
-                    List<TeamRegistration> personRegistrations = registrationRepository.findAllByEventIdAndTeamMembersContaining(eventId, person);
+                    List<TeamRegistration> personRegistrations = registrationRepository.findAllByEventIdAndTeamMembersContaining(eventId, person).stream()
+                            .filter(r -> !r.getWorkflowState().isInActive())
+                            .collect(Collectors.toList());
                     if (!personRegistrations.isEmpty()) {
                         if (personRegistrations.size() > 1) {
+
                             log.warn("{} is registered as driver in {} teams: {}", person.getName(), personRegistrations.size(),
                                     personRegistrations.stream()
                                             .map(TeamRegistration::getTeamName).collect(Collectors.toList()));
