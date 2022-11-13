@@ -247,6 +247,7 @@ public class EventDetailController extends ControllerBase {
             p.setLeagueMember(eventOrganizer.checkLeagueMembership(p.getIracingId(), event.getIRLeagueID()));
             p.setIracingTeamChecked(eventOrganizer.checkTeamMembership(p.getIracingId(), registration.getIracingId()));
             p.setRegistered(userRepository.findByiRacingId(p.getIracingId()).isPresent());
+            ensureMemberDiscordRoles(p, registration);
             personRepository.save(p);
         });
         return redirectView(EVENT_DETAIL_VIEW, registration.getEventId(), model);
@@ -355,14 +356,7 @@ public class EventDetailController extends ControllerBase {
             if (registration.getTeamMembers().stream().noneMatch(p -> p.getIracingId() == toFind.get().getIracingId())) {
                 registration.getTeamMembers().add(staff);
                 eventOrganizer.saveRegistration(registration);
-                Optional<Member> discordMember = jdaClient.getMember(staff.getEventId(), staff.getName());
-                discordMember.ifPresent(member -> {
-                    CarClassView carClass = eventOrganizer.getCarClassView(registration.getCar().getCarClassId());
-                    if(carClass != null) {
-                        jdaClient.addRoleToMember(registration.getEventId(), member, carClass.getName());
-                    }
-                    jdaClient.addRoleToMember(registration.getEventId(), member, registration.getTeamName());
-                });
+                ensureMemberDiscordRoles(staff, registration);
             }
         } else {
             addError("No team registration found for id " + teamId, model);
@@ -403,6 +397,17 @@ public class EventDetailController extends ControllerBase {
                 personView.setIracingChecked(true);
             }
         }
+    }
+
+    private void ensureMemberDiscordRoles(Person person, TeamRegistration registration) {
+        Optional<Member> discordMember = jdaClient.getMember(person.getEventId(), person.getName());
+        discordMember.ifPresent(member -> {
+            CarClassView carClass = eventOrganizer.getCarClassView(registration.getCar().getCarClassId());
+            if(carClass != null) {
+                jdaClient.addRoleToMember(registration.getEventId(), member, carClass.getName());
+            }
+            jdaClient.addRoleToMember(registration.getEventId(), member, registration.getTeamName());
+        });
     }
 
     private String redirectView(String viewName, long eventId, Model model) {
