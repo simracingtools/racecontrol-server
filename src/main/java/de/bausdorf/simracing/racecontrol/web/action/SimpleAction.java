@@ -27,6 +27,7 @@ import de.bausdorf.simracing.racecontrol.web.EventOrganizer;
 import de.bausdorf.simracing.racecontrol.web.model.orga.WorkflowActionEditView;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 public class SimpleAction extends WorkflowAction {
 
@@ -37,6 +38,15 @@ public class SimpleAction extends WorkflowAction {
     @Override
     @Transactional
     public void performAction(WorkflowActionEditView editView, Person actor) throws ActionException {
+        Long actionId = editView.getId();
+        if (actionId == null) {
+            List<de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction> actionList = getEventOrganizer().getActiveWorkflowActionForItem(editView.getWorkflowItemId());
+            if (actionList.size() != 1) {
+                throw new ActionException("Current action not found");
+            }
+            actionId = actionList.get(0).getId();
+            editView.setId(actionId);
+        }
         de.bausdorf.simracing.racecontrol.orga.model.WorkflowAction currentAction = getEventOrganizer().getWorkflowAction(editView.getId());
         if(currentAction != null) {
             getEventOrganizer().saveRegistration(updateCurrentAction(editView, currentAction, actor));
