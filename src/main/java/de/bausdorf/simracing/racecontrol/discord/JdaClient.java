@@ -34,7 +34,6 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.guild.GuildAvailableEvent;
-import net.dv8tion.jda.api.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.api.events.guild.GuildReadyEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
@@ -51,6 +50,7 @@ import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.LoginException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -116,6 +116,34 @@ public class JdaClient extends ListenerAdapter {
         Guild connectedGuild = getGuildByEventId(eventId);
         if(connectedGuild != null) {
             return connectedGuild.getMembers().stream()
+                    .filter(member -> matchMemberName(member, iRacingName))
+                    .findFirst();
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Member> getMemberUncached(long eventId, String iRacingName) {
+        Guild connectedGuild = getGuildByEventId(eventId);
+        if(connectedGuild != null) {
+            AtomicReference<List<Member>> loadedMembers = new AtomicReference<>(List.of());
+            AtomicBoolean success = new AtomicBoolean(false);
+            connectedGuild.loadMembers().onSuccess(
+                    (List<Member> members) -> {
+                        loadedMembers.set(members);
+                        success.set(true);
+                    }
+            );
+            int checkCounter = 0;
+            while(!success.get()) {
+                try {
+                    Thread.currentThread().join(500);
+                    log.debug("wait for {} ms", ++checkCounter * 500);
+                } catch (InterruptedException e) {
+                    log.error("Current thread interrupted: {}", e.getMessage(), e);
+                    Thread.currentThread().interrupt();
+                }
+            }
+            return loadedMembers.get().stream()
                     .filter(member -> matchMemberName(member, iRacingName))
                     .findFirst();
         }

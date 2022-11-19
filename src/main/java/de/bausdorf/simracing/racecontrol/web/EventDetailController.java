@@ -400,7 +400,7 @@ public class EventDetailController extends ControllerBase {
     }
 
     private void ensureMemberDiscordRoles(Person person, TeamRegistration registration) {
-        Optional<Member> discordMember = jdaClient.getMember(person.getEventId(), person.getName());
+        Optional<Member> discordMember = jdaClient.getMemberUncached(person.getEventId(), person.getName());
         discordMember.ifPresent(member -> {
             CarClassView carClass = eventOrganizer.getCarClassView(registration.getCar().getCarClassId());
             if(carClass != null) {

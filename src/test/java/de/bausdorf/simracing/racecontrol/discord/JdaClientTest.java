@@ -26,11 +26,17 @@ import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.AccountType;
 import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.SelfUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 @SpringBootTest
 @ActiveProfiles("local")
@@ -55,5 +61,34 @@ class JdaClientTest {
 //
 //        log.info(guild.toString());
 //        guilds.forEach(g -> log.info(g.getName()));
+    }
+
+    @Test
+    void testGetMembers() {
+        JDA api = jdaClient.getApi();
+        Guild guild = api.getGuildById(631774413057949706L);
+        if (guild != null) {
+            List<Member> cachedMembers = guild.getMembers();
+            log.info("Cached member count: {}", cachedMembers.size());
+
+            AtomicReference<List<Member>> loadedMembers = new AtomicReference<>(List.of());
+            AtomicBoolean success = new AtomicBoolean(false);
+            guild.loadMembers().onSuccess(
+                    (List<Member> members) -> {
+                        loadedMembers.set(members);
+                        success.set(true);
+                    }
+            );
+            int checkCounter = 0;
+            while(!success.get()) {
+                try {
+                    Thread.currentThread().join(500);
+                    log.debug("wait for {} ms", ++checkCounter * 500);
+                } catch (InterruptedException e) {
+                    log.error("Current thread interrupted: {}", e.getMessage(), e);
+                }
+            }
+            log.info("Loaded member count: {}", loadedMembers.get().size());
+        }
     }
 }
