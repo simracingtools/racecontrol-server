@@ -89,7 +89,7 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
 		http
-				.csrf().disable()
+//				.csrf().disable()
 				.headers()
 				.frameOptions().sameOrigin()
 				.and()

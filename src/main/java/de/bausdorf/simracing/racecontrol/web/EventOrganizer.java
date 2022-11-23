@@ -110,7 +110,7 @@ public class EventOrganizer {
                         resultManager.fillPermitTimes(view);
                         view.setCarClass(CarClassView.fromEntity(carClass));
                         if(assets != null) {
-                            view.getCar().setCarLogoUrl(ASSET_BASE_URL + assets.getLogo());
+                            view.getCar().setCarLogoUrl(assets.getLogo());
                         } else {
                             log.error("No assets for car {}, renew data cache (rest/data/renew) ?", r.getCar());
                             view.getCar().setCarLogoUrl("");
