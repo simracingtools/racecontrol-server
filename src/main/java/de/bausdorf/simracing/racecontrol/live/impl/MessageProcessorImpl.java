@@ -103,7 +103,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 	public void processMessage(ClientMessage message) {
 		ClientData clientData = MessageFactory.validateAndConvert(message);
 		Optional<Session> session = sessionRepository.findBySessionId(message.getSessionId());
-		if(!session.isPresent()) {
+		if(session.isEmpty()) {
 			switch(message.getType()) {
 				case EVENT: createSession(message); break;
 				case SESSION: createSession((SessionMessage)clientData, message.getSessionId()); break;
@@ -116,7 +116,6 @@ public class MessageProcessorImpl implements MessageProcessor {
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
 				&& session.get().getSessionState().getTypeCode() < SessionStateType.COOL_DOWN.getTypeCode()) {
 			processEventMessage(session.get(),
-					message.getLap(),
 					Long.parseLong(message.getDriverId()),
 					Long.parseLong(message.getTeamId()),
 					(EventMessage)clientData);
@@ -135,7 +134,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
-	public void processEventMessage(Session session, int sessionLap, long driverId, long teamId, EventMessage message) {
+	public void processEventMessage(Session session, long driverId, long teamId, EventMessage message) {
 		String sessionId = session.getSessionId();
 		Driver existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId).orElse(null);
 		if (existingDriver == null) {
@@ -144,7 +143,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 			}
 			existingDriver = createNewDriver(sessionId, driverId, teamId, message);
 		}
-		Event event = eventLogger.log(message, existingDriver, sessionLap);
+		Event event = eventLogger.log(message, existingDriver);
 		if (event == null) {
 			return;
 		}
@@ -215,7 +214,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				viewBuilder.buildEventView(event));
 	}
 
-	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime, long sessionLap) {
+	private void updateDriverStint(Driver driver, EventType eventType, Duration sessionTime, long sessionLap, SessionStateType sessionState) {
 		Stint stint = driver.getLastStint();
 		if(stint == null) {
 			stint = Stint.builder()
@@ -226,12 +225,25 @@ public class MessageProcessorImpl implements MessageProcessor {
 			driver.setStints(new ArrayList<>(Collections.singletonList(stint)));
 		}
 		switch(eventType) {
-			case ON_TRACK:
+			case LAP_COMPLETE:
 				if(stint.getState() == StintStateType.UNDEFINED) {
 					stint.setStartTime(sessionTime);
 					stint.setStartLap(sessionLap);
 					stint.setState(StintStateType.RUNNING);
-					log.info("{} starting stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
+					log.info("{} starting first stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
+				} else if(sessionState == SessionStateType.CHECKERED) {
+					stint.setEndTime(sessionTime);
+					stint.setStopLap(sessionLap);
+					stint.setState(StintStateType.IN_PIT);
+					log.info("{} ending last stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
+				}
+				break;
+			case ON_TRACK:
+				if(stint.getState() == StintStateType.UNDEFINED) {
+//					stint.setStartTime(sessionTime);
+//					stint.setStartLap(sessionLap);
+//					stint.setState(StintStateType.RUNNING);
+					log.info("{} fake starting stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
 				} else if(stint.getState() == StintStateType.IN_PIT) {
 					driver.getStints().add(Stint.builder()
 							.sessionId(driver.getSessionId())
@@ -296,11 +308,11 @@ public class MessageProcessorImpl implements MessageProcessor {
 			session.setSessionState(messageType);
 			sessionRepository.save(session);
 
-			if(session.getSessionState() == SessionStateType.RACING) {
-				processGreenFlag(session);
-			} else if(session.getSessionState() == SessionStateType.CHECKERED) {
-				processCheckeredFlag(session);
-			}
+//			if(session.getSessionState() == SessionStateType.RACING) {
+//				processGreenFlag(session);
+//			} else if(session.getSessionState() == SessionStateType.CHECKERED) {
+//				processCheckeredFlag(session);
+//			}
 			if(doReload) {
 				sendPageReload(session.getSessionId(), session.getSessionState().name());
 			}
@@ -388,8 +400,8 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	private void updateDriver(Session session, Driver existingDriver, EventMessage message) {
-		if (session.getSessionState() == SessionStateType.RACING) {
-			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime(), message.getLap());
+		if (session.getSessionState() == SessionStateType.RACING || session.getSessionState() == SessionStateType.CHECKERED) {
+			updateDriverStint(existingDriver, message.getEventType(), message.getSessionTime(), message.getLap(), session.getSessionState());
 		}
 		if (message.getEventType() != existingDriver.getLastEventType()) {
 			existingDriver.setLastEventType(message.getEventType());
