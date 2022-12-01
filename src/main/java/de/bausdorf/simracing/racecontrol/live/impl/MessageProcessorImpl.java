@@ -26,7 +26,6 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,6 +175,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 	@MessageMapping("/rctimestamp")
 	@SendToUser("/timing/client-ack")
 	public ClientAck respondTimestampMessage(ReplayPositionClientMessage message) {
+		message.setTimestamp(message.getTimestamp() - 5000);
 		messagingTemplate.convertAndSend("/rc/" + message.getUserId() + "/replayposition", message);
 		return new ClientAck("timestamp received");
 	}
@@ -239,12 +239,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 				}
 				break;
 			case ON_TRACK:
-				if(stint.getState() == StintStateType.UNDEFINED) {
-//					stint.setStartTime(sessionTime);
-//					stint.setStartLap(sessionLap);
-//					stint.setState(StintStateType.RUNNING);
-					log.info("{} fake starting stint at {} ({})", driver.getName(), TimeTools.longDurationString(sessionTime), stint.getState());
-				} else if(stint.getState() == StintStateType.IN_PIT) {
+				if(stint.getState() == StintStateType.IN_PIT) {
 					driver.getStints().add(Stint.builder()
 							.sessionId(driver.getSessionId())
 							.driver(driver)
@@ -308,11 +303,6 @@ public class MessageProcessorImpl implements MessageProcessor {
 			session.setSessionState(messageType);
 			sessionRepository.save(session);
 
-//			if(session.getSessionState() == SessionStateType.RACING) {
-//				processGreenFlag(session);
-//			} else if(session.getSessionState() == SessionStateType.CHECKERED) {
-//				processCheckeredFlag(session);
-//			}
 			if(doReload) {
 				sendPageReload(session.getSessionId(), session.getSessionState().name());
 			}
@@ -349,54 +339,6 @@ public class MessageProcessorImpl implements MessageProcessor {
 				.state(StintStateType.UNDEFINED)
 				.build())));
 		return driver;
-	}
-
-	private void processGreenFlag(Session session) {
-		List<Team> teams = teamRepository.findBySessionIdOrderByNameAsc(session.getSessionId());
-		for(Team team : teams) {
-			Driver currentDriver = driverRepository.findBySessionIdAndIracingId(session.getSessionId(), team.getCurrentDriverId()).orElse(null);
-			if(currentDriver == null) {
-				continue;
-			}
-			log.info("{} starting stint (green flag) at {}", currentDriver.getName(),
-					TimeTools.longDurationString(session.getLastUpdate()));
-			Stint stint = currentDriver.getLastStint();
-			if(stint == null) {
-				stint = Stint.builder()
-						.sessionId(team.getSessionId())
-						.driver(currentDriver)
-						.state(StintStateType.RUNNING)
-						.startTime(session.getLastUpdate())
-						.build();
-				currentDriver.setStints(new ArrayList<>(Collections.singletonList(stint)));
-			} else {
-				stint.setStartTime(session.getLastUpdate());
-				stint.setState(StintStateType.RUNNING);
-			}
-		}
-	}
-
-	private void processCheckeredFlag(Session session) {
-		List<Team> teams = teamRepository.findBySessionIdOrderByNameAsc(session.getSessionId());
-		for(Team team : teams) {
-			Driver currentDriver = driverRepository.findBySessionIdAndIracingId(session.getSessionId(), team.getCurrentDriverId()).orElse(null);
-			if(currentDriver == null) {
-				continue;
-			}
-			Stint stint = currentDriver.getLastStint();
-			if(stint == null) {
-				log.error("No last stint for {} at race end", currentDriver);
-			} else {
-				if(stint.getEndTime() == null) {
-					log.info("{} end stint (checkered flag) at {}", currentDriver.getName(),
-							TimeTools.longDurationString(session.getLastUpdate()));
-					stint.setEndTime(session.getLastUpdate());
-					stint.setStopLap(session.getSessionLaps());
-				} else {
-					log.info("{} ended last stint at {}", currentDriver.getName(), TimeTools.longDurationString(stint.getEndTime()));
-				}
-			}
-		}
 	}
 
 	private void updateDriver(Session session, Driver existingDriver, EventMessage message) {
