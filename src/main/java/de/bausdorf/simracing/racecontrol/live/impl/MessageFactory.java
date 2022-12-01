@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.live.impl;
  * #L%
  */
 
+import java.time.Duration;
 import java.util.Map;
 
 import de.bausdorf.simracing.racecontrol.live.api.ClientData;
@@ -65,7 +66,9 @@ public class MessageFactory {
 
 	private static ClientData fromSessionMessage(Map<String, Object> data) {
 		return SessionMessage.builder()
-				.sessionDuration(TimeTools.getFromIracingSessionDuration(MapTools.stringFromMap(SessionData.SESSION_DURATION, data)))
+				.sessionDuration("unlimited".equalsIgnoreCase(MapTools.stringFromMap(SessionData.SESSION_DURATION, data))
+						? Duration.ZERO
+						: TimeTools.getFromIracingSessionDuration(MapTools.stringFromMap(SessionData.SESSION_DURATION, data)))
 				.sessionType(MapTools.stringFromMap(SessionData.SESSION_TYPE, data))
 				.trackName(MapTools.stringFromMap(SessionData.TRACK_NAME, data))
 				.sessionState(MapTools.intFromMap(SessionData.SESSION_STATE, data))
