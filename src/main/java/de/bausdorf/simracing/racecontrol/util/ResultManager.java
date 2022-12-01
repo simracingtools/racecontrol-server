@@ -32,6 +32,8 @@ import de.bausdorf.simracing.racecontrol.web.model.orga.DriverPermitResultView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.PermitSessionResultView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.PersonView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
@@ -50,6 +52,7 @@ public class ResultManager {
     private final DriverPermissionRepository driverPermissionRepository;
     private final PersonRepository personRepository;
     private final TeamRegistrationRepository registrationRepository;
+    private final RcUserRepository userRepository;
     private final IRacingClient dataClient;
     private final RacecontrolServerProperties config;
 
@@ -57,12 +60,14 @@ public class ResultManager {
                          @Autowired DriverPermissionRepository driverPermissionRepository,
                          @Autowired PersonRepository personRepository,
                          @Autowired TeamRegistrationRepository registrationRepository,
+                         @Autowired RcUserRepository userRepository,
                          @Autowired IRacingClient dataClient,
                          @Autowired RacecontrolServerProperties racecontrolServerProperties) {
         this.permitSessionResultRepository = permitSessionResultRepository;
         this.driverPermissionRepository = driverPermissionRepository;
         this.personRepository = personRepository;
         this.registrationRepository = registrationRepository;
+        this.userRepository = userRepository;
         this.dataClient = dataClient;
         this.config = racecontrolServerProperties;
     }
@@ -247,6 +252,45 @@ public class ResultManager {
         });
 
         return permitCount.get() + " / " + driverCount;
+    }
+
+    public Map<RcUser, List<TeamRegistration>> missingTeamPermitContacts(final long eventId) {
+        List<TeamRegistration> withoutPermit = new ArrayList<>();
+        registrationRepository.findAllByEventId(eventId).stream()
+                .filter(r -> !r.getWorkflowState().isInActive())
+                .forEach( r -> {
+                    List<Long> memberIds = r.getTeamMembers().stream()
+                            .map(Person::getIracingId)
+                            .collect(Collectors.toList());
+                    List<DriverPermission> driverPermissions = driverPermissionRepository.findAllByEventIdAndCarIdAndIracingIdInOrderByPermissionTimeAsc(9001L, r.getCar().getCarId(), memberIds);
+                    if (getTeamPermissionTime(driverPermissions).equals(Duration.ofMinutes(60L))) {
+                        withoutPermit.add(r);
+                    }
+                });
+
+        Map<Long, List<TeamRegistration>> teamMap = new HashMap<>();
+        Map<Long, RcUser> userMap = new HashMap<>();
+        withoutPermit.forEach(r -> {
+            Optional<RcUser> owner = userRepository.findByiRacingId(r.getCreatedBy().getIracingId());
+            owner.ifPresentOrElse( user -> {
+                    List<TeamRegistration> userRegistrations = teamMap.get(user.getIRacingId());
+                    if (userRegistrations == null) {
+                        userRegistrations = new ArrayList<>();
+                    }
+                    userRegistrations.add(r);
+                    teamMap.put(user.getIRacingId(), userRegistrations);
+                    userMap.put(user.getIRacingId(), user);
+                },
+                () -> log.warn("No owner for {}", r.getTeamName())
+            );
+        });
+
+        Map<RcUser, List<TeamRegistration>> contactList = new HashMap<>();
+        userMap.forEach((irId, user) -> {
+            List<TeamRegistration> teamList = teamMap.get(irId);
+            contactList.put(user, teamList);
+        });
+        return contactList;
     }
 
     private void findSlowestLap(long subsessionId, long simsessionNumber, List<PermitSessionResult> resultList) {
