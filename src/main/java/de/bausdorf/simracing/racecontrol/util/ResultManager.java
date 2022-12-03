@@ -84,9 +84,6 @@ public class ResultManager {
                 return List.of();
             } else if (session.getIrSessionId() == null || session.getIrSessionId() == 0L) {
                 session.setIrSessionId(subsessionId);
-            } else {
-                log.debug("Will not overwrite existing result for session {}", session.getTitle());
-                return List.of();
             }
             updateSessionWeather(session, subsessionResult);
 
