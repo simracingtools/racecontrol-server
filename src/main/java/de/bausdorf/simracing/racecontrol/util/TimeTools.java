@@ -212,10 +212,10 @@ public class TimeTools {
         if (duration == null) {
             return null;
         }
-        return LocalTime.of(duration.toHoursPart(),
-                duration.toMinutesPart(),
-                duration.toSecondsPart(),
-                duration.toNanosPart());
+        return LocalTime.of(Math.abs(duration.toHoursPart()),
+                Math.abs(duration.toMinutesPart()),
+                Math.abs(duration.toSecondsPart()),
+                Math.abs(duration.toNanosPart()));
     }
 
     public static String lapDisplayTimeFromDuration(@Nullable Duration lapTime) {
