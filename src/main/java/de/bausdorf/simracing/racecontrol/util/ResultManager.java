@@ -357,11 +357,11 @@ public class ResultManager {
 
     private static void annotateInvalidLap(LapChartEntryDto data, PermitSessionResult permitSessionResult) {
         if (!"0".equals(data.getLapNumber())) {
-            String eventsString = "";
+            String eventsString;
             if (permitSessionResult.getEvents() == null) {
                 eventsString = "Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents());
             } else {
-                eventsString += ", Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents());
+                eventsString = permitSessionResult.getEvents() + ", Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents());
             }
             if (eventsString.length() > 255) {
                 eventsString = eventsString.substring(0, 254);
