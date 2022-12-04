@@ -313,12 +313,16 @@ public class ResultManager {
 
     private static void annotateInvalidLap(LapChartEntryDto data, PermitSessionResult permitSessionResult) {
         if (!"0".equals(data.getLapNumber())) {
+            String eventsString = "";
             if (permitSessionResult.getEvents() == null) {
-                permitSessionResult.setEvents("Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents()));
+                eventsString = "Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents());
             } else {
-                permitSessionResult.setEvents(permitSessionResult.getEvents()
-                        + ", Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents()));
+                eventsString += ", Lap " + data.getLapNumber() + ": " + Arrays.toString(data.getLapEvents());
             }
+            if (eventsString.length() > 255) {
+                eventsString = eventsString.substring(0, 254);
+            }
+            permitSessionResult.setEvents(eventsString);
         }
     }
 }
