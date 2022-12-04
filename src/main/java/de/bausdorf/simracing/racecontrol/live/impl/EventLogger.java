@@ -74,4 +74,9 @@ public class EventLogger {
 		eventRepository.save(event);
 		return event;
 	}
+
+	public long getLastEventNo(String sessionId) {
+		Optional<Event> topEventNo = eventRepository.findFirstBySessionIdOrderByEventNoDesc(sessionId);
+		return topEventNo.map(Event::getEventNo).orElse(-1L);
+	}
 }

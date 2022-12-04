@@ -24,5 +24,5 @@ package de.bausdorf.simracing.racecontrol.live.api;
 
 public interface MessageProcessor {
 
-	void processMessage(ClientMessage message);
+	long processMessage(ClientMessage message);
 }

@@ -30,7 +30,7 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface EventRepository extends CrudRepository<Event, Integer> {
 
-	Optional<Event> findBySessionIdAndEventNo(String sessionId, long eventNo);
+	Optional<Event> findFirstBySessionIdOrderByEventNoDesc(String sessionId);
 	Optional<Event> findBySessionIdAndSessionTimeAndDriverIdAndEventType(
 			String sessionId, Duration sessionTime, long driverId, String eventType);
 	List<Event> findTop100BySessionIdOrderBySessionTimeDesc(String sessionId);

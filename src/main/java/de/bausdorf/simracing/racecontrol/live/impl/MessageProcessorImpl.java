@@ -22,6 +22,7 @@ package de.bausdorf.simracing.racecontrol.live.impl;
  * #L%
  */
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
@@ -99,29 +101,46 @@ public class MessageProcessorImpl implements MessageProcessor {
 	}
 
 	@Transactional
-	public void processMessage(ClientMessage message) {
+	public long processMessage(ClientMessage message) {
 		ClientData clientData = MessageFactory.validateAndConvert(message);
 		Optional<Session> session = sessionRepository.findBySessionId(message.getSessionId());
 		if(session.isEmpty()) {
-			switch(message.getType()) {
-				case EVENT: createSession(message); break;
-				case SESSION: createSession((SessionMessage)clientData, message.getSessionId()); break;
-				default: break;
+			try {
+				switch (message.getType()) {
+					case EVENT: createSession(message); break;
+					case SESSION: createSession((SessionMessage) clientData, message.getSessionId()); break;
+					default: break;
+				}
+			} catch (DataIntegrityViolationException e) {
+				log.info("Create session: {}", e.getMessage());
+				logSqlIntegrityViolation(e);
 			}
 		} else if(message.getType() == ClientMessageType.SESSION) {
-			processSessionMessage(session.get(), message.getLap(), (SessionMessage)clientData);
+			try {
+				processSessionMessage(session.get(), message.getLap(), (SessionMessage) clientData);
+			} catch (DataIntegrityViolationException e) {
+				log.info("Process session event: {}", e.getMessage());
+				logSqlIntegrityViolation(e);
+			}
 		}
 		session = sessionRepository.findBySessionId(message.getSessionId());
 		if(message.getType() == ClientMessageType.EVENT && session.isPresent()
 				&& session.get().getSessionState().getTypeCode() < SessionStateType.COOL_DOWN.getTypeCode()) {
-			processEventMessage(session.get(),
-					Long.parseLong(message.getDriverId()),
-					Long.parseLong(message.getTeamId()),
-					(EventMessage)clientData);
+			try {
+				processEventMessage(session.get(),
+						Long.parseLong(message.getDriverId()),
+						Long.parseLong(message.getTeamId()),
+						(EventMessage) clientData);
+			} catch (DataIntegrityViolationException e) {
+				log.info("Process track event: {}", e.getMessage());
+				logSqlIntegrityViolation(e);
+			}
 		}
+		return session.map(s -> eventLogger.getLastEventNo(s.getSessionId())).orElse(-1L);
 	}
 
-	private void processSessionMessage(Session session, int lap, SessionMessage clientData) {
+//	@Transactional
+	public void processSessionMessage(Session session, int lap, SessionMessage clientData) {
 		if(session.getSessionLaps() < lap) {
 			session.setSessionLaps(lap);
 			sessionRepository.save(session);
@@ -133,6 +152,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
+//	@Transactional
 	public void processEventMessage(Session session, long driverId, long teamId, EventMessage message) {
 		String sessionId = session.getSessionId();
 		Driver existingDriver = driverRepository.findBySessionIdAndIracingId(sessionId, driverId).orElse(null);
@@ -197,6 +217,17 @@ public class MessageProcessorImpl implements MessageProcessor {
 	public String respondRcAck(String message) {
 		log.info(message);
 		return "{\"messageType\":\"ack\", \"clientId\": \"" + message + "\"}";
+	}
+
+	private void logSqlIntegrityViolation(Throwable t) {
+		if (t == null) {
+			return;
+		}
+		if (t instanceof SQLIntegrityConstraintViolationException) {
+			log.warn(t.getMessage());
+			return;
+		}
+		logSqlIntegrityViolation(t.getCause());
 	}
 
 	private void sendPageReload(String sessionId, String message) {
@@ -269,6 +300,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 	}
 
+//	@Transactional
 	public void createSession(ClientMessage message) {
 		sessionRepository.save(Session.builder()
 				.sessionDuration(Duration.ZERO)
@@ -279,6 +311,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		log.debug("created session {}", message.getSessionId());
 	}
 
+//	@Transactional
 	public void createSession(SessionMessage message, String sessionId) {
 		sessionRepository.save(Session.builder()
 				.sessionDuration(message.getSessionDuration())
