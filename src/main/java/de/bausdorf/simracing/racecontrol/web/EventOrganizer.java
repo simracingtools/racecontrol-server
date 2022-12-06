@@ -246,10 +246,7 @@ public class EventOrganizer {
 
     public String getTeamNameFromIRacing(long iracingTeamId) {
         Optional<TeamInfoDto> team = dataClient.getTeamMembers(iracingTeamId);
-        if(team.isEmpty()) {
-            return null;
-        }
-        return team.get().getTeamName();
+        return team.map(TeamInfoDto::getTeamName).orElse(null);
     }
 
     public List<TeamRegistration> checkUniqueTeamDriver(@Nullable Person person) {
@@ -483,7 +480,7 @@ public class EventOrganizer {
                                      AtomicReference<List<TeamRegistrationView>> waitingList) {
         if(view.isWildcard()) {
             setWildcardSlots(view, carClass, regArray);
-        } else if(regCount.get() < carClass.getMaxSlots() - carClass.getWildcards()){
+        } else if(regCount.get() <= carClass.getMaxSlots() - carClass.getWildcards()){
             setRegularSlots(view, carClass, regArray);
         } else {
             waitingList.get().add(view);
