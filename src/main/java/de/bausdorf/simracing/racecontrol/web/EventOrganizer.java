@@ -464,13 +464,14 @@ public class EventOrganizer {
         }
     }
 
-    private void setRegularSlots(TeamRegistrationView view, CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray) {
+    private boolean setRegularSlots(TeamRegistrationView view, CarClass carClass, AtomicReference<TeamRegistrationView[]> regArray) {
         for(int i = carClass.getWildcards(); i < carClass.getMaxSlots(); i++) {
             if (regArray.get()[i] == null) {
                 regArray.get()[i] = view;
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     private void fillRegisteredSlots(TeamRegistrationView view,
@@ -480,8 +481,10 @@ public class EventOrganizer {
                                      AtomicReference<List<TeamRegistrationView>> waitingList) {
         if(view.isWildcard()) {
             setWildcardSlots(view, carClass, regArray);
-        } else if(regCount.get() <= carClass.getMaxSlots() - carClass.getWildcards()){
-            setRegularSlots(view, carClass, regArray);
+        } else if(regCount.get() <= carClass.getMaxSlots() - carClass.getWildcards()) {
+            if (!setRegularSlots(view, carClass, regArray)) {
+                waitingList.get().add(view);
+            }
         } else {
             waitingList.get().add(view);
         }
