@@ -43,7 +43,7 @@ public class EventLogger {
 		this.eventRepository = eventRepository;
 	}
 
-	public Event log(EventMessage eventMessage, Driver driver, int sessionLap) {
+	public Event log(EventMessage eventMessage, Driver driver) {
 		Optional<Event> existingEvent = eventRepository.findBySessionIdAndSessionTimeAndDriverIdAndEventType(
 						driver.getSessionId(),
 						eventMessage.getSessionTime(),
@@ -60,7 +60,7 @@ public class EventLogger {
 				.carName(eventMessage.getCarName())
 				.carClass(eventMessage.getCarClass())
 				.carClassColor(eventMessage.getCarClassColor())
-				.lap(sessionLap)
+				.lap(eventMessage.getLap())
 				.lapPct(eventMessage.getLapPct())
 				.driverName(eventMessage.getDriverName())
 				.teamName(eventMessage.getTeamName())
@@ -73,5 +73,10 @@ public class EventLogger {
 
 		eventRepository.save(event);
 		return event;
+	}
+
+	public long getLastEventNo(String sessionId) {
+		Optional<Event> topEventNo = eventRepository.findFirstBySessionIdOrderByEventNoDesc(sessionId);
+		return topEventNo.map(Event::getEventNo).orElse(-1L);
 	}
 }

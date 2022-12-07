@@ -88,8 +88,16 @@ public class WebSecurityConfig extends KeycloakWebSecurityConfigurerAdapter impl
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		super.configure(http);
+		String[] ignoreCsrfUrls = new String[] {
+				"/clientmessage/**",
+				"/rcclient/**",
+				"/rc/**",
+				"/timingclient/**"
+		};
 		http
-//				.csrf().disable()
+				.csrf()
+				.ignoringAntMatchers(ignoreCsrfUrls)
+				.and()
 				.headers()
 				.frameOptions().sameOrigin()
 				.and()

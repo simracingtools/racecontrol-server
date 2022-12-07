@@ -111,3 +111,11 @@ SERVER_PORT=[your desired port number].
     delete from team_registration where id=
 
 This only works if no team_member is registered before.
+
+### Backup database
+
+    mysqldump -u <dbuser> -p<password> <database> > <backup-name>.sql
+
+### Restore database
+
+    mysql -u <dbuser> -p<password> <database> < <backup-name>.sql

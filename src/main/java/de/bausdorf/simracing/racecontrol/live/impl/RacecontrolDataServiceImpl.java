@@ -69,7 +69,7 @@ public class RacecontrolDataServiceImpl implements RacecontrolDataService {
 		try {
 			msg = this.validateClientMessage(clientMessage);
 			if (msg.getType() != ClientMessageType.PING) {
-				messageProcessor.processMessage(msg);
+				return String.valueOf(messageProcessor.processMessage(msg));
 			}
 			return msg.getType().name();
 		} catch (InvalidClientMessageException e) {

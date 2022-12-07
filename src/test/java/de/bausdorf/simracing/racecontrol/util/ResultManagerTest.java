@@ -22,10 +22,9 @@ package de.bausdorf.simracing.racecontrol.util;
  * #L%
  */
 
-import de.bausdorf.simracing.racecontrol.orga.model.DriverPermission;
-import de.bausdorf.simracing.racecontrol.orga.model.DriverPermissionRepository;
-import de.bausdorf.simracing.racecontrol.orga.model.PermitSessionResult;
-import de.bausdorf.simracing.racecontrol.orga.model.TrackSession;
+import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.web.security.RcUser;
+import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +33,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @ActiveProfiles("local")
@@ -42,7 +43,11 @@ class ResultManagerTest {
     @Autowired
     ResultManager resultManager;
     @Autowired
+    TeamRegistrationRepository registrationRepository;
+    @Autowired
     DriverPermissionRepository driverPermissionRepository;
+    @Autowired
+    RcUserRepository userRepository;
 
     @Test
     void testFetchPermitSessionResult() {
@@ -77,6 +82,13 @@ class ResultManagerTest {
         Duration teamPermissionTime = resultManager.getTeamPermissionTime(driverPermissions);
 
         log.info("Team Permit Time: {}", TimeTools.lapDisplayTimeFromDuration(teamPermissionTime));
+    }
+
+    @Test
+    void testGetTeamsWithoutPermisstion() {
+        Map<RcUser, List<TeamRegistration>> withoutPermit = resultManager.missingTeamPermitContacts(9001L);
+
+        withoutPermit.forEach((user, list )-> log.info("{}({}): {}", user.getName(), user.getEmail(), list.stream().map(TeamRegistration::getName).collect(Collectors.toList())));
     }
 
     @Test

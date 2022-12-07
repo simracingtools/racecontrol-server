@@ -30,7 +30,8 @@ public enum EventType {
 	APPROACHING_PITS("AproachingPits"),
 	OFF_TRACK("OffTrack"),
 	OFF_WORLD("OffWorld"),
-	ON_TRACK("OnTrack");
+	ON_TRACK("OnTrack"),
+	LAP_COMPLETE("Lap");
 
 	private final String eventString;
 
@@ -52,6 +53,7 @@ public enum EventType {
 			case "OffTrack": return OFF_TRACK;
 			case "OffWorld": return OFF_WORLD;
 			case "OnTrack": return ON_TRACK;
+			case "Lap": return LAP_COMPLETE;
 			default: throw new IllegalArgumentException("Unknown EventType " + type);
 		}
 	}
