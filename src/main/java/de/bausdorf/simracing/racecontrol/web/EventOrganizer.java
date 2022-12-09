@@ -31,7 +31,10 @@ import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
 import de.bausdorf.simracing.racecontrol.iracing.MemberInfo;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.util.FileTypeEnum;
+import de.bausdorf.simracing.racecontrol.util.RacecontrolServerProperties;
 import de.bausdorf.simracing.racecontrol.util.ResultManager;
+import de.bausdorf.simracing.racecontrol.util.UploadFileManager;
 import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import lombok.Getter;
@@ -42,6 +45,11 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.util.StringUtils;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -49,6 +57,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @Component
 @Slf4j
@@ -61,24 +71,30 @@ public class EventOrganizer {
     private final WorkflowStateRepository stateRepository;
     private final PersonRepository personRepository;
     private final EventSeriesRepository seriesRepository;
+    private final DocumentMetadataRepository documentRepository;
     private final ResultManager resultManager;
     private final IRacingClient dataClient;
+    private final RacecontrolServerProperties config;
     public EventOrganizer(@Autowired CarClassRepository carClassRepository,
                           @Autowired TeamRegistrationRepository registrationRepository,
                           @Autowired WorkflowActionRepository actionRepository,
                           @Autowired WorkflowStateRepository stateRepository,
                           @Autowired PersonRepository personRepository,
                           @Autowired EventSeriesRepository seriesRepository,
+                          @Autowired DocumentMetadataRepository documentRepository,
                           @Autowired ResultManager resultManager,
-                          @Autowired IRacingClient dataClient) {
+                          @Autowired IRacingClient dataClient,
+                          @Autowired RacecontrolServerProperties config) {
         this.carClassRepository = carClassRepository;
         this.registrationRepository = registrationRepository;
         this.stateRepository = stateRepository;
         this.personRepository = personRepository;
         this.seriesRepository = seriesRepository;
+        this.documentRepository = documentRepository;
         this.resultManager = resultManager;
         this.dataClient = dataClient;
         this.actionRepository = actionRepository;
+        this.config = config;
     }
 
     public List<CarClassRegistrationsView> getTeamRegistrationsCarClassList(long eventId) {
@@ -436,6 +452,56 @@ public class EventOrganizer {
     public static String memberNameWithoutMiddleInitial(@NonNull String iRacingName) {
         String[] nameParts = iRacingName.split(" ");
         return nameParts[0] + " " + nameParts[nameParts.length - 1];
+    }
+
+    public List<DocumentMetadataView> getDocumentMetadataForEvent(long eventId) {
+        List<DocumentMetadata> documentMetadata = documentRepository.findAllByEventIdOrderByLastChangedDesc(eventId);
+        List<DocumentMetadataView> metadataViews = new ArrayList<>();
+
+        documentMetadata.stream().map(DocumentMetadataView::fromEntity).forEach(view -> {
+            Optional<TeamRegistration> registration = registrationRepository.findById(view.getRefItemId());
+            registration.ifPresent(r -> {
+                view.setTeamName(r.getTeamName());
+                view.setFileUrl(config.getUploadBaseUri() + view.getFileUrl());
+            });
+            metadataViews.add(view);
+        });
+        return metadataViews;
+    }
+
+    public String createPaintZipFile(long eventId) {
+        List<DocumentMetadata> documents = documentRepository.findAllByEventIdAndDocumentType(eventId, FileTypeEnum.PAINT);
+        Path destinationZipFile = Paths.get(config.getFileUploadBasePath()
+                + UploadFileManager.EVENT_SUBDIR + eventId + '/' + FileTypeEnum.PAINT.getDestination()
+                + "/allpaints.zip");
+
+        try (FileOutputStream fos = new FileOutputStream(destinationZipFile.toFile());
+             ZipOutputStream zipfile = new ZipOutputStream(fos)) {
+            documents.forEach(doc -> {
+                Path docFile = Paths.get(config.getFileUploadBasePath()
+                        + UploadFileManager.EVENT_SUBDIR + eventId + '/' + FileTypeEnum.PAINT.getDestination()
+                        + '/' + doc.getFileName());
+                try {
+                    FileInputStream fis = new FileInputStream(docFile.toFile());
+                    ZipEntry zipEntry = new ZipEntry(docFile.toFile().getName());
+                    zipfile.putNextEntry(zipEntry);
+
+                    byte[] bytes = new byte[8192];
+                    int length;
+                    while   ((length = fis.read(bytes)) >= 0) {
+                        zipfile.write(bytes, 0, length);
+                    }
+                    fis.close();
+                } catch (IOException e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+            return config.getUploadBaseUri() + UploadFileManager.EVENT_SUBDIR + eventId + '/'
+                    + FileTypeEnum.PAINT.getDestination() + "/allpaints.zip";
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     private AtomicReference<EventSeries> closeToRegistration(List<EventSeries> events, OffsetDateTime userLocalTime) {

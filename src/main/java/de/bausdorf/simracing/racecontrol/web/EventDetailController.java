@@ -155,6 +155,7 @@ public class EventDetailController extends ControllerBase {
 
             model.addAttribute("actions", eventOrganizer.getActiveWorkflowActionListForRole(
                     eventId, currentPerson));
+            model.addAttribute("documents", eventOrganizer.getDocumentMetadataForEvent(eventId));
         } else {
             addError("Event with id " + eventId + " not found", model);
             model.addAttribute(EVENT_VIEW_MODEL_KEY, EventInfoView.createEmpty());
@@ -165,6 +166,7 @@ public class EventDetailController extends ControllerBase {
                     .eventId(eventId)
                     .confirmedTeams(new ArrayList<>())
                     .build());
+            model.addAttribute("documents", new ArrayList<>());
         }
         model.addAttribute("teamRegistrationSelectView", new TeamRegistrationSelectView());
         model.addAttribute("registeredCarEditView", RegisteredCarEditView.builder()
