@@ -103,7 +103,8 @@
                     <td th:id="${'team-' + teamData.teamId + '-name'}" th:style="${'background: #' + teamData.carClassColor + '; padding: 6px'}" class="text-nowrap">
                         <a th:href="@{/team(userId=${user.id}, teamId=${teamData.teamId}, sessionId=${sessionView.sessionId})}" th:text="${teamData.name.value}" style="background: #fff3cd; padding: 2px; font-weight: bold">FBP Racing Blue</a>
                     </td>
-                    <td style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
+                    <td th:if="${user.getRacecontrol()}" style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center" onclick="showRcBulletinDialog(this.innerText, -1)">99</td>
+                    <td th:if="${!user.getRacecontrol()}" style="padding: 6px; cursor: pointer" th:id="${'team-' + teamData.teamId + '-carNo'}" th:text="${teamData.carNo.value}" class="text-center">99</td>
                     <td style="padding: 6px; cursor: help" th:id="${'team-' + teamData.teamId + '-teamRating'}" th:text="${teamData.proTeam ? 'PRO' : 'AM'}" data-toggle="tooltip" th:attr="title=${teamData.avgTeamRating.value}" th:class="${teamData.avgTeamRating.displayType.getClassString()}"></td>
                     <td style="padding: 6px;" th:id="${'team-' + teamData.teamId + '-carClass'}" th:text="${teamData.carClass}" class="text-nowrap"></td>
                     <td></td>
