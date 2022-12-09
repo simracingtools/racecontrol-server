@@ -277,7 +277,10 @@
                                                 <label class="form-check-label" for="formCheck-4">Documents</label>
                                             </div>
                                             <button class="btn btn-primary d-inline float-right" type="button" style="padding: 1px 2px;font-size: 14px;margin-left: 1em;">Upload new document</button>
-                                            <button class="btn btn-primary d-inline float-right" type="button" style="padding: 1px 2px;font-size: 14px;">Download paint pack</button>
+                                            <button class="btn btn-primary d-inline float-right" type="button" style="padding: 1px 2px;font-size: 14px;" th:onclick="'downloadPaintPack(' + ${event.eventId} + ');'">
+                                                <span id="paint-pack-text">Download paint pack</span>
+                                                <span id="paint-pack-spinner" style="display: none;" class="spinner-border spinner-border-sm" role="status"></span>
+                                            </button>
                                         </div>
                                     </div>
                                     <div class="table-responsive">

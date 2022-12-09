@@ -40,6 +40,23 @@ function checkEventSessions(eventId) {
   window.location = '/fetch-league-sessions?eventId=' + eventId;
 }
 
+function downloadPaintPack(eventId) {
+  $('#paint-pack-text').hide();
+  $('#paint-pack-spinner').show();
+  $.ajax({
+    type: "GET",
+    dataType: "json",
+    url: "/rest/create-paint-pack/" + eventId,
+    success: function (data) {
+      $("#paint-pack-spinner").hide();
+      $("#paint-pack-text").show();
+      if (data.url) {
+        window.location = data.url;
+      }
+    }
+  });
+}
+
 function confirmUserRemove(index) {
   $("#user-remove-confirm-" + index).modal('show');
 }

@@ -48,13 +48,16 @@ public class RestDataController {
     private final IRacingClient dataClient;
     private final RcUserRepository userRepository;
     private final LeagueDataCache leagueDataCache;
+    private final EventOrganizer eventOrganizer;
 
     public RestDataController(@Autowired IRacingClient iRacingClient,
                               @Autowired RcUserRepository userRepository,
-                              @Autowired LeagueDataCache leagueDataCache) {
+                              @Autowired LeagueDataCache leagueDataCache,
+                              @Autowired EventOrganizer eventOrganizer) {
         this.dataClient = iRacingClient;
         this.userRepository = userRepository;
         this.leagueDataCache = leagueDataCache;
+        this.eventOrganizer = eventOrganizer;
     }
 
     @GetMapping("/data/renew")
@@ -206,6 +209,15 @@ public class RestDataController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/create-paint-pack/{eventId}")
+    public FileDownload getPaintPackUrl(@PathVariable long eventId) {
+        String paintPackUrl = eventOrganizer.createPaintZipFile(eventId);
+        return FileDownload.builder()
+                .name("allpaints.zip")
+                .url(paintPackUrl)
+                .build();
+    }
+
     @Data
     @Builder
     public static class PersonSearchItem {
@@ -221,5 +233,12 @@ public class RestDataController {
     public static class TeamInfo {
         private String teamName;
         private long teamId;
+    }
+
+    @Data
+    @Builder
+    public static class FileDownload {
+        private String name;
+        private String url;
     }
 }
