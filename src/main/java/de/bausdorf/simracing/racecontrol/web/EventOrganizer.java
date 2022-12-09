@@ -337,6 +337,7 @@ public class EventOrganizer {
                         return false;
                     });
                 })
+                .sorted(Comparator.comparing(TeamRegistration::getName))
                 .map(TeamRegistrationView::fromEntity)
                 .collect(Collectors.toList());
     }
