@@ -30,6 +30,6 @@ import java.util.List;
 public interface DocumentMetadataRepository extends CrudRepository<DocumentMetadata, Long> {
     List<DocumentMetadata> findAllByEventIdAndDocumentTypeAndRefItemId(long eventId, FileTypeEnum type, long refItemId);
     List<DocumentMetadata> deleteAllByEventIdAndDocumentTypeAndRefItemId(long eventId, FileTypeEnum type, long refItemId);
-    List<DocumentMetadata> findAllByEventId(long eventId);
+    List<DocumentMetadata> findAllByEventIdOrderByLastChangedDesc(long eventId);
     void deleteAllByEventId(long eventId);
 }

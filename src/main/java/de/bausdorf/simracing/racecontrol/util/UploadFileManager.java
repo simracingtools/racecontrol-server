@@ -34,7 +34,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
-import java.util.UUID;
 
 @Component
 @Slf4j
@@ -51,14 +50,14 @@ public class UploadFileManager {
         Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
                 + EVENT_SUBDIR + eventId + '/' + type.getDestination());
         saveFile(fileDestinationDir, multipartFile, multipartFile.getOriginalFilename());
-        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + multipartFile.getOriginalFilename();
+        return EVENT_SUBDIR + eventId + '/' + type.getDestination() + multipartFile.getOriginalFilename();
     }
 
     public String uploadEventFile(@NonNull MultipartFile multipartFile, @NonNull String eventId, @NonNull FileTypeEnum type, @NonNull String targetFileName) throws IOException {
         Path fileDestinationDir = Paths.get(config.getFileUploadBasePath()
                 + EVENT_SUBDIR + eventId + '/' + type.getDestination());
         saveFile(fileDestinationDir, multipartFile, targetFileName);
-        return config.getUploadBaseUri() + EVENT_SUBDIR + eventId + '/' + type.getDestination() + targetFileName;
+        return EVENT_SUBDIR + eventId + '/' + type.getDestination() + targetFileName;
     }
 
     public void deleteEventFile(@NonNull long eventId, @NonNull FileTypeEnum type, @NonNull String targetFileName) throws IOException {

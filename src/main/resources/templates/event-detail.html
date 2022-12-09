@@ -266,7 +266,52 @@
                                     </div>
                                 </div>
                                 <div th:if="${user.racedirection}" id="tab-docs" th:class="'tab-pane' + ${navigation == 'docs' ? ' active' : ''}" role="tabpanel">
-                                    <p>Content for tab 7.</p>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="formCheck-3">
+                                                <label class="form-check-label" for="formCheck-3">Paints</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input" type="checkbox" id="formCheck-4">
+                                                <label class="form-check-label" for="formCheck-4">Documents</label>
+                                            </div>
+                                            <button class="btn btn-primary d-inline float-right" type="button" style="padding: 1px 2px;font-size: 14px;margin-left: 1em;">Upload new document</button>
+                                            <button class="btn btn-primary d-inline float-right" type="button" style="padding: 1px 2px;font-size: 14px;">Download paint pack</button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table id="docs-table" class="table table-striped table-sm">
+                                            <thead>
+                                            <tr>
+                                                <th>Original name / File name</th>
+                                                <th>Type / Team</th>
+                                                <th>Created</th>
+                                                <th>Last Change</th>
+                                                <th>Version</th>
+                                                <th></th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr th:each="doc: ${documents}">
+                                                <td>
+                                                    <span th:text="${doc.getOriginalFileName()}">Original-File.tga</span>
+                                                    <div><a th:href="${doc.getFileUrl()}" th:text="${doc.getFileName()}">car_team_12345.tga</a></div>
+                                                </td>
+                                                <td>
+                                                    <span th:text="${doc.getDocumentType()}">Paint</span>
+                                                    <div><span th:text="${doc.getTeamName()}">FBP Racing Blue</span></div>
+                                                </td>
+                                                <td><span th:text="${doc.getCreatedAt()}">26.05.2022 15:05</span>
+                                                    <div><span th:text="${doc.getCreatedBy().getName()}">Robert Bausdorf</span></div>
+                                                </td>
+                                                <td th:text="${doc.getLastChanged()}">26.05.2022 18:45</td>
+                                                <td th:text="${doc.getVersion()}">2</td>
+                                                <td><button class="btn btn-primary" type="button"><i class="fas fa-edit"></i></button></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                                 <div th:if="${!user.racedirection}" id="tab-teams" th:class="'tab-pane' + ${navigation == 'teams' ? ' active' : ''}" role="tabpanel">
                                     <div th:each="team: ${event.userRegistrations}" th:if="${!team.workflowState.inActive}" th:id="'team-row-' + ${team.id}" class="row" style="border-radius: 5px;border: 2px solid rgb(70,149,225); margin-bottom: 2px;">
