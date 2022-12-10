@@ -484,13 +484,20 @@ public class EventOrganizer {
                         + '/' + doc.getFileName());
                 try {
                     FileInputStream fis = new FileInputStream(docFile.toFile());
-                    ZipEntry zipEntry = new ZipEntry(docFile.toFile().getName());
-                    zipfile.putNextEntry(zipEntry);
+                    Optional<TeamRegistration> registration = registrationRepository.findById(doc.getRefItemId());
+                    if (registration.isPresent()) {
+                        long carId = registration.get().getCar().getCarId();
+                        CarInfoDto carInfo = getCarInfo(carId);
+                        if (carInfo != null) {
+                            ZipEntry zipEntry = new ZipEntry(carInfo.getCarDirpath() + '/' + docFile.toFile().getName());
+                            zipfile.putNextEntry(zipEntry);
 
-                    byte[] bytes = new byte[8192];
-                    int length;
-                    while   ((length = fis.read(bytes)) >= 0) {
-                        zipfile.write(bytes, 0, length);
+                            byte[] bytes = new byte[8192];
+                            int length;
+                            while ((length = fis.read(bytes)) >= 0) {
+                                zipfile.write(bytes, 0, length);
+                            }
+                        }
                     }
                     fis.close();
                 } catch (IOException e) {
@@ -608,6 +615,11 @@ public class EventOrganizer {
     private CarAssetDto getCarAsset(long carId) {
         return dataClient.getDataCache().getCarAssets().values().stream()
                 .filter(asset -> asset.getCarId() == carId).findFirst().orElse(null);
+    }
+
+    private CarInfoDto getCarInfo(long carId) {
+        return Arrays.stream(dataClient.getDataCache().getCars())
+                .filter(car -> car.getCarId() == carId).findFirst().orElse(null);
     }
 
     private WorkflowActionInfoView mapWorkflowAction(WorkflowAction action, @NonNull Person currentPerson){
