@@ -22,12 +22,33 @@ server {
     proxy_set_header Origin "";
   }
 
-    listen 443 ssl;
-    ssl_certificate <your certificate path>
-    ssl_certificate_key <your key path>
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+  # Proxy for static images from iRacing to satisfy SpringBoot CORS requirements
+  location /img {
+    proxy_pass https://images-static.iracing.com;
+    proxy_ssl_server_name on;
+    proxy_set_header Origin "";
+  }
+
+  listen 443 ssl;
+  ssl_certificate <your certificate path>
+  ssl_certificate_key <your key path>
+  include /etc/letsencrypt/options-ssl-nginx.conf;
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+  ssl_ecdh_curve secp384r1;
+#  ssl_session_tickets off;
+  ssl_stapling on;
+  ssl_stapling_verify on;
+  resolver_timeout 5s;
+  add_header Strict-Transport-Security "max-age=63072000; includeSubDomains; preload";
+  add_header X-Frame-Options DENY;
+  add_header X-Content-Type-Options nosniff;
+  add_header X-XSS-Protection "1; mode=block";
+  add_header Access-Control-Allow-Origin "https://images-static.iracing.com";
+
+  client_max_body_size 100M;
 }
+
 server {
   if ($host = <your hostname>) {
     return 301 https://$host$request_uri;
