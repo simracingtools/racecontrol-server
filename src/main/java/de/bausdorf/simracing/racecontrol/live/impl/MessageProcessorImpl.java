@@ -235,9 +235,9 @@ public class MessageProcessorImpl implements MessageProcessor {
 		messagingTemplate.convertAndSend(TIMING + sessionId + "/reload", message);
 	}
 
-	private void sendDriverMessage(Driver driver) {
+	private void sendDriverMessage(Driver driver, long eventId, String carName) {
 		messagingTemplate.convertAndSend(TIMING + driver.getSessionId() + "/driver",
-				viewBuilder.buildDriverView(driver));
+				viewBuilder.buildDriverView(driver, eventId, carName));
 	}
 
 	private void sendEventMessage(Event event) {
@@ -380,7 +380,7 @@ public class MessageProcessorImpl implements MessageProcessor {
 		}
 		if (message.getEventType() != existingDriver.getLastEventType()) {
 			existingDriver.setLastEventType(message.getEventType());
-			sendDriverMessage(existingDriver);
+			sendDriverMessage(existingDriver, session.getEventId(), existingDriver.getTeam().getCarName());
 		}
 		if (message.getLapPct() != existingDriver.getLastLapPosition()) {
 			existingDriver.setLastLapPosition(message.getLapPct());

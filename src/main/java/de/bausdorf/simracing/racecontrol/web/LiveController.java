@@ -137,7 +137,7 @@ public class LiveController extends ControllerBase {
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId(sessionId, teamId);
 		if(selectedSession.isPresent() && team.isPresent()) {
 			TeamDetailView teamView = viewBuilder.buildFromTeamView(
-					viewBuilder.buildFromTeam(team.get()), selectedSession.get().getSessionId(), currentUser());
+					viewBuilder.buildFromTeam(team.get(), selectedSession.get().getEventId()), selectedSession.get().getSessionId(), currentUser());
 			model.addAttribute(VIEW_MODE, "team");
 			model.addAttribute(SESSION_VIEW_ATTRIBUTE, viewBuilder.buildSessionView(selectedSession.get(), null));
 			model.addAttribute(NEXT_BULLETIN_VIEW, prepareNextBulletin(sessionId));

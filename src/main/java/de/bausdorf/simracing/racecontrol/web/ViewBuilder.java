@@ -23,12 +23,13 @@ package de.bausdorf.simracing.racecontrol.web;
  */
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.OptionalDouble;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import de.bausdorf.simracing.racecontrol.orga.model.DriverPermission;
+import de.bausdorf.simracing.racecontrol.orga.model.DriverPermissionRepository;
+import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
+import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -68,13 +69,19 @@ public class ViewBuilder {
 	private final RuleComplianceCheck complianceCheck;
 	private final DriverChangeRepository changeRepository;
 	private final EventRepository eventRepository;
+	private final DriverPermissionRepository permissionRepository;
+	private final TeamRegistrationRepository registrationRepository;
 
 	public ViewBuilder(@Autowired RuleComplianceCheck complianceCheck,
-			@Autowired DriverChangeRepository driverChangeRepository,
-			@Autowired EventRepository eventRepository) {
+					   @Autowired DriverChangeRepository driverChangeRepository,
+					   @Autowired EventRepository eventRepository,
+					   @Autowired DriverPermissionRepository permissionRepository,
+					   @Autowired TeamRegistrationRepository registrationRepository) {
 		this.changeRepository = driverChangeRepository;
 		this.complianceCheck = complianceCheck;
 		this.eventRepository = eventRepository;
+		this.permissionRepository = permissionRepository;
+		this.registrationRepository = registrationRepository;
 	}
 
 	public SessionView buildSessionView(Session selectedSession, @Nullable List<Team> teamsInSession) {
@@ -100,28 +107,41 @@ public class ViewBuilder {
 				.build();
 		if(teamsInSession != null) {
 			sessionView.setTeams(teamsInSession.stream()
-					.map(this::buildFromTeam)
+					.map(t -> this.buildFromTeam(t, selectedSession.getEventId()))
 					.collect(Collectors.toList()));
 		}
 		return sessionView;
 	}
 
-	public TeamView buildFromTeam(Team team) {
+	public TeamView buildFromTeam(Team team, long eventId) {
+		CssClassType cssCarNo = CssClassType.DEFAULT;
+		String carNoStr = String.valueOf(team.getCarNo());
+		if (eventId > 0) {
+			Optional<TeamRegistration> registration = registrationRepository.findByEventIdAndIracingId(eventId, team.getIracingId());
+			if (registration.isPresent()) {
+				if (Long.parseLong(team.getCarNo().trim()) != Long.parseLong(registration.get().getAssignedCarNumber().trim())) {
+					cssCarNo = CssClassType.TBL_DANGER;
+					carNoStr += "/" + registration.get().getAssignedCarNumber();
+				} else {
+					cssCarNo = CssClassType.TBL_SUCCESS;
+				}
+			}
+		}
 		TeamView teamView = TeamView.builder()
 				.name(TableCellView.builder()
 						.value(team.getName())
 						.displayType(CssClassType.DEFAULT)
 						.build())
 				.carNo(TableCellView.builder()
-						.value(String.valueOf(team.getCarNo()))
-						.displayType(CssClassType.DEFAULT)
+						.value(carNoStr)
+						.displayType(cssCarNo)
 						.build())
 				.carName(team.getCarName())
 				.carClass(team.getCarClass())
 				.carClassColor(team.getCarClassColor())
 				.teamId(team.getTeamId())
 				.drivers(team.getDrivers().stream()
-						.map(this::buildDriverView)
+						.map(d -> this.buildDriverView(d, eventId, team.getCarName()))
 						.collect(Collectors.toList()))
 				.build();
 
@@ -215,7 +235,7 @@ public class ViewBuilder {
 				.build();
 	}
 
-	public DriverView buildDriverView(Driver driver) {
+	public DriverView buildDriverView(Driver driver, long eventId, String carName) {
 		List<StintView> stintViews = buildStintViews(driver);
 		Duration trackTime = Duration.ZERO;
 		long trackLaps = 0L;
@@ -223,10 +243,11 @@ public class ViewBuilder {
 			trackTime = trackTime.plus(s.getTrackTime());
 			trackLaps += s.getLaps();
 		}
+		Optional<DriverPermission> permit = permissionRepository.findByEventIdAndIracingIdAndCarName(eventId, driver.getIracingId(), carName);
 		return DriverView.builder()
 						.name(TableCellView.builder()
 								.value(driver.getName())
-								.displayType(classTypeForTrackState(driver.getLastEventType()))
+								.displayType(classTypeForTrackState(driver.getLastEventType(), (eventId > 0 && permit.isEmpty())))
 								.build())
 						.iRacingId(String.valueOf(driver.getIracingId()))
 						.iRating(String.valueOf(driver.getIRating()))
@@ -328,7 +349,10 @@ public class ViewBuilder {
 				.build();
 	}
 
-	private CssClassType classTypeForTrackState(EventType trackStateType) {
+	private CssClassType classTypeForTrackState(EventType trackStateType, boolean noPermission) {
+		if (noPermission) {
+			return CssClassType.TBL_DANGER;
+		}
 		if(trackStateType == null) {
 			return CssClassType.DEFAULT;
 		}

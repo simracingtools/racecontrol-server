@@ -25,10 +25,12 @@ package de.bausdorf.simracing.racecontrol.orga.model;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TeamRegistrationRepository extends CrudRepository<TeamRegistration, Long> {
     List<TeamRegistration> findAllByEventId(long eventId);
     List<TeamRegistration> findAllByEventIdAndTeamMembersContaining(long eventId, Person member);
     List<TeamRegistration> findAllByEventIdAndCar(long eventId, BalancedCar car);
     List<TeamRegistration> findAllByEventIdAndTeamName(long eventId, String teamName);
+    Optional<TeamRegistration> findByEventIdAndIracingId(long eventId, long iracingId);
 }

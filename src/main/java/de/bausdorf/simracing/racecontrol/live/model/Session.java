@@ -43,6 +43,7 @@ import lombok.NoArgsConstructor;
 public class Session {
 	@Id
 	private String sessionId;
+	private long eventId;
 	@Column(nullable = false)
 	private ZonedDateTime created;
 	private String trackName;

@@ -56,6 +56,6 @@ class ViewBuilderTest {
 	@Test
 	void testCuriousTeam() {
 		Optional<Team> team = teamRepository.findBySessionIdAndIracingId("roadamerica full@139239792#35010657#2",200098);
-		team.ifPresent(value -> Assertions.assertNotNull(viewBuilder.buildFromTeam(value)));
+		team.ifPresent(value -> Assertions.assertNotNull(viewBuilder.buildFromTeam(value, 9001L)));
 	}
 }
