@@ -89,10 +89,10 @@
                                 <li id="nav-bop" class="nav-item" role="presentation">
                                     <a th:class="'nav-link' + ${navigation == 'bop' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-bop">BOP</a>
                                 </li>
-                                <li id="nav-docs" th:if="${user.racedirection}" class="nav-item" role="presentation">
+                                <li id="nav-docs" th:if="${user.racecontrol}" class="nav-item" role="presentation">
                                     <a th:class="'nav-link' + ${navigation == 'docs' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-docs">Documents</a>
                                 </li>
-                                <li id="nav-teams" th:if="${!user.racedirection}" class="nav-item" role="presentation">
+                                <li id="nav-teams" th:if="${!user.racecontrol}" class="nav-item" role="presentation">
                                     <a th:class="'nav-link' + ${navigation == 'teams' ? ' active' : ''}" role="tab" data-toggle="tab" href="#tab-teams">My teams</a>
                                 </li>
                             </ul>
@@ -265,7 +265,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div th:if="${user.racedirection}" id="tab-docs" th:class="'tab-pane' + ${navigation == 'docs' ? ' active' : ''}" role="tabpanel">
+                                <div th:if="${user.racecontrol}" id="tab-docs" th:class="'tab-pane' + ${navigation == 'docs' ? ' active' : ''}" role="tabpanel">
                                     <div class="row">
                                         <div class="col">
                                             <div class="form-check form-check-inline">
@@ -285,7 +285,7 @@
                                     </div>
                                     <div class="table-responsive">
                                         <table id="docs-table" class="table table-striped table-sm">
-                                            <caption>Supplied Documents</caption>
+                                            <caption th:text="${'Supplied Documents: ' + documents.size()}">Supplied Documents</caption>
                                             <thead>
                                             <tr>
                                                 <th>Original name / File name</th>
@@ -321,7 +321,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div th:if="${!user.racedirection}" id="tab-teams" th:class="'tab-pane' + ${navigation == 'teams' ? ' active' : ''}" role="tabpanel">
+                                <div th:if="${!user.racecontrol}" id="tab-teams" th:class="'tab-pane' + ${navigation == 'teams' ? ' active' : ''}" role="tabpanel">
                                     <div th:each="team: ${event.userRegistrations}" th:if="${!team.workflowState.inActive}" th:id="'team-row-' + ${team.id}" class="row" style="border-radius: 5px;border: 2px solid rgb(70,149,225); margin-bottom: 2px;">
                                         <div class="col">
                                             <div class="row">
