@@ -192,7 +192,7 @@ public class ResultManager {
             DriverPermitResultView permitResultView = DriverPermitResultView.fromEntity(driverResult);
             permitResultView.setLapCountOk(driverResult.getLapCount() >= config.getRequiredCleanPermitLapNum());
             permitResultView.setVarianceOk(
-                    driverResult.getSlowestLapTime().minus(driverResult.getFastestLapTime()).toSeconds() <= config.getMaxPermitLapTimeDiffSeconds());
+                    Math.abs(driverResult.getSlowestLapTime().minus(driverResult.getFastestLapTime()).toSeconds()) <= config.getMaxPermitLapTimeDiffSeconds());
             if (permitResultView.isPermitted()) {
                 permitAchievedCount.getAndIncrement();
             }
