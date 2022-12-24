@@ -86,7 +86,7 @@
                                         <td class="text-center" th:text="${teamResult.position}">1</td>
                                         <td class="text-center" th:text="${teamResult.startPosition}">3</td>
                                         <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center text-carclass" th:text="${teamResult.classPosition}">1</td>
-                                        <td class="text-center"><img data-toggle="tooltip" data-bss-tooltip="" th:src="${teamResult.carLogoUrl}" style="width: 20px;text-align: center;" th:title="${teamResult.carName}"></td>
+                                        <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center"><img data-toggle="tooltip" data-bss-tooltip="" th:src="${teamResult.carLogoUrl}" style="width: 20px;text-align: center;" th:title="${teamResult.carName}"></td>
                                         <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center text-carclass" th:text="${teamResult.carNumber}">47</td>
                                         <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center text-carclass" th:text="${teamResult.carClass}">SP9</td>
                                         <td th:class="${teamResult.rated} ? 'table-success' : 'table-danger'">
