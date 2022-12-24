@@ -207,6 +207,31 @@ public class EventOrganizer {
         return carClassMap;
     }
 
+    public List<AvailableSlotsView> getFilledGridSlots(long eventId) {
+        List<AvailableSlotsView> carClassMap = new ArrayList<>();
+        List<CarClass> eventClasses = carClassRepository.findAllByEventIdOrderByClassOrderAsc(eventId);
+        List<TeamRegistration> eventRegistrations = registrationRepository.findAllByEventId(eventId);
+        eventClasses.forEach(carClass -> {
+            AtomicInteger filledSlotsCount = new AtomicInteger(0);
+            AtomicLong wildcards = new AtomicLong(carClass.getWildcards());
+
+            eventRegistrations.stream()
+                    .filter(r -> (r.getCar().getCarClassId() == carClass.getId()
+                            && !r.getWorkflowState().isInActive()))
+                    .forEach(r -> filledSlotsCount.incrementAndGet());
+
+            AvailableSlotsView availableSlots = AvailableSlotsView.builder()
+                    .carClassId(carClass.getId())
+                    .name(carClass.getName())
+                    .availableSlots(filledSlotsCount.get())
+                    .wildcards(wildcards.get())
+                    .onWaitingList(0L)
+                    .build();
+            carClassMap.add(availableSlots);
+        });
+        return carClassMap;
+    }
+
     public List<WorkflowActionInfoView> getActiveWorkflowActionListForRole(long eventId, @NonNull Person currentPerson) {
         List<WorkflowAction> actionList = actionRepository.findAllByEventIdOrderByCreatedDesc(eventId);
         List<WorkflowActionInfoView> resultList = actionList.stream()

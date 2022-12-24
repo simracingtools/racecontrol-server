@@ -29,6 +29,7 @@ import java.util.List;
 
 public interface EventSeriesRepository extends CrudRepository<EventSeries, Long> {
     List<EventSeries> findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate openBefore, boolean active);
+    List<EventSeries> findAllByEndDateBeforeAndActiveOrderByStartDateAsc(LocalDate openBefore, boolean active);
     List<EventSeries> findAllByDiscordGuildIdAndActive(long guildId, boolean active);
     List<EventSeries> findAllByActive(boolean active);
 }

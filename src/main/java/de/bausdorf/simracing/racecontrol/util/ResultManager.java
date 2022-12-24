@@ -24,14 +24,12 @@ package de.bausdorf.simracing.racecontrol.util;
 
 import de.bausdorf.simracing.irdataapi.model.*;
 import de.bausdorf.simracing.racecontrol.iracing.IRacingClient;
+import de.bausdorf.simracing.racecontrol.live.model.*;
 import de.bausdorf.simracing.racecontrol.orga.api.OrgaRoleType;
 import de.bausdorf.simracing.racecontrol.orga.api.SkyConditionType;
 import de.bausdorf.simracing.racecontrol.orga.api.WindDirectionType;
 import de.bausdorf.simracing.racecontrol.orga.model.*;
-import de.bausdorf.simracing.racecontrol.web.model.orga.DriverPermitResultView;
-import de.bausdorf.simracing.racecontrol.web.model.orga.PermitSessionResultView;
-import de.bausdorf.simracing.racecontrol.web.model.orga.PersonView;
-import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.*;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
 import de.bausdorf.simracing.racecontrol.web.security.RcUserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -43,16 +41,20 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class ResultManager {
+    private final TrackSessionRepository trackSessionRepository;
     private final PermitSessionResultRepository permitSessionResultRepository;
     private final DriverPermissionRepository driverPermissionRepository;
     private final PersonRepository personRepository;
     private final TeamRegistrationRepository registrationRepository;
     private final RcUserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final SessionRepository sessionRepository;
     private final IRacingClient dataClient;
     private final RacecontrolServerProperties config;
 
@@ -61,15 +63,21 @@ public class ResultManager {
                          @Autowired PersonRepository personRepository,
                          @Autowired TeamRegistrationRepository registrationRepository,
                          @Autowired RcUserRepository userRepository,
+                         @Autowired TeamRepository teamRepository,
+                         @Autowired SessionRepository sessionRepository,
                          @Autowired IRacingClient dataClient,
-                         @Autowired RacecontrolServerProperties racecontrolServerProperties) {
+                         @Autowired RacecontrolServerProperties racecontrolServerProperties,
+                         TrackSessionRepository trackSessionRepository) {
         this.permitSessionResultRepository = permitSessionResultRepository;
         this.driverPermissionRepository = driverPermissionRepository;
         this.personRepository = personRepository;
         this.registrationRepository = registrationRepository;
         this.userRepository = userRepository;
+        this.teamRepository = teamRepository;
+        this.sessionRepository = sessionRepository;
         this.dataClient = dataClient;
         this.config = racecontrolServerProperties;
+        this.trackSessionRepository = trackSessionRepository;
     }
 
     @Transactional
@@ -201,6 +209,153 @@ public class ResultManager {
         permitSessionResultView.setPermitAchievedCount(permitAchievedCount.get());
         permitSessionResultView.setResults(driverResults);
         return permitSessionResultView;
+    }
+
+    public RaceSessionResultView getRaceSessionResultView(long eventId, long subsessionId) {
+        TrackSession trackSession = trackSessionRepository.findByEventIdAndIrSessionId(eventId, subsessionId).orElse(null);
+        if (trackSession == null) {
+            return null;
+        }
+
+        TrackInfoDto trackInfo = dataClient.getTrackFromCache(trackSession.getTrackConfigId());
+        String trackName = "unknown";
+        if (trackInfo != null) {
+            trackName = trackInfo.getTrackName() + " - " + trackInfo.getConfigName();
+        }
+
+        SubsessionResultDto subsessionResult = dataClient.getSubsessionResult(subsessionId).orElse(null);
+        if (subsessionResult == null) {
+            return null;
+        }
+
+        List<String> liveSessionIds = sessionRepository.findAllByEventId(eventId).stream()
+                .map(Session::getSessionId)
+                .filter(s -> s.contains(Long.toString(subsessionId)))
+                .collect(Collectors.toList());
+        String liveSessionId = liveSessionIds.get(liveSessionIds.size() -1);
+
+        RaceSessionResultView raceSessionResultView;
+        SessionResultDto[] sessionResults = subsessionResult.getSessionResults();
+        Optional<SessionResultDto> raceResult = Arrays.stream(sessionResults)
+                .filter(sessionResult -> sessionResult.getSimsessionName().equals("RACE"))
+                .findFirst();
+
+
+        if (raceResult.isPresent()) {
+            if ((trackSession.getIrSessionId() != null && trackSession.getIrSessionId() != 0L) && trackSession.getIrSessionId() != subsessionId) {
+                log.warn("Non-matching subsession id for {}: {} vs. {}", trackSession.getTitle(), trackSession.getIrSessionId(), subsessionId);
+                return null;
+            } else if (trackSession.getIrSessionId() == null || trackSession.getIrSessionId() == 0L) {
+                trackSession.setIrSessionId(subsessionId);
+            }
+            updateSessionWeather(trackSession, subsessionResult);
+            raceSessionResultView = RaceSessionResultView.fromEntitiy(trackSession);
+            raceSessionResultView.setTrackName(trackName);
+
+            List<RaceTeamResultView> resultList = new ArrayList<>();
+            Map<Long, CarAssetDto> carAssets = dataClient.getDataCache().getCarAssets();
+
+            AtomicLong sessionLaps = new AtomicLong(-1L);
+            Arrays.stream(raceResult.get().getResults()).forEach(teamResult -> {
+                if (sessionLaps.get() == -1) {
+                    sessionLaps.set(teamResult.getLapsComplete());
+                }
+                RaceTeamResultView teamResultView = RaceTeamResultView.builder()
+                        .eventId(eventId)
+                        .iracingId(Math.abs(teamResult.getTeamId()))
+                        .teamName(teamResult.getDisplayName())
+                        .lapCompleted(teamResult.getLapsComplete())
+                        .averageLapTime(TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(teamResult.getAverageLap() / 10)))
+                        .fastestLapTime(TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(teamResult.getBestLapTime() / 10)))
+                        .intervall(teamResult.getInterval() > 0 ? TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(teamResult.getInterval() / 10))
+                                : "-" + (sessionLaps.get() - teamResult.getLapsComplete()) + " L")
+                        .bestLap(teamResult.getBestLapNum())
+                        .leadLaps(teamResult.getLapsLed())
+                        .carClass(teamResult.getCarClassName())
+                        .carName(teamResult.getCarName())
+                        .position(teamResult.getPosition() + 1)
+                        .startPosition(teamResult.getStartingPosition() + 1)
+                        .classPosition(teamResult.getFinishPositionInClass() + 1)
+                        .carNumber(teamResult.getLivery().getCarNumber())
+                        .carLogoUrl(carAssets.get(teamResult.getCarId()).getLogo())
+                        .rated(true)
+                        .notRatedReason("")
+                        .state(teamResult.getReasonOut())
+                        .build();
+
+                Optional<Team> liveTeam = teamRepository.findBySessionIdAndIracingId(liveSessionId, teamResultView.getIracingId());
+                liveTeam.ifPresent(team -> teamResultView.setClassColor(team.getCarClassColor()));
+
+                Optional<TeamRegistration> teamRegistration = registrationRepository.findByEventIdAndIracingId(eventId, teamResultView.getIracingId());
+                if (teamRegistration.isEmpty()) {
+                    teamResultView.setRated(false);
+                    teamResultView.setNotRatedReason("Team ID " + teamResultView.getIracingId() + " was not registered in this event. ");
+                }
+
+                List<RaceDriverResultView> raceDriverResultViews = new ArrayList<>();
+                AtomicLong iratingSum = new AtomicLong(0);
+                Arrays.stream(teamResult.getDriverResults()).forEach(driverResult -> {
+                    RaceDriverResultView raceDriverResultView = RaceDriverResultView.builder()
+                            .eventId(eventId)
+                            .driverName(driverResult.getDisplayName())
+                            .iracingId(driverResult.getCustId())
+                            .clubName(driverResult.getClubName())
+                            .rating(driverResult.getOldIRating())
+                            .averageLapTime(TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(driverResult.getAverageLap() / 10)))
+                            .fastestLapTime(TimeTools.lapDisplayTimeFromDuration(Duration.ofMillis(driverResult.getBestLapTime() / 10)))
+                            .bestLap(driverResult.getBestLapNum())
+                            .leadLaps(driverResult.getLapsLed())
+                            .lapCompleted(driverResult.getLapsComplete())
+                            .permitted(true)
+                            .noPermissionReason("")
+                            .build();
+                    Optional<DriverPermission> permission = driverPermissionRepository.findByEventIdAndIracingIdAndCarId(eventId, driverResult.getCustId(), driverResult.getLivery().getCarId());
+                    teamRegistration.ifPresent(r -> {
+                        Optional<Person> registeredDriver = r.getTeamMembers().stream()
+                                .filter(p -> p.getIracingId() == driverResult.getCustId()).findAny();
+                        if (registeredDriver.isEmpty()) {
+                            raceDriverResultView.setPermitted(false);
+                            raceDriverResultView.setNoPermissionReason("Driver with ID " + driverResult.getCustId() + " is not registered in this team. ");
+                        } else if (registeredDriver.get().getRole() != OrgaRoleType.DRIVER) {
+                            raceDriverResultView.setPermitted(false);
+                            raceDriverResultView.setNoPermissionReason("Driver had no DRIVER role in this team. ");
+                        }
+                    });
+                    if (permission.isEmpty()) {
+                        raceDriverResultView.setPermitted(false);
+                        raceDriverResultView.setNoPermissionReason(raceDriverResultView.getNoPermissionReason()
+                                + "Driver has no permission for car");
+                    }
+                    iratingSum.addAndGet(driverResult.getOldIRating());
+                    raceDriverResultViews.add(raceDriverResultView);
+                });
+                teamResultView.setDriverResults(raceDriverResultViews);
+
+                if (!raceDriverResultViews.isEmpty()) {
+                    long teamRatingAvg = iratingSum.get() / raceDriverResultViews.size();
+                    if (teamRatingAvg > config.getProAmDiscriminator()) {
+                        teamResultView.setTeamRating("PRO");
+                        teamResultView.setRatingCssClass("table-dark");
+                    } else {
+                        teamResultView.setTeamRating("AM");
+                        teamResultView.setRatingCssClass("table-secondary");
+                    }
+                } else {
+                    teamResultView.setTeamRating("N/A");
+                    teamResultView.setRatingCssClass("table-light");
+                }
+                if (raceDriverResultViews.stream().anyMatch(r -> !r.isPermitted())) {
+                    teamResultView.setRated(false);
+                    teamResultView.setNotRatedReason(teamResultView.getNotRatedReason()
+                            + "Drivers without permission");
+                }
+
+                resultList.add(teamResultView);
+            });
+            raceSessionResultView.setResults(resultList);
+            return raceSessionResultView;
+        }
+        return null;
     }
 
     public void fillPermitTimes(TeamRegistrationView registrationView) {

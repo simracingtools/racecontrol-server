@@ -149,6 +149,77 @@
             <div class="col-1 col-sm-1 col-md-1 col-lg-2 col-xl-2"></div>
         </div>
         <div class="row">
+            <div class="col" th:if="${!eventViewsFinished.isEmpty()}">
+                <h3>Past Events</h3>
+            </div>
+        </div>
+        <div th:each="event: ${eventViewsFinished}" class="row" style="border-radius: 5px;color: rgb(0,1,1);border-style: solid;border-color: rgba(40,87,159,0.47);">
+            <div class="col-3 col-sm-2 col-md-1 col-lg-1 col-xl-1" style="padding-right: 0;padding-left: 0;">
+                <img width="100px" th:src="${event.logoUrl}"/>
+            </div>
+            <div class="col-9 col-sm-10 col-md-10 col-lg-3 col-xl-4">
+                <h4 class="d-inline" th:text="${event.title}">Testevent</h4>
+                <a th:if="${user.racedirection}" th:href="@{/create-event(eventId=${event.eventId})}" style="padding-left: 5px;">
+                    <i class="fa fa-edit"></i>
+                </a>
+                <p>
+                    <span th:text="${#temporals.format(event.startDate, 'dd.MM.yyyy')}">30.09.2022</span>
+                    <span> - </span>
+                    <span th:text="${#temporals.format(event.endDate, 'dd.MM.yyyy')}">18.12.2022</span>
+                </p>
+                <p>
+                    <span>Teamsize:&nbsp;</span><span th:text="${event.minTeamDrivers}"></span><span>&nbsp;to&nbsp;</span><span th:text="${event.maxTeamDrivers}"></span>
+                </p>
+                <p th:text="${event.description}">Paragraph</p>
+                <span>Discord</span><a th:href="${event.discordInvite}" target="_blank" style="padding-left: 1em;" th:text="${event.discordInvite}">Link</a>
+            </div>
+            <div class="col-md-5 col-lg-4 col-xl-4">
+                <div class="row transparent">
+                    <div class="col-lg-12">
+                        <h4>Event Information</h4>
+                    </div>
+                </div>
+                <div class="row transparent">
+                    <div class="col-lg-12">
+                        <a href="#">Entry List</a>
+                    </div>
+                </div>
+                <div class="row transparent">
+                    <div class="col-lg-12" style="margin-top: 1em;">
+                        <h5>Race Results</h5>
+                    </div>
+                </div>
+                <div class="row transparent">
+                    <div class="col-lg-12" th:each="sessionId : ${raceResultIds}">
+                        <a th:href="@{/race-result(eventId=${event.eventId},subsessionId=${sessionId})}">Result</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-4 col-xl-3">
+                <div class="table-responsive text-center" style="margin-top: 5px;" th:fragment="tableAvailableSlots(event)">
+                    <table class="table text-center">
+                        <caption>Registration slots.</caption>
+                        <thead>
+                        <tr>
+                            <th style="padding: 3px;">Car class</th>
+                            <th style="padding: 3px;">Slots/wildcards</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="classSlots : ${event.availableSlots}">
+                            <td style="padding: 3px;" th:text="${classSlots.name}">SP9</td>
+                            <td style="padding: 3px;">
+                                <span th:text="${classSlots.availableSlots}">15</span>
+                                <span>/</span>
+                                <span th:text="${classSlots.wildcards}">2</span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row">
             <div class="col" th:if="${!eventViews.isEmpty()}">
                 <h3>Upcoming Events</h3>
             </div>

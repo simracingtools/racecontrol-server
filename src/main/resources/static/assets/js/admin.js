@@ -81,6 +81,14 @@ function confirmStateRemove(id) {
   $("#state-remove-confirm-" + id).modal('show');
 }
 
+function showHideDriverResults(teamId) {
+  if ($(".teamDriver-" + teamId).is(":visible")) {
+    $(".teamDriver-" + teamId).hide();
+  } else {
+    $(".teamDriver-" + teamId).show();
+  }
+}
+
 function personSelected(data) {
   $("#staff-modal #iracingId").val(data.iracingId);
   $("#staff-modal #name").val(data.value);

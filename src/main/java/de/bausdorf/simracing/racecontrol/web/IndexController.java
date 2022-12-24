@@ -24,13 +24,12 @@ package de.bausdorf.simracing.racecontrol.web;
 
 import de.bausdorf.simracing.racecontrol.live.model.Session;
 import de.bausdorf.simracing.racecontrol.live.model.SessionRepository;
-import de.bausdorf.simracing.racecontrol.orga.model.EventSeries;
-import de.bausdorf.simracing.racecontrol.orga.model.EventSeriesRepository;
-import de.bausdorf.simracing.racecontrol.orga.model.Person;
-import de.bausdorf.simracing.racecontrol.orga.model.TeamRegistration;
+import de.bausdorf.simracing.racecontrol.orga.model.*;
+import de.bausdorf.simracing.racecontrol.util.ResultManager;
 import de.bausdorf.simracing.racecontrol.web.model.orga.EventInfoView;
 import de.bausdorf.simracing.racecontrol.web.model.live.SessionOptionView;
 import de.bausdorf.simracing.racecontrol.web.model.live.SessionSelectView;
+import de.bausdorf.simracing.racecontrol.web.model.orga.RaceSessionResultView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationSelectView;
 import de.bausdorf.simracing.racecontrol.web.model.orga.TeamRegistrationView;
 import de.bausdorf.simracing.racecontrol.web.security.RcUser;
@@ -42,10 +41,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -54,11 +50,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -70,17 +64,24 @@ public class IndexController extends ControllerBase {
     public static final String USER_ID_PARAM = "userId";
     public static final String SESSION_ID_PARAM = "sessionId";
     public static final String EVENT_ID_PARAM = "eventId";
+    public static final String RACE_RESULT_VIEW = "race-result";
 
     private final SessionRepository sessionRepository;
     private final EventSeriesRepository eventRepository;
+    private final TrackSessionRepository trackSessionRepository;
     private final EventOrganizer eventOrganizer;
+    private final ResultManager resultManager;
 
     public IndexController(@Autowired SessionRepository sessionRepository,
                            @Autowired EventSeriesRepository eventRepository,
-                           @Autowired EventOrganizer eventOrganizer) {
+                           @Autowired TrackSessionRepository trackSessionRepository,
+                           @Autowired EventOrganizer eventOrganizer,
+                           @Autowired ResultManager resultManager) {
         this.sessionRepository = sessionRepository;
         this.eventRepository = eventRepository;
+        this.trackSessionRepository = trackSessionRepository;
         this.eventOrganizer = eventOrganizer;
+        this.resultManager = resultManager;
     }
 
     @GetMapping({"/", "/index", "index.html"})
@@ -107,18 +108,47 @@ public class IndexController extends ControllerBase {
         }
         model.addAttribute("selectView", selectView);
 
-        List<EventInfoView> eventInfoViews = EventInfoView.fromEntityList(
+        // Fetch active events
+        List<EventInfoView> activeEvents = EventInfoView.fromEntityList(
               eventRepository.findAllByEndDateAfterAndActiveOrderByStartDateAsc(LocalDate.now(), true));
-        eventInfoViews.forEach(e -> {
+        activeEvents.forEach(e -> {
             e.setAvailableSlots(eventOrganizer.getAvailableGridSlots(e.getEventId()));
             e.setUserRegistrations(eventOrganizer.myRegistrations(e.getEventId(), currentUser()).stream()
                             .filter(IndexController.distinctByKey(TeamRegistration::getTeamName))
                             .map(TeamRegistrationView::fromEntity)
                             .collect(Collectors.toList()));
         });
-        model.addAttribute("eventViews", eventInfoViews);
+
+        // Fetch finished events
+        AtomicReference<List<Long>> sessionResults = new AtomicReference<>(new ArrayList<>());
+        List<EventInfoView> finishedEvents = EventInfoView.fromEntityList(
+                eventRepository.findAllByEndDateBeforeAndActiveOrderByStartDateAsc(LocalDate.now(), true)
+        );
+        finishedEvents.forEach(e -> {
+            e.setAvailableSlots(eventOrganizer.getFilledGridSlots(e.getEventId()));
+            sessionResults.set(trackSessionRepository.findAllByEventId(e.getEventId()).stream()
+                    .filter(session -> !session.isPermitSession())
+                    .map(TrackSession::getIrSessionId)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList()));
+        });
+
+        model.addAttribute("eventViews", activeEvents);
+        model.addAttribute("eventViewsFinished", finishedEvents);
+        model.addAttribute("raceResultIds", sessionResults.get());
         model.addAttribute("teamRegistrationSelectView", new TeamRegistrationSelectView());
         return INDEX_VIEW;
+    }
+
+    @GetMapping("/race-result")
+    public String getRaceResult(@RequestParam Long eventId, @RequestParam Long subsessionId, Model model) {
+        RaceSessionResultView resultView = resultManager.getRaceSessionResultView(eventId, subsessionId);
+        if (resultView != null) {
+            model.addAttribute("resultsView", resultView);
+            return RACE_RESULT_VIEW;
+        }
+
+        return redirectBuilder(INDEX_VIEW).build(model);
     }
 
     @GetMapping("/login-redirect")

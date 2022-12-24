@@ -1,0 +1,151 @@
+<!--
+  #%L
+  racecontrol-server
+  %%
+  Copyright (C) 2020 - 2022 bausdorf engineering
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/gpl-3.0.html>.
+  #L%
+  -->
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head th:replace="index :: head"></head>
+<body>
+    <div class="container" style="max-width: 1600px;">
+        <header th:replace="index :: header"></header>
+        <div th:replace="index :: messages"></div>
+        <div th:replace="index :: menu(title='Permit session result')"></div>
+
+        <div class="row">
+            <div class="col">
+                <h4 th:text="${resultsView.title}">Permit session 1</h4>
+                <div>
+                    <span class="offset-time" th:text="${#temporals.format(resultsView.datetime, 'dd.MM.yyyy HH:mm Z')}">17.10.2022 19:00 GMT</span>
+                    <span></span>
+                </div>
+                <div><span th:text="${resultsView.trackName}">Nürburgring Combined - Gesamtstrecke 24h</span></div>
+                <div><span>iRacing session:&nbsp;</span>
+                    <a target="_blank" th:href="${'https://members.iracing.com/membersite/member/EventResult.do?subsessionid=' + resultsView.irSessionId + '&custid=' + user.getIRacingId()}" th:text="${resultsView.irSessionId}">
+                        09213409
+                    </a>
+                </div>
+                <div>
+                    <span><strong>Time Of Day :&nbsp;</strong></span><span th:text="${#temporals.format(resultsView.timeOfDay, 'dd.MM.yyyy HH:mm')}">30.11.2022 15:00</span>
+                </div>
+            </div>
+            <div class="col">
+                <div><span><strong th:text="${resultsView.dynamicWeather ? 'Dynamic Weather' : 'Static Weather'}">Dynamic Weather</strong></span></div>
+                <div><span th:text="${resultsView.airTemp + ', ' + resultsView.windDirectionAndSpeed}">Air 30 °C, Wind W @ 20 kph</span></div>
+                <div><span th:text="${resultsView.relativeHumidity}">Atmosphere: 41% RH</span></div>
+                <div><span th:text="${resultsView.skies}">Skyies: Partly Cloudy</span></div>
+                <div><span>&nbsp;</span></div>
+                <div><span><strong th:text="${resultsView.dynamicSkies ? 'Dynamic Skies' : 'Static Skies'}">&nbsp;Dynamic Skies</strong></span></div>
+                <div><span>&nbsp;</span></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <div class="row">
+                    <div class="col">
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Pos</th>
+                                    <th class="text-center">Start Pos</th>
+                                    <th class="text-center">Class Pos</th>
+                                    <th class="text-center">Car</th>
+                                    <th class="text-center">#</th>
+                                    <th class="text-center">Class</th>
+                                    <th class="text-center">Team / Driver</th>
+                                    <th class="text-center">Rating</th>
+                                    <th class="text-center">Laps Led</th>
+                                    <th class="text-center">Interval</th>
+                                    <th class="text-center">Average Lap</th>
+                                    <th class="text-center">Fastest Lap</th>
+                                    <th class="text-center">Fast Lap</th>
+                                    <th class="text-center">Laps</th>
+                                    <th class="text-center">Out</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <div th:each="teamResult: ${resultsView.results}">
+                                    <tr>
+                                        <td class="text-center" th:text="${teamResult.position}">1</td>
+                                        <td class="text-center" th:text="${teamResult.startPosition}">3</td>
+                                        <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center text-carclass" th:text="${teamResult.classPosition}">1</td>
+                                        <td class="text-center"><img data-toggle="tooltip" data-bss-tooltip="" th:src="${teamResult.carLogoUrl}" style="width: 20px;text-align: center;" th:title="${teamResult.carName}"></td>
+                                        <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center text-carclass" th:text="${teamResult.carNumber}">47</td>
+                                        <td th:style="'background: #' + ${teamResult.classColor} + ';'" class="text-center text-carclass" th:text="${teamResult.carClass}">SP9</td>
+                                        <td th:class="${teamResult.rated} ? 'table-success' : 'table-danger'">
+                                            <i class="far fa-plus-square" style="margin-right: 5px;" th:onclick="'showHideDriverResults(' + ${teamResult.iracingId} + ');'"></i>
+                                            <span th:text="${teamResult.teamName}" data-bss-tooltip="" data-toggle="tooltip" th:title="${teamResult.notRatedReason}">Adrenalin eMotorSport GT3</span></td>
+                                        <td th:text="${teamResult.teamRating}" th:class="${teamResult.ratingCssClass} + ' text-center'">PRO</td>
+                                        <td class="text-center" th:text="${teamResult.leadLaps}">124</td>
+                                        <td class="text-center" th:text="${teamResult.intervall}">-2:48.980</td>
+                                        <td class="text-right" th:text="${teamResult.averageLapTime}">8:17.163</td>
+                                        <td class="text-right" th:text="${teamResult.fastestLapTime}">8:02.567</td>
+                                        <td class="text-center" th:text="${teamResult.bestLap}">161</td>
+                                        <td class="text-center" th:text="${teamResult.lapCompleted}">173</td>
+                                        <td class="text-center" th:text="${teamResult.state}">Running</td>
+                                    </tr>
+                                    <tr th:each="driverResult: ${teamResult.driverResults}" th:class="${'teamDriver-' + teamResult.iracingId}" style="display: none">
+                                        <td style="text-align: center;"></td>
+                                        <td></td>
+                                        <td style="text-align: center;"></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-center"></td>
+                                        <td th:text="${driverResult.driverName + ' (' + driverResult.clubName + ')'}" th:class="${driverResult.permitted ? 'table-success' : 'table-danger'}" data-toggle="tooltip" data-bss-tooltip="" th:title="${driverResult.noPermissionReason}"><span>Fabian Hari</span>&nbsp;(DE-AT-CH)</td>
+                                        <td class="text-center" th:text="${driverResult.rating}">3465</td>
+                                        <td class="text-center" th:text="${driverResult.leadLaps}">42</td>
+                                        <td class="text-center"></td>
+                                        <td class="text-right" th:text="${driverResult.averageLapTime}">8:17.163</td>
+                                        <td class="text-right" th:text="${driverResult.fastestLapTime}">8:02.567</td>
+                                        <td class="text-center" th:text="${driverResult.bestLap}">161</td>
+                                        <td class="text-center" th:text="${driverResult.lapCompleted}">173</td>
+                                        <td></td>
+                                    </tr>
+                                </div>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div th:insert="index :: footer"></div>
+    </div>
+
+    <script src="assets/js/jquery.min.js"></script>
+    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="assets/js/bs-init.js"></script>
+    <script src="assets/js/admin.js"></script>
+    <script src="/webjars/momentjs/moment.js"></script>
+    <script src="/webjars/momentjs/locale/de.js"></script>
+    <script src="/webjars/jquery-ui/jquery-ui.js"></script>
+    <script>
+        $(document).ready(function () {
+            var userLang = navigator.language || navigator.userLanguage;
+            moment.locale(userLang.split('-')[0]);
+
+            showLocalTime();
+        });
+    </script>
+</body>
+
+</html>

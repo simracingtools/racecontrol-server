@@ -1,10 +1,10 @@
-package de.bausdorf.simracing.racecontrol.live.model;
+package de.bausdorf.simracing.racecontrol.web.model.orga;
 
 /*-
  * #%L
  * racecontrol-server
  * %%
- * Copyright (C) 2020 bausdorf engineering
+ * Copyright (C) 2020 - 2022 bausdorf engineering
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
@@ -22,15 +22,24 @@ package de.bausdorf.simracing.racecontrol.live.model;
  * #L%
  */
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
+import lombok.*;
 
-import org.springframework.data.repository.CrudRepository;
-
-public interface SessionRepository extends CrudRepository<Session, String> {
-
-	List<Session> findAllByCreatedBeforeOrderByCreatedDesc(ZonedDateTime allBefore);
-	Optional<Session> findBySessionId(String sessionId);
-	List<Session> findAllByEventId(long eventId);
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+public class RaceDriverResultView {
+    private long eventId;
+    private long iracingId;
+    private String driverName;
+    private Long rating;
+    private long leadLaps;
+    private String averageLapTime;
+    private String fastestLapTime;
+    private Long bestLap;
+    private Long lapCompleted;
+    private String clubName;
+    private boolean permitted;
+    private String noPermissionReason;
 }

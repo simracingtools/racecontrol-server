@@ -97,6 +97,10 @@
     color: #FFFFFF !important;
 }
 
+[data-theme="dark"] .text-carclass {
+    color: #000 !important;
+}
+
 [data-theme="dark"] .table-warning {
     background-color: #96855f !important;
 }
